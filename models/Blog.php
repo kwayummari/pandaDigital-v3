@@ -10,14 +10,21 @@ class Blog
         $this->db = new Database();
     }
 
-    public function getLatestPosts($limit = 6)
+    public function getLatestPosts($limit = 6, $excludeId = null)
     {
         try {
             $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("SELECT id, name, maelezo, photo, date_created FROM blog ORDER BY date_created DESC LIMIT ?");
-            $stmt->bindParam(1, $limit, PDO::PARAM_INT);
-            $stmt->execute();
 
+            if ($excludeId) {
+                $stmt = $conn->prepare("SELECT id, name, maelezo, photo, date_created FROM blog WHERE id != ? ORDER BY date_created DESC LIMIT ?");
+                $stmt->bindParam(1, $excludeId, PDO::PARAM_INT);
+                $stmt->bindParam(2, $limit, PDO::PARAM_INT);
+            } else {
+                $stmt = $conn->prepare("SELECT id, name, maelezo, photo, date_created FROM blog ORDER BY date_created DESC LIMIT ?");
+                $stmt->bindParam(1, $limit, PDO::PARAM_INT);
+            }
+
+            $stmt->execute();
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Error fetching blog posts: " . $e->getMessage());
@@ -29,7 +36,7 @@ class Blog
     {
         try {
             $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("SELECT id, name, maelezo, photo, date_created FROM blog WHERE id = ?");
+            $stmt = $conn->prepare("SELECT id, name, maelezo, photo, content, tags, author, date_created FROM blog WHERE id = ?");
             $stmt->bindParam(1, $id, PDO::PARAM_INT);
             $stmt->execute();
 

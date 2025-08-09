@@ -27,10 +27,10 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                         <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
                         <p class="hero-subtitle">Jifunze ujuzi wa kidijitali, uwe na biashara yako, na uweze kujitegemea kiuchumi kupitia <?= htmlspecialchars($appConfig['name']) ?></p>
                         <div class="hero-buttons">
-                            <a href="<?= app_url('courses.php') ?>" class="btn btn-primary btn-lg">
+                            <a href="<?= app_url('courses.php') ?>" class="btn btn-primary">
                                 Anza Kozi
                             </a>
-                            <a href="<?= app_url('opportunities.php') ?>" class="btn btn-outline-light btn-lg">
+                            <a href="<?= app_url('opportunities.php') ?>" class="btn btn-outline-primary">
                                 Tazama Fursa
                             </a>
                         </div>

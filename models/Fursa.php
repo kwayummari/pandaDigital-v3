@@ -14,7 +14,7 @@ class Fursa
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             if ($excludeId) {
                 $stmt = $conn->prepare("SELECT id, name, description, image, date, month, date_created FROM fursa WHERE id != ? ORDER BY date_created DESC LIMIT ?");
                 $stmt->bindParam(1, $excludeId, PDO::PARAM_INT);
@@ -23,7 +23,7 @@ class Fursa
                 $stmt = $conn->prepare("SELECT id, name, description, image, date, month, date_created FROM fursa ORDER BY date_created DESC LIMIT ?");
                 $stmt->bindParam(1, $limit, PDO::PARAM_INT);
             }
-            
+
             $stmt->execute();
             return $stmt->fetchAll();
         } catch (PDOException $e) {
@@ -36,7 +36,7 @@ class Fursa
     {
         try {
             $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("SELECT id, name, description, maelezo, mahitaji, faida, kategoria, mahali, muda, uzoefu, image, date, month, date_created FROM fursa WHERE id = ?");
+            $stmt = $conn->prepare("SELECT id, name, description, image, date_created FROM fursa WHERE id = ?");
             $stmt->bindParam(1, $id, PDO::PARAM_INT);
             $stmt->execute();
 
