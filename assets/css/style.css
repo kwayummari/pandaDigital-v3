@@ -48,11 +48,7 @@ html {
 /* Top Bar */
 .top-bar {
   font-size: 0.875rem;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--primary-dark) 100%
-  );
+  background: var(--primary-color);
 }
 
 .top-bar a {
@@ -132,25 +128,25 @@ html {
   transform: translateX(4px);
 }
 
-/* Hero Section - Modern Split Design */
+/* Hero Section - Clean Minimalistic Design */
 .hero-section {
   position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%);
+  background: var(--secondary-color);
   overflow: hidden;
 }
 
 .hero-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('../images/banner/banner-1.jpg') center/cover;
-  opacity: 0.15;
+  background: url("../images/banner/banner-1.jpg") center/cover;
+  opacity: 0.1;
   z-index: 1;
 }
 
@@ -162,6 +158,9 @@ html {
 .hero-content {
   color: white;
   padding: 2rem 0;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .hero-title {
@@ -169,10 +168,7 @@ html {
   font-weight: 800;
   margin-bottom: 1.5rem;
   line-height: 1.1;
-  background: linear-gradient(135deg, #ffffff 0%, var(--primary-color) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: white;
 }
 
 .hero-subtitle {
@@ -188,6 +184,7 @@ html {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .hero-buttons .btn {
@@ -203,11 +200,7 @@ html {
 }
 
 .btn-primary {
-  background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--primary-dark) 100%
-  );
+  background: var(--primary-color);
   border: none;
   box-shadow: var(--shadow-lg);
   color: white;
@@ -216,7 +209,7 @@ html {
 .btn-primary:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-xl);
-  background: linear-gradient(135deg, var(--primary-dark) 0%, #d4a02a 100%);
+  background: var(--primary-dark);
   color: white;
 }
 
@@ -233,38 +226,6 @@ html {
   border-color: rgba(255, 255, 255, 0.5);
   box-shadow: var(--shadow-lg);
   color: white;
-}
-
-.hero-image-container {
-  position: relative;
-  z-index: 2;
-  padding: 2rem 0;
-}
-
-.hero-image {
-  width: 100%;
-  height: auto;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-xl);
-  transition: var(--transition);
-  position: relative;
-}
-
-.hero-image::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  right: 10px;
-  bottom: 10px;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  border-radius: var(--border-radius-lg);
-  z-index: -1;
-  opacity: 0.3;
-}
-
-.hero-image:hover {
-  transform: scale(1.02) translateY(-5px);
 }
 
 .hero-scroll-indicator {
@@ -356,7 +317,7 @@ html {
 /* Features Section */
 .features-section {
   padding: 8rem 0;
-  background: linear-gradient(135deg, var(--light-color) 0%, #f1f5f9 100%);
+  background: var(--light-color);
 }
 
 .feature-block {
@@ -379,11 +340,7 @@ html {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--secondary-color)
-  );
+  background: var(--primary-color);
 }
 
 .feature-block:hover {
@@ -394,11 +351,7 @@ html {
 .feature-icon {
   width: 80px;
   height: 80px;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--primary-light)
-  );
+  background: var(--primary-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -485,7 +438,7 @@ html {
 /* Partners Section */
 .partners-section {
   padding: 6rem 0;
-  background: linear-gradient(135deg, var(--light-color) 0%, #f1f5f9 100%);
+  background: var(--light-color);
 }
 
 .partner-logo {
@@ -538,7 +491,7 @@ html {
 /* Stats Section */
 .stats-section {
   padding: 6rem 0;
-  background: linear-gradient(135deg, var(--light-color) 0%, #f1f5f9 100%);
+  background: var(--light-color);
 }
 
 .stat-card {
@@ -561,11 +514,7 @@ html {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--secondary-color)
-  );
+  background: var(--primary-color);
 }
 
 .stat-card:hover {
@@ -576,11 +525,7 @@ html {
 .stat-icon {
   width: 80px;
   height: 80px;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--primary-light)
-  );
+  background: var(--primary-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -608,7 +553,7 @@ html {
 /* Courses Section */
 .courses-section {
   padding: 8rem 0;
-  background: linear-gradient(135deg, var(--light-color) 0%, #f1f5f9 100%);
+  background: var(--light-color);
 }
 
 .course-card {
@@ -753,11 +698,7 @@ html {
 /* CTA Section */
 .cta-section {
   padding: 6rem 0;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--secondary-color) 100%
-  );
+  background: var(--primary-color);
   color: white;
   position: relative;
   overflow: hidden;
@@ -821,17 +762,31 @@ html {
   border-color: var(--primary-color);
 }
 
-/* Footer */
+/* Modern Minimalistic Footer */
 .footer {
   background-color: var(--dark-color);
   color: white;
   padding: 4rem 0 2rem;
 }
 
-.footer h5 {
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-section h5 {
   color: white;
   margin-bottom: 1.5rem;
   font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.footer-section p {
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
 }
 
 .footer-links {
@@ -848,19 +803,53 @@ html {
   text-decoration: none;
   transition: var(--transition);
   font-weight: 400;
+  display: inline-block;
 }
 
 .footer-links a:hover {
-  color: white;
+  color: var(--primary-color);
   transform: translateX(4px);
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.footer-social a {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.footer-social a:hover {
+  background: var(--primary-color);
+  transform: translateY(-2px);
 }
 
 .footer-bottom {
   border-top: 1px solid #374151;
   padding-top: 2rem;
-  margin-top: 3rem;
   text-align: center;
   color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.footer-bottom a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.footer-bottom a:hover {
+  text-decoration: underline;
 }
 
 /* Responsive Design */
@@ -901,6 +890,11 @@ html {
 
   .about-video iframe {
     height: 300px;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
 }
 

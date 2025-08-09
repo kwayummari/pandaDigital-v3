@@ -3,26 +3,23 @@ require_once 'config/init.php';
 include 'includes/header.php';
 ?>
 
-<!-- Hero Section - Modern Split Design -->
+<!-- Hero Section - Clean Minimalistic Design -->
 <section class="hero-section">
     <div class="hero-container">
         <div class="container">
-            <div class="row align-items-center min-vh-100">
-                <div class="col-lg-6 hero-content" data-aos="fade-up">
-                    <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
-                    <p class="hero-subtitle">Jifunze ujuzi wa kidijitali, uwe na biashara yako, na uweze kujitegemea kiuchumi kupitia <?= htmlspecialchars($appConfig['name']) ?></p>
-                    <div class="hero-buttons">
-                        <a href="<?= app_url('courses.php') ?>" class="btn btn-primary btn-lg">
-                            <i class="fas fa-play me-2"></i>Anza Kozi
-                        </a>
-                        <a href="<?= app_url('opportunities.php') ?>" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-lightbulb me-2"></i>Tazama Fursa
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="hero-image-container">
-                        <img src="<?= asset('images/banner/banner-1.jpg') ?>" alt="<?= htmlspecialchars($appConfig['name']) ?>" class="hero-image">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center" data-aos="fade-up">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
+                        <p class="hero-subtitle">Jifunze ujuzi wa kidijitali, uwe na biashara yako, na uweze kujitegemea kiuchumi kupitia <?= htmlspecialchars($appConfig['name']) ?></p>
+                        <div class="hero-buttons">
+                            <a href="<?= app_url('courses.php') ?>" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play me-2"></i>Anza Kozi
+                            </a>
+                            <a href="<?= app_url('opportunities.php') ?>" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-lightbulb me-2"></i>Tazama Fursa
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
