@@ -25,6 +25,64 @@
   --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Override Bootstrap Colors */
+.btn-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--black-color) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--primary-dark) !important;
+  border-color: var(--primary-dark) !important;
+  color: var(--black-color) !important;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color) !important;
+  border-color: var(--secondary-color) !important;
+  color: var(--white-color) !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+  background-color: var(--secondary-dark) !important;
+  border-color: var(--secondary-dark) !important;
+  color: var(--white-color) !important;
+}
+
+.btn-outline-primary {
+  color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--black-color) !important;
+}
+
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color) !important;
+}
+
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.text-secondary {
+  color: var(--secondary-color) !important;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -48,7 +106,7 @@ html {
 /* Top Bar */
 .top-bar {
   font-size: 0.875rem;
-  background: var(--primary-color);
+  background: var(--primary-color) !important;
 }
 
 .top-bar a {
@@ -130,7 +188,7 @@ html {
 
 .navbar-nav .nav-link:hover {
   color: var(--primary-color) !important;
-  background: rgba(255, 188, 59, 0.08);
+  background: rgba(255, 188, 59, 0.1);
 }
 
 .navbar-nav .nav-link:hover::before {
@@ -139,7 +197,7 @@ html {
 
 .navbar-nav .nav-link.active {
   color: var(--primary-color) !important;
-  background: rgba(255, 188, 59, 0.12);
+  background: rgba(255, 188, 59, 0.15);
 }
 
 .navbar-nav .nav-link.active::before {
@@ -211,7 +269,7 @@ html {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(95, 69, 148, 0.85);
+  background: rgba(95, 69, 148, 0.6);
   z-index: 2;
 }
 
@@ -278,8 +336,9 @@ html {
 
 .hero-buttons .btn-primary {
   background: var(--primary-color);
-  color: white;
+  color: var(--black-color);
   border: 2px solid var(--primary-color);
+  font-weight: 600;
 }
 
 .hero-buttons .btn-primary:hover {
@@ -290,12 +349,13 @@ html {
 
 .hero-buttons .btn-outline-light {
   background: transparent;
-  color: white;
-  border: 2px solid white;
+  color: var(--white-color);
+  border: 2px solid var(--white-color);
+  font-weight: 600;
 }
 
 .hero-buttons .btn-outline-light:hover {
-  background: white;
+  background: var(--white-color);
   color: var(--secondary-color);
   transform: translateY(-2px);
 }

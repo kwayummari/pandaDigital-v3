@@ -79,30 +79,30 @@ require_once __DIR__ . '/../config/init.php';
                 <div class="col-lg-6">
                     <div class="d-flex align-items-center">
                         <a href="tel:<?= htmlspecialchars($contactConfig['phone']) ?>" class="text-white me-3">
-                            <?= htmlspecialchars($contactConfig['phone']) ?>
+                            <i class="fas fa-phone me-1"></i><?= htmlspecialchars($contactConfig['phone']) ?>
                         </a>
                         <div class="social-links">
                             <?php if ($socialConfig['facebook']): ?>
                                 <a href="<?= htmlspecialchars($socialConfig['facebook']) ?>" target="_blank" class="text-white me-2">
-                                    Facebook
+                                    <i class="fab fa-facebook-f"></i>
                                 </a>
                             <?php endif; ?>
 
                             <?php if ($socialConfig['twitter']): ?>
                                 <a href="<?= htmlspecialchars($socialConfig['twitter']) ?>" target="_blank" class="text-white me-2">
-                                    Twitter
+                                    <i class="fab fa-twitter"></i>
                                 </a>
                             <?php endif; ?>
 
                             <?php if ($socialConfig['linkedin']): ?>
                                 <a href="<?= htmlspecialchars($socialConfig['linkedin']) ?>" target="_blank" class="text-white me-2">
-                                    LinkedIn
+                                    <i class="fab fa-linkedin-in"></i>
                                 </a>
                             <?php endif; ?>
 
                             <?php if ($socialConfig['instagram']): ?>
                                 <a href="<?= htmlspecialchars($socialConfig['instagram']) ?>" target="_blank" class="text-white">
-                                    Instagram
+                                    <i class="fab fa-instagram"></i>
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -111,10 +111,10 @@ require_once __DIR__ . '/../config/init.php';
                 <div class="col-lg-6 text-end">
                     <div class="auth-buttons">
                         <a href="#" class="btn btn-outline-light btn-sm me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
-                            Ingia
+                            <i class="fas fa-sign-in-alt me-1"></i>Ingia
                         </a>
                         <a href="#" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#signupModal">
-                            Jisajili
+                            <i class="fas fa-user-plus me-1"></i>Jisajili
                         </a>
                     </div>
                 </div>
@@ -138,22 +138,22 @@ require_once __DIR__ . '/../config/init.php';
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link active" href="<?= app_url() ?>">
-                            <i class="fas fa-home me-1"></i>NYUMBANI
+                            NYUMBANI
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= app_url('courses.php') ?>">
-                            <i class="fas fa-graduation-cap me-1"></i>KOZI ZOTE
+                            KOZI ZOTE
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= app_url('opportunities.php') ?>">
-                            <i class="fas fa-lightbulb me-1"></i>FURSA
+                            FURSA
                         </a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-shopping-cart me-1"></i>SOKO
+                            SOKO
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="<?= app_url('marketplace.php') ?>">SOKO</a></li>
