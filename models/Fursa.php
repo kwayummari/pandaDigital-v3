@@ -10,14 +10,21 @@ class Fursa
         $this->db = new Database();
     }
 
-    public function getLatestOpportunities($limit = 6)
+    public function getLatestOpportunities($limit = 6, $excludeId = null)
     {
         try {
             $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("SELECT id, name, description, image, date, month, date_created FROM fursa ORDER BY date_created DESC LIMIT ?");
-            $stmt->bindParam(1, $limit, PDO::PARAM_INT);
+            
+            if ($excludeId) {
+                $stmt = $conn->prepare("SELECT id, name, description, image, date, month, date_created FROM fursa WHERE id != ? ORDER BY date_created DESC LIMIT ?");
+                $stmt->bindParam(1, $excludeId, PDO::PARAM_INT);
+                $stmt->bindParam(2, $limit, PDO::PARAM_INT);
+            } else {
+                $stmt = $conn->prepare("SELECT id, name, description, image, date, month, date_created FROM fursa ORDER BY date_created DESC LIMIT ?");
+                $stmt->bindParam(1, $limit, PDO::PARAM_INT);
+            }
+            
             $stmt->execute();
-
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Error fetching opportunities: " . $e->getMessage());
@@ -29,7 +36,7 @@ class Fursa
     {
         try {
             $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("SELECT id, name, description, image, date, month, date_created FROM fursa WHERE id = ?");
+            $stmt = $conn->prepare("SELECT id, name, description, maelezo, mahitaji, faida, kategoria, mahali, muda, uzoefu, image, date, month, date_created FROM fursa WHERE id = ?");
             $stmt->bindParam(1, $id, PDO::PARAM_INT);
             $stmt->execute();
 
