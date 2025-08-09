@@ -16,17 +16,48 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Navbar scroll effect
+    // Modern navbar scroll effect
     const navbar = document.querySelector('.navbar');
     if (navbar) {
         window.addEventListener('scroll', function () {
-            if (window.scrollY > 100) {
-                navbar.classList.add('bg-white', 'shadow');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
             } else {
-                navbar.classList.remove('bg-white', 'shadow');
+                navbar.classList.remove('scrolled');
             }
         });
     }
+
+    // Hero stats animation
+    const heroStats = document.querySelectorAll('.hero-stat-number');
+    heroStats.forEach(stat => {
+        const target = parseInt(stat.textContent.replace(/[^\d]/g, ''));
+        const suffix = stat.textContent.replace(/[\d]/g, '');
+        let current = 0;
+        const increment = target / 50;
+
+        const updateCounter = () => {
+            if (current < target) {
+                current += increment;
+                stat.textContent = Math.ceil(current) + suffix;
+                requestAnimationFrame(updateCounter);
+            } else {
+                stat.textContent = target + suffix;
+            }
+        };
+
+        // Start animation when element is in view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    updateCounter();
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+
+        observer.observe(stat);
+    });
 
     // Form handling
     const loginForm = document.getElementById('loginForm');
