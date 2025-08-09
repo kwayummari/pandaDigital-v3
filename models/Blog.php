@@ -36,7 +36,7 @@ class Blog
     {
         try {
             $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("SELECT id, name, maelezo, photo, content, tags, author, date_created FROM blog WHERE id = ?");
+            $stmt = $conn->prepare("SELECT id, name, maelezo, photo, date_created FROM blog WHERE id = ?");
             $stmt->bindParam(1, $id, PDO::PARAM_INT);
             $stmt->execute();
 

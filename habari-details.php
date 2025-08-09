@@ -105,33 +105,29 @@ $pageTitle = htmlspecialchars($post['name']) . ' - ' . env('APP_NAME');
                                 </div>
                             </div>
 
-                            <!-- Content -->
-                            <div class="blog-text mb-4">
+                            <!-- Description -->
+                            <div class="blog-description mb-4">
                                 <h3 class="section-subtitle">Maelezo</h3>
+                                <div class="description-content">
+                                    <?= $post['maelezo'] ?>
+                                </div>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="blog-content mb-4">
+                                <h3 class="section-subtitle">Maandiko</h3>
                                 <div class="content-text">
-                                    <?= nl2br(htmlspecialchars($post['maelezo'])) ?>
+                                    <p class="text-muted">Maandiko kamili ya habari hii yataonekana hapa baada ya kujazwa na mwenyeji.</p>
                                 </div>
                             </div>
 
                             <!-- Tags -->
-                            <?php if (!empty($post['tags'])): ?>
-                                <div class="blog-tags mb-4">
-                                    <h6 class="mb-2">Tags:</h6>
-                                    <div class="tags-list">
-                                        <?php
-                                        $tags = explode(',', $post['tags']);
-                                        foreach ($tags as $tag):
-                                            $tag = trim($tag);
-                                            if (!empty($tag)):
-                                        ?>
-                                                <span class="tag"><?= htmlspecialchars($tag) ?></span>
-                                        <?php
-                                            endif;
-                                        endforeach;
-                                        ?>
-                                    </div>
+                            <div class="blog-tags mb-4">
+                                <h3 class="section-subtitle">Tags</h3>
+                                <div class="tags-content">
+                                    <p class="text-muted">Tags za habari hii zitaonekana hapa baada ya kujazwa na mwenyeji.</p>
                                 </div>
-                            <?php endif; ?>
+                            </div>
 
                             <!-- Social Share -->
                             <div class="blog-actions mt-5">
@@ -161,19 +157,16 @@ $pageTitle = htmlspecialchars($post['name']) . ' - ' . env('APP_NAME');
                 <!-- Sidebar -->
                 <div class="col-lg-4">
                     <div class="blog-sidebar" data-aos="fade-left">
-                        <!-- Author Info Card -->
+                        <!-- Author Info -->
                         <div class="card sidebar-card mb-4">
-                            <div class="card-body text-center">
-                                <div class="author-avatar mb-3">
-                                    <img src="<?= asset('images/icon/author1.png') ?>"
-                                        alt="Author"
-                                        class="rounded-circle"
-                                        width="80"
-                                        height="80">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-user text-primary me-2"></i>
+                                    Kuhusu Mwandishi
+                                </h5>
+                                <div class="author-info">
+                                    <p class="text-muted">Itaonekana baada ya kujazwa na mwenyeji.</p>
                                 </div>
-                                <h6 class="card-title"><?= htmlspecialchars($post['author'] ?? 'Admin') ?></h6>
-                                <p class="text-muted small">Mwandishi wa <?= env('APP_NAME') ?></p>
-                                <p class="text-muted">Mwandishi mwenye uzoefu wa kuhifadhi na kusambaza habari muhimu kuhusu biashara na fursa za kidijitali.</p>
                             </div>
                         </div>
 
