@@ -117,7 +117,7 @@ $pageTitle = htmlspecialchars($opportunity['name']) . ' - ' . env('APP_NAME');
                             <div class="opportunity-description mb-4">
                                 <h3 class="section-subtitle">Maelezo</h3>
                                 <div class="description-content">
-                                    <?= nl2br($opportunity['description']) ?>
+                                    <?= $opportunity['description'] ?>
                                 </div>
                             </div>
 
