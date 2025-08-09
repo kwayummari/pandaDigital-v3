@@ -12,10 +12,12 @@ Panda Digital V3 is a modern, clean-architecture version of the Panda Digital pl
 - **Fast Loading**: Optimized assets and lazy loading
 
 ### Security & Performance
+- **Environment Configuration**: Secure .env-based configuration management
 - **PDO Database**: Secure database connections with prepared statements
 - **Modern PHP**: Latest PHP practices and security standards
 - **Input Validation**: Comprehensive form validation and sanitization
 - **CSRF Protection**: Built-in CSRF token protection
+- **Security Headers**: Modern security headers and XSS protection
 
 ### User Experience
 - **Interactive Forms**: Real-time validation and feedback
@@ -35,6 +37,8 @@ pandadigitalV3/
 │   ├── images/                # All platform images
 │   └── fonts/                 # Custom fonts
 ├── config/
+│   ├── init.php               # Application initialization
+│   ├── Environment.php        # Environment configuration class
 │   └── database.php           # Database configuration
 ├── controllers/               # Business logic controllers
 ├── models/                    # Data models
@@ -44,6 +48,12 @@ pandadigitalV3/
 │   └── footer.php             # Footer with modals
 ├── api/                       # API endpoints
 ├── uploads/                   # File uploads
+├── logs/                      # Application logs
+├── cache/                     # Cache files
+├── .env                       # Environment variables (create from env.example)
+├── env.example                # Example environment configuration
+├── .gitignore                 # Git ignore rules
+├── setup.php                  # Setup wizard
 └── index.php                  # Homepage
 ```
 
@@ -63,25 +73,75 @@ pandadigitalV3/
 - **MySQL/MariaDB**: Database
 - **Apache/Nginx**: Web server
 
-## 🎨 Design System
+## ⚙️ Environment Configuration
 
-### Color Palette
-- **Primary**: `#6366f1` (Indigo)
-- **Secondary**: `#f59e0b` (Amber)
-- **Success**: `#10b981` (Emerald)
-- **Danger**: `#ef4444` (Red)
-- **Dark**: `#1e293b` (Slate)
+### Quick Setup
+1. Copy the example environment file:
+   ```bash
+   cp env.example .env
+   ```
 
-### Typography
-- **Font Family**: Inter (Google Fonts)
-- **Weights**: 300, 400, 500, 600, 700
-- **Responsive**: Scales appropriately on all devices
+2. Edit `.env` with your configuration:
+   ```env
+   # Database Configuration
+   DB_HOST=localhost
+   DB_NAME=pandadigital
+   DB_USER=root
+   DB_PASSWORD=your_password
+   DB_CHARSET=utf8mb4
 
-### Components
-- **Cards**: Rounded corners with shadows
-- **Buttons**: Modern styling with hover effects
-- **Forms**: Clean, accessible form design
-- **Modals**: Centered, responsive dialogs
+   # Application Configuration
+   APP_NAME="Panda Digital"
+   APP_URL=http://localhost/pandadigitalV3
+   APP_ENV=development
+   APP_DEBUG=true
+   APP_KEY=your-32-character-secret-key-here
+   ```
+
+3. Run the setup wizard:
+   ```
+   http://localhost/pandadigitalV3/setup.php?setup
+   ```
+
+### Environment Variables
+
+#### Database Configuration
+- `DB_HOST`: Database host (default: localhost)
+- `DB_NAME`: Database name (default: pandadigital)
+- `DB_USER`: Database username (default: root)
+- `DB_PASSWORD`: Database password
+- `DB_CHARSET`: Database charset (default: utf8mb4)
+
+#### Application Configuration
+- `APP_NAME`: Application name
+- `APP_URL`: Application URL
+- `APP_ENV`: Environment (development/production)
+- `APP_DEBUG`: Debug mode (true/false)
+- `APP_TIMEZONE`: Application timezone
+- `APP_KEY`: 32-character secret key for encryption
+
+#### Security Configuration
+- `SESSION_SECURE`: Secure session cookies (true/false)
+- `SESSION_HTTP_ONLY`: HTTP-only session cookies (true/false)
+- `SESSION_SAME_SITE`: Same-site cookie policy
+
+#### Mail Configuration
+- `MAIL_HOST`: SMTP host
+- `MAIL_PORT`: SMTP port
+- `MAIL_USERNAME`: SMTP username
+- `MAIL_PASSWORD`: SMTP password
+- `MAIL_ENCRYPTION`: SMTP encryption (tls/ssl)
+- `MAIL_FROM_ADDRESS`: From email address
+- `MAIL_FROM_NAME`: From name
+
+#### Payment Configuration
+- `AZAMPAY_API_KEY`: AzamPay API key
+- `AZAMPAY_SECRET_KEY`: AzamPay secret key
+- `AZAMPAY_ENVIRONMENT`: AzamPay environment (sandbox/production)
+
+#### Analytics Configuration
+- `GOOGLE_ANALYTICS_ID`: Google Analytics measurement ID
+- `FACEBOOK_PIXEL_ID`: Facebook Pixel ID
 
 ## 🚀 Getting Started
 
@@ -99,19 +159,50 @@ pandadigitalV3/
    cd pandadigitalV3
    ```
 
-2. **Set up the database**
+2. **Set up environment configuration**
+   ```bash
+   cp env.example .env
+   # Edit .env with your settings
+   ```
+
+3. **Set up the database**
    - Create a MySQL database named `pandadigital`
    - Import the database schema from `../pandadigitalV2/dump_database/pandadigital.sql`
 
-3. **Configure database connection**
-   - Edit `config/database.php` with your database credentials
+4. **Run the setup wizard**
+   - Navigate to `http://localhost/pandadigitalV3/setup.php?setup`
+   - Follow the setup instructions
 
-4. **Set up web server**
+5. **Set up web server**
    - Point your web server to the `pandadigitalV3` directory
-   - Ensure PHP has write permissions for the `uploads` directory
+   - Ensure PHP has write permissions for the `uploads`, `logs`, and `cache` directories
 
-5. **Access the platform**
+6. **Access the platform**
    - Navigate to `http://localhost/pandadigitalV3`
+
+## 🔧 Helper Functions
+
+The platform includes several helper functions for common tasks:
+
+### Environment Functions
+- `env($key, $default)`: Get environment variable
+- `app_url($path)`: Get application URL
+- `asset($path)`: Get asset URL
+- `upload_url($path)`: Get upload URL
+
+### Security Functions
+- `csrf_token()`: Generate CSRF token
+- `verify_csrf_token($token)`: Verify CSRF token
+
+### Session Functions
+- `flash($key, $message)`: Set flash message
+- `get_flash($key)`: Get flash message
+- `has_flash($key)`: Check if flash message exists
+- `old($key, $default)`: Get old input value
+
+### Utility Functions
+- `redirect($url)`: Redirect to URL
+- `back()`: Redirect back to previous page
 
 ## 📱 Responsive Design
 
@@ -124,9 +215,10 @@ The platform is fully responsive and optimized for:
 
 ### Adding New Pages
 1. Create a new PHP file in the root directory
-2. Include the header: `include 'includes/header.php';`
-3. Add your content
-4. Include the footer: `include 'includes/footer.php';`
+2. Include the initialization: `require_once 'config/init.php';`
+3. Include the header: `include 'includes/header.php';`
+4. Add your content
+5. Include the footer: `include 'includes/footer.php';`
 
 ### Styling
 - Main styles are in `assets/css/style.css`
@@ -140,11 +232,13 @@ The platform is fully responsive and optimized for:
 
 ## 🔒 Security Features
 
+- **Environment Variables**: Secure configuration management
 - **SQL Injection Protection**: PDO prepared statements
 - **XSS Protection**: Input sanitization and output escaping
 - **CSRF Protection**: Token-based protection for forms
 - **Input Validation**: Comprehensive client and server-side validation
 - **Secure Headers**: Modern security headers
+- **Session Security**: Secure session configuration
 
 ## 📊 Performance Optimizations
 
@@ -153,6 +247,7 @@ The platform is fully responsive and optimized for:
 - **CDN Resources**: External libraries from CDN
 - **Caching**: Browser caching for static assets
 - **Compression**: Gzip compression for faster loading
+- **Environment-based Optimization**: Different settings for dev/prod
 
 ## 🌐 Browser Support
 
@@ -185,10 +280,33 @@ For support and questions:
 
 The V3 platform maintains compatibility with the existing database structure while providing:
 - Modern, responsive design
-- Improved security
+- Improved security with environment configuration
 - Better performance
 - Enhanced user experience
 - Clean, maintainable code
+- Environment-based configuration management
+
+## 🛠️ Development
+
+### Environment Setup
+```bash
+# Development environment
+APP_ENV=development
+APP_DEBUG=true
+
+# Production environment
+APP_ENV=production
+APP_DEBUG=false
+```
+
+### Database Migration
+The platform uses the existing V2 database structure. No migration needed.
+
+### Testing
+Run the setup wizard to test your installation:
+```
+http://localhost/pandadigitalV3/setup.php?setup
+```
 
 ---
 
