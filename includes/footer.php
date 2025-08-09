@@ -1,5 +1,13 @@
 <!-- Modern Professional Footer -->
 <footer class="footer">
+    <!-- Decorative floating elements -->
+    <div class="footer-decoration">
+        <div class="floating-element element-1"></div>
+        <div class="floating-element element-2"></div>
+        <div class="floating-element element-3"></div>
+        <div class="floating-element element-4"></div>
+    </div>
+
     <div class="container">
         <!-- Main Footer Content -->
         <div class="footer-main">
