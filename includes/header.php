@@ -163,7 +163,7 @@ require_once __DIR__ . '/../config/init.php';
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-newspaper me-1"></i>HABARI
+                            HABARI
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="<?= app_url('success-stories.php') ?>">WANUFAIKA</a></li>
@@ -172,12 +172,12 @@ require_once __DIR__ . '/../config/init.php';
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= app_url('chat.php') ?>">
-                            <i class="fas fa-comments me-1"></i>ONGEA HUB
+                            ONGEA HUB
                         </a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-robot me-1"></i>Panda Chat
+                            PANDA CHAT
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="<?= app_url('expert-chat.php') ?>">Uliza swali kwa mtaalamu</a></li>

@@ -21,6 +21,9 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center" data-aos="fade-up">
                     <div class="hero-content">
+                        <div class="hero-badge">
+                            Jukwaa la Kwanza la Kidijitali kwa Wasichana
+                        </div>
                         <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
                         <p class="hero-subtitle">Jifunze ujuzi wa kidijitali, uwe na biashara yako, na uweze kujitegemea kiuchumi kupitia <?= htmlspecialchars($appConfig['name']) ?></p>
                         <div class="hero-buttons">
