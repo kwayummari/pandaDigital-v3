@@ -1,6 +1,17 @@
 <?php
 require_once 'config/init.php';
+require_once 'models/Blog.php';
+require_once 'models/Fursa.php';
+
 include 'includes/header.php';
+
+// Initialize models
+$blogModel = new Blog();
+$fursaModel = new Fursa();
+
+// Fetch data from database
+$latestBlogPosts = $blogModel->getLatestPosts(6);
+$latestOpportunities = $fursaModel->getLatestOpportunities(6);
 ?>
 
 <!-- Hero Section - Clean Minimalistic Design -->
@@ -118,45 +129,71 @@ include 'includes/header.php';
         </div>
 
         <div class="row">
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-graduation-cap"></i>
+            <?php if (!empty($latestOpportunities)): ?>
+                <?php foreach ($latestOpportunities as $index => $opportunity): ?>
+                    <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="<?= ($index + 1) * 100 ?>">
+                        <div class="feature-block">
+                            <?php if ($opportunity['image']): ?>
+                                <div class="feature-image mb-3">
+                                    <img src="<?= $fursaModel->getImageUrl($opportunity['image']) ?>" 
+                                         alt="<?= htmlspecialchars($opportunity['name']) ?>" 
+                                         class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
+                                </div>
+                            <?php endif; ?>
+                            <h3 class="feature-title"><?= htmlspecialchars($opportunity['name']) ?></h3>
+                            <p class="feature-description"><?= $fursaModel->truncateText($opportunity['description']) ?></p>
+                            <div class="opportunity-meta mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    <?= htmlspecialchars($opportunity['date']) ?> <?= htmlspecialchars($opportunity['month']) ?>
+                                </small>
+                            </div>
+                            <a href="<?= app_url('fursa-details.php?id=' . $opportunity['id']) ?>" class="btn btn-outline-primary">Soma Zaidi</a>
+                        </div>
                     </div>
-                    <h3 class="feature-title">Jifunze</h3>
-                    <p class="feature-description">Soma kozi mbalimbali kama vile usimamuzi wa biashara, usimamizi wa fedha na ufanyaji masoko zitakazosaidia kukuza ujuzi wako ili kujiajiri au kuajirika</p>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <!-- Fallback content if no opportunities found -->
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-block">
+                        <div class="feature-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="feature-title">Jifunze</h3>
+                        <p class="feature-description">Soma kozi mbalimbali kama vile usimamuzi wa biashara, usimamizi wa fedha na ufanyaji masoko zitakazosaidia kukuza ujuzi wako ili kujiajiri au kuajirika</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-lightbulb"></i>
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-block">
+                        <div class="feature-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3 class="feature-title">Fursa Za Panda</h3>
+                        <p class="feature-description">Pata taarifa kuhusu fursa mbalimbali zinazopatikana kutoka kwetu, kwa washirika wetu na sekta nzima ya maendeleo.</p>
                     </div>
-                    <h3 class="feature-title">Fursa Za Panda</h3>
-                    <p class="feature-description">Pata taarifa kuhusu fursa mbalimbali zinazopatikana kutoka kwetu, kwa washirika wetu na sekta nzima ya maendeleo.</p>
                 </div>
-            </div>
 
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-bullhorn"></i>
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-block">
+                        <div class="feature-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <h3 class="feature-title">Tangaza Biashara</h3>
+                        <p class="feature-description">Unaweza kutangaza biashara yako kupitia jukwaa la panda digital na kufikia walengwa wako kwa njia sahihi ikiwa inahusana na elimu</p>
                     </div>
-                    <h3 class="feature-title">Tangaza Biashara</h3>
-                    <p class="feature-description">Unaweza kutangaza biashara yako kupitia jukwaa la panda digital na kufikia walengwa wako kwa njia sahihi ikiwa inahusana na elimu</p>
                 </div>
-            </div>
 
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-comments"></i>
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-block">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3 class="feature-title">Panda Chat</h3>
+                        <p class="feature-description">Jukwaa maalumu kukuwezesha kuwasiliana na wataalamu na wazoefu kutoka sekta mbalimbali, kuuliza maswali na kupatiwa majibu ya kitaalamu kuhusu changamoto yako</p>
                     </div>
-                    <h3 class="feature-title">Panda Chat</h3>
-                    <p class="feature-description">Jukwaa maalumu kukuwezesha kuwasiliana na wataalamu na wazoefu kutoka sekta mbalimbali, kuuliza maswali na kupatiwa majibu ya kitaalamu kuhusu changamoto yako</p>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 </section>
@@ -172,56 +209,82 @@ include 'includes/header.php';
         </div>
 
         <div class="row">
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="news-card">
-                    <div class="news-image" style="background-image: url('<?= asset('images/blog/post-1.jpg') ?>');"></div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span><i class="fas fa-calendar me-1"></i>15 Desemba, 2024</span>
-                            <span><i class="fas fa-user me-1"></i>Panda Digital</span>
+            <?php if (!empty($latestBlogPosts)): ?>
+                <?php foreach ($latestBlogPosts as $index => $post): ?>
+                    <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="<?= ($index + 1) * 100 ?>">
+                        <div class="news-card">
+                            <?php if ($post['photo']): ?>
+                                <div class="news-image" style="background-image: url('<?= upload_url('Blog/' . $post['photo']) ?>');"></div>
+                            <?php else: ?>
+                                <div class="news-image" style="background-image: url('<?= asset('images/blog/post-1.jpg') ?>');"></div>
+                            <?php endif; ?>
+                            <div class="news-content">
+                                <div class="news-meta">
+                                    <span><i class="fas fa-calendar me-1"></i><?= $blogModel->formatDate($post['date_created']) ?></span>
+                                    <span><i class="fas fa-user me-1"></i>Panda Digital</span>
+                                </div>
+                                <h4 class="news-title"><?= htmlspecialchars($post['name']) ?></h4>
+                                <p class="news-excerpt"><?= $blogModel->truncateText($post['maelezo']) ?></p>
+                                <a href="<?= app_url('habari-details.php?id=' . $post['id']) ?>" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-arrow-right me-1"></i>Soma Zaidi
+                                </a>
+                            </div>
                         </div>
-                        <h4 class="news-title">Jinsi ya Kuanza Biashara ya Kidijitali</h4>
-                        <p class="news-excerpt">Jifunze hatua muhimu za kuanza biashara yako ya kidijitali na jinsi ya kufikia walengwa wako...</p>
-                        <a href="<?= app_url('habari-details.php?id=1') ?>" class="btn btn-primary btn-sm">
-                            <i class="fas fa-arrow-right me-1"></i>Soma Zaidi
-                        </a>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <!-- Fallback content if no blog posts found -->
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="news-card">
+                        <div class="news-image" style="background-image: url('<?= asset('images/blog/post-1.jpg') ?>');"></div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span><i class="fas fa-calendar me-1"></i>15 Desemba, 2024</span>
+                                <span><i class="fas fa-user me-1"></i>Panda Digital</span>
+                            </div>
+                            <h4 class="news-title">Jinsi ya Kuanza Biashara ya Kidijitali</h4>
+                            <p class="news-excerpt">Jifunze hatua muhimu za kuanza biashara yako ya kidijitali na jinsi ya kufikia walengwa wako...</p>
+                            <a href="<?= app_url('habari-details.php?id=1') ?>" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Soma Zaidi
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="news-card">
-                    <div class="news-image" style="background-image: url('<?= asset('images/blog/post-2.jpg') ?>');"></div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span><i class="fas fa-calendar me-1"></i>12 Desemba, 2024</span>
-                            <span><i class="fas fa-user me-1"></i>Panda Digital</span>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="news-card">
+                        <div class="news-image" style="background-image: url('<?= asset('images/blog/post-2.jpg') ?>');"></div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span><i class="fas fa-calendar me-1"></i>12 Desemba, 2024</span>
+                                <span><i class="fas fa-user me-1"></i>Panda Digital</span>
+                            </div>
+                            <h4 class="news-title">Fursa za Ufadhili kwa Wajasiriamali</h4>
+                            <p class="news-excerpt">Tazama fursa mpya za ufadhili zinazopatikana kwa wajasiriamali wa kidijitali...</p>
+                            <a href="<?= app_url('habari-details.php?id=2') ?>" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Soma Zaidi
+                            </a>
                         </div>
-                        <h4 class="news-title">Fursa za Ufadhili kwa Wajasiriamali</h4>
-                        <p class="news-excerpt">Tazama fursa mpya za ufadhili zinazopatikana kwa wajasiriamali wa kidijitali...</p>
-                        <a href="<?= app_url('habari-details.php?id=2') ?>" class="btn btn-primary btn-sm">
-                            <i class="fas fa-arrow-right me-1"></i>Soma Zaidi
-                        </a>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="news-card">
-                    <div class="news-image" style="background-image: url('<?= asset('images/blog/post-3.jpg') ?>');"></div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span><i class="fas fa-calendar me-1"></i>10 Desemba, 2024</span>
-                            <span><i class="fas fa-user me-1"></i>Panda Digital</span>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="news-card">
+                        <div class="news-image" style="background-image: url('<?= asset('images/blog/post-3.jpg') ?>');"></div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span><i class="fas fa-calendar me-1"></i>10 Desemba, 2024</span>
+                                <span><i class="fas fa-user me-1"></i>Panda Digital</span>
+                            </div>
+                            <h4 class="news-title">Ujuzi wa Masoko ya Mtandaoni</h4>
+                            <p class="news-excerpt">Jifunze jinsi ya kufanya masoko ya mtandaoni na kufikia wateja wako...</p>
+                            <a href="<?= app_url('habari-details.php?id=3') ?>" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Soma Zaidi
+                            </a>
                         </div>
-                        <h4 class="news-title">Ujuzi wa Masoko ya Mtandaoni</h4>
-                        <p class="news-excerpt">Jifunze jinsi ya kufanya masoko ya mtandaoni na kufikia wateja wako...</p>
-                        <a href="<?= app_url('habari-details.php?id=3') ?>" class="btn btn-primary btn-sm">
-                            <i class="fas fa-arrow-right me-1"></i>Soma Zaidi
-                        </a>
                     </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
 
         <div class="text-center mt-5" data-aos="fade-up">
