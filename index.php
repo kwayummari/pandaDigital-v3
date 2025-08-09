@@ -21,9 +21,6 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center" data-aos="fade-up">
                     <div class="hero-content">
-                        <div class="hero-badge">
-                            <i class="fas fa-star me-2"></i>Jukwaa la Kwanza la Kidijitali kwa Wasichana
-                        </div>
                         <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
                         <p class="hero-subtitle">Jifunze ujuzi wa kidijitali, uwe na biashara yako, na uweze kujitegemea kiuchumi kupitia <?= htmlspecialchars($appConfig['name']) ?></p>
                         <div class="hero-buttons">
@@ -33,24 +30,6 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                             <a href="<?= app_url('opportunities.php') ?>" class="btn btn-outline-light btn-lg">
                                 <i class="fas fa-lightbulb me-2"></i>Tazama Fursa
                             </a>
-                        </div>
-                        <div class="hero-stats">
-                            <div class="hero-stat">
-                                <span class="hero-stat-number">5,000+</span>
-                                <span class="hero-stat-label">Wanafunzi</span>
-                            </div>
-                            <div class="hero-stat">
-                                <span class="hero-stat-number">200+</span>
-                                <span class="hero-stat-label">Kozi</span>
-                            </div>
-                            <div class="hero-stat">
-                                <span class="hero-stat-number">1,500+</span>
-                                <span class="hero-stat-label">Biashara</span>
-                            </div>
-                            <div class="hero-stat">
-                                <span class="hero-stat-number">95%</span>
-                                <span class="hero-stat-label">Mafanikio</span>
-                            </div>
                         </div>
                     </div>
                 </div>

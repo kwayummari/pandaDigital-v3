@@ -79,30 +79,30 @@ require_once __DIR__ . '/../config/init.php';
                 <div class="col-lg-6">
                     <div class="d-flex align-items-center">
                         <a href="tel:<?= htmlspecialchars($contactConfig['phone']) ?>" class="text-white me-3">
-                            <i class="fas fa-phone me-1"></i><?= htmlspecialchars($contactConfig['phone']) ?>
+                            <?= htmlspecialchars($contactConfig['phone']) ?>
                         </a>
                         <div class="social-links">
                             <?php if ($socialConfig['facebook']): ?>
                                 <a href="<?= htmlspecialchars($socialConfig['facebook']) ?>" target="_blank" class="text-white me-2">
-                                    <i class="fab fa-facebook-f"></i>
+                                    Facebook
                                 </a>
                             <?php endif; ?>
 
                             <?php if ($socialConfig['twitter']): ?>
                                 <a href="<?= htmlspecialchars($socialConfig['twitter']) ?>" target="_blank" class="text-white me-2">
-                                    <i class="fab fa-twitter"></i>
+                                    Twitter
                                 </a>
                             <?php endif; ?>
 
                             <?php if ($socialConfig['linkedin']): ?>
                                 <a href="<?= htmlspecialchars($socialConfig['linkedin']) ?>" target="_blank" class="text-white me-2">
-                                    <i class="fab fa-linkedin-in"></i>
+                                    LinkedIn
                                 </a>
                             <?php endif; ?>
 
                             <?php if ($socialConfig['instagram']): ?>
                                 <a href="<?= htmlspecialchars($socialConfig['instagram']) ?>" target="_blank" class="text-white">
-                                    <i class="fab fa-instagram"></i>
+                                    Instagram
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -111,10 +111,10 @@ require_once __DIR__ . '/../config/init.php';
                 <div class="col-lg-6 text-end">
                     <div class="auth-buttons">
                         <a href="#" class="btn btn-outline-light btn-sm me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
-                            <i class="fas fa-sign-in-alt me-1"></i>Ingia
+                            Ingia
                         </a>
                         <a href="#" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#signupModal">
-                            <i class="fas fa-user-plus me-1"></i>Jisajili
+                            Jisajili
                         </a>
                     </div>
                 </div>
