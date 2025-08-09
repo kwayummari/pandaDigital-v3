@@ -54,7 +54,7 @@
                         <ul class="footer-links">
                             <li><a href="<?= app_url() ?>">Nyumbani</a></li>
                             <li><a href="<?= app_url('about.php') ?>">Kuhusu Sisi</a></li>
-                            <li><a href="<?= app_url('courses.php') ?>">Kozi</a></li>
+                            <li><a href="<?= app_url('kozi.php') ?>">Kozi</a></li>
                             <li><a href="<?= app_url('opportunities.php') ?>">Fursa</a></li>
                             <li><a href="<?= app_url('habari.php') ?>">Habari</a></li>
                             <li><a href="<?= app_url('contact.php') ?>">Wasiliana Nasi</a></li>
@@ -67,7 +67,7 @@
                     <div class="footer-section">
                         <h5 class="footer-title">Huduma Zetu</h5>
                         <ul class="footer-links">
-                            <li><a href="<?= app_url('courses.php') ?>">Kozi za Kidijitali</a></li>
+                            <li><a href="<?= app_url('kozi.php') ?>">Kozi za Kidijitali</a></li>
                             <li><a href="<?= app_url('mentorship.php') ?>">Ushauri wa Biashara</a></li>
                             <li><a href="<?= app_url('networking.php') ?>">Mtandao wa Wajasiriamali</a></li>
                             <li><a href="<?= app_url('funding.php') ?>">Fursa za Ufadhili</a></li>

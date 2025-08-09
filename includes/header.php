@@ -142,7 +142,7 @@ require_once __DIR__ . '/../config/init.php';
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= app_url('courses.php') ?>">
+                        <a class="nav-link" href="<?= app_url('kozi.php') ?>">
                             KOZI ZOTE
                         </a>
                     </li>
