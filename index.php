@@ -135,9 +135,9 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                         <div class="feature-block">
                             <?php if ($opportunity['image']): ?>
                                 <div class="feature-image mb-3">
-                                    <img src="<?= $fursaModel->getImageUrl($opportunity['image']) ?>" 
-                                         alt="<?= htmlspecialchars($opportunity['name']) ?>" 
-                                         class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
+                                    <img src="<?= $fursaModel->getImageUrl($opportunity['image']) ?>"
+                                        alt="<?= htmlspecialchars($opportunity['name']) ?>"
+                                        class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
                                 </div>
                             <?php endif; ?>
                             <h3 class="feature-title"><?= htmlspecialchars($opportunity['name']) ?></h3>
@@ -214,7 +214,7 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                     <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="<?= ($index + 1) * 100 ?>">
                         <div class="news-card">
                             <?php if ($post['photo']): ?>
-                                <div class="news-image" style="background-image: url('<?= upload_url('Blog/' . $post['photo']) ?>');"></div>
+                                <div class="news-image" style="background-image: url('<?= $blogModel->getImageUrl($post['photo']) ?>');"></div>
                             <?php else: ?>
                                 <div class="news-image" style="background-image: url('<?= asset('images/blog/post-1.jpg') ?>');"></div>
                             <?php endif; ?>

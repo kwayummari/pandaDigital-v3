@@ -17,7 +17,7 @@ class Fursa
             $stmt = $conn->prepare("SELECT id, name, description, image, date, month, date_created FROM fursa ORDER BY date_created DESC LIMIT ?");
             $stmt->bindParam(1, $limit, PDO::PARAM_INT);
             $stmt->execute();
-            
+
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Error fetching opportunities: " . $e->getMessage());
@@ -32,7 +32,7 @@ class Fursa
             $stmt = $conn->prepare("SELECT id, name, description, image, date, month, date_created FROM fursa WHERE id = ?");
             $stmt->bindParam(1, $id, PDO::PARAM_INT);
             $stmt->execute();
-            
+
             return $stmt->fetch();
         } catch (PDOException $e) {
             error_log("Error fetching opportunity: " . $e->getMessage());
@@ -61,8 +61,14 @@ class Fursa
         if (filter_var($imageName, FILTER_VALIDATE_URL)) {
             return $imageName;
         }
-        
-        // If it's just a filename, construct the URL
-        return upload_url('Fursa/' . $imageName);
+
+        // Check if image exists in uploads directory
+        $imagePath = __DIR__ . '/../uploads/Fursa/' . $imageName;
+        if (file_exists($imagePath)) {
+            return upload_url('Fursa/' . $imageName);
+        }
+
+        // Fallback to a default image
+        return asset('images/blog/post-1.jpg');
     }
-} 
+}

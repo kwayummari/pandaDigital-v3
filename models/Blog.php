@@ -17,7 +17,7 @@ class Blog
             $stmt = $conn->prepare("SELECT id, name, maelezo, photo, date_created FROM blog ORDER BY date_created DESC LIMIT ?");
             $stmt->bindParam(1, $limit, PDO::PARAM_INT);
             $stmt->execute();
-            
+
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Error fetching blog posts: " . $e->getMessage());
@@ -32,7 +32,7 @@ class Blog
             $stmt = $conn->prepare("SELECT id, name, maelezo, photo, date_created FROM blog WHERE id = ?");
             $stmt->bindParam(1, $id, PDO::PARAM_INT);
             $stmt->execute();
-            
+
             return $stmt->fetch();
         } catch (PDOException $e) {
             error_log("Error fetching blog post: " . $e->getMessage());
@@ -54,4 +54,21 @@ class Blog
         }
         return substr($text, 0, $length) . '...';
     }
-} 
+
+    public function getImageUrl($imageName)
+    {
+        // Check if it's a full URL or just filename
+        if (filter_var($imageName, FILTER_VALIDATE_URL)) {
+            return $imageName;
+        }
+
+        // Check if image exists in uploads directory
+        $imagePath = __DIR__ . '/../uploads/Blog/' . $imageName;
+        if (file_exists($imagePath)) {
+            return upload_url('Blog/' . $imageName);
+        }
+
+        // Fallback to a default image
+        return asset('images/blog/post-1.jpg');
+    }
+}
