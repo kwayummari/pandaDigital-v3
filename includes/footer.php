@@ -1,87 +1,131 @@
-<!-- Modern Minimalistic Footer -->
+<!-- Modern Professional Footer -->
 <footer class="footer">
     <div class="container">
-        <div class="footer-content">
-            <!-- About Section -->
-            <div class="footer-section">
-                <img src="<?= asset('images/logo/logo.png') ?>" alt="<?= htmlspecialchars($appConfig['name']) ?>" height="50" class="mb-3">
-                <p><?= htmlspecialchars($appConfig['name']) ?> ni jukwaa la kujifunza na kuendeleza biashara ya kidijitali kwa wanawake Tanzania. Tunakupa fursa za kujifunza ujuzi wa kidijitali na kuendeleza biashara yako.</p>
-                <div class="footer-social">
-                    <?php if ($socialConfig['facebook']): ?>
-                        <a href="<?= htmlspecialchars($socialConfig['facebook']) ?>" target="_blank" title="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                    <?php endif; ?>
-                    <?php if ($socialConfig['twitter']): ?>
-                        <a href="<?= htmlspecialchars($socialConfig['twitter']) ?>" target="_blank" title="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    <?php endif; ?>
-                    <?php if ($socialConfig['instagram']): ?>
-                        <a href="<?= htmlspecialchars($socialConfig['instagram']) ?>" target="_blank" title="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    <?php endif; ?>
-                    <?php if ($socialConfig['linkedin']): ?>
-                        <a href="<?= htmlspecialchars($socialConfig['linkedin']) ?>" target="_blank" title="LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                    <?php endif; ?>
+        <!-- Main Footer Content -->
+        <div class="footer-main">
+            <div class="row">
+                <!-- Brand Section -->
+                <div class="col-lg-4 col-md-6 mb-5">
+                    <div class="footer-brand">
+                        <div class="footer-logo mb-4">
+                            <img src="<?= asset('images/logo/logo.png') ?>" alt="<?= htmlspecialchars($appConfig['name']) ?>" height="60">
+                            <span class="ms-3 brand-text"><?= htmlspecialchars($appConfig['name']) ?></span>
+                        </div>
+                        <p class="footer-description">
+                            <?= htmlspecialchars($appConfig['name']) ?> ni jukwaa la kujifunza na kuendeleza biashara ya kidijitali kwa wanawake Tanzania. Tunakupa fursa za kujifunza ujuzi wa kidijitali na kuendeleza biashara yako.
+                        </p>
+                        <div class="footer-social mt-4">
+                            <?php if ($socialConfig['facebook']): ?>
+                                <a href="<?= htmlspecialchars($socialConfig['facebook']) ?>" target="_blank" class="social-link" title="Facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                            <?php endif; ?>
+                            <?php if ($socialConfig['twitter']): ?>
+                                <a href="<?= htmlspecialchars($socialConfig['twitter']) ?>" target="_blank" class="social-link" title="Twitter">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            <?php endif; ?>
+                            <?php if ($socialConfig['instagram']): ?>
+                                <a href="<?= htmlspecialchars($socialConfig['instagram']) ?>" target="_blank" class="social-link" title="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            <?php endif; ?>
+                            <?php if ($socialConfig['linkedin']): ?>
+                                <a href="<?= htmlspecialchars($socialConfig['linkedin']) ?>" target="_blank" class="social-link" title="LinkedIn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Quick Links -->
-            <div class="footer-section">
-                <h5>Viungo vya Haraka</h5>
-                <ul class="footer-links">
-                    <li><a href="<?= app_url() ?>">Nyumbani</a></li>
-                    <li><a href="<?= app_url('about.php') ?>">Kuhusu Sisi</a></li>
-                    <li><a href="<?= app_url('courses.php') ?>">Kozi</a></li>
-                    <li><a href="<?= app_url('opportunities.php') ?>">Fursa</a></li>
-                    <li><a href="<?= app_url('habari.php') ?>">Habari</a></li>
-                    <li><a href="<?= app_url('contact.php') ?>">Wasiliana Nasi</a></li>
-                </ul>
-            </div>
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6 mb-5">
+                    <div class="footer-section">
+                        <h5 class="footer-title">Viungo vya Haraka</h5>
+                        <ul class="footer-links">
+                            <li><a href="<?= app_url() ?>">Nyumbani</a></li>
+                            <li><a href="<?= app_url('about.php') ?>">Kuhusu Sisi</a></li>
+                            <li><a href="<?= app_url('courses.php') ?>">Kozi</a></li>
+                            <li><a href="<?= app_url('opportunities.php') ?>">Fursa</a></li>
+                            <li><a href="<?= app_url('habari.php') ?>">Habari</a></li>
+                            <li><a href="<?= app_url('contact.php') ?>">Wasiliana Nasi</a></li>
+                        </ul>
+                    </div>
+                </div>
 
-            <!-- Services -->
-            <div class="footer-section">
-                <h5>Huduma Zetu</h5>
-                <ul class="footer-links">
-                    <li><a href="<?= app_url('courses.php') ?>">Kozi za Kidijitali</a></li>
-                    <li><a href="<?= app_url('mentorship.php') ?>">Ushauri wa Biashara</a></li>
-                    <li><a href="<?= app_url('networking.php') ?>">Mtandao wa Wajasiriamali</a></li>
-                    <li><a href="<?= app_url('funding.php') ?>">Fursa za Ufadhili</a></li>
-                    <li><a href="<?= app_url('marketplace.php') ?>">Soko la Kidijitali</a></li>
-                    <li><a href="<?= app_url('chat.php') ?>">Panda Chat</a></li>
-                </ul>
-            </div>
+                <!-- Services -->
+                <div class="col-lg-3 col-md-6 mb-5">
+                    <div class="footer-section">
+                        <h5 class="footer-title">Huduma Zetu</h5>
+                        <ul class="footer-links">
+                            <li><a href="<?= app_url('courses.php') ?>">Kozi za Kidijitali</a></li>
+                            <li><a href="<?= app_url('mentorship.php') ?>">Ushauri wa Biashara</a></li>
+                            <li><a href="<?= app_url('networking.php') ?>">Mtandao wa Wajasiriamali</a></li>
+                            <li><a href="<?= app_url('funding.php') ?>">Fursa za Ufadhili</a></li>
+                            <li><a href="<?= app_url('marketplace.php') ?>">Soko la Kidijitali</a></li>
+                            <li><a href="<?= app_url('chat.php') ?>">Panda Chat</a></li>
+                        </ul>
+                    </div>
+                </div>
 
-            <!-- Contact Info -->
-            <div class="footer-section">
-                <h5>Wasiliana Nasi</h5>
-                <ul class="footer-links">
-                    <li>
-                        <i class="fas fa-map-marker-alt me-2"></i>
-                        Dar es Salaam, Tanzania
-                    </li>
-                    <li>
-                        <i class="fas fa-phone me-2"></i>
-                        <a href="tel:<?= htmlspecialchars($contactConfig['phone']) ?>"><?= htmlspecialchars($contactConfig['phone']) ?></a>
-                    </li>
-                    <li>
-                        <i class="fas fa-envelope me-2"></i>
-                        <a href="mailto:<?= htmlspecialchars($contactConfig['email']) ?>"><?= htmlspecialchars($contactConfig['email']) ?></a>
-                    </li>
-                    <li>
-                        <i class="fas fa-clock me-2"></i>
-                        Jumatano - Ijumaa: 8:00 AM - 6:00 PM
-                    </li>
-                </ul>
+                <!-- Contact Info -->
+                <div class="col-lg-3 col-md-6 mb-5">
+                    <div class="footer-section">
+                        <h5 class="footer-title">Wasiliana Nasi</h5>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <span>Dar es Salaam, Tanzania</span>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <a href="tel:<?= htmlspecialchars($contactConfig['phone']) ?>"><?= htmlspecialchars($contactConfig['phone']) ?></a>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <a href="mailto:<?= htmlspecialchars($contactConfig['email']) ?>"><?= htmlspecialchars($contactConfig['email']) ?></a>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <span>Jumatano - Ijumaa: 8:00 AM - 6:00 PM</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- Footer Bottom -->
         <div class="footer-bottom">
-            <p>&copy; <?= date('Y') ?> <?= htmlspecialchars($appConfig['name']) ?>. Haki zote zimehifadhiwa. | Imeundwa na <a href="#"><?= htmlspecialchars($appConfig['name']) ?> Team</a></p>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="copyright">
+                        &copy; <?= date('Y') ?> <?= htmlspecialchars($appConfig['name']) ?>. Haki zote zimehifadhiwa.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="credits">
+                        Imeundwa na <a href="#" class="team-link"><?= htmlspecialchars($appConfig['name']) ?> Team</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </footer>
