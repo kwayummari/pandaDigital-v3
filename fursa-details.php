@@ -291,6 +291,8 @@ include 'includes/header.php';
     .opportunity-image img {
         width: 100%;
         height: auto;
+        max-height: none;
+        object-fit: contain;
         border-radius: 16px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
