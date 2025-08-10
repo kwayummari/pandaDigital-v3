@@ -157,7 +157,7 @@ require_once __DIR__ . '/../config/init.php';
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="<?= app_url('soko.php') ?>">SOKO</a></li>
-                            <li><a class="dropdown-item" href="<?= app_url('business.php') ?>">TANGAZA BIASHARA</a></li>
+                            <li><a class="dropdown-item" href="<?= app_url('biashara.php') ?>">TANGAZA BIASHARA</a></li>
                             <li><a class="dropdown-item" href="<?= app_url('panda-market.php') ?>">PANDA MARKET</a></li>
                         </ul>
                     </li>
