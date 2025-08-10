@@ -71,7 +71,7 @@
                             <li><a href="<?= app_url('mentorship.php') ?>">Ushauri wa Biashara</a></li>
                             <li><a href="<?= app_url('networking.php') ?>">Mtandao wa Wajasiriamali</a></li>
                             <li><a href="<?= app_url('funding.php') ?>">Fursa za Ufadhili</a></li>
-                            <li><a href="<?= app_url('marketplace.php') ?>">Soko la Kidijitali</a></li>
+                            <li><a href="<?= app_url('soko.php') ?>">Soko la Kidijitali</a></li>
                             <li><a href="<?= app_url('chat.php') ?>">Panda Chat</a></li>
                         </ul>
                     </div>

@@ -156,7 +156,7 @@ require_once __DIR__ . '/../config/init.php';
                             SOKO
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?= app_url('marketplace.php') ?>">SOKO</a></li>
+                            <li><a class="dropdown-item" href="<?= app_url('soko.php') ?>">SOKO</a></li>
                             <li><a class="dropdown-item" href="<?= app_url('business.php') ?>">TANGAZA BIASHARA</a></li>
                             <li><a class="dropdown-item" href="<?= app_url('panda-market.php') ?>">PANDA MARKET</a></li>
                         </ul>
