@@ -102,16 +102,16 @@ if (!empty($searchQuery)) {
                 </div>
                 <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="stat-card">
-                        <h3 class="stat-number text-success"><?= count(array_filter($experts, function ($expert) use ($expertModel) {
-                                                                    return $expertModel->getExpertStatus($expert['id']) === 'free';
+                        <h3 class="stat-number text-success"><?= count(array_filter($experts, function ($expert) {
+                                                                    return $expert['status'] === 'free';
                                                                 })) ?></h3>
                         <p class="stat-label">Wataalamu wa Bure</p>
                     </div>
                 </div>
                 <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="stat-card">
-                        <h3 class="stat-number text-warning"><?= count(array_filter($experts, function ($expert) use ($expertModel) {
-                                                                    return $expertModel->getExpertStatus($expert['id']) === 'premium';
+                        <h3 class="stat-number text-warning"><?= count(array_filter($experts, function ($expert) {
+                                                                    return $expert['status'] === 'premium';
                                                                 })) ?></h3>
                         <p class="stat-label">Wataalamu wa Premium</p>
                     </div>
@@ -172,8 +172,8 @@ if (!empty($searchQuery)) {
                                     <img src="<?= $expertModel->getExpertImageUrl($expert['profile_photo']) ?>"
                                         alt="<?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?>"
                                         class="expert-image">
-                                    <div class="expert-status <?= $expertModel->getExpertStatus($expert['id']) ?>">
-                                        <?= ucfirst($expertModel->getExpertStatus($expert['id'])) ?>
+                                    <div class="expert-status <?= $expert['status'] ?>">
+                                        <?= ucfirst($expert['status']) ?>
                                     </div>
                                 </div>
                                 <div class="expert-info">

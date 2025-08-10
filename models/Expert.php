@@ -18,7 +18,7 @@ class Expert
                 SELECT u.id, u.first_name, u.last_name, u.profile_photo, u.business, u.region, u.email, u.phone,
                        COALESCE(e.status, 'free') as status
                 FROM users u 
-                LEFT JOIN experts e ON u.email = e.email 
+                LEFT JOIN experts e ON u.email COLLATE utf8mb4_general_ci = e.email COLLATE utf8mb4_general_ci
                 WHERE u.role = 'expert' 
                 ORDER BY u.first_name, u.last_name
             ");
@@ -33,18 +33,32 @@ class Expert
     public function getExpertImageUrl($profilePhoto)
     {
         if (empty($profilePhoto) || $profilePhoto === "Profile-01.jpg") {
-            return asset("images/default-expert.jpg");
+            return asset("images/logo/logo.png");
         }
         $imagePath = __DIR__ . "/../uploads/ProfilePhotos/" . $profilePhoto;
         if (file_exists($imagePath)) {
             return upload_url("ProfilePhotos/" . $profilePhoto);
         }
-        return asset("images/default-expert.jpg");
+        return asset("images/logo/logo.png");
     }
 
     public function getExpertStatus($expertId)
     {
-        return "free";
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("
+                SELECT COALESCE(e.status, 'free') as status
+                FROM users u 
+                LEFT JOIN experts e ON u.email COLLATE utf8mb4_general_ci = e.email COLLATE utf8mb4_general_ci
+                WHERE u.id = ? AND u.role = 'expert'
+            ");
+            $stmt->execute([$expertId]);
+            $result = $stmt->fetch();
+            return $result ? $result['status'] : 'free';
+        } catch (PDOException $e) {
+            error_log("Error fetching expert status: " . $e->getMessage());
+            return 'free';
+        }
     }
 
     public function getExpertStats()
@@ -89,22 +103,63 @@ class Expert
             $searchTerm = '%' . $searchQuery . '%';
 
             $stmt = $conn->prepare("
-                SELECT id, first_name, last_name, profile_photo, business, region, email, phone 
-                FROM users 
-                WHERE role = 'expert' 
+                SELECT u.id, u.first_name, u.last_name, u.profile_photo, u.business, u.region, u.email, u.phone,
+                       COALESCE(e.status, 'free') as status
+                FROM users u 
+                LEFT JOIN experts e ON u.email COLLATE utf8mb4_general_ci = e.email COLLATE utf8mb4_general_ci
+                WHERE u.role = 'expert' 
                 AND (
-                    first_name LIKE ? OR 
-                    last_name LIKE ? OR 
-                    business LIKE ? OR 
-                    region LIKE ?
+                    u.first_name LIKE ? OR 
+                    u.business LIKE ? OR 
+                    u.region LIKE ?
                 )
-                ORDER BY first_name, last_name
+                ORDER BY u.first_name, u.last_name
             ");
 
-            $stmt->execute([$searchTerm, $searchTerm, $searchTerm, $searchTerm]);
+            $stmt->execute([$searchTerm, $searchTerm, $searchTerm]);
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Error searching experts: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getExpertById($expertId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("
+                SELECT u.id, u.first_name, u.last_name, u.profile_photo, u.business, u.region, u.email, u.phone,
+                       COALESCE(e.status, 'free') as status
+                FROM users u 
+                LEFT JOIN experts e ON u.email COLLATE utf8mb4_general_ci = e.email COLLATE utf8mb4_general_ci
+                WHERE u.id = ? AND u.role = 'expert'
+            ");
+            $stmt->execute([$expertId]);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Error fetching expert by ID: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function getOtherExperts($excludeId, $limit = 8)
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("
+                SELECT u.id, u.first_name, u.last_name, u.profile_photo, u.business, u.region, u.email, u.phone,
+                       COALESCE(e.status, 'free') as status
+                FROM users u 
+                LEFT JOIN experts e ON u.email COLLATE utf8mb4_general_ci = e.email COLLATE utf8mb4_general_ci
+                WHERE u.role = 'expert' AND u.id != ?
+                ORDER BY RAND()
+                LIMIT ?
+            ");
+            $stmt->execute([$excludeId, $limit]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error fetching other experts: " . $e->getMessage());
             return [];
         }
     }

@@ -171,8 +171,8 @@ require_once __DIR__ . '/../config/init.php';
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= app_url('ongea-hub.php') ?>">
-                            ONGEA HUB
+                        <a class="nav-link" href="<?= app_url('uliza-swali.php') ?>">
+                            ONGEA
                         </a>
                     </li>
                     <li class="nav-item dropdown">
