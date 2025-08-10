@@ -166,7 +166,7 @@ require_once __DIR__ . '/../config/init.php';
                             HABARI
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?= app_url('success-stories.php') ?>">WANUFAIKA</a></li>
+                            <li><a class="dropdown-item" href="<?= app_url('wanufaika.php') ?>">WANUFAIKA</a></li>
                             <li><a class="dropdown-item" href="<?= app_url('habari.php') ?>">BLOG</a></li>
                         </ul>
                     </li>
