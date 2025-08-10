@@ -45,8 +45,7 @@ class Course
             $sql = "SELECT c.*, cc.name as category_name, cc.icon as category_icon, cc.color as category_color 
                     FROM course c 
                     LEFT JOIN course_categories cc ON c.category_id = cc.id 
-                    WHERE c.is_featured = 1 OR c.total_enrollments > 0
-                    ORDER BY c.total_enrollments DESC, c.date_created DESC 
+                    ORDER BY c.date_created DESC 
                     LIMIT ?";
 
             $stmt = $conn->prepare($sql);
@@ -139,8 +138,8 @@ class Course
             return $photo;
         }
 
-        // Return the asset path
-        return asset('uploads/IntroPhoto/' . $photo);
+        // Return the upload URL for course images
+        return upload_url('courses/' . $photo);
     }
 
     public function formatDate($date)
