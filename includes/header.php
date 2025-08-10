@@ -181,7 +181,7 @@ require_once __DIR__ . '/../config/init.php';
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="<?= app_url('uliza-swali.php') ?>">Uliza swali kwa mtaalamu</a></li>
-                            <li><a class="dropdown-item" href="<?= app_url('become-expert.php') ?>">Fomu ya kuwa mtaalamu</a></li>
+                            <li><a class="dropdown-item" href="<?= app_url('fomu.php') ?>">Fomu ya kuwa mtaalamu</a></li>
                         </ul>
                     </li>
                 </ul>
