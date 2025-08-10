@@ -216,6 +216,28 @@ include 'includes/header.php';
         color: #64748b;
     }
 
+    /* Link styling - remove underlines */
+    .course-card a {
+        text-decoration: none;
+        color: inherit;
+        transition: color 0.3s ease;
+    }
+
+    .course-card a:hover {
+        color: var(--primary-color, #ffbc3b);
+        text-decoration: none;
+    }
+
+    .course-title a {
+        color: #1e293b;
+        text-decoration: none;
+    }
+
+    .course-title a:hover {
+        color: var(--primary-color, #ffbc3b);
+        text-decoration: none;
+    }
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .course-image-container {
