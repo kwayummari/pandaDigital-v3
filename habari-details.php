@@ -249,10 +249,6 @@ $pageTitle = htmlspecialchars($post['name']) . ' - ' . env('APP_NAME');
     <!-- Include Footer -->
     <?php include 'includes/footer.php'; ?>
 
-    <!-- Scripts -->
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- AOS Animation JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
