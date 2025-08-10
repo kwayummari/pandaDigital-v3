@@ -94,19 +94,19 @@ include 'includes/header.php';
             <?php if (!empty($featuredCourses)): ?>
                 <?php foreach ($featuredCourses as $index => $course): ?>
                     <div class="col-lg-4 col-sm-6 mb-5" data-aos="fade-up" data-aos-delay="<?= ($index + 1) * 100 ?>">
-                        <div class="card p-0 border-primary rounded-0 hover-shadow">
+                        <div class="course-card hover-shadow h-100">
                             <div class="course-image-container">
                                 <?php if (!empty($course['photo'])): ?>
-                                    <img class="card-img-top rounded-0 course-image"
+                                    <img class="course-image"
                                         src="<?= $courseModel->getImageUrl($course['photo']) ?>"
                                         alt="<?= htmlspecialchars($course['name']) ?>">
                                 <?php else: ?>
-                                    <img class="card-img-top rounded-0 course-image"
+                                    <img class="course-image"
                                         src="<?= asset('images/courses/default-course.jpg') ?>"
                                         alt="Default Course Image">
                                 <?php endif; ?>
                             </div>
-                            <div class="card-body">
+                            <div class="course-content">
                                 <ul class="list-inline mb-2">
                                     <li class="list-inline-item">
                                         <i class="fas fa-calendar mr-1 text-color"></i>
@@ -117,9 +117,9 @@ include 'includes/header.php';
                                     </li>
                                 </ul>
                                 <a href="https://pandadigital.co.tz/admin/spo/routes/AboutCourse/?id=<?= $course['id'] ?>">
-                                    <h4 class="card-title">Fahamu Kuhusu <?= htmlspecialchars($course['name']) ?></h4>
+                                    <h4 class="course-title">Fahamu Kuhusu <?= htmlspecialchars($course['name']) ?></h4>
                                 </a>
-                                <p class="card-text mb-4">
+                                <p class="course-description mb-4">
                                     <?= $courseModel->truncateText($course['description']) ?>
                                 </p>
                                 <a href="https://pandadigital.co.tz/admin/spo/routes/AboutCourse/?id=<?= $course['id'] ?>"
@@ -180,22 +180,40 @@ include 'includes/header.php';
         transform: scale(1.05);
     }
 
-    /* Ensure cards have consistent height */
-    .card {
+    /* Course card specific styles */
+    .course-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
         height: 100%;
-        display: flex;
-        flex-direction: column;
+        border: 1px solid #e2e8f0;
     }
 
-    .card-body {
+    .course-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-content {
+        padding: 2rem;
         flex: 1;
         display: flex;
         flex-direction: column;
     }
 
-    .card-text {
+    .course-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+    }
+
+    .course-description {
         flex: 1;
         margin-bottom: 1rem;
+        color: #64748b;
     }
 
     /* Responsive adjustments */
