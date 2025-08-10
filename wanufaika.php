@@ -36,7 +36,7 @@ include 'includes/header.php';
             </div>
             <div class="col-lg-4 text-center" data-aos="fade-left">
                 <div class="header-icon">
-                    <i class="fas fa-star fa-4x text-white"></i>
+                    <div class="star-icon text-white" style="font-size: 4rem; font-weight: bold;">★</div>
                 </div>
             </div>
         </div>
@@ -75,7 +75,7 @@ include 'includes/header.php';
                                 <div class="wanufaika-overlay">
                                     <div class="wanufaika-actions">
                                         <a href="wanufaika-details.php?id=<?= $wanufaika['id'] ?>" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-eye me-2"></i>Soma Zaidi
+                                            <span class="me-2">👁️</span>Soma Zaidi
                                         </a>
                                     </div>
                                 </div>
@@ -89,19 +89,19 @@ include 'includes/header.php';
                                     <a href="wanufaika-details.php?id=<?= $wanufaika['id'] ?>" class="text-decoration-none"><?= htmlspecialchars($wanufaika['title']) ?></a>
                                 </h5>
                                 <p class="wanufaika-author text-muted mb-2">
-                                    <i class="fas fa-user me-1"></i><?= htmlspecialchars($wanufaika['name']) ?>
+                                    <span class="me-1">👤</span><?= htmlspecialchars($wanufaika['name']) ?>
                                 </p>
                                 <p class="wanufaika-description text-muted mb-3"><?= $wanufaikaModel->truncateText($wanufaika['description']) ?></p>
 
                                 <div class="wanufaika-footer d-flex justify-content-between align-items-center">
                                     <div class="wanufaika-date">
                                         <small class="text-muted">
-                                            <i class="fas fa-calendar me-1"></i><?= $wanufaikaModel->formatDate($wanufaika['date_created']) ?>
+                                            <span class="me-1">📅</span><?= $wanufaikaModel->formatDate($wanufaika['date_created']) ?>
                                         </small>
                                     </div>
                                     <div class="wanufaika-read">
                                         <a href="wanufaika-details.php?id=<?= $wanufaika['id'] ?>" class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-book-open me-1"></i>Soma Hadithi
+                                            <span class="me-1">📖</span>Soma Hadithi
                                         </a>
                                     </div>
                                 </div>
@@ -119,7 +119,7 @@ include 'includes/header.php';
         <div class="row mt-5">
             <div class="col-12 text-center" data-aos="fade-up">
                 <a href="#" class="btn btn-primary btn-lg">
-                    <i class="fas fa-th-list me-2"></i>Tazama Wanufaika Wote
+                    <span class="me-2">📋</span>Tazama Wanufaika Wote
                 </a>
             </div>
         </div>
@@ -191,10 +191,10 @@ include 'includes/header.php';
                 </p>
                 <div class="cta-buttons">
                     <a href="register.php" class="btn btn-primary btn-lg me-3">
-                        <i class="fas fa-user-plus me-2"></i>Jisajili Sasa
+                        <span class="me-2">➕</span>Jisajili Sasa
                     </a>
                     <a href="courses.php" class="btn btn-outline-light btn-lg">
-                        <i class="fas fa-graduation-cap me-2"></i>Tazama Kozi
+                        <span class="me-2">🎓</span>Tazama Kozi
                     </a>
                 </div>
             </div>
@@ -213,15 +213,15 @@ include 'includes/header.php';
                 </p>
                 <div class="contact-info">
                     <div class="contact-item mb-3">
-                        <i class="fas fa-phone me-3 text-primary"></i>
+                        <span class="me-3 text-primary" style="font-size: 1.2rem;">📞</span>
                         <a href="tel:+255123456789">+255 123 456 789</a>
                     </div>
                     <div class="contact-item mb-3">
-                        <i class="fas fa-envelope me-3 text-primary"></i>
+                        <span class="me-3 text-primary" style="font-size: 1.2rem;">✉️</span>
                         <a href="mailto:info@pandadigital.co.tz">info@pandadigital.co.tz</a>
                     </div>
                     <div class="contact-item mb-3">
-                        <i class="fas fa-map-marker-alt me-3 text-primary"></i>
+                        <span class="me-3 text-primary" style="font-size: 1.2rem;">📍</span>
                         <span>Dar es Salaam, Tanzania</span>
                     </div>
                 </div>

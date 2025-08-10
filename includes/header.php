@@ -171,7 +171,7 @@ require_once __DIR__ . '/../config/init.php';
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= app_url('chat.php') ?>">
+                        <a class="nav-link" href="<?= app_url('ongea-hub.php') ?>">
                             ONGEA HUB
                         </a>
                     </li>
