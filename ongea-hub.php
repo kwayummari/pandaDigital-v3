@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             if ($ongeaHubModel->submitReport($data)) {
                 $message = 'Taarifa za tukio zimetumwa kikamilifu. Tutakuhusiana nawe hivi karibuni.';
                 $messageType = 'success';
-                
+
                 // Clear form data after successful submission
                 $_POST = [];
             } else {
@@ -88,7 +88,7 @@ include 'includes/header.php';
             </div>
             <div class="col-lg-4 text-center" data-aos="fade-left">
                 <div class="header-icon">
-                    <i class="fas fa-comments fa-4x text-white"></i>
+                    <div class="chat-icon text-white" style="font-size: 4rem; font-weight: bold;"></div>
                 </div>
             </div>
         </div>
@@ -110,7 +110,7 @@ include 'includes/header.php';
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="alert alert-<?= $messageType ?> alert-dismissible fade show" role="alert">
-                        <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-triangle' ?> me-2"></i>
+                        <span class="me-2"></span>
                         <?= htmlspecialchars($message) ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
@@ -123,44 +123,44 @@ include 'includes/header.php';
             <div class="col-lg-7 mb-4 mb-lg-0" data-aos="fade-right">
                 <div class="form-card">
                     <h3 class="form-title mb-4">
-                        <i class="fas fa-edit me-2 text-primary"></i>
+                        <span class="me-2 text-primary"></span>
                         Ripoti Tukio
                     </h3>
-                    
+
                     <form method="post" class="ongea-form">
                         <!-- CSRF Token -->
                         <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="fname" class="form-label">
-                                    <i class="fas fa-user me-2 text-primary"></i>
+                                    <span class="me-2 text-primary"></span>
                                     Jina La Kwanza <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" 
-                                       class="form-control <?= isset($_POST['fname']) && empty($_POST['fname']) ? 'is-invalid' : '' ?>" 
-                                       id="fname" 
-                                       name="fname" 
-                                       value="<?= old('fname', $_POST['fname'] ?? '') ?>"
-                                       placeholder="Jina La Kwanza" 
-                                       required>
+                                <input type="text"
+                                    class="form-control <?= isset($_POST['fname']) && empty($_POST['fname']) ? 'is-invalid' : '' ?>"
+                                    id="fname"
+                                    name="fname"
+                                    value="<?= old('fname', $_POST['fname'] ?? '') ?>"
+                                    placeholder="Jina La Kwanza"
+                                    required>
                                 <div class="invalid-feedback">
                                     Jina la kwanza ni muhimu.
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6 mb-3">
                                 <label for="sname" class="form-label">
-                                    <i class="fas fa-user me-2 text-primary"></i>
+                                    <span class="me-2 text-primary"></span>
                                     Jina La Pili <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" 
-                                       class="form-control <?= isset($_POST['sname']) && empty($_POST['sname']) ? 'is-invalid' : '' ?>" 
-                                       id="sname" 
-                                       name="sname" 
-                                       value="<?= old('sname', $_POST['sname'] ?? '') ?>"
-                                       placeholder="Jina La Pili" 
-                                       required>
+                                <input type="text"
+                                    class="form-control <?= isset($_POST['sname']) && empty($_POST['sname']) ? 'is-invalid' : '' ?>"
+                                    id="sname"
+                                    name="sname"
+                                    value="<?= old('sname', $_POST['sname'] ?? '') ?>"
+                                    placeholder="Jina La Pili"
+                                    required>
                                 <div class="invalid-feedback">
                                     Jina la pili ni muhimu.
                                 </div>
@@ -170,33 +170,33 @@ include 'includes/header.php';
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="phone" class="form-label">
-                                    <i class="fas fa-phone me-2 text-primary"></i>
+                                    <span class="me-2 text-primary"></span>
                                     Namba Ya Simu <span class="text-danger">*</span>
                                 </label>
-                                <input type="tel" 
-                                       class="form-control <?= isset($_POST['phone']) && !empty($_POST['phone']) && !$ongeaHubModel->validatePhone($_POST['phone']) ? 'is-invalid' : '' ?>" 
-                                       id="phone" 
-                                       name="phone" 
-                                       value="<?= old('phone', $_POST['phone'] ?? '') ?>"
-                                       placeholder="Mfano: 0712345678" 
-                                       maxlength="10" 
-                                       minlength="10" 
-                                       required>
+                                <input type="tel"
+                                    class="form-control <?= isset($_POST['phone']) && !empty($_POST['phone']) && !$ongeaHubModel->validatePhone($_POST['phone']) ? 'is-invalid' : '' ?>"
+                                    id="phone"
+                                    name="phone"
+                                    value="<?= old('phone', $_POST['phone'] ?? '') ?>"
+                                    placeholder="Mfano: 0712345678"
+                                    maxlength="10"
+                                    minlength="10"
+                                    required>
                                 <div class="invalid-feedback">
                                     Namba ya simu si sahihi. Tafadhali weka namba sahihi ya Tanzania.
                                 </div>
                                 <small class="form-text text-muted">Weka namba ya simu ya Tanzania (mwanzo na 0)</small>
                             </div>
-                            
+
                             <div class="col-md-6 mb-3">
                                 <label for="region" class="form-label">
-                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                                    <span class="me-2 text-primary"></span>
                                     Mkoa <span class="text-danger">*</span>
                                 </label>
-                                <select class="form-select <?= isset($_POST['region']) && empty($_POST['region']) ? 'is-invalid' : '' ?>" 
-                                        id="region" 
-                                        name="region" 
-                                        required>
+                                <select class="form-select <?= isset($_POST['region']) && empty($_POST['region']) ? 'is-invalid' : '' ?>"
+                                    id="region"
+                                    name="region"
+                                    required>
                                     <option value="">Chagua Mkoa</option>
                                     <?php foreach ($regions as $region): ?>
                                         <option value="<?= $region ?>" <?= (old('region', $_POST['region'] ?? '') === $region) ? 'selected' : '' ?>>
@@ -212,15 +212,15 @@ include 'includes/header.php';
 
                         <div class="mb-3">
                             <label for="tarehe_ya_tukio" class="form-label">
-                                <i class="fas fa-calendar me-2 text-primary"></i>
+                                <span class="me-2 text-primary"></span>
                                 Tarehe Ya Tukio <span class="text-danger">*</span>
                             </label>
-                            <input type="date" 
-                                   class="form-control <?= isset($_POST['tarehe_ya_tukio']) && empty($_POST['tarehe_ya_tukio']) ? 'is-invalid' : '' ?>" 
-                                   id="tarehe_ya_tukio" 
-                                   name="tarehe_ya_tukio" 
-                                   value="<?= old('tarehe_ya_tukio', $_POST['tarehe_ya_tukio'] ?? '') ?>"
-                                   required>
+                            <input type="date"
+                                class="form-control <?= isset($_POST['tarehe_ya_tukio']) && empty($_POST['tarehe_ya_tukio']) ? 'is-invalid' : '' ?>"
+                                id="tarehe_ya_tukio"
+                                name="tarehe_ya_tukio"
+                                value="<?= old('tarehe_ya_tukio', $_POST['tarehe_ya_tukio'] ?? '') ?>"
+                                required>
                             <div class="invalid-feedback">
                                 Tarehe ya tukio ni muhimu.
                             </div>
@@ -228,13 +228,13 @@ include 'includes/header.php';
 
                         <div class="mb-3">
                             <label for="msaada" class="form-label">
-                                <i class="fas fa-hands-helping me-2 text-primary"></i>
+                                <span class="me-2 text-primary"></span>
                                 Unahitaji Msaada Gani? <span class="text-danger">*</span>
                             </label>
-                            <select class="form-select <?= isset($_POST['msaada']) && empty($_POST['msaada']) ? 'is-invalid' : '' ?>" 
-                                    id="msaada" 
-                                    name="msaada" 
-                                    required>
+                            <select class="form-select <?= isset($_POST['msaada']) && empty($_POST['msaada']) ? 'is-invalid' : '' ?>"
+                                id="msaada"
+                                name="msaada"
+                                required>
                                 <option value="">Chagua Aina Ya Msaada</option>
                                 <?php foreach ($assistanceTypes as $key => $value): ?>
                                     <option value="<?= $key ?>" <?= (old('msaada', $_POST['msaada'] ?? '') === $key) ? 'selected' : '' ?>>
@@ -249,28 +249,28 @@ include 'includes/header.php';
 
                         <div class="mb-4">
                             <label for="report" class="form-label">
-                                <i class="fas fa-file-alt me-2 text-primary"></i>
+                                <span class="me-2 text-primary"></span>
                                 Taarifa Za Tukio <span class="text-danger">*</span>
                             </label>
-                            <textarea class="form-control <?= isset($_POST['report']) && !empty($_POST['report']) && !$ongeaHubModel->validateReportText($_POST['report']) ? 'is-invalid' : '' ?>" 
-                                      id="report" 
-                                      name="report" 
-                                      rows="5" 
-                                      placeholder="Eleza tukio kwa ufupi na uwazi..." 
-                                      required><?= old('report', $_POST['report'] ?? '') ?></textarea>
+                            <textarea class="form-control <?= isset($_POST['report']) && !empty($_POST['report']) && !$ongeaHubModel->validateReportText($_POST['report']) ? 'is-invalid' : '' ?>"
+                                id="report"
+                                name="report"
+                                rows="5"
+                                placeholder="Eleza tukio kwa ufupi na uwazi..."
+                                required><?= old('report', $_POST['report'] ?? '') ?></textarea>
                             <div class="invalid-feedback">
                                 Maelezo ni mengi au mafupi mno. Tafadhali weka maelezo sahihi.
                             </div>
                             <small class="form-text text-muted">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Maelezo yanapaswa kuwa kati ya maneno 1-150. 
+                                <span class="me-1"></span>
+                                Maelezo yanapaswa kuwa kati ya maneno 1-150.
                                 <span id="word-count" class="text-muted">0 maneno</span>
                             </small>
                         </div>
 
                         <div class="d-grid">
                             <button type="submit" name="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-paper-plane me-2"></i>
+                                <span class="me-2"></span>
                                 TUMA TAARIFA
                             </button>
                         </div>
@@ -282,68 +282,68 @@ include 'includes/header.php';
             <div class="col-lg-5" data-aos="fade-left">
                 <div class="info-card">
                     <h3 class="info-title mb-4">
-                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        <span class="me-2 text-primary"></span>
                         Kwa Nini Ongea Hub?
                     </h3>
-                    
+
                     <div class="info-content">
                         <p class="mb-4">
                             Taarifa yako ni muhimu sana. Hili ni jukwaa mahsusi kwaajili ya kuripoti kesi za udhalilishaji na kuunganishwa na msaada wa haraka.
                         </p>
-                        
+
                         <div class="info-features mb-4">
                             <div class="feature-item mb-3">
-                                <i class="fas fa-shield-alt text-success me-2"></i>
+                                <span class="text-success me-2"></span>
                                 <span>Usiri kamili wa taarifa zako</span>
                             </div>
                             <div class="feature-item mb-3">
-                                <i class="fas fa-clock text-info me-2"></i>
+                                <span class="text-info me-2"></span>
                                 <span>Msaada wa haraka na wa karibu</span>
                             </div>
                             <div class="feature-item mb-3">
-                                <i class="fas fa-users text-warning me-2"></i>
+                                <span class="text-warning me-2"></span>
                                 <span>Ushirikiano na mamlaka husika</span>
                             </div>
                             <div class="feature-item mb-3">
-                                <i class="fas fa-heart text-danger me-2"></i>
+                                <span class="text-danger me-2"></span>
                                 <span>Msaada wa kisaikolojia na kijamii</span>
                             </div>
                         </div>
 
                         <div class="contact-info">
                             <h5 class="mb-3">
-                                <i class="fas fa-phone-alt me-2 text-primary"></i>
+                                <span class="me-2 text-primary"></span>
                                 Wasiliana Nasi
                             </h5>
-                            
+
                             <div class="contact-item mb-3">
-                                <i class="fas fa-phone me-2 text-success"></i>
+                                <span class="me-2 text-success"></span>
                                 <a href="tel:+25573428334" class="text-decoration-none">
                                     +255 734 283 34
                                 </a>
                             </div>
-                            
+
                             <div class="contact-item mb-3">
-                                <i class="fas fa-envelope me-2 text-info"></i>
+                                <span class="me-2 text-info"></span>
                                 <a href="mailto:info@pandadigital.co.tz" class="text-decoration-none">
                                     info@pandadigital.co.tz
                                 </a>
                             </div>
-                            
+
                             <div class="contact-item mb-3">
-                                <i class="fas fa-map-marker-alt me-2 text-warning"></i>
+                                <span class="me-2 text-warning"></span>
                                 <span>Dar Es Salaam, Tanzania</span>
                             </div>
                         </div>
 
                         <div class="emergency-info mt-4 p-3 bg-light rounded">
                             <h6 class="text-danger mb-2">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <span class="me-2"></span>
                                 Dharura?
                             </h6>
                             <p class="mb-2 small">Kama unahitaji msaada wa haraka, piga simu moja kwa moja:</p>
                             <a href="tel:+25573428334" class="btn btn-danger btn-sm w-100">
-                                <i class="fas fa-phone me-2"></i>
+                                <span class="me-2"></span>
                                 Piga Sasa
                             </a>
                         </div>
@@ -363,42 +363,42 @@ include 'includes/header.php';
                 <p class="section-subtitle">Tunaendelea kusaidia wasichana kupata msaada wao</p>
             </div>
         </div>
-        
+
         <div class="row g-4">
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
                 <div class="stat-card text-center">
                     <div class="stat-icon mb-3">
-                        <i class="fas fa-users fa-3x text-primary"></i>
+                        <span class="text-primary" style="font-size: 3rem;"></span>
                     </div>
                     <h3 class="stat-number">500+</h3>
                     <p class="stat-label">Wasichana Wamepokea Msaada</p>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
                 <div class="stat-card text-center">
                     <div class="stat-icon mb-3">
-                        <i class="fas fa-handshake fa-3x text-success"></i>
+                        <span class="text-success" style="font-size: 3rem;"></span>
                     </div>
                     <h3 class="stat-number">25+</h3>
                     <p class="stat-label">Mashirika Yanayoshiriki</p>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
                 <div class="stat-card text-center">
                     <div class="stat-icon mb-3">
-                        <i class="fas fa-clock fa-3x text-info"></i>
+                        <span class="text-info" style="font-size: 3rem;"></span>
                     </div>
                     <h3 class="stat-number">24h</h3>
                     <p class="stat-label">Muda Wa Msaada</p>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
                 <div class="stat-card text-center">
                     <div class="stat-icon mb-3">
-                        <i class="fas fa-star fa-3x text-warning"></i>
+                        <span class="text-warning" style="font-size: 3rem;"></span>
                     </div>
                     <h3 class="stat-number">98%</h3>
                     <p class="stat-label">Uthibitisho Wa Msaada</p>
@@ -415,15 +415,15 @@ include 'includes/header.php';
             <div class="col-lg-8" data-aos="fade-up">
                 <h2 class="cta-title">Je, Unahitaji Msaada Wa Haraka?</h2>
                 <p class="cta-subtitle">
-                    Usikie ukimya. Ongea Hub ni jukwaa salama la kuripoti na kupata msaada. 
+                    Usikie ukimya. Ongea Hub ni jukwaa salama la kuripoti na kupata msaada.
                     Tunahitaji kusikia kutoka kwako.
                 </p>
                 <div class="cta-buttons">
                     <a href="tel:+25573428334" class="btn btn-light btn-lg me-3">
-                        <i class="fas fa-phone me-2"></i>Piga Simu
+                        <span class="me-2"></span>Piga Simu
                     </a>
                     <a href="mailto:info@pandadigital.co.tz" class="btn btn-outline-light btn-lg">
-                        <i class="fas fa-envelope me-2"></i>Tuma Barua
+                        <span class="me-2"></span>Tuma Barua
                     </a>
                 </div>
             </div>
@@ -438,64 +438,88 @@ include 'includes/header.php';
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <script>
-    // Initialize AOS
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: true
-    });
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize AOS
+        if (typeof AOS !== 'undefined') {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+        }
 
-    // Word count for report textarea
-    document.getElementById('report').addEventListener('input', function() {
-        const text = this.value;
-        const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-        document.getElementById('word-count').textContent = wordCount + ' maneno';
-        
-        // Change color based on word count
+        // Word count for report textarea
+        const reportTextarea = document.getElementById('report');
         const wordCountElement = document.getElementById('word-count');
-        if (wordCount > 150) {
-            wordCountElement.className = 'text-danger';
-        } else if (wordCount > 100) {
-            wordCountElement.className = 'text-warning';
-        } else {
-            wordCountElement.className = 'text-muted';
-        }
-    });
 
-    // Phone number formatting
-    document.getElementById('phone').addEventListener('input', function() {
-        let value = this.value.replace(/\D/g, '');
-        if (value.length > 0 && value[0] !== '0') {
-            value = '0' + value;
-        }
-        if (value.length > 10) {
-            value = value.substring(0, 10);
-        }
-        this.value = value;
-    });
+        if (reportTextarea && wordCountElement) {
+            reportTextarea.addEventListener('input', function() {
+                const text = this.value;
+                const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+                wordCountElement.textContent = wordCount + ' maneno';
 
-    // Form validation
-    document.querySelector('.ongea-form').addEventListener('submit', function(e) {
-        const requiredFields = this.querySelectorAll('[required]');
-        let isValid = true;
-
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                field.classList.add('is-invalid');
-                isValid = false;
-            } else {
-                field.classList.remove('is-invalid');
-            }
-        });
-
-        if (!isValid) {
-            e.preventDefault();
-            // Scroll to first error
-            const firstError = this.querySelector('.is-invalid');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+                // Change color based on word count
+                if (wordCount > 150) {
+                    wordCountElement.className = 'text-muted text-danger';
+                } else if (wordCount > 100) {
+                    wordCountElement.className = 'text-muted text-warning';
+                } else {
+                    wordCountElement.className = 'text-muted';
+                }
+            });
         }
+
+        // Phone number formatting
+        const phoneInput = document.getElementById('phone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function() {
+                let value = this.value.replace(/\D/g, '');
+                if (value.length > 0 && value[0] !== '0') {
+                    value = '0' + value;
+                }
+                if (value.length > 10) {
+                    value = value.substring(0, 10);
+                }
+                this.value = value;
+            });
+        }
+
+        // Form validation
+        const form = document.querySelector('.ongea-form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const requiredFields = this.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    // Scroll to first error
+                    const firstError = this.querySelector('.is-invalid');
+                    if (firstError) {
+                        firstError.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
+                }
+            });
+        }
+
+        // Debug logging
+        console.log('Ongea Hub JavaScript loaded successfully');
+        console.log('Report textarea:', reportTextarea);
+        console.log('Phone input:', phoneInput);
+        console.log('Form:', form);
     });
 </script>
 
@@ -579,7 +603,8 @@ include 'includes/header.php';
         margin-bottom: 0.5rem;
     }
 
-    .form-control, .form-select {
+    .form-control,
+    .form-select {
         border-radius: 10px;
         border: 2px solid #e2e8f0;
         padding: 0.75rem 1rem;
@@ -587,12 +612,14 @@ include 'includes/header.php';
         font-size: 1rem;
     }
 
-    .form-control:focus, .form-select:focus {
+    .form-control:focus,
+    .form-select:focus {
         border-color: var(--primary-color, #ffbc3b);
         box-shadow: 0 0 0 0.2rem rgba(255, 188, 59, 0.25);
     }
 
-    .form-control.is-invalid, .form-select.is-invalid {
+    .form-control.is-invalid,
+    .form-select.is-invalid {
         border-color: #dc3545;
     }
 
@@ -769,35 +796,38 @@ include 'includes/header.php';
         .page-title {
             font-size: 2.5rem;
         }
-        
+
         .cta-title {
             font-size: 2rem;
         }
-        
+
         .section-title {
             font-size: 2rem;
         }
-        
-        .form-card, .info-card {
+
+        .form-card,
+        .info-card {
             padding: 2rem;
         }
-        
+
         .stat-number {
             font-size: 2rem;
         }
     }
-    
+
     @media (max-width: 576px) {
-        .form-card, .info-card {
+
+        .form-card,
+        .info-card {
             padding: 1.5rem;
         }
-        
+
         .cta-buttons .btn {
             display: block;
             width: 100%;
             margin-bottom: 1rem;
         }
-        
+
         .cta-buttons .btn:last-child {
             margin-bottom: 0;
         }

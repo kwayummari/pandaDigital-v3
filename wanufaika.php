@@ -247,8 +247,6 @@ include 'includes/header.php';
     </div>
 </section>
 
-<?php include 'includes/footer.php'; ?>
-
 <style>
     /* Wanufaika card styles */
     .wanufaika-card {
@@ -563,3 +561,5 @@ include 'includes/header.php';
         }
     }
 </style>
+
+<?php include 'includes/footer.php'; ?>
