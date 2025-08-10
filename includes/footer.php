@@ -55,7 +55,7 @@
                             <li><a href="<?= app_url() ?>">Nyumbani</a></li>
                             <li><a href="<?= app_url('about.php') ?>">Kuhusu Sisi</a></li>
                             <li><a href="<?= app_url('kozi.php') ?>">Kozi</a></li>
-                            <li><a href="<?= app_url('opportunities.php') ?>">Fursa</a></li>
+                            <li><a href="<?= app_url('fursa.php') ?>">Fursa</a></li>
                             <li><a href="<?= app_url('habari.php') ?>">Habari</a></li>
                             <li><a href="<?= app_url('contact.php') ?>">Wasiliana Nasi</a></li>
                         </ul>

@@ -15,7 +15,7 @@ class Environment
         }
 
         $envFile = $path ?: dirname(__DIR__) . '/.env';
-        
+
         if (!file_exists($envFile)) {
             // Try to load from env.example if .env doesn't exist
             $exampleFile = dirname(__DIR__) . '/env.example';
@@ -35,7 +35,7 @@ class Environment
     private static function loadFromFile($file)
     {
         $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        
+
         foreach ($lines as $line) {
             // Skip comments
             if (strpos(trim($line), '#') === 0) {
@@ -109,9 +109,9 @@ class Environment
     {
         return [
             'host' => self::get('DB_HOST', 'localhost'),
-            'name' => self::get('DB_NAME', 'pandadigital'),
-            'user' => self::get('DB_USER', 'root'),
-            'password' => self::get('DB_PASSWORD', ''),
+            'name' => self::get('DB_NAME', 'u750269652_pandadigital'),
+            'user' => self::get('DB_USER', 'u750269652_pandadigital'),
+            'password' => self::get('DB_PASSWORD', 'PandaDigital.2020'),
             'charset' => self::get('DB_CHARSET', 'utf8mb4')
         ];
     }
@@ -219,4 +219,4 @@ class Environment
     {
         return self::get('APP_DEBUG', 'true') === 'true';
     }
-} 
+}

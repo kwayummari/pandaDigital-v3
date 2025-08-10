@@ -89,27 +89,28 @@ $pageTitle = 'Fursa Zote - ' . $appConfig['name'];
 
 <!DOCTYPE html>
 <html lang="sw">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle) ?></title>
     <meta name="description" content="Tazama fursa zote za ajira, ufadhili, mafunzo na biashara. Panda Digital - Platform bora ya fursa kwa wanawake Tanzania.">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="<?= asset('images/logo/favicon.png') ?>">
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
-    
+
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
@@ -149,24 +150,24 @@ $pageTitle = 'Fursa Zote - ' . $appConfig['name'];
                     <p class="section-subtitle">Chagua kategoria inayokufaa zaidi na uone fursa zote zinazopatikana</p>
                 </div>
             </div>
-            
+
             <div class="row g-4">
                 <?php foreach ($opportunityCategories as $index => $category): ?>
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
-                    <div class="category-card text-center p-4 h-100">
-                        <div class="category-icon mb-3">
-                            <i class="<?= $category['icon'] ?> fa-3x text-<?= $category['color'] ?>"></i>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
+                        <div class="category-card text-center p-4 h-100">
+                            <div class="category-icon mb-3">
+                                <i class="<?= $category['icon'] ?> fa-3x text-<?= $category['color'] ?>"></i>
+                            </div>
+                            <h4 class="category-title mb-3"><?= $category['name'] ?></h4>
+                            <p class="category-description text-muted"><?= $category['description'] ?></p>
+                            <div class="category-count mb-3">
+                                <span class="badge bg-<?= $category['color'] ?> fs-6"><?= $category['count'] ?> Fursa</span>
+                            </div>
+                            <a href="#opportunities-<?= $category['id'] ?>" class="btn btn-outline-<?= $category['color'] ?> mt-3">
+                                Tazama Fursa <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
                         </div>
-                        <h4 class="category-title mb-3"><?= $category['name'] ?></h4>
-                        <p class="category-description text-muted"><?= $category['description'] ?></p>
-                        <div class="category-count mb-3">
-                            <span class="badge bg-<?= $category['color'] ?> fs-6"><?= $category['count'] ?> Fursa</span>
-                        </div>
-                        <a href="#opportunities-<?= $category['id'] ?>" class="btn btn-outline-<?= $category['color'] ?> mt-3">
-                            Tazama Fursa <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
                     </div>
-                </div>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -181,66 +182,66 @@ $pageTitle = 'Fursa Zote - ' . $appConfig['name'];
                     <p class="section-subtitle">Fursa bora zaidi zilizochaguliwa na wataalamu wetu</p>
                 </div>
             </div>
-            
+
             <div class="row g-4">
                 <?php foreach ($featuredOpportunities as $index => $opportunity): ?>
-                <div class="col-lg-6 col-xl-3" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
-                    <div class="opportunity-card h-100">
-                        <div class="opportunity-image">
-                            <img src="<?= asset($opportunity['image']) ?>" alt="<?= htmlspecialchars($opportunity['title']) ?>" class="img-fluid">
-                            <div class="opportunity-overlay">
-                                <div class="opportunity-actions">
-                                    <a href="fursa-details.php?id=<?= $opportunity['id'] ?>" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-eye me-2"></i>Tazama Zaidi
-                                    </a>
+                    <div class="col-lg-6 col-xl-3" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
+                        <div class="opportunity-card h-100">
+                            <div class="opportunity-image">
+                                <img src="<?= asset($opportunity['image']) ?>" alt="<?= htmlspecialchars($opportunity['title']) ?>" class="img-fluid">
+                                <div class="opportunity-overlay">
+                                    <div class="opportunity-actions">
+                                        <a href="fursa-details.php?id=<?= $opportunity['id'] ?>" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-eye me-2"></i>Tazama Zaidi
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="opportunity-content p-4">
-                            <div class="opportunity-meta mb-2">
-                                <span class="badge bg-primary me-2"><?= $opportunity['category'] ?></span>
-                                <span class="badge bg-secondary"><?= $opportunity['type'] ?></span>
-                            </div>
-                            <h5 class="opportunity-title mb-3">
-                                <a href="fursa-details.php?id=<?= $opportunity['id'] ?>" class="text-decoration-none"><?= htmlspecialchars($opportunity['title']) ?></a>
-                            </h5>
-                            <p class="opportunity-description text-muted mb-3"><?= htmlspecialchars($opportunity['description']) ?></p>
-                            
-                            <div class="opportunity-company mb-3">
-                                <small class="text-muted">
-                                    <i class="fas fa-building me-2"></i><?= htmlspecialchars($opportunity['company']) ?>
-                                </small>
-                            </div>
-                            
-                            <div class="opportunity-details d-flex justify-content-between align-items-center mb-3">
-                                <div class="opportunity-location">
+                            <div class="opportunity-content p-4">
+                                <div class="opportunity-meta mb-2">
+                                    <span class="badge bg-primary me-2"><?= $opportunity['category'] ?></span>
+                                    <span class="badge bg-secondary"><?= $opportunity['type'] ?></span>
+                                </div>
+                                <h5 class="opportunity-title mb-3">
+                                    <a href="fursa-details.php?id=<?= $opportunity['id'] ?>" class="text-decoration-none"><?= htmlspecialchars($opportunity['title']) ?></a>
+                                </h5>
+                                <p class="opportunity-description text-muted mb-3"><?= htmlspecialchars($opportunity['description']) ?></p>
+
+                                <div class="opportunity-company mb-3">
                                     <small class="text-muted">
-                                        <i class="fas fa-map-marker-alt me-1"></i><?= $opportunity['location'] ?>
+                                        <i class="fas fa-building me-2"></i><?= htmlspecialchars($opportunity['company']) ?>
                                     </small>
                                 </div>
-                                <div class="opportunity-deadline">
-                                    <small class="text-danger">
-                                        <i class="fas fa-calendar me-1"></i><?= date('d/m/Y', strtotime($opportunity['deadline'])) ?>
-                                    </small>
+
+                                <div class="opportunity-details d-flex justify-content-between align-items-center mb-3">
+                                    <div class="opportunity-location">
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt me-1"></i><?= $opportunity['location'] ?>
+                                        </small>
+                                    </div>
+                                    <div class="opportunity-deadline">
+                                        <small class="text-danger">
+                                            <i class="fas fa-calendar me-1"></i><?= date('d/m/Y', strtotime($opportunity['deadline'])) ?>
+                                        </small>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="opportunity-footer d-flex justify-content-between align-items-center">
-                                <div class="opportunity-type">
-                                    <strong class="text-primary"><?= $opportunity['type'] ?></strong>
-                                </div>
-                                <div class="opportunity-apply">
-                                    <a href="fursa-details.php?id=<?= $opportunity['id'] ?>" class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-paper-plane me-1"></i>Omba Sasa
-                                    </a>
+
+                                <div class="opportunity-footer d-flex justify-content-between align-items-center">
+                                    <div class="opportunity-type">
+                                        <strong class="text-primary"><?= $opportunity['type'] ?></strong>
+                                    </div>
+                                    <div class="opportunity-apply">
+                                        <a href="fursa-details.php?id=<?= $opportunity['id'] ?>" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-paper-plane me-1"></i>Omba Sasa
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 <?php endforeach; ?>
             </div>
-            
+
             <div class="row mt-5">
                 <div class="col-12 text-center" data-aos="fade-up">
                     <a href="#" class="btn btn-primary btn-lg">
@@ -260,7 +261,7 @@ $pageTitle = 'Fursa Zote - ' . $appConfig['name'];
                     <p class="section-subtitle">Fuata hatua hizi rahisi kuomba fursa yoyote</p>
                 </div>
             </div>
-            
+
             <div class="row g-4">
                 <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
                     <div class="step-card text-center p-4">
@@ -271,7 +272,7 @@ $pageTitle = 'Fursa Zote - ' . $appConfig['name'];
                         <p class="step-description text-muted">Tafuta fursa inayokufaa zaidi kutoka kwenye orodha yetu</p>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
                     <div class="step-card text-center p-4">
                         <div class="step-number mb-3">
@@ -281,7 +282,7 @@ $pageTitle = 'Fursa Zote - ' . $appConfig['name'];
                         <p class="step-description text-muted">Soma maelezo kamili ya fursa na mahitaji yote</p>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
                     <div class="step-card text-center p-4">
                         <div class="step-number mb-3">
@@ -291,7 +292,7 @@ $pageTitle = 'Fursa Zote - ' . $appConfig['name'];
                         <p class="step-description text-muted">Andaa maombi yako kwa makini na usahihi</p>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
                     <div class="step-card text-center p-4">
                         <div class="step-number mb-3">
@@ -327,7 +328,7 @@ $pageTitle = 'Fursa Zote - ' . $appConfig['name'];
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
+
     <script>
         // Initialize AOS
         AOS.init({
@@ -337,4 +338,5 @@ $pageTitle = 'Fursa Zote - ' . $appConfig['name'];
         });
     </script>
 </body>
-</html> 
+
+</html>

@@ -30,7 +30,7 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                             <a href="<?= app_url('kozi.php') ?>" class="btn btn-primary">
                                 Anza Kozi
                             </a>
-                            <a href="<?= app_url('opportunities.php') ?>" class="btn btn-outline-primary">
+                            <a href="<?= app_url('fursa.php') ?>" class="btn btn-outline-primary">
                                 Tazama Fursa
                             </a>
                         </div>

@@ -147,7 +147,7 @@ require_once __DIR__ . '/../config/init.php';
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= app_url('opportunities.php') ?>">
+                        <a class="nav-link" href="<?= app_url('fursa.php') ?>">
                             FURSA
                         </a>
                     </li>
@@ -167,7 +167,7 @@ require_once __DIR__ . '/../config/init.php';
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="<?= app_url('success-stories.php') ?>">WANUFAIKA</a></li>
-                            <li><a class="dropdown-item" href="<?= app_url('blog.php') ?>">BLOG</a></li>
+                            <li><a class="dropdown-item" href="<?= app_url('habari.php') ?>">BLOG</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
