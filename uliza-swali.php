@@ -389,7 +389,7 @@ if (!empty($searchQuery)) {
 
         .expert-image-container {
             position: relative;
-            height: 250px;
+            height: 300px;
             overflow: hidden;
         }
 
@@ -397,6 +397,7 @@ if (!empty($searchQuery)) {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center top;
             transition: transform 0.3s ease;
         }
 

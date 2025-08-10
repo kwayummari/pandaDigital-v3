@@ -14,7 +14,14 @@ class Expert
     {
         try {
             $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("SELECT id, first_name, last_name, profile_photo, business, region, email, phone FROM users WHERE role = 'expert' ORDER BY first_name, last_name");
+            $stmt = $conn->prepare("
+                SELECT u.id, u.first_name, u.last_name, u.profile_photo, u.business, u.region, u.email, u.phone,
+                       COALESCE(e.status, 'free') as status
+                FROM users u 
+                LEFT JOIN experts e ON u.email = e.email 
+                WHERE u.role = 'expert' 
+                ORDER BY u.first_name, u.last_name
+            ");
             $stmt->execute();
             return $stmt->fetchAll();
         } catch (PDOException $e) {
