@@ -267,19 +267,19 @@ include 'includes/header.php';
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
-               .wanufaika-image {
-               position: relative;
-               overflow: hidden;
-               height: 280px;
-           }
+    .wanufaika-image {
+        position: relative;
+        overflow: hidden;
+        height: 280px;
+    }
 
-               .wanufaika-image img {
-               width: 100%;
-               height: 100%;
-               object-fit: cover;
-               transition: transform 0.3s ease;
-               object-position: center top;
-           }
+    .wanufaika-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+        object-position: center top;
+    }
 
     .wanufaika-card:hover .wanufaika-image img {
         transform: scale(1.1);
@@ -538,28 +538,28 @@ include 'includes/header.php';
         transform: translateY(-2px);
     }
 
-               /* Responsive */
-           @media (max-width: 768px) {
-               .page-title {
-                   font-size: 2.5rem;
-               }
-               
-               .cta-title {
-                   font-size: 2rem;
-               }
-               
-               .section-title {
-                   font-size: 2rem;
-               }
-               
-               .wanufaika-image {
-                   height: 220px;
-               }
-           }
-           
-           @media (max-width: 576px) {
-               .wanufaika-image {
-                   height: 200px;
-               }
-           }
+    /* Responsive */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2.5rem;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
+
+        .wanufaika-image {
+            height: 220px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .wanufaika-image {
+            height: 200px;
+        }
+    }
 </style>
