@@ -1,0 +1,72 @@
+<?php
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Content-Type');
+
+require_once __DIR__ . "/../../services/AuthService.php";
+
+// Only allow POST requests
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Method not allowed. Only POST requests are accepted.'
+    ]);
+    exit();
+}
+
+try {
+    // Get JSON input
+    $input = json_decode(file_get_contents('php://input'), true);
+    
+    if (!$input) {
+        $input = $_POST; // Fallback to POST data
+    }
+    
+    // Validate required fields
+    if (empty($input['email']) || empty($input['password'])) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Email and password are required.'
+        ]);
+        exit();
+    }
+    
+    // Sanitize input
+    $email = filter_var(trim($input['email']), FILTER_SANITIZE_EMAIL);
+    $password = trim($input['password']);
+    
+    // Initialize auth service
+    $authService = new AuthService();
+    
+    // Attempt login
+    $result = $authService->loginUser($email, $password);
+    
+    if ($result['valid']) {
+        // Login successful
+        echo json_encode([
+            'success' => true,
+            'message' => $result['message'],
+            'user' => $result['user'],
+            'redirect_url' => '/dashboard.php' // or wherever you want to redirect after login
+        ]);
+    } else {
+        // Login failed
+        http_response_code(401);
+        echo json_encode([
+            'success' => false,
+            'message' => $result['message'],
+            'field' => $result['field'] ?? 'general'
+        ]);
+    }
+    
+} catch (Exception $e) {
+    error_log("Login error: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'An error occurred during login. Please try again.'
+    ]);
+}

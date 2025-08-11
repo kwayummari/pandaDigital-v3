@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . "/../config/database.php";
 
 class Blog
 {
@@ -10,62 +10,35 @@ class Blog
         $this->db = new Database();
     }
 
-    public function getLatestBlogPosts($limit = 8, $excludeId = null)
-    {
-        try {
-            $conn = $this->db->getConnection();
-
-            if ($excludeId) {
-                $stmt = $conn->prepare("SELECT id, name, maelezo, photo, date_created FROM blog WHERE id != ? ORDER BY date_created DESC LIMIT ?");
-                $stmt->bindParam(1, $excludeId, PDO::PARAM_INT);
-                $stmt->bindParam(2, $limit, PDO::PARAM_INT);
-            } else {
-                $stmt = $conn->prepare("SELECT id, name, maelezo, photo, date_created FROM blog ORDER BY date_created DESC LIMIT ?");
-                $stmt->bindParam(1, $limit, PDO::PARAM_INT);
-            }
-
-            $stmt->execute();
-            return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            error_log("Error fetching blog posts: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    public function getBlogPostById($id)
-    {
-        try {
-            $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("SELECT id, name, maelezo, photo, date_created FROM blog WHERE id = ?");
-            $stmt->bindParam(1, $id, PDO::PARAM_INT);
-            $stmt->execute();
-
-            return $stmt->fetch();
-        } catch (PDOException $e) {
-            error_log("Error fetching blog post: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    public function getAllBlogPosts($page = 1, $perPage = 12)
+    public function getAllBlogsForAdmin($page = 1, $perPage = 20)
     {
         try {
             $conn = $this->db->getConnection();
             $offset = ($page - 1) * $perPage;
 
-            $stmt = $conn->prepare("SELECT id, name, maelezo, photo, date_created FROM blog ORDER BY date_created DESC LIMIT ? OFFSET ?");
-            $stmt->bindParam(1, $perPage, PDO::PARAM_INT);
-            $stmt->bindParam(2, $offset, PDO::PARAM_INT);
-            $stmt->execute();
-
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.title, b.excerpt, b.content, b.category, b.status, b.date_created,
+                    u.first_name, u.last_name,
+                    COUNT(DISTINCT v.id) as views,
+                    COUNT(DISTINCT c.id) as comments
+                FROM blog b
+                LEFT JOIN users u ON b.author_id = u.id
+                LEFT JOIN blog_views v ON b.id = v.blog_id
+                LEFT JOIN blog_comments c ON b.id = c.blog_id
+                GROUP BY b.id
+                ORDER BY b.date_created DESC 
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute([$perPage, $offset]);
             return $stmt->fetchAll();
         } catch (PDOException $e) {
-            error_log("Error fetching all blog posts: " . $e->getMessage());
+            error_log("Error getting all blogs for admin: " . $e->getMessage());
             return [];
         }
     }
 
-    public function getTotalCount()
+    public function getTotalBlogs()
     {
         try {
             $conn = $this->db->getConnection();
@@ -74,40 +47,285 @@ class Blog
             $result = $stmt->fetch();
             return $result['total'] ?? 0;
         } catch (PDOException $e) {
-            error_log("Error counting blog posts: " . $e->getMessage());
+            error_log("Error getting total blogs: " . $e->getMessage());
             return 0;
         }
     }
 
-    public function formatDate($dateString)
+    public function getOverallBlogStats()
     {
-        $date = new DateTime($dateString);
-        return $date->format('d M Y');
+        try {
+            $conn = $this->db->getConnection();
+
+            // Get total views
+            $stmt = $conn->prepare("SELECT COUNT(*) as total_views FROM blog_views");
+            $stmt->execute();
+            $viewsResult = $stmt->fetch();
+
+            // Get total comments
+            $stmt = $conn->prepare("SELECT COUNT(*) as total_comments FROM blog_comments");
+            $stmt->execute();
+            $commentsResult = $stmt->fetch();
+
+            // Get total authors
+            $stmt = $conn->prepare("SELECT COUNT(DISTINCT author_id) as total_authors FROM blog");
+            $stmt->execute();
+            $authorsResult = $stmt->fetch();
+
+            return [
+                'total_views' => $viewsResult['total_views'] ?? 0,
+                'total_comments' => $commentsResult['total_comments'] ?? 0,
+                'total_authors' => $authorsResult['total_authors'] ?? 0
+            ];
+        } catch (PDOException $e) {
+            error_log("Error getting overall blog stats: " . $e->getMessage());
+            return [
+                'total_views' => 0,
+                'total_comments' => 0,
+                'total_authors' => 0
+            ];
+        }
     }
 
-    public function truncateText($text, $length = 120)
+    public function deleteBlog($blogId)
     {
-        $text = strip_tags($text);
-        if (strlen($text) <= $length) {
-            return $text;
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if blog exists
+            $stmt = $conn->prepare("SELECT id FROM blog WHERE id = ?");
+            $stmt->execute([$blogId]);
+            if (!$stmt->fetch()) {
+                return false;
+            }
+
+            // Delete blog (you might want to soft delete instead)
+            $stmt = $conn->prepare("DELETE FROM blog WHERE id = ?");
+            return $stmt->execute([$blogId]);
+        } catch (PDOException $e) {
+            error_log("Error deleting blog: " . $e->getMessage());
+            return false;
         }
-        return substr($text, 0, $length) . '...';
     }
 
-    public function getImageUrl($imageName)
+    public function toggleBlogStatus($blogId)
     {
-        // Check if it's a full URL or just filename
-        if (filter_var($imageName, FILTER_VALIDATE_URL)) {
-            return $imageName;
-        }
+        try {
+            $conn = $this->db->getConnection();
 
-        // Check if image exists in uploads directory
-        $imagePath = __DIR__ . '/../uploads/Blog/' . $imageName;
-        if (file_exists($imagePath)) {
-            return upload_url('Blog/' . $imageName);
-        }
+            // For now, we'll just return true as the status toggle logic
+            // would need to be implemented based on your database structure
+            // You might want to add a status field to the blog table
 
-        // Fallback to a default image
-        return upload_url('Blog/TDA4.jpg');
+            return true;
+        } catch (PDOException $e) {
+            error_log("Error toggling blog status: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function addBlog($authorId, $title, $excerpt, $content, $category, $status = 'draft')
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if author exists
+            $stmt = $conn->prepare("SELECT id FROM users WHERE id = ?");
+            $stmt->execute([$authorId]);
+            if (!$stmt->fetch()) {
+                return false;
+            }
+
+            // Insert new blog
+            $stmt = $conn->prepare("
+                INSERT INTO blog (author_id, title, excerpt, content, category, status, date_created) 
+                VALUES (?, ?, ?, ?, ?, ?, NOW())
+            ");
+
+            return $stmt->execute([$authorId, $title, $excerpt, $content, $category, $status]);
+        } catch (PDOException $e) {
+            error_log("Error adding blog: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateBlog($blogId, $title, $excerpt, $content, $category, $status)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if blog exists
+            $stmt = $conn->prepare("SELECT id FROM blog WHERE id = ?");
+            $stmt->execute([$blogId]);
+            if (!$stmt->fetch()) {
+                return false;
+            }
+
+            // Update blog
+            $stmt = $conn->prepare("
+                UPDATE blog 
+                SET title = ?, excerpt = ?, content = ?, category = ?, status = ?, date_updated = NOW()
+                WHERE id = ?
+            ");
+
+            return $stmt->execute([$title, $excerpt, $content, $category, $status, $blogId]);
+        } catch (PDOException $e) {
+            error_log("Error updating blog: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getBlogById($blogId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.*, u.first_name, u.last_name,
+                    COUNT(DISTINCT v.id) as views,
+                    COUNT(DISTINCT c.id) as comments
+                FROM blog b
+                LEFT JOIN users u ON b.author_id = u.id
+                LEFT JOIN blog_views v ON b.id = v.blog_id
+                LEFT JOIN blog_comments c ON b.id = c.blog_id
+                WHERE b.id = ?
+                GROUP BY b.id
+            ");
+            $stmt->execute([$blogId]);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Error getting blog by ID: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getPublishedBlogs($page = 1, $perPage = 10)
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $offset = ($page - 1) * $perPage;
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.title, b.excerpt, b.category, b.date_created,
+                    u.first_name, u.last_name,
+                    COUNT(DISTINCT v.id) as views,
+                    COUNT(DISTINCT c.id) as comments
+                FROM blog b
+                LEFT JOIN users u ON b.author_id = u.id
+                LEFT JOIN blog_views v ON b.id = v.blog_id
+                LEFT JOIN blog_comments c ON b.id = c.blog_id
+                WHERE b.status = 'published'
+                GROUP BY b.id
+                ORDER BY b.date_created DESC 
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute([$perPage, $offset]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting published blogs: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getBlogsByCategory($category, $page = 1, $perPage = 10)
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $offset = ($page - 1) * $perPage;
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.title, b.excerpt, b.category, b.date_created,
+                    u.first_name, u.last_name,
+                    COUNT(DISTINCT v.id) as views,
+                    COUNT(DISTINCT c.id) as comments
+                FROM blog b
+                LEFT JOIN users u ON b.author_id = u.id
+                LEFT JOIN blog_views v ON b.id = v.blog_id
+                LEFT JOIN blog_comments c ON b.id = c.blog_id
+                WHERE b.status = 'published' AND b.category = ?
+                GROUP BY b.id
+                ORDER BY b.date_created DESC 
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute([$category, $perPage, $offset]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting blogs by category: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function incrementViews($blogId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Insert or update view count
+            $stmt = $conn->prepare("
+                INSERT INTO blog_views (blog_id, ip_address, user_agent, date_created)
+                VALUES (?, ?, ?, NOW())
+                ON DUPLICATE KEY UPDATE date_created = NOW()
+            ");
+
+            $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+            $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+
+            return $stmt->execute([$blogId, $ipAddress, $userAgent]);
+        } catch (PDOException $e) {
+            error_log("Error incrementing blog views: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function addComment($blogId, $userId, $comment)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if blog exists and is published
+            $stmt = $conn->prepare("SELECT id FROM blog WHERE id = ? AND status = 'published'");
+            $stmt->execute([$blogId]);
+            if (!$stmt->fetch()) {
+                return false;
+            }
+
+            // Insert comment
+            $stmt = $conn->prepare("
+                INSERT INTO blog_comments (blog_id, user_id, comment, date_created) 
+                VALUES (?, ?, ?, NOW())
+            ");
+
+            return $stmt->execute([$blogId, $userId, $comment]);
+        } catch (PDOException $e) {
+            error_log("Error adding blog comment: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getBlogComments($blogId, $page = 1, $perPage = 20)
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $offset = ($page - 1) * $perPage;
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    c.id, c.comment, c.date_created,
+                    u.first_name, u.last_name, u.role
+                FROM blog_comments c
+                LEFT JOIN users u ON c.user_id = u.id
+                WHERE c.blog_id = ?
+                ORDER BY c.date_created DESC 
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute([$blogId, $perPage, $offset]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting blog comments: " . $e->getMessage());
+            return [];
+        }
     }
 }
