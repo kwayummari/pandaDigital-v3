@@ -1,36 +1,45 @@
 <?php
 require_once __DIR__ . "/../middleware/AuthMiddleware.php";
-require_once __DIR__ . "/../models/User.php";
-require_once __DIR__ . "/../models/Course.php";
-require_once __DIR__ . "/../models/ExpertQuestion.php";
+require_once __DIR__ . "/../models/Blog.php";
+require_once __DIR__ . "/../models/Feedback.php";
+require_once __DIR__ . "/../models/Opportunity.php";
+require_once __DIR__ . "/../models/Beneficiary.php";
+require_once __DIR__ . "/../models/Sales.php";
+require_once __DIR__ . "/../models/Download.php";
+require_once __DIR__ . "/../models/Business.php";
+require_once __DIR__ . "/../models/Ranking.php";
 
 $auth = new AuthMiddleware();
 $auth->requireRole('admin');
 
 $currentUser = $auth->getCurrentUser();
-$userModel = new User();
-$courseModel = new Course();
-$expertQuestionModel = new ExpertQuestion();
 
-// Get platform statistics
-$totalUsers = $userModel->getTotalUsers();
-$totalCourses = $courseModel->getTotalCourses();
-$totalExpertQuestions = $expertQuestionModel->getTotalQuestions();
-$pendingExpertRequests = $userModel->getPendingExpertRequests();
+// Initialize models
+$blogModel = new Blog();
+$feedbackModel = new Feedback();
+$opportunityModel = new Opportunity();
+$beneficiaryModel = new Beneficiary();
+$salesModel = new Sales();
+$downloadModel = new Download();
+$businessModel = new Business();
+$rankingModel = new Ranking();
 
-// Get user statistics by role
-$userStats = $userModel->getUserStatsByRole();
-$recentRegistrations = $userModel->getRecentRegistrations(5);
+// Get statistics
+$blogStats = $blogModel->getOverallBlogStats();
+$feedbackStats = $feedbackModel->getOverallFeedbackStats();
+$opportunityStats = $opportunityModel->getOverallOpportunityStats();
+$beneficiaryStats = $beneficiaryModel->getOverallBeneficiaryStats();
+$salesStats = $salesModel->getOverallSalesStats();
+$downloadStats = $downloadModel->getOverallDownloadStats();
+$businessStats = $businessModel->getOverallBusinessStats();
+$rankingStats = $rankingModel->getOverallRankingStats();
 
-// Get today's date for greeting
-$hour = date('H');
-if ($hour < 12) {
-    $greeting = "Asubuhi njema";
-} elseif ($hour < 17) {
-    $greeting = "Mchana njema";
-} else {
-    $greeting = "Jioni njema";
-}
+// Get recent activities
+$recentBlogs = $blogModel->getRecentBlogs(5);
+$recentFeedback = $feedbackModel->getAllFeedbackForAdmin(1, 5);
+$recentOpportunities = $opportunityModel->getAllOpportunitiesForAdmin(1, 5);
+$recentSales = $salesModel->getAllTransactionsForAdmin(null, null, 1, 5);
+$topRankings = $rankingModel->getTopPerformers('monthly', 5);
 ?>
 
 <!DOCTYPE html>
@@ -39,12 +48,14 @@ if ($hour < 12) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard ya Admin - Panda Digital</title>
+    <title>Admin Dashboard - Panda Digital</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom CSS -->
     <style>
         :root {
@@ -74,24 +85,15 @@ if ($hour < 12) {
             border: none;
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease-in-out;
         }
 
         .card:hover {
             transform: translateY(-2px);
         }
 
-        .welcome-section {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: 15px;
-            padding: 40px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
         .stats-card {
-            background: linear-gradient(135deg, var(--accent-color), #c0392b);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
         }
 
@@ -107,86 +109,133 @@ if ($hour < 12) {
             background: linear-gradient(135deg, var(--warning-color), #d68910);
         }
 
-        .stats-card.primary {
-            background: linear-gradient(135deg, var(--primary-color), #8e44ad);
+        .stats-card.danger {
+            background: linear-gradient(135deg, var(--accent-color), #c0392b);
         }
 
-        .quick-actions {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            border-radius: 15px;
-            text-decoration: none;
-            color: var(--primary-color);
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-
-        .action-btn:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-5px);
-        }
-
-        .action-btn i {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .chart-container {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .user-item {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
+        .quick-action-card {
             background: white;
             border-left: 4px solid var(--primary-color);
             transition: all 0.3s ease;
         }
 
-        .user-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .quick-action-card:hover {
+            border-left-color: var(--secondary-color);
+            background: #f8f9fa;
         }
 
-        .btn-primary-custom {
-            background: var(--primary-color);
-            border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
-            font-weight: 600;
+        .activity-item {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
         }
 
-        .btn-primary-custom:hover {
-            background: var(--secondary-color);
-            transform: translateY(-1px);
+        .activity-item:hover {
+            background-color: #f8f9fa;
         }
 
-        .alert {
-            border-radius: 10px;
-            border: none;
+        .activity-item:last-child {
+            border-bottom: none;
         }
 
-        .admin-badge {
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-section {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
             font-size: 0.9rem;
-            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .trend-indicator {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .trend-up {
+            color: #2ecc71;
+        }
+
+        .trend-down {
+            color: #e74c3c;
+        }
+
+        .ranking-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .performer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .performer-item:last-child {
+            border-bottom: none;
+        }
+
+        .performer-rank {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .performer-rank.top-1 {
+            background: #ffd700;
+        }
+
+        .performer-rank.top-2 {
+            background: #c0c0c0;
+        }
+
+        .performer-rank.top-3 {
+            background: #cd7f32;
         }
     </style>
 </head>
@@ -203,14 +252,38 @@ if ($hour < 12) {
                 <a class="nav-link active" href="/admin/dashboard.php">
                     <i class="fas fa-tachometer-alt me-1"></i> Dashboard
                 </a>
-                <a class="nav-link" href="/admin/expert-requests.php">
-                    <i class="fas fa-user-graduate me-1"></i> Maombi ya Mitaalam
-                </a>
-                <a class="nav-link" href="/admin/users.php">
-                    <i class="fas fa-users me-1"></i> Watumiaji
-                </a>
                 <a class="nav-link" href="/admin/courses.php">
                     <i class="fas fa-book me-1"></i> Kozi
+                </a>
+                <a class="nav-link" href="/admin/videos.php">
+                    <i class="fas fa-video me-1"></i> Video
+                </a>
+                <a class="nav-link" href="/admin/questions.php">
+                    <i class="fas fa-question-circle me-1"></i> Maswali
+                </a>
+                <a class="nav-link" href="/admin/blogs.php">
+                    <i class="fas fa-blog me-1"></i> Blog
+                </a>
+                <a class="nav-link" href="/admin/feedback.php">
+                    <i class="fas fa-comments me-1"></i> Maoni
+                </a>
+                <a class="nav-link" href="/admin/opportunities.php">
+                    <i class="fas fa-briefcase me-1"></i> Fursa
+                </a>
+                <a class="nav-link" href="/admin/beneficiaries.php">
+                    <i class="fas fa-users me-1"></i> Wenyenyeji
+                </a>
+                <a class="nav-link" href="/admin/sales.php">
+                    <i class="fas fa-chart-line me-1"></i> Mauzo
+                </a>
+                <a class="nav-link" href="/admin/downloads.php">
+                    <i class="fas fa-download me-1"></i> Kushusha
+                </a>
+                <a class="nav-link" href="/admin/businesses.php">
+                    <i class="fas fa-building me-1"></i> Biashara
+                </a>
+                <a class="nav-link" href="/admin/rankings.php">
+                    <i class="fas fa-trophy me-1"></i> Uratibu
                 </a>
                 <a class="nav-link" href="/logout.php">
                     <i class="fas fa-sign-out-alt me-1"></i> Toka
@@ -223,65 +296,33 @@ if ($hour < 12) {
         <div class="container">
             <!-- Welcome Section -->
             <div class="welcome-section">
-                <div class="admin-badge d-inline-block mb-3">
-                    <i class="fas fa-crown me-2"></i>
-                    Msimamizi Mkuu
-                </div>
-                <h1 class="mb-3">
-                    <i class="fas fa-sun me-2"></i>
-                    <?php echo $greeting; ?>, <?php echo htmlspecialchars($currentUser['first_name']); ?>!
-                </h1>
-                <p class="lead mb-0">
-                    Tazama muhtasari wa mfumo na usimamizi wa watumiaji
-                </p>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <h4 class="mb-4">
-                    <i class="fas fa-bolt text-primary me-2"></i>
-                    Vitendo vya Haraka
-                </h4>
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <a href="/admin/users.php" class="action-btn">
-                            <i class="fas fa-users"></i>
-                            <span class="fw-bold">Usimamizi wa Watumiaji</span>
-                            <small class="text-muted">Sajili na udhibiti watumiaji</small>
-                        </a>
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="h2 mb-2">
+                            <i class="fas fa-sun me-2"></i>
+                            Habari za Asubuhi, <?php echo htmlspecialchars($currentUser['first_name']); ?>!
+                        </h1>
+                        <p class="mb-0 opacity-75">
+                            Karibu kwenye paneli ya usimamizi wa Panda Digital. Hapa unaweza kudhibiti na kufuatilia shughuli zote za mfumo.
+                        </p>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <a href="/admin/courses.php" class="action-btn">
-                            <i class="fas fa-book"></i>
-                            <span class="fw-bold">Usimamizi wa Kozi</span>
-                            <small class="text-muted">Ongeza na udhibiti kozi</small>
-                        </a>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <a href="/admin/expert-requests.php" class="action-btn">
-                            <i class="fas fa-user-graduate"></i>
-                            <span class="fw-bold">Maombi ya Mitaalam</span>
-                            <small class="text-muted">Idhinisha au kataa maombi</small>
-                        </a>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <a href="/admin/reports.php" class="action-btn">
-                            <i class="fas fa-chart-bar"></i>
-                            <span class="fw-bold">Ripoti na Takwimu</span>
-                            <small class="text-muted">Tazama ripoti za mfumo</small>
-                        </a>
+                    <div class="col-md-4 text-end">
+                        <div class="trend-indicator">
+                            <i class="fas fa-calendar me-1"></i>
+                            <?php echo date('l, d M Y'); ?>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Statistics Cards -->
+            <!-- Main Statistics -->
             <div class="row mb-4">
                 <div class="col-md-3">
                     <div class="card stats-card">
                         <div class="card-body text-center">
                             <i class="fas fa-users fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $totalUsers; ?></h3>
-                            <p class="mb-0">Jumla ya Watumiaji</p>
+                            <div class="metric-value"><?php echo $rankingStats['total_users'] ?? 0; ?></div>
+                            <div class="metric-label">Watumiaji Waliojitolea</div>
                         </div>
                     </div>
                 </div>
@@ -289,185 +330,217 @@ if ($hour < 12) {
                     <div class="card stats-card success">
                         <div class="card-body text-center">
                             <i class="fas fa-book fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $totalCourses; ?></h3>
-                            <p class="mb-0">Jumla ya Kozi</p>
+                            <div class="metric-value"><?php echo $blogStats['total_blogs'] ?? 0; ?></div>
+                            <div class="metric-label">Blog Zilizochapishwa</div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card stats-card info">
                         <div class="card-body text-center">
-                            <i class="fas fa-question-circle fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $totalExpertQuestions; ?></h3>
-                            <p class="mb-0">Maswali ya Mitaalam</p>
+                            <i class="fas fa-briefcase fa-2x mb-2"></i>
+                            <div class="metric-value"><?php echo $opportunityStats['total_opportunities'] ?? 0; ?></div>
+                            <div class="metric-label">Fursa Zilizotolewa</div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card stats-card warning">
                         <div class="card-body text-center">
-                            <i class="fas fa-clock fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo count($pendingExpertRequests); ?></h3>
-                            <p class="mb-0">Maombi Yaliyosubiri</p>
+                            <i class="fas fa-chart-line fa-2x mb-2"></i>
+                            <div class="metric-value"><?php echo number_format($salesStats['total_revenue'] ?? 0); ?></div>
+                            <div class="metric-label">Jumla ya Mapato (TZS)</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- User Statistics by Role -->
+            <!-- Secondary Statistics -->
             <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-chart-pie text-primary me-2"></i>
-                                Watumiaji kwa Majukumu
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <?php foreach ($userStats as $role => $count): ?>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-user-circle text-primary me-3 fa-lg"></i>
-                                        <span class="fw-bold">
-                                            <?php
-                                            switch ($role) {
-                                                case 'user':
-                                                    echo 'Wanafunzi';
-                                                    break;
-                                                case 'expert':
-                                                    echo 'Mitaalam';
-                                                    break;
-                                                case 'admin':
-                                                    echo 'Wasimamizi';
-                                                    break;
-                                                default:
-                                                    echo ucfirst($role);
-                                            }
-                                            ?>
-                                        </span>
-                                    </div>
-                                    <div class="text-end">
-                                        <div class="fw-bold fs-4"><?php echo $count; ?></div>
-                                        <small class="text-muted">
-                                            <?php echo round(($count / $totalUsers) * 100); ?>%
-                                        </small>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
+                <div class="col-md-3">
+                    <div class="card stats-card danger">
+                        <div class="card-body text-center">
+                            <i class="fas fa-comments fa-2x mb-2"></i>
+                            <div class="metric-value"><?php echo $feedbackStats['total_feedback'] ?? 0; ?></div>
+                            <div class="metric-label">Maoni Yaliyotolewa</div>
                         </div>
                     </div>
                 </div>
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-2x mb-2"></i>
+                            <div class="metric-value"><?php echo $beneficiaryStats['total_beneficiaries'] ?? 0; ?></div>
+                            <div class="metric-label">Wenyenyeji</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card success">
+                        <div class="card-body text-center">
+                            <i class="fas fa-download fa-2x mb-2"></i>
+                            <div class="metric-value"><?php echo $downloadStats['total_downloads'] ?? 0; ?></div>
+                            <div class="metric-label">Mafaili Yaliyoshushwa</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card info">
+                        <div class="card-body text-center">
+                            <i class="fas fa-building fa-2x mb-2"></i>
+                            <div class="metric-value"><?php echo $businessStats['verified'] ?? 0; ?></div>
+                            <div class="metric-label">Biashara Zilizothibitishwa</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <div class="col-md-6">
+            <!-- Charts Row -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="chart-container">
+                        <h5 class="mb-3">
+                            <i class="fas fa-chart-line text-primary me-2"></i>
+                            Mwelekeo wa Watumiaji
+                        </h5>
+                        <canvas id="userTrendsChart" height="100"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="chart-container">
+                        <h5 class="mb-3">
+                            <i class="fas fa-chart-pie text-success me-2"></i>
+                            Usambazaji wa Biashara
+                        </h5>
+                        <canvas id="businessTypeChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions and Recent Activities -->
+            <div class="row">
+                <!-- Quick Actions -->
+                <div class="col-md-4">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="mb-0">
-                                <i class="fas fa-trophy text-warning me-2"></i>
-                                Muhtasari wa Mfumo
+                                <i class="fas fa-bolt text-warning me-2"></i>
+                                Vitendo vya Haraka
                             </h5>
                         </div>
-                        <div class="card-body">
-                            <div class="row text-center">
-                                <div class="col-6 mb-3">
-                                    <div class="text-success fw-bold fs-4">
-                                        <?php echo $userStats['user'] ?? 0; ?>
+                        <div class="card-body p-0">
+                            <div class="quick-action-card p-3">
+                                <a href="/admin/add-blog.php" class="text-decoration-none">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-plus-circle text-success me-3"></i>
+                                        <div>
+                                            <div class="fw-bold">Ongeza Blog</div>
+                                            <small class="text-muted">Chapisha makala mpya</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Wanafunzi</small>
-                                </div>
-                                <div class="col-6 mb-3">
-                                    <div class="text-primary fw-bold fs-4">
-                                        <?php echo $userStats['expert'] ?? 0; ?>
+                                </a>
+                            </div>
+                            <div class="quick-action-card p-3">
+                                <a href="/admin/feedback.php" class="text-decoration-none">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-comments text-info me-3"></i>
+                                        <div>
+                                            <div class="fw-bold">Tazama Maoni</div>
+                                            <small class="text-muted">Fuatilia maoni ya watumiaji</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Mitaalam</small>
-                                </div>
-                                <div class="col-6 mb-3">
-                                    <div class="text-info fw-bold fs-4">
-                                        <?php echo $totalCourses; ?>
+                                </a>
+                            </div>
+                            <div class="quick-action-card p-3">
+                                <a href="/admin/opportunities.php" class="text-decoration-none">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-briefcase text-warning me-3"></i>
+                                        <div>
+                                            <div class="fw-bold">Fursa Mpya</div>
+                                            <small class="text-muted">Ongeza fursa za biashara</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Kozi</small>
-                                </div>
-                                <div class="col-6 mb-3">
-                                    <div class="text-warning fw-bold fs-4">
-                                        <?php echo count($pendingExpertRequests); ?>
+                                </a>
+                            </div>
+                            <div class="quick-action-card p-3">
+                                <a href="/admin/rankings.php" class="text-decoration-none">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-trophy text-primary me-3"></i>
+                                        <div>
+                                            <div class="fw-bold">Uratibu wa Nguvu</div>
+                                            <small class="text-muted">Fuatilia alama za watumiaji</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Maombi</small>
-                                </div>
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Recent Activity and System Overview -->
-            <div class="row">
-                <!-- Recent User Registrations -->
-                <div class="col-lg-8">
+                <!-- Recent Activities -->
+                <div class="col-md-8">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="card-header">
                             <h5 class="mb-0">
-                                <i class="fas fa-user-plus text-success me-2"></i>
-                                Watumiaji Waliosajiliwa Hivi Karibuni
+                                <i class="fas fa-clock text-info me-2"></i>
+                                Shughuli za Hivi Karibuni
                             </h5>
-                            <a href="/admin/users.php" class="btn btn-primary-custom text-white btn-sm">
-                                <i class="fas fa-eye me-2"></i>
-                                Tazama Wote
-                            </a>
                         </div>
-                        <div class="card-body">
-                            <?php if (empty($recentRegistrations)): ?>
-                                <div class="text-center py-4">
-                                    <i class="fas fa-info-circle fa-2x text-muted mb-3"></i>
-                                    <h6>Hakuna watumiaji waliosajiliwa hivi karibuni</h6>
-                                    <p class="text-muted">Watumiaji wote waliosajiliwa bado.</p>
-                                </div>
-                            <?php else: ?>
-                                <?php foreach ($recentRegistrations as $user): ?>
-                                    <div class="user-item">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="d-flex align-items-center">
-                                                <div class="me-3">
-                                                    <i class="fas fa-user-circle text-primary fa-lg"></i>
-                                                </div>
-                                                <div>
-                                                    <h6 class="mb-1">
-                                                        <?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?>
-                                                    </h6>
-                                                    <p class="mb-1 text-muted small">
-                                                        <?php echo htmlspecialchars($user['email']); ?>
-                                                    </p>
-                                                    <small class="text-muted">
-                                                        <i class="fas fa-calendar me-1"></i>
-                                                        <?php echo date('d M Y H:i', strtotime($user['date_created'])); ?>
-                                                    </small>
-                                                </div>
+                        <div class="card-body p-0">
+                            <?php if (!empty($recentBlogs)): ?>
+                                <?php foreach ($recentBlogs as $blog): ?>
+                                    <div class="activity-item">
+                                        <div class="d-flex align-items-center">
+                                            <div class="activity-icon bg-success me-3">
+                                                <i class="fas fa-blog"></i>
                                             </div>
-                                            <div class="text-end">
-                                                <span class="badge bg-<?php
-                                                                        switch ($user['role']) {
-                                                                            case 'admin':
-                                                                                echo 'danger';
-                                                                                break;
-                                                                            case 'expert':
-                                                                                echo 'warning';
-                                                                                break;
-                                                                            default:
-                                                                                echo 'success';
-                                                                        }
-                                                                        ?>">
-                                                    <?php
-                                                    switch ($user['role']) {
-                                                        case 'admin':
-                                                            echo 'Msimamizi';
-                                                            break;
-                                                        case 'expert':
-                                                            echo 'Mtaalam';
-                                                            break;
-                                                        default:
-                                                            echo 'Mwanafunzi';
-                                                    }
-                                                    ?>
-                                                </span>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold">Blog mpya imeongezwa</div>
+                                                <div class="text-muted"><?php echo htmlspecialchars($blog['title']); ?></div>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    <?php echo date('d M Y H:i', strtotime($blog['date_created'])); ?>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+
+                            <?php if (!empty($recentFeedback)): ?>
+                                <?php foreach ($recentFeedback as $feedback): ?>
+                                    <div class="activity-item">
+                                        <div class="d-flex align-items-center">
+                                            <div class="activity-icon bg-info me-3">
+                                                <i class="fas fa-comment"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold">Maoni mapya yamefika</div>
+                                                <div class="text-muted"><?php echo htmlspecialchars(substr($feedback['feedback_text'], 0, 50)) . '...'; ?></div>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    <?php echo date('d M Y H:i', strtotime($feedback['date_created'])); ?>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+
+                            <?php if (!empty($recentSales)): ?>
+                                <?php foreach ($recentSales as $sale): ?>
+                                    <div class="activity-item">
+                                        <div class="d-flex align-items-center">
+                                            <div class="activity-icon bg-warning me-3">
+                                                <i class="fas fa-shopping-cart"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold">Mauzo mapya</div>
+                                                <div class="text-muted">TZS <?php echo number_format($sale['amount']); ?></div>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    <?php echo date('d M Y H:i', strtotime($sale['date_created'])); ?>
+                                                </small>
                                             </div>
                                         </div>
                                     </div>
@@ -476,99 +549,39 @@ if ($hour < 12) {
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- System Overview -->
-                <div class="col-lg-4">
+            <!-- Top Performers -->
+            <div class="row mt-4">
+                <div class="col-12">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="mb-0">
-                                <i class="fas fa-cogs text-primary me-2"></i>
-                                Muhtasari wa Mfumo
+                                <i class="fas fa-crown text-warning me-2"></i>
+                                Wanaoongoza wa Mwezi
                             </h5>
                         </div>
                         <div class="card-body">
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <small class="text-muted">Watumiaji Walioidhinishwa</small>
-                                    <small class="text-muted">
-                                        <?php
-                                        $activeUsers = ($userStats['user'] ?? 0) + ($userStats['expert'] ?? 0) + ($userStats['admin'] ?? 0);
-                                        echo $activeUsers;
-                                        ?>
-                                    </small>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar bg-success"
-                                        style="width: <?php echo ($activeUsers / $totalUsers) * 100; ?>%"></div>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <small class="text-muted">Kozi Zilizopakiwa</small>
-                                    <small class="text-muted"><?php echo $totalCourses; ?></small>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar bg-info" style="width: 100%"></div>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <small class="text-muted">Maombi ya Mitaalam</small>
-                                    <small class="text-muted"><?php echo count($pendingExpertRequests); ?></small>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar bg-warning"
-                                        style="width: <?php echo count($pendingExpertRequests) > 0 ? 100 : 0; ?>%"></div>
-                                </div>
-                            </div>
-
-                            <div class="text-center mt-4">
-                                <a href="/admin/reports.php" class="btn btn-primary-custom text-white">
-                                    <i class="fas fa-chart-bar me-2"></i>
-                                    Tazama Ripoti Kamili
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- System Health and Alerts -->
-            <div class="card mt-4">
-                <div class="card-body text-center">
-                    <h5 class="mb-3">
-                        <i class="fas fa-heartbeat text-success me-2"></i>
-                        Hali ya Mfumo
-                    </h5>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="text-center p-3">
-                                <i class="fas fa-server text-success fa-2x mb-3"></i>
-                                <h6>Mfumo Unafanya Kazi</h6>
-                                <p class="text-muted small">Hali ya mfumo ni nzuri na unafanya kazi kwa kawaida.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center p-3">
-                                <i class="fas fa-database text-info fa-2x mb-3"></i>
-                                <h6>Database Inafanya Kazi</h6>
-                                <p class="text-muted small">Database inafanya kazi vizuri na data zote zipo salama.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center p-3">
-                                <i class="fas fa-shield-alt text-warning fa-2x mb-3"></i>
-                                <h6>Usalama Unafanya Kazi</h6>
-                                <p class="text-muted small">Mifumo ya usalama inafanya kazi na kuhifadhi watumiaji.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center p-3">
-                                <i class="fas fa-sync text-primary fa-2x mb-3"></i>
-                                <h6>Backup Inafanya Kazi</h6>
-                                <p class="text-muted small">Mifumo ya backup inafanya kazi na kuhifadhi data.</p>
+                            <div class="row">
+                                <?php foreach ($topRankings as $index => $performer): ?>
+                                    <div class="col-md-3 text-center mb-3">
+                                        <div class="position-relative">
+                                            <?php if ($index < 3): ?>
+                                                <div class="position-absolute top-0 start-50 translate-middle">
+                                                    <i class="fas fa-medal fa-2x text-<?php
+                                                                                        echo $index == 0 ? 'warning' : ($index == 1 ? 'secondary' : 'danger');
+                                                                                        ?>"></i>
+                                                </div>
+                                            <?php endif; ?>
+                                            <div class="ranking-icon mx-auto mb-2">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div class="fw-bold"><?php echo htmlspecialchars($performer['user_name']); ?></div>
+                                            <div class="text-muted">Level <?php echo $performer['level']; ?></div>
+                                            <div class="badge bg-success"><?php echo number_format($performer['total_score']); ?> pts</div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
                         </div>
                     </div>
@@ -579,6 +592,72 @@ if ($hour < 12) {
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // User Trends Chart
+        const userCtx = document.getElementById('userTrendsChart').getContext('2d');
+        new Chart(userCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Watumiaji Waliojitolea',
+                    data: [120, 190, 300, 500, 200, 300],
+                    borderColor: '#662e91',
+                    backgroundColor: 'rgba(102, 46, 145, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Business Type Chart
+        const businessCtx = document.getElementById('businessTypeChart').getContext('2d');
+        new Chart(businessCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Reja Reja', 'Jumla', 'Huduma', 'Uzalishaji', 'Kilimo', 'Teknolojia'],
+                datasets: [{
+                    data: [30, 25, 20, 15, 7, 3],
+                    backgroundColor: [
+                        '#662e91',
+                        '#FFC10B',
+                        '#27ae60',
+                        '#e74c3c',
+                        '#f39c12',
+                        '#3498db'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../config/database.php";
 
 class Business
 {
@@ -6,51 +7,238 @@ class Business
 
     public function __construct()
     {
-        $database = new Database();
-        $this->db = $database->getConnection();
+        $this->db = new Database();
     }
 
-    /**
-     * Get all approved businesses
-     */
-    public function getAllApprovedBusinesses($limit = null)
+    public function getAllBusinessesForAdmin($page = 1, $perPage = 20)
     {
         try {
-            $sql = "SELECT b.*, u.name as owner_name, u.phone as owner_phone, u.email as owner_email 
-                    FROM business b 
-                    LEFT JOIN users u ON b.user_id = u.id 
-                    WHERE b.status = 'approved' 
-                    ORDER BY b.date_created DESC";
+            $conn = $this->db->getConnection();
+            $offset = ($page - 1) * $perPage;
 
-            if ($limit) {
-                $sql .= " LIMIT " . (int)$limit;
-            }
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.business_name, b.description, b.business_type, b.location, 
+                    b.phone, b.email, b.website, b.verification_status, b.status, b.date_created,
+                    u.first_name, u.last_name, u.email as owner_email
+                FROM businesses b
+                LEFT JOIN users u ON b.owner_id = u.id
+                ORDER BY b.date_created DESC 
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute([$perPage, $offset]);
             return $stmt->fetchAll();
         } catch (PDOException $e) {
-            error_log("Error getting approved businesses: " . $e->getMessage());
+            error_log("Error getting all businesses for admin: " . $e->getMessage());
             return [];
         }
     }
 
-    /**
-     * Get business by ID
-     */
-    public function getBusinessById($id)
+    public function getTotalBusinesses()
     {
         try {
-            $sql = "SELECT b.*, u.name as owner_name, u.phone as owner_phone, u.email as owner_email 
-                    FROM business b 
-                    LEFT JOIN users u ON b.user_id = u.id 
-                    WHERE b.id = :id AND b.status = 'approved'";
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM businesses");
             $stmt->execute();
+            $result = $stmt->fetch();
+            return $result['total'] ?? 0;
+        } catch (PDOException $e) {
+            error_log("Error getting total businesses: " . $e->getMessage());
+            return 0;
+        }
+    }
 
+    public function getOverallBusinessStats()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Get verified businesses count
+            $stmt = $conn->prepare("SELECT COUNT(*) as verified FROM businesses WHERE verification_status = 'verified'");
+            $stmt->execute();
+            $verifiedResult = $stmt->fetch();
+
+            // Get pending businesses count
+            $stmt = $conn->prepare("SELECT COUNT(*) as pending FROM businesses WHERE verification_status = 'pending'");
+            $stmt->execute();
+            $pendingResult = $stmt->fetch();
+
+            // Get active business owners count
+            $stmt = $conn->prepare("SELECT COUNT(DISTINCT owner_id) as active_owners FROM businesses WHERE status = 'active'");
+            $stmt->execute();
+            $ownersResult = $stmt->fetch();
+
+            return [
+                'verified' => $verifiedResult['verified'] ?? 0,
+                'pending' => $pendingResult['pending'] ?? 0,
+                'active_owners' => $ownersResult['active_owners'] ?? 0
+            ];
+        } catch (PDOException $e) {
+            error_log("Error getting overall business stats: " . $e->getMessage());
+            return [
+                'verified' => 0,
+                'pending' => 0,
+                'active_owners' => 0
+            ];
+        }
+    }
+
+    public function addBusiness($ownerId, $businessName, $description, $businessType, $location, $phone, $email, $website = null)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if user exists
+            $stmt = $conn->prepare("SELECT id FROM users WHERE id = ?");
+            $stmt->execute([$ownerId]);
+            if (!$stmt->fetch()) {
+                return false;
+            }
+
+            // Check if user already has a business
+            $stmt = $conn->prepare("SELECT id FROM businesses WHERE owner_id = ?");
+            $stmt->execute([$ownerId]);
+            if ($stmt->fetch()) {
+                return false; // User already has a business
+            }
+
+            $stmt = $conn->prepare("
+                INSERT INTO businesses (owner_id, business_name, description, business_type, location, phone, email, website, verification_status, status, date_created) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'active', NOW())
+            ");
+
+            return $stmt->execute([$ownerId, $businessName, $description, $businessType, $location, $phone, $email, $website]);
+        } catch (PDOException $e) {
+            error_log("Error adding business: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateBusiness($businessId, $businessName, $description, $businessType, $location, $phone, $email, $website)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if business exists
+            $stmt = $conn->prepare("SELECT id FROM businesses WHERE id = ?");
+            $stmt->execute([$businessId]);
+            if (!$stmt->fetch()) {
+                return false;
+            }
+
+            $stmt = $conn->prepare("
+                UPDATE businesses 
+                SET business_name = ?, description = ?, business_type = ?, location = ?, 
+                    phone = ?, email = ?, website = ?, date_updated = NOW()
+                WHERE id = ?
+            ");
+
+            return $stmt->execute([$businessName, $description, $businessType, $location, $phone, $email, $website, $businessId]);
+        } catch (PDOException $e) {
+            error_log("Error updating business: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function deleteBusiness($businessId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if business exists
+            $stmt = $conn->prepare("SELECT id FROM businesses WHERE id = ?");
+            $stmt->execute([$businessId]);
+            if (!$stmt->fetch()) {
+                return false;
+            }
+
+            // Delete business (you might want to soft delete instead)
+            $stmt = $conn->prepare("DELETE FROM businesses WHERE id = ?");
+            return $stmt->execute([$businessId]);
+        } catch (PDOException $e) {
+            error_log("Error deleting business: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function toggleBusinessStatus($businessId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if business exists
+            $stmt = $conn->prepare("SELECT id, status FROM businesses WHERE id = ?");
+            $stmt->execute([$businessId]);
+            $business = $stmt->fetch();
+            if (!$business) {
+                return false;
+            }
+
+            // Toggle status
+            $newStatus = ($business['status'] == 'active') ? 'inactive' : 'active';
+            $stmt = $conn->prepare("UPDATE businesses SET status = ?, date_updated = NOW() WHERE id = ?");
+            return $stmt->execute([$newStatus, $businessId]);
+        } catch (PDOException $e) {
+            error_log("Error toggling business status: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function verifyBusiness($businessId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if business exists
+            $stmt = $conn->prepare("SELECT id FROM businesses WHERE id = ?");
+            $stmt->execute([$businessId]);
+            if (!$stmt->fetch()) {
+                return false;
+            }
+
+            // Mark as verified
+            $stmt = $conn->prepare("UPDATE businesses SET verification_status = 'verified', date_updated = NOW() WHERE id = ?");
+            return $stmt->execute([$businessId]);
+        } catch (PDOException $e) {
+            error_log("Error verifying business: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function rejectBusiness($businessId, $reason = null)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if business exists
+            $stmt = $conn->prepare("SELECT id FROM businesses WHERE id = ?");
+            $stmt->execute([$businessId]);
+            if (!$stmt->fetch()) {
+                return false;
+            }
+
+            // Mark as rejected
+            $stmt = $conn->prepare("UPDATE businesses SET verification_status = 'rejected', rejection_reason = ?, date_updated = NOW() WHERE id = ?");
+            return $stmt->execute([$reason, $businessId]);
+        } catch (PDOException $e) {
+            error_log("Error rejecting business: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getBusinessById($businessId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.*, u.first_name, u.last_name, u.email as owner_email
+                FROM businesses b
+                LEFT JOIN users u ON b.owner_id = u.id
+                WHERE b.id = ?
+            ");
+            $stmt->execute([$businessId]);
             return $stmt->fetch();
         } catch (PDOException $e) {
             error_log("Error getting business by ID: " . $e->getMessage());
@@ -58,91 +246,126 @@ class Business
         }
     }
 
-    /**
-     * Get business photos by user ID
-     */
-    public function getBusinessPhotos($userId)
+    public function getBusinessByOwnerId($ownerId)
     {
         try {
-            $sql = "SELECT * FROM business_photo WHERE user_id = ? ORDER BY id ASC";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$userId]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.*, u.first_name, u.last_name, u.email as owner_email
+                FROM businesses b
+                LEFT JOIN users u ON b.owner_id = u.id
+                WHERE b.owner_id = ?
+            ");
+            $stmt->execute([$ownerId]);
+            return $stmt->fetch();
         } catch (PDOException $e) {
-            error_log("Error getting business photos: " . $e->getMessage());
-            return [];
+            error_log("Error getting business by owner ID: " . $e->getMessage());
+            return false;
         }
     }
 
-    /**
-     * Get similar businesses by location
-     */
-    public function getSimilarBusinesses($excludeId, $location, $limit = 4)
+    public function getBusinessesByType($businessType, $page = 1, $perPage = 10)
     {
         try {
-            $sql = "SELECT b.*, u.name as owner_name, u.phone as owner_phone, u.email as owner_email 
-                    FROM business b 
-                    LEFT JOIN users u ON b.user_id = u.id 
-                    WHERE b.status = 'approved' 
-                    AND b.id != ? 
-                    AND b.location LIKE ? 
-                    ORDER BY b.date_created DESC 
-                    LIMIT ?";
+            $conn = $this->db->getConnection();
+            $offset = ($page - 1) * $perPage;
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$excludeId, '%' . $location . '%', $limit]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Error getting similar businesses: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    /**
-     * Get businesses by category (location-based)
-     */
-    public function getBusinessesByLocation($location, $limit = 6)
-    {
-        try {
-            $sql = "SELECT b.*, u.name as owner_name 
-                    FROM business b 
-                    LEFT JOIN users u ON b.user_id = u.id 
-                    WHERE b.status = 'approved' AND b.location LIKE :location 
-                    ORDER BY b.date_created DESC 
-                    LIMIT :limit";
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':location', '%' . $location . '%', PDO::PARAM_STR);
-            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-            $stmt->execute();
-
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.*, u.first_name, u.last_name, u.email as owner_email
+                FROM businesses b
+                LEFT JOIN users u ON b.owner_id = u.id
+                WHERE b.business_type = ? AND b.status = 'active'
+                ORDER BY b.date_created DESC 
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute([$businessType, $perPage, $offset]);
             return $stmt->fetchAll();
         } catch (PDOException $e) {
-            error_log("Error getting businesses by location: " . $e->getMessage());
+            error_log("Error getting businesses by type: " . $e->getMessage());
             return [];
         }
     }
 
-    /**
-     * Search businesses
-     */
-    public function searchBusinesses($searchTerm, $limit = 12)
+    public function getBusinessesByStatus($status, $page = 1, $perPage = 10)
     {
         try {
-            $sql = "SELECT b.*, u.name as owner_name 
-                    FROM business b 
-                    LEFT JOIN users u ON b.user_id = u.id 
-                    WHERE b.status = 'approved' 
-                    AND (b.name LIKE :search OR b.maelezo LIKE :search OR b.location LIKE :search)
-                    ORDER BY b.date_created DESC 
-                    LIMIT :limit";
+            $conn = $this->db->getConnection();
+            $offset = ($page - 1) * $perPage;
 
-            $stmt = $this->db->prepare($sql);
-            $searchPattern = '%' . $searchTerm . '%';
-            $stmt->bindParam(':search', $searchPattern, PDO::PARAM_STR);
-            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-            $stmt->execute();
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.*, u.first_name, u.last_name, u.email as owner_email
+                FROM businesses b
+                LEFT JOIN users u ON b.owner_id = u.id
+                WHERE b.status = ?
+                ORDER BY b.date_created DESC 
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute([$status, $perPage, $offset]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting businesses by status: " . $e->getMessage());
+            return [];
+        }
+    }
 
+    public function getBusinessesByVerificationStatus($verificationStatus, $page = 1, $perPage = 10)
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $offset = ($page - 1) * $perPage;
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.*, u.first_name, u.last_name, u.email as owner_email
+                FROM businesses b
+                LEFT JOIN users u ON b.owner_id = u.id
+                WHERE b.verification_status = ?
+                ORDER BY b.date_created DESC 
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute([$verificationStatus, $perPage, $offset]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting businesses by verification status: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function searchBusinesses($searchTerm, $businessType = null, $verificationStatus = null, $page = 1, $perPage = 10)
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $offset = ($page - 1) * $perPage;
+
+            $sql = "
+                SELECT 
+                    b.*, u.first_name, u.last_name, u.email as owner_email
+                FROM businesses b
+                LEFT JOIN users u ON b.owner_id = u.id
+                WHERE (b.business_name LIKE ? OR b.description LIKE ? OR b.location LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ?)
+            ";
+            $params = ["%$searchTerm%", "%$searchTerm%", "%$searchTerm%", "%$searchTerm%", "%$searchTerm%"];
+
+            if ($businessType) {
+                $sql .= " AND b.business_type = ?";
+                $params[] = $businessType;
+            }
+
+            if ($verificationStatus) {
+                $sql .= " AND b.verification_status = ?";
+                $params[] = $verificationStatus;
+            }
+
+            $sql .= " ORDER BY b.date_created DESC LIMIT ? OFFSET ?";
+            $params[] = $perPage;
+            $params[] = $offset;
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Error searching businesses: " . $e->getMessage());
@@ -150,92 +373,79 @@ class Business
         }
     }
 
-    /**
-     * Get business statistics
-     */
-    public function getBusinessStats()
+    public function getBusinessesByLocation($location, $page = 1, $perPage = 10)
     {
         try {
-            $sql = "SELECT 
-                        COUNT(*) as total_businesses,
-                        COUNT(CASE WHEN status = 'approved' THEN 1 END) as approved_businesses,
-                        COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_businesses
-                    FROM business";
+            $conn = $this->db->getConnection();
+            $offset = ($page - 1) * $perPage;
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-
-            return $stmt->fetch();
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.*, u.first_name, u.last_name, u.email as owner_email
+                FROM businesses b
+                LEFT JOIN users u ON b.owner_id = u.id
+                WHERE b.location LIKE ? AND b.status = 'active'
+                ORDER BY b.date_created DESC 
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute(["%$location%", $perPage, $offset]);
+            return $stmt->fetchAll();
         } catch (PDOException $e) {
-            error_log("Error getting business stats: " . $e->getMessage());
-            return [
-                'total_businesses' => 0,
-                'approved_businesses' => 0,
-                'pending_businesses' => 0
-            ];
+            error_log("Error getting businesses by location: " . $e->getMessage());
+            return [];
         }
     }
 
-    /**
-     * Format date
-     */
-    public function formatDate($date)
+    public function getBusinessReport($startDate = null, $endDate = null)
     {
-        if (empty($date)) {
-            return 'Hivi karibuni';
-        }
+        try {
+            $conn = $this->db->getConnection();
 
-        $timestamp = strtotime($date);
-        if ($timestamp === false) {
-            return 'Hivi karibuni';
-        }
+            $sql = "
+                SELECT 
+                    business_type,
+                    verification_status,
+                    status,
+                    COUNT(*) as count
+                FROM businesses
+            ";
+            $params = [];
 
-        $now = time();
-        $diff = $now - $timestamp;
+            if ($startDate && $endDate) {
+                $sql .= " WHERE date_created BETWEEN ? AND ?";
+                $params = [$startDate, $endDate];
+            }
 
-        if ($diff < 60) {
-            return 'Hivi karibuni';
-        } elseif ($diff < 3600) {
-            $minutes = floor($diff / 60);
-            return "Mda wa dakika $minutes";
-        } elseif ($diff < 86400) {
-            $hours = floor($diff / 3600);
-            return "Mda wa saa $hours";
-        } elseif ($diff < 2592000) {
-            $days = floor($diff / 86400);
-            return "Mda wa siku $days";
-        } else {
-            return date('d/m/Y', $timestamp);
+            $sql .= " GROUP BY business_type, verification_status, status ORDER BY business_type, verification_status";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting business report: " . $e->getMessage());
+            return [];
         }
     }
 
-    /**
-     * Truncate text
-     */
-    public function truncateText($text, $length = 100)
+    public function getBusinessTypeStats()
     {
-        if (strlen($text) <= $length) {
-            return $text;
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    business_type,
+                    COUNT(*) as count
+                FROM businesses 
+                WHERE status = 'active'
+                GROUP BY business_type 
+                ORDER BY count DESC
+            ");
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting business type stats: " . $e->getMessage());
+            return [];
         }
-
-        return substr($text, 0, $length) . '...';
-    }
-
-    /**
-     * Get image URL
-     */
-    public function getImageUrl($photoPath)
-    {
-        if (empty($photoPath)) {
-            return asset('images/business/default-business.jpg');
-        }
-
-        // Check if it's already a full URL
-        if (filter_var($photoPath, FILTER_VALIDATE_URL)) {
-            return $photoPath;
-        }
-
-        // Return relative path
-        return 'uploads/Business/' . $photoPath;
     }
 }

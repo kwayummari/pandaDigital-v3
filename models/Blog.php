@@ -57,6 +57,11 @@ class Blog
         try {
             $conn = $this->db->getConnection();
 
+            // Get total blogs
+            $stmt = $conn->prepare("SELECT COUNT(*) as total_blogs FROM blog");
+            $stmt->execute();
+            $blogsResult = $stmt->fetch();
+
             // Get total views
             $stmt = $conn->prepare("SELECT COUNT(*) as total_views FROM blog_views");
             $stmt->execute();
@@ -73,6 +78,7 @@ class Blog
             $authorsResult = $stmt->fetch();
 
             return [
+                'total_blogs' => $blogsResult['total_blogs'] ?? 0,
                 'total_views' => $viewsResult['total_views'] ?? 0,
                 'total_comments' => $commentsResult['total_comments'] ?? 0,
                 'total_authors' => $authorsResult['total_authors'] ?? 0
@@ -80,6 +86,7 @@ class Blog
         } catch (PDOException $e) {
             error_log("Error getting overall blog stats: " . $e->getMessage());
             return [
+                'total_blogs' => 0,
                 'total_views' => 0,
                 'total_comments' => 0,
                 'total_authors' => 0
@@ -327,5 +334,167 @@ class Blog
             error_log("Error getting blog comments: " . $e->getMessage());
             return [];
         }
+    }
+
+    public function getLatestPosts($limit = 6)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.title, b.excerpt, b.category, b.date_created,
+                    u.first_name, u.last_name,
+                    COUNT(DISTINCT v.id) as views,
+                    COUNT(DISTINCT c.id) as comments
+                FROM blog b
+                LEFT JOIN users u ON b.author_id = u.id
+                LEFT JOIN blog_views v ON b.id = v.blog_id
+                LEFT JOIN blog_comments c ON b.id = c.blog_id
+                WHERE b.status = 'published'
+                GROUP BY b.id
+                ORDER BY b.date_created DESC 
+                LIMIT ?
+            ");
+            $stmt->execute([$limit]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting latest blog posts: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getRecentBlogs($limit = 5)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.title, b.excerpt, b.category, b.status, b.date_created,
+                    u.first_name, u.last_name
+                FROM blog b
+                LEFT JOIN users u ON b.author_id = u.id
+                ORDER BY b.date_created DESC 
+                LIMIT ?
+            ");
+            $stmt->execute([$limit]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting recent blogs: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getPostById($postId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Increment view count first
+            $this->incrementViews($postId);
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.title, b.excerpt, b.content, b.category, b.status, b.date_created,
+                    b.photo, b.author_id,
+                    u.first_name, u.last_name, u.email as author_email,
+                    COUNT(DISTINCT v.id) as views,
+                    COUNT(DISTINCT c.id) as comments
+                FROM blog b
+                LEFT JOIN users u ON b.author_id = u.id
+                LEFT JOIN blog_views v ON b.id = v.blog_id
+                LEFT JOIN blog_comments c ON b.id = c.blog_id
+                WHERE b.id = ? AND b.status = 'published'
+                GROUP BY b.id
+            ");
+            $stmt->execute([$postId]);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Error getting blog post by ID: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getRelatedPosts($postId, $category, $limit = 3)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.title, b.excerpt, b.category, b.date_created,
+                    u.first_name, u.last_name,
+                    COUNT(DISTINCT v.id) as views
+                FROM blog b
+                LEFT JOIN users u ON b.author_id = u.id
+                LEFT JOIN blog_views v ON b.id = v.blog_id
+                WHERE b.id != ? AND b.category = ? AND b.status = 'published'
+                GROUP BY b.id
+                ORDER BY b.date_created DESC 
+                LIMIT ?
+            ");
+            $stmt->execute([$postId, $category, $limit]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting related blog posts: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getImageUrl($imageName)
+    {
+        // Check if it's a full URL or just filename
+        if (filter_var($imageName, FILTER_VALIDATE_URL)) {
+            return $imageName;
+        }
+
+        // Check if image exists in uploads directory
+        $imagePath = __DIR__ . '/../uploads/Blog/' . $imageName;
+        if (file_exists($imagePath)) {
+            return 'uploads/Blog/' . $imageName;
+        }
+
+        // Fallback to a default image
+        return 'images/blog/default-blog.jpg';
+    }
+
+    public function formatDate($dateString)
+    {
+        if (empty($dateString)) {
+            return 'Hivi karibuni';
+        }
+
+        $timestamp = strtotime($dateString);
+        if ($timestamp === false) {
+            return 'Hivi karibuni';
+        }
+
+        $now = time();
+        $diff = $now - $timestamp;
+
+        if ($diff < 60) {
+            return 'Hivi karibuni';
+        } elseif ($diff < 3600) {
+            $minutes = floor($diff / 60);
+            return "Mda wa dakika $minutes";
+        } elseif ($diff < 86400) {
+            $hours = floor($diff / 3600);
+            return "Mda wa saa $hours";
+        } elseif ($diff < 2592000) {
+            $days = floor($diff / 86400);
+            return "Mda wa siku $days";
+        } else {
+            return date('d/m/Y', $timestamp);
+        }
+    }
+
+    public function truncateText($text, $length = 100)
+    {
+        if (strlen($text) <= $length) {
+            return $text;
+        }
+
+        return substr($text, 0, $length) . '...';
     }
 }

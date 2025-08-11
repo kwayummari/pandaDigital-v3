@@ -18,10 +18,10 @@ if (!$post) {
 }
 
 // Get related posts
-$relatedPosts = $blogModel->getLatestPosts(3, $id);
+$relatedPosts = $blogModel->getRelatedPosts($id, $post['category'], 3);
 
 // Set page title
-$pageTitle = htmlspecialchars($post['name']) . ' - ' . env('APP_NAME');
+$pageTitle = htmlspecialchars($post['title']) . ' - ' . env('APP_NAME');
 ?>
 
 <!DOCTYPE html>
@@ -61,10 +61,10 @@ $pageTitle = htmlspecialchars($post['name']) . ' - ' . env('APP_NAME');
                         <ol class="breadcrumb justify-content-center">
                             <li class="breadcrumb-item"><a href="<?= app_url() ?>">Nyumbani</a></li>
                             <li class="breadcrumb-item"><a href="<?= app_url('index.php#habari') ?>">Habari</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($post['name']) ?></li>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($post['title']) ?></li>
                         </ol>
                     </nav>
-                    <h1 class="page-title"><?= htmlspecialchars($post['name']) ?></h1>
+                    <h1 class="page-title"><?= htmlspecialchars($post['title']) ?></h1>
                     <p class="page-subtitle">Habari za hivi karibuni na ujuzi wa kidijitali</p>
                 </div>
             </div>
@@ -80,8 +80,8 @@ $pageTitle = htmlspecialchars($post['name']) . ' - ' . env('APP_NAME');
                     <div class="blog-main" data-aos="fade-up">
                         <!-- Blog Image -->
                         <div class="blog-image mb-4">
-                            <img src="<?= $blogModel->getImageUrl($post['photo']) ?>"
-                                alt="<?= htmlspecialchars($post['name']) ?>"
+                            <img src="<?= $blogModel->getImageUrl($post['photo'] ?? '') ?>"
+                                alt="<?= htmlspecialchars($post['title']) ?>"
                                 class="img-fluid rounded shadow">
                         </div>
 

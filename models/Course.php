@@ -793,4 +793,53 @@ class Course
             return [];
         }
     }
+
+    public function getCourseCategories()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    category,
+                    COUNT(*) as course_count
+                FROM course 
+                WHERE status = 'active'
+                GROUP BY category 
+                ORDER BY course_count DESC
+            ");
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting course categories: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getFeaturedCourses($limit = 8)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    c.id, c.name, c.description, c.category, c.price, c.photo,
+                    c.difficulty_level, c.estimated_duration,
+                    COUNT(DISTINCT e.id) as total_enrollments,
+                    AVG(r.rating) as average_rating
+                FROM course c
+                LEFT JOIN enrolled e ON c.id = e.course_id
+                LEFT JOIN course_ratings r ON c.id = r.course_id
+                WHERE c.status = 'active'
+                GROUP BY c.id
+                ORDER BY total_enrollments DESC, average_rating DESC
+                LIMIT ?
+            ");
+            $stmt->execute([$limit]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting featured courses: " . $e->getMessage());
+            return [];
+        }
+    }
 }
