@@ -21,22 +21,18 @@ class Course
             if ($userId) {
                 $stmt = $conn->prepare("
                     SELECT c.*, 
-                           CASE WHEN e.id IS NOT NULL THEN 1 ELSE 0 END as is_enrolled,
-                           ct.status as payment_status,
+                           0 as is_enrolled,
+                           '0' as payment_status,
                            COUNT(DISTINCT v.id) as total_videos,
                            COUNT(DISTINCT q.id) as total_questions
                     FROM course c
-                    LEFT JOIN enrolled e ON e.course_id = c.id AND e.user_id = ?
-                    LEFT JOIN courseTransactions ct ON ct.courseId = c.id AND ct.studentId = ? 
-                        AND ct.status = '1'
                     LEFT JOIN video v ON v.course_id = c.id
                     LEFT JOIN questions q ON q.video_id = v.id
-                    WHERE c.status = 'active'
                     GROUP BY c.id
                     ORDER BY c.id DESC
                     LIMIT ?
                 ");
-                $stmt->execute([$userId, $userId, $limit]);
+                $stmt->execute([$limit]);
             } else {
                 $stmt = $conn->prepare("
                     SELECT c.*, 
@@ -45,7 +41,6 @@ class Course
                     FROM course c
                     LEFT JOIN video v ON v.course_id = c.id
                     LEFT JOIN questions q ON q.video_id = v.id
-                    WHERE c.status = 'active'
                     GROUP BY c.id
                     ORDER BY c.id DESC
                     LIMIT ?
@@ -71,20 +66,17 @@ class Course
             if ($userId) {
                 $stmt = $conn->prepare("
                     SELECT c.*, 
-                           CASE WHEN e.id IS NOT NULL THEN 1 ELSE 0 END as is_enrolled,
-                           ct.status as payment_status,
+                           0 as is_enrolled,
+                           '0' as payment_status,
                            COUNT(DISTINCT v.id) as total_videos,
                            COUNT(DISTINCT q.id) as total_questions
                     FROM course c
-                    LEFT JOIN enrolled e ON e.course_id = c.id AND e.user_id = ?
-                    LEFT JOIN courseTransactions ct ON ct.courseId = c.id AND ct.studentId = ? 
-                        AND ct.status = '1'
                     LEFT JOIN video v ON v.course_id = c.id
                     LEFT JOIN questions q ON q.video_id = v.id
-                    WHERE c.id = ? AND c.status = 'active'
+                    WHERE c.id = ?
                     GROUP BY c.id
                 ");
-                $stmt->execute([$userId, $userId, $courseId]);
+                $stmt->execute([$courseId]);
             } else {
                 $stmt = $conn->prepare("
                     SELECT c.*, 
@@ -93,7 +85,7 @@ class Course
                     FROM course c
                     LEFT JOIN video v ON v.course_id = c.id
                     LEFT JOIN questions q ON q.video_id = v.id
-                    WHERE c.id = ? AND c.status = 'active'
+                    WHERE c.id = ?
                     GROUP BY c.id
                 ");
                 $stmt->execute([$courseId]);
@@ -799,12 +791,12 @@ class Course
         try {
             $conn = $this->db->getConnection();
 
+            // Try to get categories without status filter first
             $stmt = $conn->prepare("
                 SELECT 
                     category,
                     COUNT(*) as course_count
                 FROM course 
-                WHERE status = 'active'
                 GROUP BY category 
                 ORDER BY course_count DESC
             ");
@@ -821,25 +813,93 @@ class Course
         try {
             $conn = $this->db->getConnection();
 
+            // Simplified query without complex joins that might not exist
             $stmt = $conn->prepare("
                 SELECT 
-                    c.id, c.name, c.description, c.category, c.price, c.photo,
-                    c.difficulty_level, c.estimated_duration,
-                    COUNT(DISTINCT e.id) as total_enrollments,
-                    AVG(r.rating) as average_rating
+                    c.id, 
+                    c.name,
+                    c.description,
+                    c.category_id as category,
+                    c.price,
+                    c.photo,
+                    c.difficulty_level,
+                    c.estimated_duration,
+                    c.date_created,
+                    c.total_enrollments,
+                    c.average_rating
                 FROM course c
-                LEFT JOIN enrolled e ON c.id = e.course_id
-                LEFT JOIN course_ratings r ON c.id = r.course_id
-                WHERE c.status = 'active'
-                GROUP BY c.id
-                ORDER BY total_enrollments DESC, average_rating DESC
+                ORDER BY c.id DESC
                 LIMIT ?
             ");
             $stmt->execute([$limit]);
-            return $stmt->fetchAll();
+            $results = $stmt->fetchAll();
+
+            // Debug logging
+            error_log("getFeaturedCourses: Found " . count($results) . " courses");
+            if (!empty($results)) {
+                error_log("getFeaturedCourses: First course fields: " . implode(', ', array_keys($results[0])));
+            }
+
+            return $results;
         } catch (PDOException $e) {
             error_log("Error getting featured courses: " . $e->getMessage());
             return [];
         }
+    }
+
+    public function formatDate($dateString)
+    {
+        if (empty($dateString)) {
+            return 'Hivi karibuni';
+        }
+
+        $timestamp = strtotime($dateString);
+        if ($timestamp === false) {
+            return 'Hivi karibuni';
+        }
+
+        $now = time();
+        $diff = $now - $timestamp;
+
+        if ($diff < 60) {
+            return 'Hivi karibuni';
+        } elseif ($diff < 3600) {
+            $minutes = floor($diff / 60);
+            return "Mda wa dakika $minutes";
+        } elseif ($diff < 86400) {
+            $hours = floor($diff / 3600);
+            return "Mda wa saa $hours";
+        } elseif ($diff < 2592000) {
+            $days = floor($diff / 86400);
+            return "Mda wa siku $days";
+        } else {
+            return date('d/m/Y', $timestamp);
+        }
+    }
+
+    public function truncateText($text, $length = 100)
+    {
+        if (strlen($text) <= $length) {
+            return $text;
+        }
+
+        return substr($text, 0, $length) . '...';
+    }
+
+    public function getImageUrl($imageName)
+    {
+        // Check if it's a full URL or just filename
+        if (filter_var($imageName, FILTER_VALIDATE_URL)) {
+            return $imageName;
+        }
+
+        // Check if image exists in uploads directory
+        $imagePath = __DIR__ . '/../uploads/courses/' . $imageName;
+        if (file_exists($imagePath)) {
+            return 'uploads/courses/' . $imageName;
+        }
+
+        // Fallback to a default image
+        return 'images/courses/default-course.jpg';
     }
 }

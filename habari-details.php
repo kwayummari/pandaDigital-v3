@@ -18,7 +18,7 @@ if (!$post) {
 }
 
 // Get related posts
-$relatedPosts = $blogModel->getRelatedPosts($id, $post['category'], 3);
+$relatedPosts = $blogModel->getRelatedPosts($id, 3);
 
 // Set page title
 $pageTitle = htmlspecialchars($post['title']) . ' - ' . env('APP_NAME');
@@ -57,11 +57,11 @@ $pageTitle = htmlspecialchars($post['title']) . ' - ' . env('APP_NAME');
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
-                    <nav aria-label="breadcrumb">
+                    <nav aria-label="breadcrumb text-dark">
                         <ol class="breadcrumb justify-content-center">
-                            <li class="breadcrumb-item"><a href="<?= app_url() ?>">Nyumbani</a></li>
-                            <li class="breadcrumb-item"><a href="<?= app_url('index.php#habari') ?>">Habari</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($post['title']) ?></li>
+                            <li class="breadcrumb-item" style="color: #000000;"><a href="<?= app_url() ?>" style="color: #000000;">Nyumbani</a></li>
+                            <li class="breadcrumb-item" style="color: #000000;"><a href="<?= app_url('index.php#habari') ?>" style="color: #000000;">Habari</a></li>
+                            <li class="breadcrumb-item active" style="color: #000000;" aria-current="page"><?= htmlspecialchars($post['title']) ?></li>
                         </ol>
                     </nav>
                     <h1 class="page-title"><?= htmlspecialchars($post['title']) ?></h1>
@@ -99,7 +99,7 @@ $pageTitle = htmlspecialchars($post['title']) . ' - ' . env('APP_NAME');
                                     <div class="col-md-6 mb-3">
                                         <div class="meta-item">
                                             <i class="fas fa-user text-primary me-2"></i>
-                                            <span>Mwandishi: <?= htmlspecialchars($post['author'] ?? 'Admin') ?></span>
+                                            <span>Mwandishi: <?= htmlspecialchars($post['first_name'] . ' ' . $post['last_name']) ?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -109,7 +109,7 @@ $pageTitle = htmlspecialchars($post['title']) . ' - ' . env('APP_NAME');
                             <div class="blog-description mb-4">
                                 <h3 class="section-subtitle">Maelezo</h3>
                                 <div class="description-content">
-                                    <?= $post['maelezo'] ?>
+                                    <?= $post['excerpt'] ?>
                                 </div>
                             </div>
 
@@ -184,13 +184,13 @@ $pageTitle = htmlspecialchars($post['title']) . ' - ' . env('APP_NAME');
                                                 <div class="row">
                                                     <div class="col-4">
                                                         <img src="<?= $blogModel->getImageUrl($related['photo']) ?>"
-                                                            alt="<?= htmlspecialchars($related['name']) ?>"
+                                                            alt="<?= htmlspecialchars($related['title']) ?>"
                                                             class="img-fluid rounded">
                                                     </div>
                                                     <div class="col-8">
                                                         <h6 class="recent-title">
                                                             <a href="<?= app_url('habari-details.php?id=' . $related['id']) ?>">
-                                                                <?= htmlspecialchars($related['name']) ?>
+                                                                <?= htmlspecialchars($related['title']) ?>
                                                             </a>
                                                         </h6>
                                                         <small class="text-muted">

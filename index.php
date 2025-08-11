@@ -226,8 +226,8 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                                     <span><i class="fas fa-calendar me-1"></i><?= $blogModel->formatDate($post['date_created']) ?></span>
                                     <span><i class="fas fa-user me-1"></i>Panda Digital</span>
                                 </div>
-                                <h4 class="news-title"><?= htmlspecialchars($post['name']) ?></h4>
-                                <p class="news-excerpt"><?= $blogModel->truncateText($post['maelezo']) ?></p>
+                                <h4 class="news-title"><?= htmlspecialchars($post['title']) ?></h4>
+                                <p class="news-excerpt"><?= $blogModel->truncateText($post['excerpt']) ?></p>
                                 <a href="<?= app_url('habari-details.php?id=' . $post['id']) ?>" class="btn btn-primary btn-sm">
                                     <i class="fas fa-arrow-right me-1"></i>Soma Zaidi
                                 </a>

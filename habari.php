@@ -47,47 +47,26 @@ include 'includes/header.php';
             </div>
         </div>
 
-        <div class="row g-4">
+        <div class="row">
             <?php if (!empty($featuredBlogPosts)): ?>
-                <?php foreach ($featuredBlogPosts as $index => $blogPost): ?>
-                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
-                        <div class="blog-card h-100">
-                            <div class="blog-image">
-                                <?php if (!empty($blogPost['photo'])): ?>
-                                    <img src="<?= $blogModel->getImageUrl($blogPost['photo']) ?>" alt="<?= htmlspecialchars($blogPost['name']) ?>" class="img-fluid">
-                                <?php else: ?>
-                                    <img src="<?= upload_url('Blog/TDA4.jpg') ?>" alt="Default Blog Image" class="img-fluid">
-                                <?php endif; ?>
-                                <div class="blog-overlay">
-                                    <div class="blog-actions">
-                                        <a href="habari-details.php?id=<?= $blogPost['id'] ?>" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-eye me-2"></i>Soma Zaidi
-                                        </a>
-                                    </div>
+                <?php foreach ($featuredBlogPosts as $index => $post): ?>
+                    <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="<?= ($index + 1) * 100 ?>">
+                        <div class="news-card">
+                            <?php if ($post['photo']): ?>
+                                <div class="news-image" style="background-image: url('<?= $blogModel->getImageUrl($post['photo']) ?>');"></div>
+                            <?php else: ?>
+                                <div class="news-image" style="background-image: url('<?= asset('images/blog/post-1.jpg') ?>');"></div>
+                            <?php endif; ?>
+                            <div class="news-content">
+                                <div class="news-meta">
+                                    <span><i class="fas fa-calendar me-1"></i><?= $blogModel->formatDate($post['date_created']) ?></span>
+                                    <span><i class="fas fa-user me-1"></i>Panda Digital</span>
                                 </div>
-                            </div>
-                            <div class="blog-content p-4">
-                                <div class="blog-meta mb-2">
-                                    <span class="badge bg-primary me-2">Habari</span>
-                                    <span class="badge bg-secondary"><?= $blogModel->formatDate($blogPost['date_created']) ?></span>
-                                </div>
-                                <h5 class="blog-title mb-3">
-                                    <a href="habari-details.php?id=<?= $blogPost['id'] ?>" class="text-decoration-none"><?= htmlspecialchars($blogPost['name']) ?></a>
-                                </h5>
-                                <p class="blog-excerpt text-muted mb-3"><?= $blogModel->truncateText($blogPost['maelezo']) ?></p>
-
-                                <div class="blog-footer d-flex justify-content-between align-items-center">
-                                    <div class="blog-date">
-                                        <small class="text-muted">
-                                            <i class="fas fa-calendar me-1"></i><?= $blogModel->formatDate($blogPost['date_created']) ?>
-                                        </small>
-                                    </div>
-                                    <div class="blog-read">
-                                        <a href="habari-details.php?id=<?= $blogPost['id'] ?>" class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-book-open me-1"></i>Soma Makala
-                                        </a>
-                                    </div>
-                                </div>
+                                <h4 class="news-title"><?= htmlspecialchars($post['title']) ?></h4>
+                                <p class="news-excerpt"><?= $blogModel->truncateText($post['excerpt']) ?></p>
+                                <a href="habari-details.php?id=<?= $post['id'] ?>" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-arrow-right me-1"></i>Soma Zaidi
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -237,100 +216,64 @@ include 'includes/header.php';
 <?php include 'includes/footer.php'; ?>
 
 <style>
-    /* Blog card styles */
-    .blog-card {
+    /* News Card Styles (same as homepage) */
+    .news-card {
         background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
         transition: all 0.3s ease;
-        border: 1px solid #e2e8f0;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .blog-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-
-    .blog-image {
-        position: relative;
-        overflow: hidden;
-        height: 280px;
-    }
-
-    .blog-image img {
-        width: 100%;
         height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-        object-position: center top;
+        border: 1px solid #e9ecef;
     }
 
-    .blog-card:hover .blog-image img {
-        transform: scale(1.1);
+    .news-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     }
 
-    .blog-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
+    .news-image {
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+    }
+
+    .news-content {
+        padding: 1.5rem;
+    }
+
+    .news-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .news-meta span {
         display: flex;
         align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.3s ease;
     }
 
-    .blog-card:hover .blog-overlay {
-        opacity: 1;
-    }
-
-    .blog-content {
-        padding: 2rem;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .blog-title {
+    .news-title {
         font-size: 1.25rem;
         font-weight: 600;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
         color: #1e293b;
+        line-height: 1.4;
     }
 
-    .blog-excerpt {
-        flex: 1;
-        margin-bottom: 1rem;
+    .news-excerpt {
         color: #64748b;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
     }
 
-    /* Link styling - remove underlines */
-    .blog-card a {
-        text-decoration: none;
-        color: inherit;
-        transition: color 0.3s ease;
-    }
 
-    .blog-card a:hover {
-        color: var(--primary-color, #ffbc3b);
-        text-decoration: none;
-    }
 
-    .blog-title a {
-        color: #1e293b;
-        text-decoration: none;
-    }
 
-    .blog-title a:hover {
-        color: var(--primary-color, #ffbc3b);
-        text-decoration: none;
-    }
 
     /* Page header styles */
     .page-header {

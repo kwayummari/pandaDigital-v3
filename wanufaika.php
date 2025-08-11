@@ -86,7 +86,7 @@ include 'includes/header.php';
                                     <span class="badge bg-secondary"><?= $wanufaikaModel->formatDate($wanufaika['date_created']) ?></span>
                                 </div>
                                 <h5 class="wanufaika-title mb-3">
-                                    <a href="wanufaika-details.php?id=<?= $wanufaika['id'] ?>" class="text-decoration-none"><?= htmlspecialchars($wanufaika['title']) ?></a>
+                                    <span class="text-decoration-none" style="cursor: pointer;" onclick="showWanufaikaDetails(<?= $wanufaika['id'] ?>)"><?= htmlspecialchars($wanufaika['title']) ?></span>
                                 </h5>
                                 <p class="wanufaika-author text-muted mb-2">
                                     <span class="me-1">👤</span><?= htmlspecialchars($wanufaika['name']) ?>

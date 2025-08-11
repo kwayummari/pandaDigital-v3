@@ -92,7 +92,19 @@ include 'includes/header.php';
 
         <div class="row justify-content-center">
             <?php if (!empty($featuredCourses)): ?>
+                <?php
+                // Debug: Show what we got
+                echo "<!-- Debug: Found " . count($featuredCourses) . " courses -->";
+                if (!empty($featuredCourses)) {
+                    echo "<!-- Debug: First course fields: " . implode(', ', array_keys($featuredCourses[0])) . " -->";
+                    echo "<!-- Debug: First course data: " . json_encode($featuredCourses[0]) . " -->";
+                }
+                ?>
                 <?php foreach ($featuredCourses as $index => $course): ?>
+                    <?php
+                    // Debug: Show course data
+                    echo "<!-- Debug Course $index: ID=" . $course['id'] . ", Name=" . htmlspecialchars($course['name']) . " -->";
+                    ?>
                     <div class="col-lg-4 col-sm-6 mb-5" data-aos="fade-up" data-aos-delay="<?= ($index + 1) * 100 ?>">
                         <div class="course-card hover-shadow h-100">
                             <div class="course-image-container">

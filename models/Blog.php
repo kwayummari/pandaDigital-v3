@@ -343,16 +343,11 @@ class Blog
 
             $stmt = $conn->prepare("
                 SELECT 
-                    b.id, b.title, b.excerpt, b.category, b.date_created,
-                    u.first_name, u.last_name,
-                    COUNT(DISTINCT v.id) as views,
-                    COUNT(DISTINCT c.id) as comments
+                    b.id, b.name as title, b.maelezo as excerpt, b.photo, b.date_created,
+                    'Unknown' as first_name, 'Author' as last_name,
+                    0 as views,
+                    0 as comments
                 FROM blog b
-                LEFT JOIN users u ON b.author_id = u.id
-                LEFT JOIN blog_views v ON b.id = v.blog_id
-                LEFT JOIN blog_comments c ON b.id = c.blog_id
-                WHERE b.status = 'published'
-                GROUP BY b.id
                 ORDER BY b.date_created DESC 
                 LIMIT ?
             ");
@@ -371,10 +366,9 @@ class Blog
 
             $stmt = $conn->prepare("
                 SELECT 
-                    b.id, b.title, b.excerpt, b.category, b.status, b.date_created,
-                    u.first_name, u.last_name
+                    b.id, b.name as title, b.maelezo as excerpt, b.photo, b.date_created,
+                    'Unknown' as first_name, 'Author' as last_name
                 FROM blog b
-                LEFT JOIN users u ON b.author_id = u.id
                 ORDER BY b.date_created DESC 
                 LIMIT ?
             ");
@@ -391,22 +385,16 @@ class Blog
         try {
             $conn = $this->db->getConnection();
 
-            // Increment view count first
-            $this->incrementViews($postId);
+
 
             $stmt = $conn->prepare("
                 SELECT 
-                    b.id, b.title, b.excerpt, b.content, b.category, b.status, b.date_created,
-                    b.photo, b.author_id,
-                    u.first_name, u.last_name, u.email as author_email,
-                    COUNT(DISTINCT v.id) as views,
-                    COUNT(DISTINCT c.id) as comments
+                    b.id, b.name as title, b.maelezo as excerpt, b.maelezo as content, b.photo, b.date_created,
+                    'Unknown' as first_name, 'Author' as last_name, 'unknown@example.com' as author_email,
+                    0 as views,
+                    0 as comments
                 FROM blog b
-                LEFT JOIN users u ON b.author_id = u.id
-                LEFT JOIN blog_views v ON b.id = v.blog_id
-                LEFT JOIN blog_comments c ON b.id = c.blog_id
-                WHERE b.id = ? AND b.status = 'published'
-                GROUP BY b.id
+                WHERE b.id = ?
             ");
             $stmt->execute([$postId]);
             return $stmt->fetch();
@@ -416,25 +404,22 @@ class Blog
         }
     }
 
-    public function getRelatedPosts($postId, $category, $limit = 3)
+    public function getRelatedPosts($postId, $limit = 3)
     {
         try {
             $conn = $this->db->getConnection();
 
             $stmt = $conn->prepare("
                 SELECT 
-                    b.id, b.title, b.excerpt, b.category, b.date_created,
-                    u.first_name, u.last_name,
-                    COUNT(DISTINCT v.id) as views
+                    b.id, b.name as title, b.maelezo as excerpt, b.photo, b.date_created,
+                    'Unknown' as first_name, 'Author' as last_name,
+                    0 as views
                 FROM blog b
-                LEFT JOIN users u ON b.author_id = u.id
-                LEFT JOIN blog_views v ON b.id = v.blog_id
-                WHERE b.id != ? AND b.category = ? AND b.status = 'published'
-                GROUP BY b.id
+                WHERE b.id != ?
                 ORDER BY b.date_created DESC 
                 LIMIT ?
             ");
-            $stmt->execute([$postId, $category, $limit]);
+            $stmt->execute([$postId, $limit]);
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Error getting related blog posts: " . $e->getMessage());
@@ -496,5 +481,79 @@ class Blog
         }
 
         return substr($text, 0, $length) . '...';
+    }
+
+    public function getLatestBlogPosts($limit = 12)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Use the actual database structure
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.name as title, b.maelezo as excerpt, b.photo, b.date_created,
+                    'Unknown' as first_name, 'Author' as last_name,
+                    0 as views,
+                    0 as comments
+                FROM blog b
+                ORDER BY b.date_created DESC 
+                LIMIT ?
+            ");
+            $stmt->execute([$limit]);
+            $results = $stmt->fetchAll();
+
+            error_log("Found " . count($results) . " blog posts");
+            return $results;
+        } catch (PDOException $e) {
+            error_log("Error getting latest blog posts: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function searchBlogs($searchTerm, $page = 1, $perPage = 10)
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $offset = ($page - 1) * $perPage;
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.name as title, b.maelezo as excerpt, b.photo, b.date_created,
+                    'Unknown' as first_name, 'Author' as last_name,
+                    0 as views,
+                    0 as comments
+                FROM blog b
+                WHERE (b.name LIKE ? OR b.maelezo LIKE ?)
+                ORDER BY b.date_created DESC 
+                LIMIT ? OFFSET ?
+            ");
+            $searchPattern = "%$searchTerm%";
+            $stmt->execute([$searchPattern, $searchPattern, $perPage, $offset]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error searching blogs: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getAllBlogsForDebug($limit = 20)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.name as title, b.maelezo as excerpt, b.photo, b.date_created,
+                    'Unknown' as first_name, 'Author' as last_name
+                FROM blog b
+                ORDER BY b.date_created DESC 
+                LIMIT ?
+            ");
+            $stmt->execute([$limit]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting all blogs for debug: " . $e->getMessage());
+            return [];
+        }
     }
 }

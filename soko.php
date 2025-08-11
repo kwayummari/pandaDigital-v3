@@ -30,13 +30,13 @@ include 'includes/header.php';
 <!-- Main Content -->
 <section class="section-sm">
     <div class="container">
-        <div class="row">
-            <div class="col-12">
+        <div class="row mt-5">
+            <!-- <div class="col-12">
                 <div class="d-flex align-items-center section-title justify-content-between">
                     <h2 class="mb-0 text-nowrap mr-3">Masoko Yote (<?= $businessCount ?>)</h2>
                     <div class="border-top w-100 border-primary d-none d-sm-block"></div>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div class="row justify-content-center">
