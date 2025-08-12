@@ -422,9 +422,9 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                                                         alt="<?= htmlspecialchars($course['name']) ?>"
                                                         class="img-fluid w-100 h-100 object-fit-cover"
                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                    <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
+                                                    <!-- <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
                                                         <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
-                                                    </div>
+                                                    </div> -->
                                                 <?php else: ?>
                                                     <div class="course-placeholder d-flex align-items-center justify-content-center">
                                                         <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
