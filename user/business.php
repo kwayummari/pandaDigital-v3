@@ -60,7 +60,7 @@ $pendingActivities = count(array_filter($businessActivities, function ($a) {
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=2">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=3">
     <style>
         .business-card {
             border: 2px solid var(--primary-color);

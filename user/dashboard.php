@@ -57,7 +57,7 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=2">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=3">
     <!-- Custom CSS -->
     <style>
         /* All styles now handled by main CSS file */
@@ -417,9 +417,19 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                                     <?php foreach ($displayCourses as $course): ?>
                                         <div class="course-card mb-3">
                                             <div class="course-image">
-                                                <img src="<?= app_url($courseModel->getImageUrl($course['photo'] ?? '')) ?>" 
-                                                     alt="<?= htmlspecialchars($course['name']) ?>" 
-                                                     class="img-fluid w-100 h-100 object-fit-cover">
+                                                <?php if (!empty($course['photo'])): ?>
+                                                    <img src="<?= app_url($courseModel->getImageUrl($course['photo'])) ?>"
+                                                        alt="<?= htmlspecialchars($course['name']) ?>"
+                                                        class="img-fluid w-100 h-100 object-fit-cover"
+                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
+                                                        <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <div class="course-placeholder d-flex align-items-center justify-content-center">
+                                                        <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
+                                                    </div>
+                                                <?php endif; ?>
                                             </div>
                                             <div class="card-body course-body">
                                                 <h6 class="card-title"><?php echo htmlspecialchars($course['name']); ?></h6>
