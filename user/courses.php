@@ -42,7 +42,7 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=3">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=4">
     <style>
         /* Additional course-specific styles */
         .card {
@@ -109,7 +109,6 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                 <div class="row mb-4">
                     <div class="col-12">
                         <h1 class="h3 mb-0">
-                            <i class="fas fa-book me-2" style="color: var(--primary-color);"></i>
                             Kozi Zilizopo
                         </h1>
                         <p class="text-muted">Jifunze na uendelee na maendeleo yako</p>
@@ -121,7 +120,6 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                     <div class="col-md-4">
                         <div class="card stats-card">
                             <div class="card-body text-center">
-                                <i class="fas fa-book fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo count($courses); ?></h3>
                                 <p class="mb-0">Jumla ya Kozi</p>
                             </div>
@@ -130,7 +128,6 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                     <div class="col-md-4">
                         <div class="card stats-card success">
                             <div class="card-body text-center">
-                                <i class="fas fa-user-graduate fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo count($enrolledCourses); ?></h3>
                                 <p class="mb-0">Kozi Zilizosajiliwa</p>
                             </div>
@@ -139,7 +136,6 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                     <div class="col-md-4">
                         <div class="card stats-card info">
                             <div class="card-body text-center">
-                                <i class="fas fa-play-circle fa-2x mb-2"></i>
                                 <h3 class="mb-1">
                                     <?php
                                     $totalLessons = 0;
@@ -158,7 +154,6 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                 <!-- Alerts -->
                 <?php if (isset($success)): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fas fa-check-circle me-2" style="color: var(--primary-color);"></i>
                         <?php echo htmlspecialchars($success); ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
@@ -166,7 +161,6 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
 
                 <?php if (isset($error)): ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fas fa-exclamation-circle me-2" style="color: var(--secondary-color);"></i>
                         <?php echo htmlspecialchars($error); ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
@@ -178,17 +172,17 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                         <ul class="nav nav-pills filter-tabs" id="courseTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all" type="button" role="tab">
-                                    <i class="fas fa-th me-2"></i> Kozi Zote (<?php echo count($courses); ?>)
+                                    Kozi Zote (<?php echo count($courses); ?>)
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="enrolled-tab" data-bs-toggle="pill" data-bs-target="#enrolled" type="button" role="tab">
-                                    <i class="fas fa-user-graduate me-2"></i> Zilizosajiliwa (<?php echo count($enrolledCourses); ?>)
+                                    Zilizosajiliwa (<?php echo count($enrolledCourses); ?>)
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="available-tab" data-bs-toggle="pill" data-bs-target="#available" type="button" role="tab">
-                                    <i class="fas fa-plus-circle me-2"></i> Zilizopo (<?php echo count($courses) - count($enrolledCourses); ?>)
+                                    Zilizopo (<?php echo count($courses) - count($enrolledCourses); ?>)
                                 </button>
                             </li>
                         </ul>
@@ -204,7 +198,19 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                                 <div class="col-lg-4 col-md-6 mb-4">
                                     <div class="card course-card">
                                         <div class="course-image">
-                                            <i class="fas fa-graduation-cap"></i>
+                                            <?php if (!empty($course['photo'])): ?>
+                                                <img src="<?= app_url($courseModel->getImageUrl($course['photo'])) ?>"
+                                                    alt="<?= htmlspecialchars($course['name']) ?>"
+                                                    class="img-fluid w-100 h-100 object-fit-cover"
+                                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
+                                                    <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="course-placeholder d-flex align-items-center justify-content-center">
+                                                    <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
+                                                </div>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="card-body course-body">
                                             <div class="d-flex justify-content-between align-items-start mb-2">
@@ -246,16 +252,14 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
 
                                         <div class="card-footer course-footer bg-transparent border-0">
                                             <?php if ($course['is_enrolled']): ?>
-                                                <a href="/user/course.php?id=<?php echo $course['id']; ?>"
+                                                <a href="<?= app_url('user/course.php?id=' . $course['id']) ?>"
                                                     class="btn btn-continue text-white w-100">
-                                                    <i class="fas fa-play me-2"></i>
                                                     Endelea Kusoma
                                                 </a>
                                             <?php else: ?>
                                                 <form method="POST" class="d-inline">
                                                     <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
                                                     <button type="submit" name="enroll_course" class="btn btn-enroll text-white w-100">
-                                                        <i class="fas fa-plus me-2"></i>
                                                         Jisajili
                                                     </button>
                                                 </form>
@@ -271,11 +275,9 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                     <div class="tab-pane fade" id="enrolled" role="tabpanel">
                         <?php if (empty($enrolledCourses)): ?>
                             <div class="text-center py-5">
-                                <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
                                 <h5>Hujajisajili kwenye kozi yoyote bado!</h5>
                                 <p class="text-muted">Jisajili kwenye kozi moja au zaidi ili uanze kujifunza.</p>
                                 <a href="#available" class="btn btn-primary" data-bs-toggle="pill">
-                                    <i class="fas fa-search me-2"></i>
                                     Tazama Kozi Zilizopo
                                 </a>
                             </div>
@@ -285,7 +287,19 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                                     <div class="col-lg-4 col-md-6 mb-4">
                                         <div class="card course-card">
                                             <div class="course-image">
-                                                <i class="fas fa-graduation-cap"></i>
+                                                <?php if (!empty($course['photo'])): ?>
+                                                    <img src="<?= app_url($courseModel->getImageUrl($course['photo'])) ?>"
+                                                        alt="<?= htmlspecialchars($course['name']) ?>"
+                                                        class="img-fluid w-100 h-100 object-fit-cover"
+                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
+                                                        <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <div class="course-placeholder d-flex align-items-center justify-content-center">
+                                                        <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
+                                                    </div>
+                                                <?php endif; ?>
                                             </div>
                                             <div class="card-body course-body">
                                                 <div class="d-flex justify-content-between align-items-start mb-2">
@@ -331,9 +345,8 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                                             </div>
 
                                             <div class="card-footer course-footer bg-transparent border-0">
-                                                <a href="/user/course.php?id=<?php echo $course['id']; ?>"
+                                                <a href="<?= app_url('user/course.php?id=' . $course['id']) ?>"
                                                     class="btn btn-continue text-white w-100">
-                                                    <i class="fas fa-play me-2"></i>
                                                     Endelea Kusoma
                                                 </a>
                                             </div>
@@ -354,7 +367,6 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
 
                         <?php if (empty($availableCourses)): ?>
                             <div class="text-center py-5">
-                                <i class="fas fa-check-circle fa-3x mb-3" style="color: var(--primary-color);"></i>
                                 <h5>Umesajili kwenye kozi zote zilizopo!</h5>
                                 <p class="text-muted">Hongera! Umesajili kwenye kozi zote. Endelea kujifunza na uendelee na maendeleo yako.</p>
                             </div>
@@ -364,7 +376,19 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                                     <div class="col-lg-4 col-md-6 mb-4">
                                         <div class="card course-card">
                                             <div class="course-image">
-                                                <i class="fas fa-graduation-cap"></i>
+                                                <?php if (!empty($course['photo'])): ?>
+                                                    <img src="<?= app_url($courseModel->getImageUrl($course['photo'])) ?>"
+                                                        alt="<?= htmlspecialchars($course['name']) ?>"
+                                                        class="img-fluid w-100 h-100 object-fit-cover"
+                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
+                                                        <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <div class="course-placeholder d-flex align-items-center justify-content-center">
+                                                        <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
+                                                    </div>
+                                                <?php endif; ?>
                                             </div>
                                             <div class="card-body course-body">
                                                 <div class="d-flex justify-content-between align-items-start mb-2">
@@ -402,7 +426,6 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                                                 <form method="POST" class="d-inline">
                                                     <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
                                                     <button type="submit" name="enroll_course" class="btn btn-enroll text-white w-100">
-                                                        <i class="fas fa-plus me-2"></i>
                                                         Jisajili
                                                     </button>
                                                 </form>

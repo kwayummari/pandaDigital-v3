@@ -21,18 +21,19 @@ class Course
             if ($userId) {
                 $stmt = $conn->prepare("
                     SELECT c.*, 
-                           0 as is_enrolled,
+                           CASE WHEN e.user_id IS NOT NULL THEN 1 ELSE 0 END as is_enrolled,
                            '0' as payment_status,
                            COUNT(DISTINCT v.id) as total_videos,
                            COUNT(DISTINCT q.id) as total_questions
                     FROM course c
                     LEFT JOIN video v ON v.course_id = c.id
                     LEFT JOIN questions q ON q.video_id = v.id
+                    LEFT JOIN enrolled e ON e.course_id = c.id AND e.user_id = ?
                     GROUP BY c.id
                     ORDER BY c.id DESC
                     LIMIT ?
                 ");
-                $stmt->execute([$limit]);
+                $stmt->execute([$userId, $limit]);
             } else {
                 $stmt = $conn->prepare("
                     SELECT c.*, 
@@ -66,17 +67,18 @@ class Course
             if ($userId) {
                 $stmt = $conn->prepare("
                     SELECT c.*, 
-                           0 as is_enrolled,
+                           CASE WHEN e.user_id IS NOT NULL THEN 1 ELSE 0 END as is_enrolled,
                            '0' as payment_status,
                            COUNT(DISTINCT v.id) as total_videos,
                            COUNT(DISTINCT q.id) as total_questions
                     FROM course c
                     LEFT JOIN video v ON v.course_id = c.id
                     LEFT JOIN questions q ON q.video_id = v.id
+                    LEFT JOIN enrolled e ON e.course_id = c.id AND e.user_id = ?
                     WHERE c.id = ?
                     GROUP BY c.id
                 ");
-                $stmt->execute([$courseId]);
+                $stmt->execute([$userId, $courseId]);
             } else {
                 $stmt = $conn->prepare("
                     SELECT c.*, 
