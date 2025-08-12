@@ -69,9 +69,9 @@ class User
 
             $stmt = $conn->prepare("
                 SELECT id, first_name, last_name, email, phone, pass, role, region, business, 
-                       profile_photo, expert_authorization, account_status, date_created
+                       profile_photo, expert_authorization, date_created
                 FROM users 
-                WHERE email = ? AND account_status = 'active'
+                WHERE email = ?
             ");
 
             $stmt->execute([$email]);
@@ -100,9 +100,9 @@ class User
 
             $stmt = $conn->prepare("
                 SELECT id, first_name, last_name, email, phone, role, region, business, 
-                       profile_photo, expert_authorization, account_status, date_created, updated_at
+                       profile_photo, expert_authorization, date_created
                 FROM users 
-                WHERE id = ? AND account_status = 'active'
+                WHERE id = ?
             ");
 
             $stmt->execute([$userId]);
@@ -123,9 +123,9 @@ class User
 
             $stmt = $conn->prepare("
                 SELECT id, first_name, last_name, email, phone, role, region, business, 
-                       profile_photo, expert_authorization, account_status, date_created, updated_at
+                       profile_photo, expert_authorization, date_created
                 FROM users 
-                WHERE email = ? AND account_status = 'active'
+                WHERE email = ?
             ");
 
             $stmt->execute([$email]);

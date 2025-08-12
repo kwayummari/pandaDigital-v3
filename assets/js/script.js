@@ -70,11 +70,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
 
+    console.log('Login form found:', loginForm);
+    console.log('Signup form found:', signupForm);
+
     if (loginForm) {
+        console.log('Adding event listener to login form');
         loginForm.addEventListener('submit', function (e) {
+            console.log('Login form submitted!');
             e.preventDefault();
             handleLogin();
         });
+    } else {
+        console.error('Login form not found!');
     }
 
     if (signupForm) {
@@ -86,9 +93,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Login handler
     function handleLogin() {
+        console.log('handleLogin function called!');
+
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
         const rememberMe = document.getElementById('rememberMe').checked;
+
+        console.log('Form values:', { email, password, rememberMe });
 
         if (!email || !password) {
             showAlert('Tafadhali jaza sehemu zote', 'danger');
@@ -101,22 +112,66 @@ document.addEventListener('DOMContentLoaded', function () {
         submitBtn.innerHTML = '<span class="loading"></span> Inaingia...';
         submitBtn.disabled = true;
 
-        // Simulate API call
-        setTimeout(() => {
-            // Here you would make actual API call
-            console.log('Login attempt:', { email, password, rememberMe });
+        // Make actual API call
+        console.log('Making login API call to:', '/panda/pandadigitalV3/api/auth/login.php');
+        console.log('Login data:', { email, password, remember: rememberMe });
 
-            // Reset button
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
+        fetch('/panda/pandadigitalV3/api/auth/login.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+                remember: rememberMe
+            })
+        })
+            .then(response => {
+                console.log('Login API response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Login API response data:', data);
 
-            // Show success message
-            showAlert('Umeingia kwa mafanikio!', 'success');
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
 
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-            modal.hide();
-        }, 2000);
+                if (data.success) {
+                    // Login successful
+                    showAlert(data.message || 'Umeingia kwa mafanikio!', 'success');
+
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                    modal.hide();
+
+                    // Redirect to dashboard
+                    if (data.redirect_url) {
+                        // Construct full URL with proper prefix
+                        const baseUrl = '/panda/pandadigitalV3';
+                        const redirectUrl = baseUrl + data.redirect_url;
+                        console.log('Redirecting to:', redirectUrl);
+                        window.location.href = redirectUrl;
+                    } else {
+                        // Default redirect to user dashboard
+                        window.location.href = '/panda/pandadigitalV3/user/dashboard.php';
+                    }
+                } else {
+                    // Login failed
+                    showAlert(data.message || 'Kuna tatizo na kuingia. Jaribu tena.', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                // Show error message
+                showAlert('Kuna tatizo na mtandao. Jaribu tena.', 'danger');
+            });
     }
 
     // Signup handler

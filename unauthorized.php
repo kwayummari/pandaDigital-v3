@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/config/init.php";
 require_once __DIR__ . "/services/AuthService.php";
 
 $authService = new AuthService();
@@ -229,15 +230,15 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                             <i class="fas fa-tachometer-alt me-2"></i> Rudi kwenye Dashboard
                         </a>
                     <?php else: ?>
-                        <a href="/login.php" class="btn btn-primary">
+                        <a href="<?= app_url('login.php') ?>" class="btn btn-primary">
                             <i class="fas fa-sign-in-alt me-2"></i> Ingia
                         </a>
-                        <a href="/register.php" class="btn btn-outline-secondary">
+                        <a href="<?= app_url('register.php') ?>" class="btn btn-outline-secondary">
                             <i class="fas fa-user-plus me-2"></i> Jisajili
                         </a>
                     <?php endif; ?>
 
-                    <a href="/" class="btn btn-outline-secondary">
+                    <a href="<?= app_url('') ?>" class="btn btn-outline-secondary">
                         <i class="fas fa-home me-2"></i> Rudi Nyumbani
                     </a>
                 </div>

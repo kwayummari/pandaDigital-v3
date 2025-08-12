@@ -19,11 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 try {
     // Get JSON input
     $input = json_decode(file_get_contents('php://input'), true);
-    
+
     if (!$input) {
         $input = $_POST; // Fallback to POST data
     }
-    
+
     // Validate required fields
     if (empty($input['email']) || empty($input['password'])) {
         http_response_code(400);
@@ -33,24 +33,27 @@ try {
         ]);
         exit();
     }
-    
+
     // Sanitize input
     $email = filter_var(trim($input['email']), FILTER_SANITIZE_EMAIL);
     $password = trim($input['password']);
-    
+
     // Initialize auth service
     $authService = new AuthService();
-    
+
     // Attempt login
     $result = $authService->loginUser($email, $password);
-    
+
     if ($result['valid']) {
         // Login successful
+        // Use the AuthService's role-based redirect
+        $redirectUrl = $authService->getRoleBasedRedirect($result['user']['role']);
+
         echo json_encode([
             'success' => true,
             'message' => $result['message'],
             'user' => $result['user'],
-            'redirect_url' => '/dashboard.php' // or wherever you want to redirect after login
+            'redirect_url' => $redirectUrl
         ]);
     } else {
         // Login failed
@@ -61,7 +64,6 @@ try {
             'field' => $result['field'] ?? 'general'
         ]);
     }
-    
 } catch (Exception $e) {
     error_log("Login error: " . $e->getMessage());
     http_response_code(500);

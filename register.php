@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/config/init.php";
 require_once __DIR__ . "/services/AuthService.php";
 
 // Check if user is already logged in

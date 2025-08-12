@@ -17,7 +17,7 @@
                     <div class="footer-brand">
                         <div class="footer-logo mb-4">
                             <img src="<?= asset('images/logo/logo.png') ?>" alt="<?= htmlspecialchars($appConfig['name']) ?>" height="60">
-                            <span class="ms-3 brand-text"><?= htmlspecialchars($appConfig['name']) ?></span>
+                            <!-- <span class="ms-3 brand-text"><?= htmlspecialchars($appConfig['name']) ?></span> -->
                         </div>
                         <p class="footer-description">
                             <?= htmlspecialchars($appConfig['name']) ?> ni jukwaa la kujifunza na kuendeleza biashara ya kidijitali kwa wanawake Tanzania. Tunakupa fursa za kujifunza ujuzi wa kidijitali na kuendeleza biashara yako.
@@ -242,7 +242,7 @@
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <!-- Custom Scripts -->
-<script src="<?= asset('js/script.js') ?>"></script>
+<script src="<?= asset('js/script.js') ?>?v=<?= time() ?>&cb=<?= uniqid() ?>"></script>
 
 <script>
     // Initialize AOS

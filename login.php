@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/config/init.php";
 require_once __DIR__ . "/services/AuthService.php";
 
 // Check if user is already logged in
@@ -31,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Handle expert authorization pending
             if (isset($result['requires_authorization']) && $result['requires_authorization']) {
-                $error .= ' <a href="/expert/pending-authorization.php" class="alert-link">Tazama hali ya ombi</a>';
+                $error .= ' <a href="' . app_url('expert/pending-authorization.php') . '" class="alert-link">Tazama hali ya ombi</a>';
             }
         }
     }
@@ -265,8 +266,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
 
                 <div class="login-footer">
-                    <p>Huna akaunti? <a href="/register.php">Jisajili hapa</a></p>
-                    <p><a href="/">Rudi Nyumbani</a></p>
+                    <p>Huna akaunti? <a href="<?= app_url('register.php') ?>">Jisajili hapa</a></p>
+                    <p><a href="<?= app_url('') ?>">Rudi Nyumbani</a></p>
                 </div>
             </div>
         </div>

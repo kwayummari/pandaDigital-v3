@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../config/init.php";
 require_once __DIR__ . "/../services/AuthService.php";
 
 class AuthMiddleware
@@ -16,7 +17,7 @@ class AuthMiddleware
     public function requireAuth()
     {
         if (!$this->authService->isLoggedIn()) {
-            header('Location: /login.php');
+            header('Location: ' . app_url('login.php'));
             exit();
         }
 
@@ -32,7 +33,7 @@ class AuthMiddleware
         $this->requireAuth();
 
         if (!$this->authService->hasRole($role)) {
-            header('Location: /unauthorized.php');
+            header('Location: ' . app_url('unauthorized.php'));
             exit();
         }
 
@@ -72,7 +73,7 @@ class AuthMiddleware
         ) {
 
             // Redirect to pending authorization page
-            header('Location: /expert/pending-authorization.php');
+            header('Location: ' . app_url('expert/pending-authorization.php'));
             exit();
         }
     }

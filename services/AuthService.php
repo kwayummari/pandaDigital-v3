@@ -74,7 +74,7 @@ class AuthService
     {
         // Set expert_authorization to 0 (pending) for experts
         $data['expert_authorization'] = '0';
-        $data['account_status'] = 'pending'; // Set account status to pending for experts
+        // Note: account_status removed until database field is added
 
         $userId = $this->userModel->createUser($data);
 
@@ -126,8 +126,9 @@ class AuthService
                 ];
             }
 
+            // Note: account_status check removed until database field is added
             // Check if user is active
-            if (isset($user['account_status']) && $user['account_status'] !== 'active') {
+            if (isset($user['is_active']) && $user['is_active'] != 1) {
                 return [
                     'valid' => false,
                     'message' => 'Akaunti yako imefungwa au haijaudhinishwa. Tafadhali wasiliana na wasimamizi.',
@@ -209,7 +210,19 @@ class AuthService
             return null;
         }
 
-        return $this->userModel->getUserById($_SESSION['user_id']);
+        // Return user data from session instead of re-querying database
+        return [
+            'id' => $_SESSION['user_id'],
+            'email' => $_SESSION['user_email'],
+            'role' => $_SESSION['user_role'],
+            'first_name' => $_SESSION['first_name'],
+            'last_name' => $_SESSION['last_name'],
+            'phone' => $_SESSION['user_phone'] ?? '',
+            'region' => $_SESSION['user_region'] ?? '',
+            'business' => $_SESSION['user_business'] ?? '',
+            'login_time' => $_SESSION['login_time'] ?? '',
+            'expert_authorization' => $_SESSION['expert_authorization'] ?? null
+        ];
     }
 
     /**
@@ -239,7 +252,7 @@ class AuthService
     public function requireAuth()
     {
         if (!$this->isLoggedIn()) {
-            header('Location: /login.php');
+            header('Location: ' . app_url('login.php'));
             exit();
         }
     }
@@ -252,7 +265,7 @@ class AuthService
         $this->requireAuth();
 
         if (!$this->hasRole($role)) {
-            header('Location: /unauthorized.php');
+            header('Location: ' . app_url('unauthorized.php'));
             exit();
         }
     }
@@ -272,10 +285,12 @@ class AuthService
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_role'] = $user['role'];
-        $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
+        $_SESSION['first_name'] = $user['first_name'];
+        $_SESSION['last_name'] = $user['last_name'];
         $_SESSION['user_phone'] = $user['phone'] ?? '';
         $_SESSION['user_region'] = $user['region'] ?? '';
         $_SESSION['user_business'] = $user['business'] ?? '';
+        $_SESSION['expert_authorization'] = $user['expert_authorization'] ?? null;
         $_SESSION['login_time'] = time();
 
         // Set session timeout (24 hours)
@@ -287,14 +302,16 @@ class AuthService
      */
     public function getRoleBasedRedirect($role)
     {
+        // Use the app_url() helper function to get the correct base URL
+        $basePath = app_url('');
         switch ($role) {
             case 'admin':
-                return '/admin/dashboard.php';
+                return $basePath . 'admin/dashboard.php';
             case 'expert':
-                return '/expert/dashboard.php';
+                return $basePath . 'expert/dashboard.php';
             case 'user':
             default:
-                return '/user/dashboard.php';
+                return $basePath . 'user/dashboard.php';
         }
     }
 
