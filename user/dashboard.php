@@ -51,471 +51,21 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=2">
     <!-- Custom CSS -->
     <style>
-        :root {
-            --primary-color: #ffbc3b;
-            --secondary-color: #5f4594;
-        }
+        /* All styles now handled by main CSS file */
+    </style>
 
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-        }
 
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+    cursor: pointer;
+    padding: 5px;
+    }
 
-        .main-content {
-            padding: 20px;
-        }
 
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease;
-            background: white;
-        }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-        }
 
-        .welcome-section {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: 15px;
-            padding: 40px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
 
-        .stats-card {
-            background: linear-gradient(135deg, var(--accent-color), #d35400);
-            color: white;
-        }
-
-        .stats-card.success {
-            background: linear-gradient(135deg, var(--success-color), #229954);
-        }
-
-        .stats-card.info {
-            background: linear-gradient(135deg, var(--info-color), #138496);
-        }
-
-        .stats-card.warning {
-            background: linear-gradient(135deg, var(--warning-color), #d68910);
-        }
-
-        .progress-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            position: relative;
-        }
-
-        .progress-circle::before {
-            content: '';
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-        }
-
-        .progress-text {
-            position: relative;
-            z-index: 1;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--secondary-color);
-        }
-
-        .course-card {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .course-image {
-            height: 120px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 15px 15px 0 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
-        }
-
-        .course-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .course-footer {
-            margin-top: auto;
-        }
-
-        .btn-primary-custom {
-            background: var(--primary-color);
-            border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
-            font-weight: 600;
-        }
-
-        .btn-primary-custom:hover {
-            background: var(--secondary-color);
-            transform: translateY(-1px);
-        }
-
-        .activity-item {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            background: white;
-            border-left: 4px solid var(--primary-color);
-            transition: all 0.3s ease;
-        }
-
-        .activity-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .activity-item.quiz {
-            border-left-color: var(--primary-color);
-        }
-
-        .activity-item.question {
-            border-left-color: var(--secondary-color);
-        }
-
-        .activity-item.course {
-            border-left-color: var(--primary-color);
-        }
-
-        .quick-actions {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            border-radius: 15px;
-            text-decoration: none;
-            color: var(--secondary-color);
-            transition: all 0.3s ease;
-            background: white;
-            border: 1px solid #e9ecef;
-        }
-
-        .action-btn:hover {
-            background: var(--primary-color);
-            color: black;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .action-btn i {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--secondary-color);
-        }
-
-        .action-btn:hover i {
-            color: black;
-        }
-
-        .alert {
-            border-radius: 10px;
-            border: none;
-        }
-
-        /* Dashboard Layout */
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar Styles */
-        .sidebar {
-            width: 280px;
-            background: var(--secondary-color);
-            color: white;
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-brand {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-        }
-
-        .sidebar-brand:hover {
-            color: white;
-        }
-
-        .sidebar-toggle {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        .sidebar-user {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .user-avatar {
-            margin-bottom: 10px;
-        }
-
-        .user-info h6 {
-            color: white;
-            margin-bottom: 5px;
-        }
-
-        .user-info small {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .sidebar-nav {
-            padding: 20px 0;
-            flex: 1;
-        }
-
-        .nav-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .nav-item {
-            margin-bottom: 5px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--primary-color);
-            background: rgba(0, 0, 0, 0.2);
-            border-left-color: var(--primary-color);
-        }
-
-        .nav-link i {
-            width: 20px;
-            margin-right: 12px;
-            text-align: center;
-        }
-
-        .sidebar-footer {
-            padding: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-footer .nav-link {
-            color: rgba(255, 255, 255, 0.9);
-            padding: 10px 0;
-        }
-
-        .sidebar-footer .nav-link:hover {
-            color: var(--primary-color);
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            background: #f8f9fa;
-            min-height: 100vh;
-            transition: all 0.3s ease;
-        }
-
-        /* Top Navigation Bar */
-        .top-navbar {
-            background: white;
-            padding: 15px 30px;
-            border-bottom: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .page-title {
-            color: var(--secondary-color);
-            font-weight: 600;
-            margin-left: 15px;
-        }
-
-        .nav-right .user-dropdown .btn {
-            color: var(--secondary-color);
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: rgba(95, 69, 148, 0.1);
-            border: none;
-        }
-
-        .nav-right .user-dropdown .btn:hover {
-            background: rgba(95, 69, 148, 0.2);
-        }
-
-        /* Content Wrapper */
-        .content-wrapper {
-            padding: 30px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 991.98px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.collapsed {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .dashboard-container.sidebar-collapsed .main-content {
-                margin-left: 0;
-            }
-        }
-
-        @media (min-width: 992px) {
-            .sidebar-toggle {
-                display: none;
-            }
-        }
-
-        /* Update existing styles to use primary/secondary colors */
-        .welcome-section {
-            background: var(--primary-color);
-            color: black;
-            border-radius: 15px;
-            padding: 40px;
-            margin-bottom: 30px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .stats-card {
-            background: var(--primary-color);
-            color: black;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .stats-card.success {
-            background: var(--secondary-color);
-            color: white;
-        }
-
-        .stats-card.info {
-            background: var(--primary-color);
-            color: black;
-        }
-
-        .stats-card.warning {
-            background: var(--secondary-color);
-            color: white;
-        }
-
-        .course-image {
-            background: var(--primary-color);
-            color: black;
-        }
-
-        .btn-primary-custom {
-            background: var(--primary-color);
-            border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
-            font-weight: 600;
-            color: black;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary-custom:hover {
-            background: var(--secondary-color);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .activity-item {
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .action-btn {
-            background: white;
-            border: 1px solid #e9ecef;
-            transition: all 0.3s ease;
-        }
-
-        .action-btn:hover {
-            background: var(--primary-color);
-            color: black;
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
     </style>
 </head>
 
@@ -548,68 +98,47 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                 <ul class="nav-list">
                     <li class="nav-item active">
                         <a href="<?= app_url('user/dashboard.php') ?>" class="nav-link">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span>Dashboard</span>
+                            <span>Nyumbani</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?= app_url('user/courses.php') ?>" class="nav-link">
-                            <i class="fas fa-book"></i>
-                            <span>Kozi Zangu</span>
+                            <span>Kozi</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= app_url('user/profile.php') ?>" class="nav-link">
-                            <i class="fas fa-user-cog"></i>
-                            <span>Wasifu Wangu</span>
+                        <a href="<?= app_url('user/quiz-results.php') ?>" class="nav-link">
+                            <span>Majibu Yangu</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= app_url('uliza-swali.php') ?>" class="nav-link">
-                            <i class="fas fa-question-circle"></i>
-                            <span>Uliza Swali</span>
+                        <a href="<?= app_url('user/certificates.php') ?>" class="nav-link">
+                            <span>Vyeti Vyagu</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= app_url('kozi.php') ?>" class="nav-link">
-                            <i class="fas fa-search"></i>
-                            <span>Tafuta Kozi</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?= app_url('fursa.php') ?>" class="nav-link">
-                            <i class="fas fa-lightbulb"></i>
-                            <span>Fursa</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?= app_url('habari.php') ?>" class="nav-link">
-                            <i class="fas fa-newspaper"></i>
-                            <span>Habari</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?= app_url('soko.php') ?>" class="nav-link">
-                            <i class="fas fa-store"></i>
-                            <span>Soko</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?= app_url('biashara.php') ?>" class="nav-link">
-                            <i class="fas fa-briefcase"></i>
+                        <a href="<?= app_url('user/business.php') ?>" class="nav-link">
                             <span>Biashara</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= app_url('wanufaika.php') ?>" class="nav-link">
-                            <i class="fas fa-users"></i>
-                            <span>Wanufaika</span>
+                        <a href="<?= app_url('user/ask-questions.php') ?>" class="nav-link">
+                            <span>Uliza Maswali</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= app_url('ongea-hub.php') ?>" class="nav-link">
-                            <i class="fas fa-comments"></i>
-                            <span>Ongea Hub</span>
+                        <a href="<?= app_url('user/certificate-history.php') ?>" class="nav-link">
+                            <span>Historia ya Vyeti</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= app_url('user/skill-level.php') ?>" class="nav-link">
+                            <span>Daraja la Uwezo</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= app_url('user/feedback.php') ?>" class="nav-link">
+                            <span>Toa Mrejesho</span>
                         </a>
                     </li>
                 </ul>
@@ -640,11 +169,11 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                             <?php echo htmlspecialchars($currentUser['first_name']); ?>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="<?= app_url('user/profile.php') ?>">
-                                    <i class="fas fa-user-cog me-2"></i>Wasifu Wangu
+                            <li><a class="dropdown-item" href="<?= app_url('user/dashboard.php') ?>">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                                 </a></li>
                             <li><a class="dropdown-item" href="<?= app_url('user/courses.php') ?>">
-                                    <i class="fas fa-book me-2"></i>Kozi Zangu
+                                    <i class="fas fa-book me-2"></i>Kozi
                                 </a></li>
                             <li>
                                 <hr class="dropdown-divider">
@@ -661,7 +190,6 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                 <!-- Welcome Section -->
                 <div class="welcome-section">
                     <h1 class="mb-3">
-                        <i class="fas fa-sun me-2"></i>
                         Karibu tena, <?php echo htmlspecialchars($currentUser['first_name']); ?>!
                     </h1>
                     <p class="lead mb-0">
@@ -672,34 +200,29 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                 <!-- Quick Actions -->
                 <div class="quick-actions">
                     <h4 class="mb-4">
-                        <i class="fas fa-bolt" style="color: var(--primary-color);" class="me-2"></i>
                         Vitendo vya Haraka
                     </h4>
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <a href="<?= app_url('user/courses.php') ?>" class="action-btn">
-                                <i class="fas fa-book"></i>
                                 <span class="fw-bold">Tazama Kozi</span>
                                 <small class="text-muted">Jisajili kwenye kozi mpya</small>
                             </a>
                         </div>
                         <div class="col-md-3 mb-3">
                             <a href="<?= app_url('user/courses.php#enrolled') ?>" class="action-btn">
-                                <i class="fas fa-play-circle"></i>
                                 <span class="fw-bold">Endelea Kusoma</span>
                                 <small class="text-muted">Rudi kwenye kozi uliyosajiliwa</small>
                             </a>
                         </div>
                         <div class="col-md-3 mb-3">
                             <a href="<?= app_url('uliza-swali.php') ?>" class="action-btn">
-                                <i class="fas fa-question-circle"></i>
                                 <span class="fw-bold">Uliza Swali</span>
                                 <small class="text-muted">Pata msaada kutoka kwa mitaalam</small>
                             </a>
                         </div>
                         <div class="col-md-3 mb-3">
                             <a href="<?= app_url('user/profile.php') ?>" class="action-btn">
-                                <i class="fas fa-user-cog"></i>
                                 <span class="fw-bold">Wasifu Wangu</span>
                                 <small class="text-muted">Badilisha maelezo yako</small>
                             </a>
@@ -712,7 +235,6 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                     <div class="col-md-3">
                         <div class="card stats-card">
                             <div class="card-body text-center">
-                                <i class="fas fa-book fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo $totalCourses; ?></h3>
                                 <p class="mb-0">Kozi Zilizosajiliwa</p>
                             </div>
@@ -721,7 +243,6 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                     <div class="col-md-3">
                         <div class="card stats-card success">
                             <div class="card-body text-center">
-                                <i class="fas fa-play-circle fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo $quizStats['videos_completed']; ?></h3>
                                 <p class="mb-0">Masomo Yaliyokamilika</p>
                             </div>
@@ -730,7 +251,6 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                     <div class="col-md-3">
                         <div class="card stats-card info">
                             <div class="card-body text-center">
-                                <i class="fas fa-question-circle fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo $quizStats['total_questions_answered']; ?></h3>
                                 <p class="mb-0">Maswali Yaliyojibiwa</p>
                             </div>
@@ -739,7 +259,6 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                     <div class="col-md-3">
                         <div class="card stats-card warning">
                             <div class="card-body text-center">
-                                <i class="fas fa-star fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo round($quizStats['average_score']); ?>%</h3>
                                 <p class="mb-0">Wastani wa Alama</p>
                             </div>
@@ -753,10 +272,9 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                         <div class="card">
                             <div class="card-body text-center">
                                 <h5 class="mb-3">
-                                    <i class="fas fa-chart-line" style="color: var(--primary-color);" class="me-2"></i>
                                     Maendeleo Yako ya Jumla
                                 </h5>
-                                <div class="progress-circle" style="background: conic-gradient(var(--success-color) 0deg, var(--success-color) <?php echo $overallProgress * 3.6; ?>deg, #e9ecef <?php echo $overallProgress * 3.6; ?>deg, #e9ecef 360deg);">
+                                <div class="progress-circle">
                                     <div class="progress-text"><?php echo round($overallProgress); ?>%</div>
                                 </div>
                                 <p class="text-muted mb-0">
@@ -770,7 +288,6 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="mb-3">
-                                    <i class="fas fa-trophy" style="color: var(--primary-color);" class="me-2"></i>
                                     Mafanikio Yako
                                 </h5>
                                 <div class="row text-center">
@@ -808,14 +325,12 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0">
-                                    <i class="fas fa-history me-2"></i>
                                     Shughuli za Hivi Karibuni
                                 </h5>
                             </div>
                             <div class="card-body">
                                 <?php if (empty($recentQuizAttempts) && empty($userQuestions)): ?>
                                     <div class="text-center py-4">
-                                        <i class="fas fa-info-circle fa-2x text-muted mb-3"></i>
                                         <h6>Hakuna shughuli za hivi karibuni</h6>
                                         <p class="text-muted">Anza kujifunza ili uone shughuli zako hapa</p>
                                     </div>
@@ -860,9 +375,6 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                                     <?php foreach ($recentActivities as $activity): ?>
                                         <div class="activity-item <?php echo $activity['type']; ?>">
                                             <div class="d-flex align-items-center">
-                                                <div class="me-3">
-                                                    <i class="<?php echo $activity['icon']; ?> fa-lg" style="color: <?php echo $activity['color']; ?>;"></i>
-                                                </div>
                                                 <div class="flex-grow-1">
                                                     <h6 class="mb-1"><?php echo htmlspecialchars($activity['title']); ?></h6>
                                                     <p class="mb-1 text-muted"><?php echo htmlspecialchars($activity['description']); ?></p>
@@ -883,18 +395,15 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0">
-                                    <i class="fas fa-book me-2"></i>
                                     Kozi Zako
                                 </h5>
                             </div>
                             <div class="card-body">
                                 <?php if (empty($enrolledCourses)): ?>
                                     <div class="text-center py-4">
-                                        <i class="fas fa-book-open fa-2x text-muted mb-3"></i>
                                         <h6>Hujajisajili kwenye kozi yoyote</h6>
                                         <p class="text-muted">Jisajili kwenye kozi moja au zaidi ili uanze kujifunza</p>
                                         <a href="<?= app_url('user/courses.php') ?>" class="btn btn-primary-custom text-white">
-                                            <i class="fas fa-plus me-2"></i>
                                             Tazama Kozi
                                         </a>
                                     </div>
@@ -902,7 +411,6 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                                     <?php foreach ($enrolledCourses as $course): ?>
                                         <div class="course-card mb-3">
                                             <div class="course-image">
-                                                <i class="fas fa-graduation-cap"></i>
                                             </div>
                                             <div class="card-body course-body">
                                                 <h6 class="card-title"><?php echo htmlspecialchars($course['name']); ?></h6>
@@ -913,7 +421,6 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                                             <div class="card-footer course-footer bg-transparent border-0 p-2">
                                                 <a href="<?= app_url('user/course.php?id=' . $course['id']) ?>"
                                                     class="btn btn-primary-custom text-white btn-sm w-100">
-                                                    <i class="fas fa-play me-2"></i>
                                                     Endelea
                                                 </a>
                                             </div>
@@ -923,7 +430,6 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                                     <?php if (count($enrolledCourses) >= 5): ?>
                                         <div class="text-center mt-3">
                                             <a href="<?= app_url('user/courses.php') ?>" class="btn btn-outline-primary btn-sm">
-                                                <i class="fas fa-eye me-2"></i>
                                                 Tazama Zote
                                             </a>
                                         </div>
