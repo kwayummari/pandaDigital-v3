@@ -262,18 +262,26 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Course Cards */
-.course-image {
+/* Dashboard Course Cards */
+.dashboard-container .course-image {
   background: white;
   border: 1px solid #e9ecef;
   border-top: 3px solid var(--primary-color);
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 15px;
+  overflow: hidden;
+}
+
+.dashboard-container .course-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
 }
 
 /* Progress Bars */

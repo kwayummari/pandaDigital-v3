@@ -214,7 +214,7 @@ class Course
                 JOIN course c ON c.id = e.course_id
                 LEFT JOIN video v ON v.course_id = c.id
                 LEFT JOIN questions q ON q.video_id = v.id
-                WHERE e.user_id = ? AND c.status = 'active'
+                WHERE e.user_id = ?
                 GROUP BY c.id
                 ORDER BY e.date_created DESC
                 LIMIT ?
@@ -224,6 +224,37 @@ class Course
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Error fetching enrolled courses: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get courses user has actually interacted with (based on quiz activity)
+     */
+    public function getUserActiveCourses($userId, $limit = 50)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT DISTINCT c.*, 
+                       COUNT(DISTINCT v.id) as total_videos,
+                       COUNT(DISTINCT q.id) as total_questions,
+                       MAX(a.date_created) as last_activity
+                FROM course c
+                JOIN video v ON v.course_id = c.id
+                JOIN questions q ON q.video_id = v.id
+                JOIN algorithm a ON a.qn_id = q.id
+                WHERE a.user_id = ?
+                GROUP BY c.id
+                ORDER BY last_activity DESC
+                LIMIT ?
+            ");
+
+            $stmt->execute([$userId, $limit]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error fetching active courses: " . $e->getMessage());
             return [];
         }
     }

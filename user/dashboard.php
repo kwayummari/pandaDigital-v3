@@ -37,6 +37,12 @@ if ($totalCourses > 0) {
 
 // Get recent quiz attempts
 $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
+
+// Get courses user has actually interacted with (based on quiz activity)
+$activeCourses = $courseModel->getUserActiveCourses($currentUser['id'], 5);
+
+// Use active courses if no enrolled courses, otherwise use enrolled courses
+$displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
 ?>
 
 <!DOCTYPE html>
@@ -278,7 +284,7 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                                     <div class="progress-text"><?php echo round($overallProgress); ?>%</div>
                                 </div>
                                 <p class="text-muted mb-0">
-                                    Umeendelea na <strong><?php echo $totalCourses; ?></strong> kozi
+                                    Umeendelea na <strong><?php echo count($displayCourses); ?></strong> kozi
                                 </p>
                             </div>
                         </div>
@@ -399,7 +405,7 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                                 </h5>
                             </div>
                             <div class="card-body">
-                                <?php if (empty($enrolledCourses)): ?>
+                                <?php if (empty($displayCourses)): ?>
                                     <div class="text-center py-4">
                                         <h6>Hujajisajili kwenye kozi yoyote</h6>
                                         <p class="text-muted">Jisajili kwenye kozi moja au zaidi ili uanze kujifunza</p>
@@ -408,9 +414,12 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                                         </a>
                                     </div>
                                 <?php else: ?>
-                                    <?php foreach ($enrolledCourses as $course): ?>
+                                    <?php foreach ($displayCourses as $course): ?>
                                         <div class="course-card mb-3">
                                             <div class="course-image">
+                                                <img src="<?= app_url($courseModel->getImageUrl($course['photo'] ?? '')) ?>" 
+                                                     alt="<?= htmlspecialchars($course['name']) ?>" 
+                                                     class="img-fluid w-100 h-100 object-fit-cover">
                                             </div>
                                             <div class="card-body course-body">
                                                 <h6 class="card-title"><?php echo htmlspecialchars($course['name']); ?></h6>
@@ -427,7 +436,7 @@ $recentQuizAttempts = $quizModel->getUserQuizAttempts($currentUser['id'], 5);
                                         </div>
                                     <?php endforeach; ?>
 
-                                    <?php if (count($enrolledCourses) >= 5): ?>
+                                    <?php if (count($displayCourses) >= 5): ?>
                                         <div class="text-center mt-3">
                                             <a href="<?= app_url('user/courses.php') ?>" class="btn btn-outline-primary btn-sm">
                                                 Tazama Zote
