@@ -89,6 +89,57 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
             border-radius: 10px;
             border: none;
         }
+
+        /* Progress bar enhancements */
+        .progress {
+            height: 8px;
+            border-radius: 10px;
+            background-color: #e9ecef;
+            overflow: hidden;
+        }
+
+        /* Clickable course cards */
+        .course-card {
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-card[onclick] {
+            cursor: pointer;
+        }
+
+        .course-card[onclick]:hover {
+            border-color: var(--primary-color);
+        }
+
+        .progress-bar {
+            transition: width 0.6s ease;
+            border-radius: 10px;
+        }
+
+        /* Course progress stats */
+        .course-progress-stats {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        .progress-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
     </style>
 </head>
 
@@ -196,16 +247,16 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                         <div class="row">
                             <?php foreach ($courses as $course): ?>
                                 <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="card course-card">
+                                    <div class="card course-card" style="cursor: pointer;" onclick="window.location.href='<?php echo app_url('user/course-overview.php'); ?>?id=<?= $course['id'] ?>'">
                                         <div class="course-image">
                                             <?php if (!empty($course['photo'])): ?>
                                                 <img src="<?= app_url($courseModel->getImageUrl($course['photo'])) ?>"
                                                     alt="<?= htmlspecialchars($course['name']) ?>"
                                                     class="img-fluid w-100 h-100 object-fit-cover"
                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
+                                                <!-- <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
                                                     <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
-                                                </div>
+                                                </div> -->
                                             <?php else: ?>
                                                 <div class="course-placeholder d-flex align-items-center justify-content-center">
                                                     <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
@@ -252,7 +303,7 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
 
                                         <div class="card-footer course-footer bg-transparent border-0">
                                             <?php if ($course['is_enrolled']): ?>
-                                                <a href="<?= app_url('user/course.php?id=' . $course['id']) ?>"
+                                                <a href="<?php echo app_url('user/course-overview.php'); ?>?id=<?= $course['id'] ?>"
                                                     class="btn btn-continue text-white w-100">
                                                     Endelea Kusoma
                                                 </a>
@@ -285,16 +336,16 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                             <div class="row">
                                 <?php foreach ($enrolledCourses as $course): ?>
                                     <div class="col-lg-4 col-md-6 mb-4">
-                                        <div class="card course-card">
+                                        <div class="card course-card" style="cursor: pointer;" onclick="window.location.href='<?php echo app_url('user/course-overview.php'); ?>?id=<?= $course['id'] ?>'">
                                             <div class="course-image">
                                                 <?php if (!empty($course['photo'])): ?>
                                                     <img src="<?= app_url($courseModel->getImageUrl($course['photo'])) ?>"
                                                         alt="<?= htmlspecialchars($course['name']) ?>"
                                                         class="img-fluid w-100 h-100 object-fit-cover"
                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                    <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
+                                                    <!-- <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
                                                         <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
-                                                    </div>
+                                                    </div> -->
                                                 <?php else: ?>
                                                     <div class="course-placeholder d-flex align-items-center justify-content-center">
                                                         <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
@@ -322,30 +373,43 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                                                         <small class="text-muted">Maendeleo</small>
                                                         <small class="text-muted">
                                                             <?php
-                                                            // This would need to be calculated based on completed lessons
-                                                            echo "0%"; // Placeholder
+                                                            // Calculate real course progress
+                                                            try {
+                                                                $courseProgress = $courseModel->calculateCourseProgress($currentUser['id'], $course['id']);
+                                                                $progressPercentage = round($courseProgress['completion_percentage']);
+                                                                echo $progressPercentage . "%";
+                                                            } catch (Exception $e) {
+                                                                echo "0%";
+                                                                $courseProgress = ['answered_questions' => 0, 'total_questions' => 0];
+                                                            }
                                                             ?>
                                                         </small>
                                                     </div>
                                                     <div class="progress">
-                                                        <div class="progress-bar" style="width: 0%; background-color: var(--primary-color);"></div>
+                                                        <div class="progress-bar" style="width: <?= $progressPercentage ?>%; background-color: var(--primary-color);"
+                                                            role="progressbar" aria-valuenow="<?= $progressPercentage ?>" aria-valuemin="0" aria-valuemax="100">
+                                                        </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="row text-center">
-                                                    <div class="col-6">
+                                                    <div class="col-4">
                                                         <div class="fw-bold" style="color: var(--primary-color);"><?php echo $course['total_videos']; ?></div>
                                                         <small class="text-muted">Masomo</small>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-4">
                                                         <div class="fw-bold" style="color: var(--secondary-color);"><?php echo $course['total_questions']; ?></div>
                                                         <small class="text-muted">Maswali</small>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="fw-bold" style="color: var(--success-color, #28a745);"><?php echo $courseProgress['answered_questions']; ?></div>
+                                                        <small class="text-muted">Umejibu</small>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="card-footer course-footer bg-transparent border-0">
-                                                <a href="<?= app_url('user/course.php?id=' . $course['id']) ?>"
+                                                <a href="<?php echo app_url('user/course-overview.php'); ?>?id=<?= $course['id'] ?>"
                                                     class="btn btn-continue text-white w-100">
                                                     Endelea Kusoma
                                                 </a>
@@ -374,16 +438,16 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
                             <div class="row">
                                 <?php foreach ($availableCourses as $course): ?>
                                     <div class="col-lg-4 col-md-6 mb-4">
-                                        <div class="card course-card">
+                                        <div class="card course-card" style="cursor: pointer;" onclick="window.location.href='<?php echo app_url('user/course-overview.php'); ?>?id=<?= $course['id'] ?>'">
                                             <div class="course-image">
                                                 <?php if (!empty($course['photo'])): ?>
                                                     <img src="<?= app_url($courseModel->getImageUrl($course['photo'])) ?>"
                                                         alt="<?= htmlspecialchars($course['name']) ?>"
                                                         class="img-fluid w-100 h-100 object-fit-cover"
                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                    <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
+                                                    <!-- <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
                                                         <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
-                                                    </div>
+                                                    </div> -->
                                                 <?php else: ?>
                                                     <div class="course-placeholder d-flex align-items-center justify-content-center">
                                                         <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
