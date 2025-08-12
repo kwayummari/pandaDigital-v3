@@ -59,7 +59,7 @@ $pendingQuestions = count(array_filter($userQuestions, function ($q) {
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-questions.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=3">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
     <style>
         .question-card {
             border: 2px solid var(--primary-color);

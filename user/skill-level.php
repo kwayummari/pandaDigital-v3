@@ -72,7 +72,7 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=3">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
     <style>
         .skill-card {
             border: 2px solid var(--primary-color);

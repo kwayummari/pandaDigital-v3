@@ -59,7 +59,7 @@ $firstVideo = !empty($courseVideos) ? $courseVideos[0] : null;
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=3">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
     <style>
         :root {
             --primary-color: #ffbc3b;

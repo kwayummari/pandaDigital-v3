@@ -6,47 +6,40 @@ require_once 'models/Course.php';
 $courseModel = new Course();
 
 // Fetch data from database using the model
-$courseCategories = $courseModel->getCourseCategories();
 $featuredCourses = $courseModel->getFeaturedCourses(8);
 
-// If no courses found, use fallback data
+// Debug: Check what we got
+echo "<!-- Debug: Featured courses count: " . count($featuredCourses) . " -->";
+if (!empty($featuredCourses)) {
+    echo "<!-- Debug: First course data: " . json_encode($featuredCourses[0]) . " -->";
+} else {
+    echo "<!-- Debug: No courses returned from database -->";
+}
+
+// If no courses found, use fallback data to show the design
 if (empty($featuredCourses)) {
+    echo "<!-- Debug: Using fallback data because database returned empty -->";
     $featuredCourses = [
         [
             'id' => 1,
             'name' => 'Ujuzi wa Msingi wa Kompyuta',
-            'category_name' => 'Teknolojia',
-            'difficulty_level' => 'beginner',
-            'estimated_duration' => '8 Wiki',
-            'price' => 0,
+            'description' => 'Jifunze ujuzi wa msingi wa kompyuta na jinsi ya kutumia programu muhimu za ofisi.',
             'photo' => 'images/courses/basic-computer.jpg',
-            'average_rating' => 4.8,
-            'total_enrollments' => 156,
-            'description' => 'Jifunze ujuzi wa msingi wa kompyuta na jinsi ya kutumia programu muhimu za ofisi.'
+            'date_created' => '2024-01-15'
         ],
         [
             'id' => 2,
             'name' => 'Biashara ya Instagram',
-            'category_name' => 'Masoko',
-            'difficulty_level' => 'intermediate',
-            'estimated_duration' => '6 Wiki',
-            'price' => 75000,
+            'description' => 'Jifunze jinsi ya kuanza na kuendeleza biashara kwa kutumia Instagram.',
             'photo' => 'images/courses/instagram-business.jpg',
-            'average_rating' => 4.9,
-            'total_enrollments' => 89,
-            'description' => 'Jifunze jinsi ya kuanza na kuendeleza biashara kwa kutumia Instagram.'
+            'date_created' => '2024-01-20'
         ],
         [
             'id' => 3,
-            'name' => 'Ujuzi wa Msingi wa Kompyuta',
-            'category_name' => 'Teknolojia',
-            'difficulty_level' => 'beginner',
-            'estimated_duration' => '8 Wiki',
-            'price' => 0,
-            'photo' => 'images/courses/basic-computer.jpg',
-            'average_rating' => 4.8,
-            'total_enrollments' => 156,
-            'description' => 'Jifunze ujuzi wa msingi wa kompyuta na jinsi ya kutumia programu muhimu za ofisi.'
+            'name' => 'Ufanyaji wa Video',
+            'description' => 'Jifunze jinsi ya kutengeneza video za kujifunza na za biashara.',
+            'photo' => 'images/courses/video-making.jpg',
+            'date_created' => '2024-01-25'
         ]
     ];
 }
@@ -58,7 +51,7 @@ include 'includes/header.php';
 
 <!-- Page Header -->
 <section class="page-header" style="background-image: url('<?= asset('images/banner/new-banner2.jpg') ?>'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
-    <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5);"></div>
+    <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6);"></div>
     <div class="container" style="position: relative; z-index: 2;">
         <div class="row align-items-center">
             <div class="col-lg-8" data-aos="fade-right">
@@ -71,6 +64,11 @@ include 'includes/header.php';
                     </ol>
                 </nav>
             </div>
+            <div class="col-lg-4 text-center" data-aos="fade-left">
+                <div class="header-icon">
+                    <i class="fas fa-graduation-cap fa-4x text-white"></i>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -79,63 +77,49 @@ include 'includes/header.php';
 <section class="featured-courses-section py-5 bg-light">
     <div class="container">
         <div class="row">
-            <div class="col-12">
-                <div class="d-flex align-items-center section-title justify-content-between">
-                    <h2 class="mb-0 text-nowrap mr-3">Kozi Zote</h2>
-                    <div class="border-top w-100 border-primary d-none d-sm-block"></div>
-                    <div>
-                        <a href="" class="btn btn-sm btn-outline-primary ml-sm-3 d-none d-sm-block">Ona Zote</a>
-                    </div>
-                </div>
+            <div class="col-12 text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Kozi Zilizochaguliwa</h2>
+                <p class="section-subtitle">Kozi bora zaidi zilizochaguliwa na wataalamu wetu</p>
             </div>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row g-4">
             <?php if (!empty($featuredCourses)): ?>
                 <?php
-                // Debug: Show what we got
-                echo "<!-- Debug: Found " . count($featuredCourses) . " courses -->";
-                if (!empty($featuredCourses)) {
-                    echo "<!-- Debug: First course fields: " . implode(', ', array_keys($featuredCourses[0])) . " -->";
-                    echo "<!-- Debug: First course data: " . json_encode($featuredCourses[0]) . " -->";
-                }
+                echo "<!-- Debug: Displaying " . count($featuredCourses) . " courses -->";
+                foreach ($featuredCourses as $index => $course):
+                    echo "<!-- Debug Course $index: " . htmlspecialchars($course['name']) . " -->";
                 ?>
-                <?php foreach ($featuredCourses as $index => $course): ?>
-                    <?php
-                    // Debug: Show course data
-                    echo "<!-- Debug Course $index: ID=" . $course['id'] . ", Name=" . htmlspecialchars($course['name']) . " -->";
-                    ?>
-                    <div class="col-lg-4 col-sm-6 mb-5" data-aos="fade-up" data-aos-delay="<?= ($index + 1) * 100 ?>">
-                        <div class="course-card hover-shadow h-100">
-                            <div class="course-image-container">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100" style="border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; border: 1px solid #e2e8f0;">
+                            <div style="height: 300px; overflow: hidden; position: relative;">
                                 <?php if (!empty($course['photo'])): ?>
-                                    <img class="course-image"
-                                        src="<?= $courseModel->getImageUrl($course['photo']) ?>"
-                                        alt="<?= htmlspecialchars($course['name']) ?>">
+                                    <img src="<?= $courseModel->getImageUrl($course['photo']) ?>" alt="<?= htmlspecialchars($course['name']) ?>" style="width: 100%; height: 100%; object-fit: cover;">
                                 <?php else: ?>
-                                    <img class="course-image"
-                                        src="<?= asset('images/courses/default-course.jpg') ?>"
-                                        alt="Default Course Image">
+                                    <img src="<?= asset('images/courses/default-course.jpg') ?>" alt="Default Course Image" style="width: 100%; height: 100%; object-fit: cover;">
                                 <?php endif; ?>
                             </div>
-                            <div class="course-content">
-                                <ul class="list-inline mb-2">
-                                    <li class="list-inline-item">
-                                        <i class="fas fa-calendar mr-1 text-color"></i>
-                                        <?= $courseModel->formatDate($course['date_created']) ?>
-                                    </li>
-                                    <li class="list-inline-item">
-                                        <a class="text-color" href="<?= app_url() ?>">Panda Digital</a>
-                                    </li>
-                                </ul>
-                                <a href="https://pandadigital.co.tz/admin/spo/routes/AboutCourse/?id=<?= $course['id'] ?>">
-                                    <h4 class="course-title">Fahamu Kuhusu <?= htmlspecialchars($course['name']) ?></h4>
-                                </a>
-                                <p class="course-description mb-4">
-                                    <?= $courseModel->truncateText($course['description']) ?>
+                            <div class="card-body p-4">
+                                <div class="mb-2">
+                                    <span class="badge bg-primary me-2">Kozi</span>
+                                    <span class="badge bg-secondary"><?= $courseModel->formatDate($course['date_created']) ?></span>
+                                </div>
+                                <h5 class="card-title mb-3" style="font-size: 1.25rem; font-weight: 600; color: #1e293b;">
+                                    <?= htmlspecialchars($course['name']) ?>
+                                </h5>
+                                <p class="card-text text-muted mb-3" style="color: #64748b;">
+                                    <?= $courseModel->truncateText($course['description'] ?? 'Maelezo ya kozi hayajapatikana.') ?>
                                 </p>
-                                <a href="https://pandadigital.co.tz/admin/spo/routes/AboutCourse/?id=<?= $course['id'] ?>"
-                                    class="btn btn-primary btn-sm">Jiunge na kozi</a>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 p-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i><?= $courseModel->formatDate($course['date_created']) ?>
+                                    </small>
+                                    <a href="course-details.php?id=<?= $course['id'] ?>" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-graduation-cap me-1"></i>Jisajili Sasa
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -147,23 +131,82 @@ include 'includes/header.php';
             <?php endif; ?>
         </div>
 
+        <div class="row mt-5">
+            <div class="col-12 text-center" data-aos="fade-up">
+                <a href="#" class="btn btn-primary btn-lg">
+                    <i class="fas fa-th-list me-2"></i>Tazama Kozi Zote
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How to Learn Section -->
+<section class="how-to-learn-section py-5">
+    <div class="container">
         <div class="row">
-            <div class="col-12 text-center">
-                <a href="" class="btn btn-sm btn-outline-primary d-sm-none d-inline-block">Ona Zote</a>
+            <div class="col-12 text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Jinsi Ya Kujifunza</h2>
+                <p class="section-subtitle">Fuata hatua hizi rahisi kujifunza na kuendelea na maendeleo yako</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="step-card text-center p-4">
+                    <div class="step-number mb-3">
+                        <span class="badge bg-primary fs-4">1</span>
+                    </div>
+                    <h5 class="step-title mb-3">Chagua Kozi</h5>
+                    <p class="step-description text-muted">Chagua kozi inayokufaa zaidi kutoka kwenye orodha yetu</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="step-card text-center p-4">
+                    <div class="step-number mb-3">
+                        <span class="badge bg-primary fs-4">2</span>
+                    </div>
+                    <h5 class="step-title mb-3">Jisajili</h5>
+                    <p class="step-description text-muted">Jisajili kwenye kozi na uanze kujifunza</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="step-card text-center p-4">
+                    <div class="step-number mb-3">
+                        <span class="badge bg-primary fs-4">3</span>
+                    </div>
+                    <h5 class="step-title mb-3">Jifunza</h5>
+                    <p class="step-description text-muted">Jifunza kwa makini na ufanye mazoezi</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="step-card text-center p-4">
+                    <div class="step-number mb-3">
+                        <span class="badge bg-primary fs-4">4</span>
+                    </div>
+                    <h5 class="step-title mb-3">Pata Vyeti</h5>
+                    <p class="step-description text-muted">Maliza kozi na upate vyeti vyako</p>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- CTA Section -->
-<section class="cta-section py-5" style="background-image: url('<?= asset('images/backgrounds/success-story.jpg') ?>'); background-size: cover; background-position: center; position: relative;">
-    <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6);"></div>
-    <div class="container" style="position: relative; z-index: 2;">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <h2 class="text-white mb-4">Tayari kujifunza?</h2>
-                <p class="text-white mb-4">Jiunge na kozi zetu na uende mbele katika kazi yako. Panda Digital inakupa fursa ya kujifunza kutoka kwa wataalamu wenye uzoefu.</p>
-                <a href="#featured-courses" class="btn btn-primary btn-lg">Anza Sasa</a>
+<section class="cta-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8" data-aos="fade-right">
+                <h2 class="cta-title">Je, Una Kozi Unayotaka Kufundisha?</h2>
+                <p class="cta-subtitle">Tunaweza kukusaidia kufundisha kozi yako na kusaidia wanawake wengine</p>
+            </div>
+            <div class="col-lg-4 text-center" data-aos="fade-left">
+                <a href="#" class="btn btn-light btn-lg">
+                    <i class="fas fa-plus me-2"></i>Ongeza Kozi
+                </a>
             </div>
         </div>
     </div>
@@ -172,26 +215,6 @@ include 'includes/header.php';
 <?php include 'includes/footer.php'; ?>
 
 <style>
-    /* Course image sizing for consistent appearance */
-    .course-image-container {
-        position: relative;
-        width: 100%;
-        height: 250px;
-        overflow: hidden;
-    }
-
-    .course-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: top;
-        transition: transform 0.3s ease;
-    }
-
-    .course-image:hover {
-        transform: scale(1.05);
-    }
-
     /* Course card specific styles */
     .course-card {
         background: white;
@@ -206,6 +229,43 @@ include 'includes/header.php';
     .course-card:hover {
         transform: translateY(-8px);
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-image {
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .course-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .course-card:hover .course-image img {
+        transform: scale(1.05);
+    }
+
+    .course-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .course-card:hover .course-overlay {
+        opacity: 1;
     }
 
     .course-content {
@@ -250,19 +310,6 @@ include 'includes/header.php';
         text-decoration: none;
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .course-image-container {
-            height: 200px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .course-image-container {
-            height: 180px;
-        }
-    }
-
     /* Page header styles */
     .page-header {
         padding: 120px 0 80px;
@@ -295,22 +342,6 @@ include 'includes/header.php';
         font-weight: 600;
     }
 
-    /* Card hover effects */
-    .hover-shadow:hover {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        transform: translateY(-5px);
-        transition: all 0.3s ease;
-    }
-
-    /* CTA section styles */
-    .cta-section {
-        color: white;
-    }
-
-    .cta-section h2 {
-        font-weight: 600;
-    }
-
     /* Breadcrumb styles */
     .breadcrumb {
         background: transparent;
@@ -329,5 +360,56 @@ include 'includes/header.php';
 
     .breadcrumb-item+.breadcrumb-item::before {
         color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Step card styles */
+    .step-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .step-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .step-number .badge {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .step-title {
+        color: #333;
+        font-weight: 600;
+    }
+
+    .step-description {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* CTA section styles */
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary-color, #ffbc3b) 0%, var(--secondary-color, #5f4594) 100%);
+        color: white;
+    }
+
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .cta-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 0;
     }
 </style>

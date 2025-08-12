@@ -42,7 +42,7 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=4">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=7">
     <style>
         /* Additional course-specific styles */
         .card {
@@ -94,7 +94,7 @@ $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
 
 <body>
     <!-- Sidebar and Main Content Layout -->
-    <div class="dashboard-container">
+    <div class="dashboard-container courses-page">
         <?php include __DIR__ . '/../includes/user_sidebar.php'; ?>
 
         <!-- Main Content -->
