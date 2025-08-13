@@ -327,7 +327,7 @@ class Course
             // Get total questions
             $stmt = $conn->prepare("
                 SELECT COUNT(*) as total_questions
-                FROM question q
+                FROM questions q
                 JOIN video v ON q.video_id = v.id
                 WHERE v.course_id = ?
             ");
@@ -366,6 +366,154 @@ class Course
                 'total_students' => 0,
                 'average_score' => 0
             ];
+        }
+    }
+
+    /**
+     * Track course view by user
+     */
+    public function trackCourseView($userId, $courseId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if view already exists for today
+            $stmt = $conn->prepare("
+                SELECT id FROM course_views 
+                WHERE user_id = ? AND course_id = ? AND DATE(view_date) = CURDATE()
+            ");
+            $stmt->execute([$userId, $courseId]);
+
+            if (!$stmt->fetch()) {
+                // Insert new view for today
+                $stmt = $conn->prepare("
+                    INSERT INTO course_views (user_id, course_id, view_date, view_count) 
+                    VALUES (?, ?, NOW(), 1)
+                ");
+                $stmt->execute([$userId, $courseId]);
+            } else {
+                // Update existing view count for today
+                $stmt = $conn->prepare("
+                    UPDATE course_views 
+                    SET view_count = view_count + 1, last_view = NOW()
+                    WHERE user_id = ? AND course_id = ? AND DATE(view_date) = CURDATE()
+                ");
+                $stmt->execute([$userId, $courseId]);
+            }
+
+            return true;
+        } catch (PDOException $e) {
+            error_log("Error tracking course view: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Check if user has completed a course (eligible for certificate)
+     */
+    public function hasCompletedCourse($userId, $courseId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Get all videos for the course
+            $stmt = $conn->prepare("SELECT id FROM video WHERE course_id = ?");
+            $stmt->execute([$courseId]);
+            $videos = $stmt->fetchAll();
+
+            if (empty($videos)) {
+                return false; // No videos in course
+            }
+
+            $totalVideos = count($videos);
+            $completedVideos = 0;
+
+            foreach ($videos as $video) {
+                // Check if user has completed this video's quiz
+                $stmt = $conn->prepare("
+                    SELECT COUNT(*) as completed
+                    FROM algorithm a
+                    JOIN questions q ON a.qn_id = q.id
+                    WHERE a.user_id = ? AND q.video_id = ?
+                ");
+                $stmt->execute([$userId, $video['id']]);
+                $result = $stmt->fetch();
+
+                if ($result['completed'] > 0) {
+                    $completedVideos++;
+                }
+            }
+
+            // Course is completed if user has completed at least 80% of videos
+            $completionRate = ($completedVideos / $totalVideos) * 100;
+            return $completionRate >= 80;
+        } catch (PDOException $e) {
+            error_log("Error checking course completion: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Generate certificate for completed course
+     */
+    public function generateCertificate($userId, $courseId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if user has completed the course
+            if (!$this->hasCompletedCourse($userId, $courseId)) {
+                return false;
+            }
+
+            // Check if certificate already exists
+            $stmt = $conn->prepare("
+                SELECT id FROM course_certificates 
+                WHERE user_id = ? AND course_id = ?
+            ");
+            $stmt->execute([$userId, $courseId]);
+
+            if ($stmt->fetch()) {
+                return true; // Certificate already exists
+            }
+
+            // Generate new certificate
+            $stmt = $conn->prepare("
+                INSERT INTO course_certificates (user_id, course_id, completion_date, certificate_number, status) 
+                VALUES (?, ?, NOW(), ?, 'active')
+            ");
+
+            $certificateNumber = 'CERT-' . strtoupper(uniqid());
+            $stmt->execute([$userId, $courseId, $certificateNumber]);
+
+            return $certificateNumber;
+        } catch (PDOException $e) {
+            error_log("Error generating certificate: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get user's certificates
+     */
+    public function getUserCertificates($userId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT cc.*, c.name as course_name, c.description as course_description
+                FROM course_certificates cc
+                JOIN course c ON cc.course_id = c.id
+                WHERE cc.user_id = ? AND cc.status = 'active'
+                ORDER BY cc.completion_date DESC
+            ");
+            $stmt->execute([$userId]);
+
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting user certificates: " . $e->getMessage());
+            return [];
         }
     }
 

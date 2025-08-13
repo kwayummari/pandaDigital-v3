@@ -3029,6 +3029,34 @@ html {
   border-top: 3px solid var(--primary-color);
 }
 
+.course-overview-page .course-preview-section {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  border-top: 3px solid var(--primary-color);
+}
+
+.course-overview-page .course-main-image img,
+.course-overview-page .course-main-image-placeholder {
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+}
+
+.course-overview-page .course-preview-video {
+  background: var(--light-color);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.course-overview-page .video-preview-container {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
 .course-overview-page .course-title {
   color: var(--secondary-color);
   font-weight: 700;
@@ -3174,24 +3202,16 @@ html {
 }
 
 .course-overview-page .feature-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
   padding: 1rem;
   background: var(--light-color);
   border-radius: 10px;
   transition: var(--transition);
+  text-align: center;
 }
 
 .course-overview-page .feature-item:hover {
   background: white;
   box-shadow: var(--shadow);
-}
-
-.course-overview-page .feature-icon {
-  font-size: 1.5rem;
-  width: 30px;
-  text-align: center;
 }
 
 .course-overview-page .feature-text {
@@ -3263,6 +3283,10 @@ html {
     padding: 1.5rem;
   }
 
+  .course-overview-page .course-preview-section {
+    padding: 1.5rem;
+  }
+
   .course-overview-page .content-card {
     padding: 1.5rem;
   }
@@ -3279,6 +3303,15 @@ html {
   .course-overview-page .lesson-number {
     margin-right: 0;
     margin-bottom: 1rem;
+  }
+
+  .course-overview-page .course-preview-video {
+    margin-top: 1rem;
+  }
+
+  .course-overview-page .course-main-image img,
+  .course-overview-page .course-main-image-placeholder {
+    height: 200px !important;
   }
 }
 
@@ -3336,4 +3369,118 @@ html {
   background: #dbeafe;
   color: #1e40af;
   border-left: 4px solid var(--info-color);
+}
+
+/* Certificate Page Styles */
+.certificate-preview {
+  background: var(--light-color);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.certificate-container {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  border: 2px solid var(--primary-color);
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.certificate-header h3 {
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.certificate-header h4 {
+  color: var(--secondary-color);
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+.certificate-body {
+  margin: 2rem 0;
+}
+
+.certificate-text {
+  font-size: 1.1rem;
+  color: var(--gray-color);
+  margin-bottom: 1.5rem;
+}
+
+.course-name {
+  color: var(--secondary-color);
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--light-color);
+  border-radius: 10px;
+}
+
+.completion-details {
+  color: var(--gray-color);
+  line-height: 1.8;
+}
+
+.certificate-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.certificate-footer p {
+  color: var(--gray-light);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.course-summary {
+  background: var(--light-color);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.summary-item {
+  padding: 1rem;
+}
+
+.summary-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.summary-label {
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.download-actions {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Print styles for certificates */
+@media print {
+  .sidebar,
+  .top-navbar,
+  .download-actions {
+    display: none !important;
+  }
+
+  .certificate-container {
+    border: 2px solid #000;
+    box-shadow: none;
+  }
+
+  .main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 }

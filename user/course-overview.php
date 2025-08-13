@@ -40,10 +40,22 @@ $totalQuestions = $courseStats['total_questions'];
 // Get course lessons (videos)
 $courseLessons = $courseModel->getCourseVideos($courseId);
 
+// Track course view
+$courseModel->trackCourseView($currentUser['id'], $courseId);
+
 // Get user progress if enrolled
 $userProgress = null;
 if ($isEnrolled) {
     $userProgress = $courseModel->calculateCourseProgress($currentUser['id'], $courseId);
+
+    // Check completion status for each lesson
+    foreach ($courseLessons as &$lesson) {
+        $lesson['completed'] = false;
+        if (isset($lesson['id'])) {
+            // Check if user has completed this video's quiz
+            $lesson['completed'] = $quizModel->hasCompletedQuiz($currentUser['id'], $lesson['id']);
+        }
+    }
 }
 ?>
 
@@ -97,6 +109,11 @@ if ($isEnrolled) {
                     </div>
                     <div class="col-md-4 text-end">
                         <?php if ($isEnrolled): ?>
+                            <?php if ($courseModel->hasCompletedCourse($currentUser['id'], $courseId)): ?>
+                                <button class="btn btn-success me-2" onclick="downloadCertificate(<?php echo $courseId; ?>)">
+                                    Pakua Vyeti
+                                </button>
+                            <?php endif; ?>
                             <a href="<?php echo app_url('user/learn.php'); ?>?course_id=<?php echo $courseId; ?>&video_id=1" class="btn btn-primary">
                                 Endelea Kusoma
                             </a>
@@ -108,6 +125,51 @@ if ($isEnrolled) {
                         <a href="<?php echo app_url('user/courses.php'); ?>" class="btn btn-outline-secondary ms-2">
                             Rudi
                         </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Image and Preview -->
+            <div class="course-preview-section mb-4">
+                <div class="row">
+                    <div class="col-md-8">
+                        <?php if (!empty($course['photo'])): ?>
+                            <div class="course-main-image">
+                                <img src="<?php echo app_url($courseModel->getImageUrl($course['photo'])); ?>"
+                                    alt="<?php echo htmlspecialchars($course['name']); ?>"
+                                    class="img-fluid w-100 rounded"
+                                    style="height: 300px; object-fit: cover;">
+                            </div>
+                        <?php else: ?>
+                            <div class="course-main-image-placeholder d-flex align-items-center justify-content-center bg-light rounded"
+                                style="height: 300px;">
+                                <span class="text-muted">Picha ya kozi haijapatikana</span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?php if (!empty($courseLessons) && isset($courseLessons[0]['name']) && !empty($courseLessons[0]['name'])): ?>
+                            <div class="course-preview-video">
+                                <h5 class="mb-3">Onyesho la Kozi</h5>
+                                <div class="video-preview-container">
+                                    <iframe src="<?php echo htmlspecialchars($courseLessons[0]['name']); ?>"
+                                        frameborder="0"
+                                        allowfullscreen
+                                        class="w-100 rounded"
+                                        style="height: 200px;">
+                                    </iframe>
+                                </div>
+                                <p class="text-muted mt-2 small"><?php echo htmlspecialchars($courseLessons[0]['description']); ?></p>
+                            </div>
+                        <?php else: ?>
+                            <div class="course-preview-video">
+                                <h5 class="mb-3">Onyesho la Kozi</h5>
+                                <div class="video-preview-container d-flex align-items-center justify-content-center bg-light"
+                                    style="height: 200px;">
+                                    <span class="text-muted">Video ya onyesho haijapatikana</span>
+                                </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -165,7 +227,7 @@ if ($isEnrolled) {
                                     <div class="lesson-item">
                                         <div class="lesson-number"><?php echo $index + 1; ?></div>
                                         <div class="lesson-content">
-                                            <h5 class="lesson-title"><?php echo htmlspecialchars($lesson['title']); ?></h5>
+                                            <h5 class="lesson-title"><?php echo htmlspecialchars($lesson['description']); ?></h5>
                                             <div class="lesson-meta">
                                                 <span class="lesson-type">Video na Maswali</span>
                                                 <?php if ($isEnrolled && isset($lesson['completed']) && $lesson['completed']): ?>
@@ -190,27 +252,21 @@ if ($isEnrolled) {
                         <h3 class="card-title">Onyesho la Kozi</h3>
                         <div class="course-features">
                             <div class="feature-item">
-                                <span class="feature-icon">📹</span>
                                 <span class="feature-text"><?php echo $totalLessons; ?> Video za Mafunzo</span>
                             </div>
                             <div class="feature-item">
-                                <span class="feature-icon">❓</span>
                                 <span class="feature-text"><?php echo $totalQuestions; ?> Maswali ya Majaribio</span>
                             </div>
                             <div class="feature-item">
-                                <span class="feature-icon">📱</span>
                                 <span class="feature-text">Inafikiwa kwenye Simu na Kompyuta</span>
                             </div>
                             <div class="feature-item">
-                                <span class="feature-icon">⏰</span>
                                 <span class="feature-text">Ufikiaji wa Maisha</span>
                             </div>
                             <div class="feature-item">
-                                <span class="feature-icon">🆓</span>
                                 <span class="feature-text">Kozi ya Bure Kabisa</span>
                             </div>
                             <div class="feature-item">
-                                <span class="feature-icon">🇹🇿</span>
                                 <span class="feature-text">Lugha: Kiswahili</span>
                             </div>
                         </div>
@@ -248,6 +304,12 @@ if ($isEnrolled) {
                 // Here you would typically make an AJAX call to enroll the user
                 // For now, we'll redirect to a simple enrollment process
                 window.location.href = '<?php echo app_url("user/enroll.php"); ?>?course_id=' + courseId;
+            }
+        }
+
+        function downloadCertificate(courseId) {
+            if (confirm('Je, unahitaji kupakua vyeti vya kozi hii?')) {
+                window.location.href = '<?php echo app_url("user/download-certificate.php"); ?>?course_id=' + courseId;
             }
         }
 
