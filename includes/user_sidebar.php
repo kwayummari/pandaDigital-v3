@@ -36,7 +36,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li class="nav-item">
-                <a href="<?= app_url('user/quiz-results.php') ?>" class="nav-link <?= $current_page == 'quiz-results.php' ? 'active' : '' ?>">
+                <a href="<?= app_url('user/majibu-yangu.php') ?>" class="nav-link <?= $current_page == 'majibu-yangu.php' ? 'active' : '' ?>">
                     <span>Majibu Yangu</span>
                 </a>
             </li>

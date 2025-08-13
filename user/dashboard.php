@@ -113,7 +113,7 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= app_url('user/quiz-results.php') ?>" class="nav-link">
+                        <a href="<?= app_url('user/majibu-yangu.php') ?>" class="nav-link">
                             <span>Majibu Yangu</span>
                         </a>
                     </li>

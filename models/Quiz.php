@@ -186,6 +186,45 @@ class Quiz
     }
 
     /**
+     * Get user's quiz statistics for a specific course
+     */
+    public function getUserQuizStatsForCourse($userId, $courseId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    COUNT(DISTINCT q.id) as total_questions,
+                    COUNT(DISTINCT a.qn_id) as questions_answered,
+                    AVG(CASE WHEN ans.status = 'true' THEN 100 ELSE 0 END) as average_score
+                FROM course c
+                LEFT JOIN video v ON v.course_id = c.id
+                LEFT JOIN questions q ON q.video_id = v.id
+                LEFT JOIN algorithm a ON a.qn_id = q.id AND a.user_id = ?
+                LEFT JOIN answers ans ON ans.id = a.ans_id
+                WHERE c.id = ?
+            ");
+
+            $stmt->execute([$userId, $courseId]);
+            $result = $stmt->fetch();
+
+            return $result ?: [
+                'total_questions' => 0,
+                'questions_answered' => 0,
+                'average_score' => 0
+            ];
+        } catch (PDOException $e) {
+            error_log("Error getting user quiz stats for course: " . $e->getMessage());
+            return [
+                'total_questions' => 0,
+                'questions_answered' => 0,
+                'average_score' => 0
+            ];
+        }
+    }
+
+    /**
      * Get quiz statistics for a course
      */
     public function getCourseQuizStats($courseId)
@@ -200,9 +239,9 @@ class Quiz
                     COUNT(DISTINCT e.user_id) as total_students,
                     AVG(CASE WHEN ans.status = 'true' THEN 100 ELSE 0 END) as average_score
                 FROM course c
+                LEFT JOIN enrolled e ON e.course_id = c.id
                 LEFT JOIN video v ON v.course_id = c.id
                 LEFT JOIN questions q ON q.video_id = v.id
-                LEFT JOIN enrolled e ON e.course_id = c.id
                 LEFT JOIN algorithm a ON a.qn_id = q.id
                 LEFT JOIN answers ans ON ans.id = a.ans_id
                 WHERE c.id = ?
@@ -247,6 +286,8 @@ class Quiz
             return false;
         }
     }
+
+
 
     /**
      * Get user's quiz attempts

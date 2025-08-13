@@ -1,42 +1,96 @@
 <?php
 require_once __DIR__ . "/../config/init.php";
 require_once __DIR__ . "/../middleware/AuthMiddleware.php";
+require_once __DIR__ . "/../models/Course.php";
+require_once __DIR__ . "/../models/Quiz.php";
 
 $auth = new AuthMiddleware();
 $auth->requireRole('user');
 
 $currentUser = $auth->getCurrentUser();
+$courseModel = new Course();
+$quizModel = new Quiz();
 
-// Mock data for certificates - in real app this would come from database
-$certificates = [
-    [
-        'id' => 1,
-        'course_name' => 'Mafundisho ya Biashara ya Mtandaoni',
-        'issue_date' => '2024-01-15',
-        'completion_date' => '2024-01-10',
-        'grade' => 'A+',
-        'certificate_number' => 'CERT-001-2024',
-        'status' => 'issued'
-    ],
-    [
-        'id' => 2,
-        'course_name' => 'Ufundi wa Digital Marketing',
-        'issue_date' => '2024-02-20',
-        'completion_date' => '2024-02-18',
-        'grade' => 'A',
-        'certificate_number' => 'CERT-002-2024',
-        'status' => 'issued'
-    ],
-    [
-        'id' => 3,
-        'course_name' => 'Ufundi wa Social Media Management',
-        'issue_date' => null,
-        'completion_date' => '2024-03-05',
-        'grade' => 'B+',
-        'certificate_number' => 'CERT-003-2024',
-        'status' => 'pending'
-    ]
-];
+// Get user's enrolled courses with progress
+$enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
+
+// Process each course to determine certificate eligibility
+$certificates = [];
+$totalCertificates = 0;
+$issuedCertificates = 0;
+$pendingCertificates = 0;
+
+foreach ($enrolledCourses as $course) {
+    $courseId = $course['id'];
+
+    // Get course progress and quiz scores
+    $courseProgress = $courseModel->calculateCourseProgress($currentUser['id'], $courseId);
+    $quizStats = $quizModel->getUserQuizStatsForCourse($currentUser['id'], $courseId);
+
+    // Determine certificate eligibility
+    $isCompleted = $courseProgress['completion_percentage'] >= 100;
+    $hasPassingScore = $quizStats['average_score'] >= 70;
+    $certificateEligible = $isCompleted && $hasPassingScore;
+
+    // Calculate accuracy percentage
+    $accuracyPercentage = $quizStats['average_score'] ?? 0;
+
+    // Determine status
+    if ($certificateEligible) {
+        $status = 'issued';
+        $issuedCertificates++;
+        $totalCertificates++;
+    } elseif ($isCompleted && !$hasPassingScore) {
+        $status = 'pending_score';
+        $pendingCertificates++;
+        $totalCertificates++;
+    } elseif (!$isCompleted) {
+        $status = 'in_progress';
+        $pendingCertificates++;
+        $totalCertificates++;
+    } else {
+        $status = 'not_eligible';
+        continue;
+    }
+
+    // Generate certificate number if eligible
+    $certificateNumber = $certificateEligible ? 'CERT-' . str_pad($courseId, 3, '0', STR_PAD_LEFT) . '-' . date('Y') : null;
+
+    $certificates[] = [
+        'id' => $courseId,
+        'course_name' => $course['name'],
+        'completion_date' => $courseProgress['last_activity'] ?? null,
+        'issue_date' => $certificateEligible ? date('Y-m-d') : null,
+        'grade' => calculateGrade($accuracyPercentage),
+        'certificate_number' => $certificateNumber,
+        'status' => $status,
+        'completion_percentage' => $courseProgress['completion_percentage'],
+        'accuracy_percentage' => $accuracyPercentage,
+        'total_questions' => $quizStats['total_questions'] ?? 0,
+        'answered_questions' => $quizStats['questions_answered'] ?? 0
+    ];
+}
+
+// Sort certificates by completion date (most recent first)
+usort($certificates, function ($a, $b) {
+    if ($a['completion_date'] && $b['completion_date']) {
+        return strtotime($b['completion_date']) - strtotime($a['completion_date']);
+    }
+    return 0;
+});
+
+// Helper function to calculate grade
+function calculateGrade($score)
+{
+    if ($score >= 90) return 'A+';
+    if ($score >= 80) return 'A';
+    if ($score >= 70) return 'B+';
+    if ($score >= 60) return 'B';
+    if ($score >= 50) return 'C+';
+    if ($score >= 40) return 'C';
+    if ($score >= 30) return 'D';
+    return 'F';
+}
 ?>
 
 <!DOCTYPE html>
@@ -52,24 +106,50 @@ $certificates = [
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=7">
     <style>
+        /* Additional styles for certificates page */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stats-card .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
         .certificate-card {
-            border: 2px solid var(--primary-color);
+            border: 1px solid var(--border-color);
             border-radius: 15px;
             transition: all 0.3s ease;
             background: white;
         }
 
         .certificate-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(255, 188, 59, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
         .certificate-header {
-            background: var(--primary-color);
-            color: black;
-            border-radius: 13px 13px 0 0;
+            background: #f8f9fa;
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 14px 14px 0 0;
             padding: 20px;
             text-align: center;
         }
@@ -79,21 +159,23 @@ $certificates = [
         }
 
         .certificate-number {
-            background: var(--secondary-color);
+            background: var(--primary-color);
             color: white;
             padding: 8px 15px;
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: 600;
+            display: inline-block;
         }
 
         .grade-badge {
             background: var(--primary-color);
-            color: black;
+            color: white;
             padding: 10px 20px;
             border-radius: 25px;
             font-weight: bold;
             font-size: 1.2rem;
+            display: inline-block;
         }
 
         .status-badge {
@@ -104,18 +186,23 @@ $certificates = [
         }
 
         .status-issued {
-            background: var(--primary-color);
-            color: black;
+            background: var(--success-color);
+            color: white;
         }
 
-        .status-pending {
-            background: var(--secondary-color);
+        .status-pending_score {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .status-in_progress {
+            background: var(--info-color);
             color: white;
         }
 
         .download-btn {
             background: var(--primary-color);
-            color: black;
+            color: white;
             border: none;
             border-radius: 25px;
             padding: 12px 25px;
@@ -124,21 +211,61 @@ $certificates = [
         }
 
         .download-btn:hover {
-            background: var(--secondary-color);
+            background: var(--primary-dark);
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
+        .download-btn:disabled {
+            background: var(--gray-color);
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            height: 8px;
+            border-radius: 10px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        .progress-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 3rem 1rem;
         }
 
         .empty-state i {
-            font-size: 4rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
+            opacity: 0.3;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h5 {
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--gray-color);
+        }
+
+        .empty-state p {
+            color: var(--gray-color);
+            margin-bottom: 1.5rem;
         }
     </style>
 </head>
@@ -160,7 +287,6 @@ $certificates = [
                 <div class="row mb-4">
                     <div class="col-12">
                         <h1 class="h3 mb-0">
-                            <i class="fas fa-certificate me-2" style="color: var(--primary-color);"></i>
                             Vyeti Vyagu
                         </h1>
                         <p class="text-muted">Tazama vyeti vyote ulivyopata kwa kukamilisha kozi</p>
@@ -171,31 +297,24 @@ $certificates = [
                 <div class="row mb-4">
                     <div class="col-md-4">
                         <div class="card stats-card">
-                            <div class="card-body text-center">
-                                <i class="fas fa-certificate fa-2x mb-2"></i>
-                                <h3 class="mb-1"><?php echo count($certificates); ?></h3>
-                                <p class="mb-0">Jumla ya Vyeti</p>
+                            <div class="card-body">
+                                <h3 class="mb-1"><?php echo $totalCertificates; ?></h3>
+                                <p class="mb-0">Jumla ya Kozi</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card stats-card success">
-                            <div class="card-body text-center">
-                                <i class="fas fa-check-circle fa-2x mb-2"></i>
-                                <h3 class="mb-1"><?php echo count(array_filter($certificates, function ($c) {
-                                                        return $c['status'] == 'issued';
-                                                    })); ?></h3>
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-1"><?php echo $issuedCertificates; ?></h3>
                                 <p class="mb-0">Vyeti Vilivyotolewa</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card stats-card info">
-                            <div class="card-body text-center">
-                                <i class="fas fa-clock fa-2x mb-2"></i>
-                                <h3 class="mb-1"><?php echo count(array_filter($certificates, function ($c) {
-                                                        return $c['status'] == 'pending';
-                                                    })); ?></h3>
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-1"><?php echo $pendingCertificates; ?></h3>
                                 <p class="mb-0">Vyeti Vinasubiri</p>
                             </div>
                         </div>
@@ -205,10 +324,9 @@ $certificates = [
                 <?php if (empty($certificates)): ?>
                     <div class="empty-state">
                         <i class="fas fa-certificate"></i>
-                        <h4>Huna vyeti bado</h4>
-                        <p class="text-muted">Jisajili kwenye kozi na ukamilishe ili upate vyeti vyako</p>
-                        <a href="<?= app_url('user/courses.php') ?>" class="btn download-btn">
-                            <i class="fas fa-book me-2"></i>
+                        <h5>Huna kozi zilizosajiliwa bado</h5>
+                        <p>Jisajili kwenye kozi na ukamilishe ili upate vyeti vyako</p>
+                        <a href="<?= app_url('user/courses.php') ?>" class="btn btn-primary">
                             Tazama Kozi
                         </a>
                     </div>
@@ -220,16 +338,33 @@ $certificates = [
                                 <div class="certificate-card">
                                     <div class="certificate-header">
                                         <h5 class="mb-2"><?php echo htmlspecialchars($certificate['course_name']); ?></h5>
-                                        <div class="certificate-number">
-                                            <?php echo htmlspecialchars($certificate['certificate_number']); ?>
-                                        </div>
+                                        <?php if ($certificate['certificate_number']): ?>
+                                            <div class="certificate-number">
+                                                <?php echo htmlspecialchars($certificate['certificate_number']); ?>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
 
                                     <div class="certificate-body">
+                                        <!-- Progress Information -->
+                                        <div class="mb-3">
+                                            <div class="progress-info">
+                                                <span class="progress-label">Maendeleo ya Kozi</span>
+                                                <span class="progress-value"><?php echo round($certificate['completion_percentage'], 1); ?>%</span>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar" role="progressbar"
+                                                    style="width: <?php echo $certificate['completion_percentage']; ?>%"
+                                                    aria-valuenow="<?php echo $certificate['completion_percentage']; ?>"
+                                                    aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="row mb-3">
                                             <div class="col-6">
-                                                <small class="text-muted">Tarehe ya Kukamilisha</small>
-                                                <div class="fw-bold"><?php echo date('d/m/Y', strtotime($certificate['completion_date'])); ?></div>
+                                                <small class="text-muted">Maswali Yaliyojibiwa</small>
+                                                <div class="fw-bold"><?php echo $certificate['answered_questions']; ?>/<?php echo $certificate['total_questions']; ?></div>
                                             </div>
                                             <div class="col-6">
                                                 <small class="text-muted">Alama</small>
@@ -239,16 +374,8 @@ $certificates = [
 
                                         <div class="row mb-3">
                                             <div class="col-6">
-                                                <small class="text-muted">Tarehe ya Kutolewa</small>
-                                                <div class="fw-bold">
-                                                    <?php
-                                                    if ($certificate['issue_date']) {
-                                                        echo date('d/m/Y', strtotime($certificate['issue_date']));
-                                                    } else {
-                                                        echo 'Bado';
-                                                    }
-                                                    ?>
-                                                </div>
+                                                <small class="text-muted">Usahihi</small>
+                                                <div class="fw-bold"><?php echo round($certificate['accuracy_percentage'], 1); ?>%</div>
                                             </div>
                                             <div class="col-6">
                                                 <small class="text-muted">Hali</small>
@@ -257,8 +384,10 @@ $certificates = [
                                                         <?php
                                                         if ($certificate['status'] == 'issued') {
                                                             echo 'Imetolewa';
-                                                        } else {
-                                                            echo 'Inasubiri';
+                                                        } elseif ($certificate['status'] == 'pending_score') {
+                                                            echo 'Inahitaji Alama';
+                                                        } elseif ($certificate['status'] == 'in_progress') {
+                                                            echo 'Inaendelea';
                                                         }
                                                         ?>
                                                     </span>
@@ -268,14 +397,16 @@ $certificates = [
 
                                         <div class="text-center">
                                             <?php if ($certificate['status'] == 'issued'): ?>
-                                                <button class="btn download-btn" onclick="downloadCertificate(<?php echo $certificate['id']; ?>)">
-                                                    <i class="fas fa-download me-2"></i>
+                                                <a href="<?= app_url('user/download-certificate.php?course_id=' . $certificate['id']) ?>" class="btn download-btn">
                                                     Pakua Vyeti
+                                                </a>
+                                            <?php elseif ($certificate['status'] == 'pending_score'): ?>
+                                                <button class="btn download-btn" disabled>
+                                                    Unahitaji 70%+
                                                 </button>
                                             <?php else: ?>
                                                 <button class="btn download-btn" disabled>
-                                                    <i class="fas fa-clock me-2"></i>
-                                                    Inasubiri
+                                                    Inaendelea
                                                 </button>
                                             <?php endif; ?>
                                         </div>
@@ -290,10 +421,7 @@ $certificates = [
     </div>
 
     <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Sidebar Toggle Script -->
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
     <script>
         function downloadCertificate(certificateId) {

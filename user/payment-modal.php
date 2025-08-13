@@ -428,3 +428,4 @@ if ($course['courseIsPaidStatusId'] != 1) {
 </body>
 
 </html>
+

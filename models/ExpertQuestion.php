@@ -121,9 +121,9 @@ class ExpertQuestion
             $conn = $this->db->getConnection();
 
             $stmt = $conn->prepare("
-                SELECT eq.*, u.first_name, u.last_name, u.email
+                SELECT eq.*, e.name as expert_name
                 FROM expertqn eq
-                JOIN users u ON eq.expert_id = u.id
+                LEFT JOIN experts e ON eq.expert_id = e.id
                 WHERE eq.user_id = ?
                 ORDER BY eq.date_created DESC
                 LIMIT ?

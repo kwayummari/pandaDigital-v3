@@ -3991,3 +3991,158 @@ html {
   text-align: center;
   margin: 1rem 0;
 }
+
+/* Majibu Yangu Page Styles */
+.page-header {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+  border-left: 4px solid var(--primary-color);
+}
+
+.page-header h1 {
+  color: var(--secondary-color);
+  font-weight: 700;
+}
+
+.page-header .lead {
+  color: var(--gray-color);
+  font-size: 1.1rem;
+}
+
+.stats-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin: 0 auto 1rem;
+  transition: var(--transition);
+}
+
+.stats-card:hover .stats-icon {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-lg);
+}
+
+.stats-card.success .stats-icon {
+  background: var(--success-color);
+}
+
+.stats-card.info .stats-icon {
+  background: var(--info-color);
+}
+
+.stats-card.warning .stats-icon {
+  background: var(--warning-color);
+}
+
+.progress-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  position: relative;
+  border: 8px solid var(--primary-color);
+}
+
+.progress-circle::before {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: white;
+  border-radius: 50%;
+}
+
+.progress-text {
+  position: relative;
+  z-index: 1;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+}
+
+/* Table Enhancements */
+.table th {
+  background: #f8f9fa;
+  border-bottom: 2px solid var(--border-color);
+  color: var(--secondary-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  vertical-align: middle;
+  border-color: var(--border-color);
+}
+
+.table-hover tbody tr:hover {
+  background: rgba(255, 188, 59, 0.05);
+  transform: translateY(-1px);
+  transition: var(--transition);
+}
+
+/* Badge Enhancements */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.badge.bg-success {
+  background: var(--success-color) !important;
+}
+
+.badge.bg-warning {
+  background: var(--warning-color) !important;
+}
+
+.badge.bg-danger {
+  background: var(--danger-color) !important;
+}
+
+.badge.bg-info {
+  background: var(--info-color) !important;
+}
+
+.badge.bg-primary {
+  background: var(--primary-color) !important;
+}
+
+/* Chart Container */
+canvas#performanceChart {
+  max-height: 300px;
+}
+
+/* Empty State Styling */
+.text-center.py-4 {
+  padding: 3rem 1rem;
+}
+
+.text-center.py-4 i {
+  opacity: 0.3;
+}
+
+.text-center.py-4 h5 {
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.text-center.py-4 p {
+  color: var(--gray-color);
+  margin-bottom: 1.5rem;
+}
