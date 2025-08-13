@@ -55,11 +55,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <span>Uliza Swali</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="<?= app_url('user/certificate-history.php') ?>" class="nav-link <?= $current_page == 'certificate-history.php' ? 'active' : '' ?>">
-                    <span>Historia ya Vyeti</span>
-                </a>
-            </li>
+
             <li class="nav-item">
                 <a href="<?= app_url('user/skill-level.php') ?>" class="nav-link <?= $current_page == 'skill-level.php' ? 'active' : '' ?>">
                     <span>Daraja la Uwezo</span>
