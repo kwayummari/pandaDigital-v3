@@ -433,7 +433,7 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                 </div>
                 <div class="modal-body">
                     <p class="text-muted mb-4">Chagua mtaalamu ambao unataka kumuliza swali lako</p>
-
+                    
                     <div class="row">
                         <?php if (empty($availableExperts)): ?>
                             <div class="col-12">
@@ -446,14 +446,14 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                             <?php foreach ($availableExperts as $expert): ?>
                                 <div class="col-md-6 mb-3">
                                     <div class="card expert-card h-100" style="cursor: pointer;"
-                                        onclick="selectExpert(<?php echo $expert['id']; ?>, '<?php echo htmlspecialchars($expert['name']); ?>')">
+                                         onclick="selectExpert(<?php echo $expert['id']; ?>, '<?php echo htmlspecialchars($expert['name']); ?>')">
                                         <div class="card-body text-center p-4">
                                             <div class="expert-avatar mb-3">
                                                 <?php if (!empty($expert['photo']) && $expert['photo'] !== 'not provided'): ?>
                                                     <img src="<?php echo app_url('admin/uploads/' . htmlspecialchars($expert['photo'])); ?>"
-                                                        alt="<?php echo htmlspecialchars($expert['name']); ?>"
-                                                        class="rounded-circle" width="80" height="80"
-                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                                         alt="<?php echo htmlspecialchars($expert['name']); ?>"
+                                                         class="rounded-circle" width="80" height="80"
+                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                                                     <i class="fas fa-user-tie fa-3x text-primary" style="display: none;"></i>
                                                 <?php else: ?>
                                                     <i class="fas fa-user-tie fa-3x text-primary"></i>
@@ -473,34 +473,35 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                                             </div>
                                         </div>
                                     </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
                                 </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Bootstrap 5 JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
-        <script>
-            function showExpertModal() {
-                const modal = new bootstrap.Modal(document.getElementById('expertModal'));
-                modal.show();
-            }
+    <script>
+        function showExpertModal() {
+            const modal = new bootstrap.Modal(document.getElementById('expertModal'));
+            modal.show();
+        }
 
-            function selectExpert(expertId, expertName) {
-                // Update the form
-                document.getElementById('selected_expert_id').value = expertId;
-                document.getElementById('expert_selection_text').textContent = expertName;
-                document.getElementById('submit_btn').disabled = false;
+        function selectExpert(expertId, expertName) {
+            // Update the form
+            document.getElementById('selected_expert_id').value = expertId;
+            document.getElementById('expert_selection_text').textContent = expertName;
+            document.getElementById('submit_btn').disabled = false;
 
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('expertModal'));
-                modal.hide();
-            }
-        </script>
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('expertModal'));
+            modal.hide();
+        }
+    </script>
 </body>
 
 </html>
