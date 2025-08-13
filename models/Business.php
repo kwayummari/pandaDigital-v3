@@ -205,6 +205,139 @@ class Business
         }
     }
 
+    /**
+     * Get businesses by user ID (for old system compatibility)
+     */
+    public function getBusinessesByUserId($userId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT * FROM business 
+                WHERE user_id = ? 
+                ORDER BY date_created DESC
+            ");
+
+            $stmt->execute([$userId]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting businesses by user ID: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get business details with photos
+     */
+    public function getBusinessWithPhotos($businessId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT b.*, bp.photo_path
+                FROM business b
+                LEFT JOIN business_photo bp ON b.id = bp.business_id
+                WHERE b.id = ?
+            ");
+
+            $stmt->execute([$businessId]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting business with photos: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get products by business ID
+     */
+    public function getProductsByBusinessId($businessId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT p.*, c.name as category_name
+                FROM products p
+                LEFT JOIN categories c ON p.categoryId = c.id
+                WHERE p.sellerId = ?
+                ORDER BY p.date DESC
+            ");
+
+            $stmt->execute([$businessId]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting products by business ID: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get sales by business ID
+     */
+    public function getSalesByBusinessId($businessId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT s.*, p.name as product_name, p.image as product_photo
+                FROM sales s
+                LEFT JOIN products p ON s.productId = p.id
+                WHERE p.sellerId = ?
+                ORDER BY s.date DESC
+            ");
+
+            $stmt->execute([$businessId]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting sales by business ID: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Register a new business using the old system table structure
+     */
+    public function registerBusinessOldSystem($userId, $businessName, $description, $location)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                INSERT INTO business (name, maelezo, location, status, user_id, date_created) 
+                VALUES (?, ?, ?, 'pending', ?, NOW())
+            ");
+
+            return $stmt->execute([$businessName, $description, $location, $userId]);
+        } catch (PDOException $e) {
+            error_log("Error registering business in old system: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Add a product to a business
+     */
+    public function addProduct($businessId, $productName, $description, $price, $categoryId = null, $imagePath = null)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                INSERT INTO products (name, description, amount, image, categoryId, sellerId, status, date) 
+                VALUES (?, ?, ?, ?, ?, ?, '1', NOW())
+            ");
+
+            return $stmt->execute([$productName, $description, $price, $imagePath, $categoryId, $businessId]);
+        } catch (PDOException $e) {
+            error_log("Error adding product: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function rejectBusiness($businessId, $reason = null)
     {
         try {
