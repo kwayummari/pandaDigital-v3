@@ -249,6 +249,16 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                     </div>
                 <?php endif; ?>
 
+                <!-- Debug Info -->
+                <?php if (empty($availableExperts)): ?>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Debug:</strong> Hakuna wataalamu waliopatikana.
+                        <br>Total experts: <?php echo count($availableExperts); ?>
+                        <br>SQL Query: SELECT id, name, bio, photo, phone, email FROM experts WHERE status IN ('free', 'premium') ORDER BY name ASC
+                    </div>
+                <?php endif; ?>
+
                 <!-- Statistics Cards -->
                 <div class="row mb-4">
                     <div class="col-md-4">
@@ -425,62 +435,72 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                     <p class="text-muted mb-4">Chagua mtaalamu ambao unataka kumuliza swali lako</p>
 
                     <div class="row">
-                        <?php foreach ($availableExperts as $expert): ?>
-                            <div class="col-md-6 mb-3">
-                                <div class="card expert-card h-100" style="cursor: pointer;"
-                                    onclick="selectExpert(<?php echo $expert['id']; ?>, '<?php echo htmlspecialchars($expert['name']); ?>')">
-                                    <div class="card-body text-center p-4">
-                                        <div class="expert-avatar mb-3">
-                                            <?php if (!empty($expert['photo'])): ?>
-                                                <img src="<?php echo htmlspecialchars($expert['photo']); ?>"
-                                                    alt="<?php echo htmlspecialchars($expert['name']); ?>"
-                                                    class="rounded-circle" width="80" height="80">
-                                            <?php else: ?>
-                                                <i class="fas fa-user-tie fa-3x text-primary"></i>
-                                            <?php endif; ?>
-                                        </div>
-                                        <h6 class="mb-2"><?php echo htmlspecialchars($expert['name']); ?></h6>
-                                        <?php if (!empty($expert['bio'])): ?>
-                                            <p class="text-muted small mb-2"><?php echo htmlspecialchars(substr($expert['bio'], 0, 100)) . '...'; ?></p>
-                                        <?php endif; ?>
-                                        <div class="expert-contact small text-muted">
-                                            <?php if (!empty($expert['phone'])): ?>
-                                                <div><i class="fas fa-phone me-1"></i><?php echo htmlspecialchars($expert['phone']); ?></div>
-                                            <?php endif; ?>
-                                            <?php if (!empty($expert['email'])): ?>
-                                                <div><i class="fas fa-envelope me-1"></i><?php echo htmlspecialchars($expert['email']); ?></div>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
+                        <?php if (empty($availableExperts)): ?>
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Hakuna wataalamu waliopatikana. Tafadhali jaribu tena baadae.
                                 </div>
                             </div>
-                        <?php endforeach; ?>
+                        <?php else: ?>
+                            <?php foreach ($availableExperts as $expert): ?>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card expert-card h-100" style="cursor: pointer;"
+                                        onclick="selectExpert(<?php echo $expert['id']; ?>, '<?php echo htmlspecialchars($expert['name']); ?>')">
+                                        <div class="card-body text-center p-4">
+                                            <div class="expert-avatar mb-3">
+                                                <?php if (!empty($expert['photo']) && $expert['photo'] !== 'not provided'): ?>
+                                                    <img src="<?php echo app_url('admin/uploads/' . htmlspecialchars($expert['photo'])); ?>"
+                                                        alt="<?php echo htmlspecialchars($expert['name']); ?>"
+                                                        class="rounded-circle" width="80" height="80"
+                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                                    <i class="fas fa-user-tie fa-3x text-primary" style="display: none;"></i>
+                                                <?php else: ?>
+                                                    <i class="fas fa-user-tie fa-3x text-primary"></i>
+                                                <?php endif; ?>
+                                            </div>
+                                            <h6 class="mb-2"><?php echo htmlspecialchars($expert['name']); ?></h6>
+                                            <?php if (!empty($expert['bio'])): ?>
+                                                <p class="text-muted small mb-2"><?php echo htmlspecialchars(substr($expert['bio'], 0, 100)) . '...'; ?></p>
+                                            <?php endif; ?>
+                                            <div class="expert-contact small text-muted">
+                                                <?php if (!empty($expert['phone'])): ?>
+                                                    <div><i class="fas fa-phone me-1"></i><?php echo htmlspecialchars($expert['phone']); ?></div>
+                                                <?php endif; ?>
+                                                <?php if (!empty($expert['email'])): ?>
+                                                    <div><i class="fas fa-envelope me-1"></i><?php echo htmlspecialchars($expert['email']); ?></div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                                </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+        <!-- Bootstrap 5 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
-    <script>
-        function showExpertModal() {
-            const modal = new bootstrap.Modal(document.getElementById('expertModal'));
-            modal.show();
-        }
+        <script>
+            function showExpertModal() {
+                const modal = new bootstrap.Modal(document.getElementById('expertModal'));
+                modal.show();
+            }
 
-        function selectExpert(expertId, expertName) {
-            // Update the form
-            document.getElementById('selected_expert_id').value = expertId;
-            document.getElementById('expert_selection_text').textContent = expertName;
-            document.getElementById('submit_btn').disabled = false;
+            function selectExpert(expertId, expertName) {
+                // Update the form
+                document.getElementById('selected_expert_id').value = expertId;
+                document.getElementById('expert_selection_text').textContent = expertName;
+                document.getElementById('submit_btn').disabled = false;
 
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('expertModal'));
-            modal.hide();
-        }
-    </script>
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('expertModal'));
+                modal.hide();
+            }
+        </script>
 </body>
 
 </html>

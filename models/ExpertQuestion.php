@@ -49,15 +49,40 @@ class ExpertQuestion
         try {
             $conn = $this->db->getConnection();
 
+            // First, let's check if the experts table exists and has data
+            $checkStmt = $conn->prepare("SHOW TABLES LIKE 'experts'");
+            $checkStmt->execute();
+            $tableExists = $checkStmt->fetch();
+
+            if (!$tableExists) {
+                error_log("Experts table does not exist");
+                return [];
+            }
+
+            // Check total count
+            $countStmt = $conn->prepare("SELECT COUNT(*) as total FROM experts");
+            $countStmt->execute();
+            $totalCount = $countStmt->fetch()['total'];
+            error_log("Total experts in table: " . $totalCount);
+
+            // Check status values
+            $statusStmt = $conn->prepare("SELECT DISTINCT status FROM experts");
+            $statusStmt->execute();
+            $statuses = $statusStmt->fetchAll(PDO::FETCH_COLUMN);
+            error_log("Available statuses: " . implode(', ', $statuses));
+
             $stmt = $conn->prepare("
-                SELECT id, name, bio, photo, phone, email
+                SELECT id, name, bio, photo, phone, email, status
                 FROM experts 
-                WHERE status = '1'
+                WHERE status IN ('free', 'premium')
                 ORDER BY name ASC
             ");
 
             $stmt->execute();
-            return $stmt->fetchAll();
+            $experts = $stmt->fetchAll();
+            error_log("Found " . count($experts) . " available experts");
+
+            return $experts;
         } catch (PDOException $e) {
             error_log("Error fetching experts: " . $e->getMessage());
             return [];
