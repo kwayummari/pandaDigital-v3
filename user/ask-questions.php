@@ -59,8 +59,7 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=7">
     <style>
@@ -217,6 +216,22 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
             opacity: 0.6;
             cursor: not-allowed;
         }
+
+        .expert-avatar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .expert-avatar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 
@@ -235,9 +250,7 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                             <h1 class="h3 mb-0">Uliza Swali</h1>
                             <p class="text-muted">Uliza swali kwa wataalamu na upate majibu ya kitaalamu</p>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-question-circle text-primary me-2" style="font-size: 1.5rem;"></i>
-                        </div>
+
                     </div>
                 </div>
 
@@ -249,17 +262,7 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                     </div>
                 <?php endif; ?>
 
-                <!-- Debug Info -->
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <strong>Debug Info:</strong>
-                    <br>Total experts: <?php echo count($availableExperts); ?>
-                    <br>Experts data: <?php echo !empty($availableExperts) ? 'Available' : 'Empty'; ?>
-                    <?php if (!empty($availableExperts)): ?>
-                        <br>First expert: <?php echo htmlspecialchars($availableExperts[0]['name'] ?? 'N/A'); ?>
-                        <br>Photo path: <?php echo htmlspecialchars($availableExperts[0]['photo'] ?? 'N/A'); ?>
-                    <?php endif; ?>
-                </div>
+
 
                 <!-- Statistics Cards -->
                 <div class="row mb-4">
@@ -299,7 +302,6 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                         <div class="card">
                             <div class="card-body p-4">
                                 <h5 class="card-title mb-4">
-                                    <i class="fas fa-plus-circle text-primary me-2"></i>
                                     Uliza Swali Jipya
                                 </h5>
 
@@ -310,7 +312,6 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                                     <div class="mb-3">
                                         <label class="form-label">Chagua Mtaalamu *</label>
                                         <button type="button" class="btn btn-outline-primary w-100" onclick="showExpertModal()">
-                                            <i class="fas fa-user-tie me-2"></i>
                                             <span id="expert_selection_text">Chagua Mtaalamu</span>
                                         </button>
                                         <small class="text-muted">Bofya hapa kuchagua mtaalamu</small>
@@ -341,14 +342,13 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
 
                                     <!-- Submit Button -->
                                     <button type="submit" class="btn btn-primary w-100" id="submit_btn" disabled>
-                                        <i class="fas fa-paper-plane me-2"></i>
                                         Tumia Swali
                                     </button>
                                 </form>
 
                                 <!-- Tips -->
                                 <div class="mt-4 p-3 bg-light rounded">
-                                    <h6 class="mb-2"><i class="fas fa-lightbulb text-warning me-2"></i>Vidokezo</h6>
+                                    <h6 class="mb-2">Vidokezo</h6>
                                     <ul class="mb-0 small">
                                         <li>Chagua mtaalamu kwanza</li>
                                         <li>Andika swali kwa ufasaha na uelewa</li>
@@ -365,13 +365,11 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                         <div class="card">
                             <div class="card-body p-4">
                                 <h5 class="card-title mb-4">
-                                    <i class="fas fa-list text-primary me-2"></i>
                                     Swali Zangu
                                 </h5>
 
                                 <?php if (empty($userQuestions)): ?>
                                     <div class="empty-state">
-                                        <i class="fas fa-question-circle"></i>
                                         <h5>Huna swali bado</h5>
                                         <p>Anza kwa kuuliza swali lako la kwanza kwa wataalamu wetu</p>
                                     </div>
@@ -389,7 +387,6 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
 
                                             <div class="question-meta">
                                                 <small class="text-muted">
-                                                    <i class="fas fa-calendar me-1"></i>
                                                     <?php echo date('d/m/Y H:i', strtotime($question['date_created'])); ?>
                                                 </small>
                                             </div>
@@ -397,7 +394,6 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                                             <?php if ($question['status'] === '1' && !empty($question['answer'])): ?>
                                                 <div class="expert-answer">
                                                     <div class="d-flex align-items-center mb-2">
-                                                        <i class="fas fa-user-tie text-primary me-2"></i>
                                                         <strong class="text-primary">Mtaalamu</strong>
                                                         <small class="text-muted ms-2">
                                                             <?php echo date('d/m/Y H:i', strtotime($question['date_created'])); ?>
@@ -407,7 +403,6 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                                                 </div>
                                             <?php elseif ($question['status'] === '0'): ?>
                                                 <div class="text-center py-3">
-                                                    <i class="fas fa-clock text-warning me-2"></i>
                                                     <span class="text-muted">Swali lako linachambuliwa na mtaalamu. Utapata jibu hivi karibuni.</span>
                                                 </div>
                                             <?php endif; ?>
@@ -428,7 +423,6 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="expertModalLabel">
-                        <i class="fas fa-user-tie text-primary me-2"></i>
                         Chagua Mtaalamu
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -440,7 +434,6 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                         <?php if (empty($availableExperts)): ?>
                             <div class="col-12">
                                 <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i>
                                     Hakuna wataalamu waliopatikana. Tafadhali jaribu tena baadae.
                                 </div>
                             </div>
@@ -452,13 +445,9 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                                         <div class="card-body text-center p-4">
                                             <div class="expert-avatar mb-3">
                                                 <?php if (!empty($expert['photo']) && $expert['photo'] !== 'not provided'): ?>
-                                                    <img src="<?php echo app_url('pandadigitalV2/admin/uploads/' . htmlspecialchars($expert['photo'])); ?>"
-                                                        alt="<?php echo htmlspecialchars($expert['name']); ?>"
-                                                        class="rounded-circle" width="80" height="80"
-                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                                    <i class="fas fa-user-tie fa-3x text-primary" style="display: none;"></i>
-                                                <?php else: ?>
-                                                    <i class="fas fa-user-tie fa-3x text-primary"></i>
+                                                                                                        <img src="<?php echo app_url('uploads/ProfilePhotos/' . htmlspecialchars($expert['photo'])); ?>"
+                                                         alt="<?php echo htmlspecialchars($expert['name']); ?>"
+                                                         class="rounded-circle" width="80" height="80">
                                                 <?php endif; ?>
                                             </div>
                                             <h6 class="mb-2"><?php echo htmlspecialchars($expert['name']); ?></h6>
@@ -467,10 +456,10 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                                             <?php endif; ?>
                                             <div class="expert-contact small text-muted">
                                                 <?php if (!empty($expert['phone'])): ?>
-                                                    <div><i class="fas fa-phone me-1"></i><?php echo htmlspecialchars($expert['phone']); ?></div>
+                                                    <div><?php echo htmlspecialchars($expert['phone']); ?></div>
                                                 <?php endif; ?>
                                                 <?php if (!empty($expert['email'])): ?>
-                                                    <div><i class="fas fa-envelope me-1"></i><?php echo htmlspecialchars($expert['email']); ?></div>
+                                                    <div><?php echo htmlspecialchars($expert['email']); ?></div>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
