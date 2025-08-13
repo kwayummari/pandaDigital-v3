@@ -216,15 +216,89 @@ $page_title = 'Pakua Vyeti';
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         function downloadPDF() {
-            // For now, we'll just show a message
-            // In a real implementation, you'd generate and serve a PDF
-            alert('Vyeti vya PDF vitapakuliwa hivi karibuni. Kwa sasa unaweza kuchapisha vyeti hapa.');
+            // Hide elements that shouldn't be in PDF
+            const sidebar = document.querySelector('.sidebar');
+            const topNavbar = document.querySelector('.top-navbar');
+            const downloadActions = document.querySelector('.download-actions');
+            const courseSummary = document.querySelector('.course-summary');
+
+            if (sidebar) sidebar.style.display = 'none';
+            if (topNavbar) topNavbar.style.display = 'none';
+            if (downloadActions) downloadActions.style.display = 'none';
+            if (courseSummary) courseSummary.style.display = 'none';
+
+            // Get the certificate container
+            const certificateContainer = document.querySelector('.certificate-container');
+
+            if (!certificateContainer) {
+                alert('Haikuweza kupata vyeti. Tafadhali jaribu tena.');
+                return;
+            }
+
+            // PDF options
+            const opt = {
+                margin: 0,
+                filename: 'vyeti_<?php echo htmlspecialchars($course['name']); ?>_<?php echo htmlspecialchars($currentUser['first_name']); ?>.pdf',
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                }
+            };
+
+            // Generate PDF
+            html2pdf().set(opt).from(certificateContainer).save().then(() => {
+                // Show elements back after PDF generation
+                if (sidebar) sidebar.style.display = 'block';
+                if (topNavbar) topNavbar.style.display = 'block';
+                if (downloadActions) downloadActions.style.display = 'block';
+                if (courseSummary) courseSummary.style.display = 'block';
+            }).catch(err => {
+                console.error('Error generating PDF:', err);
+                alert('Kulikuwa na tatizo kujenga PDF. Tafadhali jaribu tena au tumia "Chapisha Vyeti" badala yake.');
+
+                // Show elements back on error
+                if (sidebar) sidebar.style.display = 'block';
+                if (topNavbar) topNavbar.style.display = 'block';
+                if (downloadActions) downloadActions.style.display = 'block';
+                if (courseSummary) courseSummary.style.display = 'block';
+            });
         }
 
         function printCertificate() {
+            // Hide elements for printing
+            const sidebar = document.querySelector('.sidebar');
+            const topNavbar = document.querySelector('.top-navbar');
+            const downloadActions = document.querySelector('.download-actions');
+            const courseSummary = document.querySelector('.course-summary');
+
+            if (sidebar) sidebar.style.display = 'none';
+            if (topNavbar) topNavbar.style.display = 'none';
+            if (downloadActions) downloadActions.style.display = 'none';
+            if (courseSummary) courseSummary.style.display = 'none';
+
+            // Print
             window.print();
+
+            // Show elements back after printing
+            setTimeout(() => {
+                if (sidebar) sidebar.style.display = 'block';
+                if (topNavbar) topNavbar.style.display = 'block';
+                if (downloadActions) downloadActions.style.display = 'block';
+                if (courseSummary) courseSummary.style.display = 'block';
+            }, 1000);
         }
 
         // Sidebar toggle functionality
