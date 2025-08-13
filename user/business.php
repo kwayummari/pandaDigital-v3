@@ -44,12 +44,12 @@ if ($selectedBusinessId) {
 
 // Calculate sales statistics
 $totalSales = count($businessSales);
-$totalRevenue = array_sum(array_column($businessSales, 'amount'));
+$totalRevenue = array_sum(array_column($businessSales, 'amount') ?: [0]);
 $completedSales = count(array_filter($businessSales, function ($s) {
-    return $s['status'] == '1';
+    return isset($s['status']) && $s['status'] == '1';
 }));
 $pendingSales = count(array_filter($businessSales, function ($s) {
-    return $s['status'] == '0';
+    return isset($s['status']) && $s['status'] == '0';
 }));
 ?>
 
@@ -417,19 +417,19 @@ $pendingSales = count(array_filter($businessSales, function ($s) {
                                                     <div class="col-md-6 col-lg-4 mb-3">
                                                         <div class="product-item">
                                                             <div class="d-flex align-items-start">
-                                                                <?php if ($product['photo']): ?>
-                                                                    <img src="<?= app_url('uploads/products/' . $product['photo']) ?>"
-                                                                        alt="<?php echo htmlspecialchars($product['name']); ?>"
+                                                                <?php if (!empty($product['image'])): ?>
+                                                                    <img src="<?= app_url('uploads/' . $product['image']) ?>"
+                                                                        alt="<?php echo htmlspecialchars($product['name'] ?? ''); ?>"
                                                                         class="product-photo me-3">
                                                                 <?php endif; ?>
                                                                 <div class="flex-grow-1">
-                                                                    <h6 class="mb-1"><?php echo htmlspecialchars($product['name']); ?></h6>
+                                                                    <h6 class="mb-1"><?php echo htmlspecialchars($product['name'] ?? ''); ?></h6>
                                                                     <p class="mb-2 text-muted small">
-                                                                        <?php echo htmlspecialchars(substr($product['description'], 0, 100)) . '...'; ?>
+                                                                        <?php echo htmlspecialchars(substr($product['description'] ?? '', 0, 100)) . '...'; ?>
                                                                     </p>
                                                                     <div class="d-flex justify-content-between align-items-center">
                                                                         <span class="fw-bold text-primary">
-                                                                            TSh <?php echo number_format($product['price']); ?>
+                                                                            TSh <?php echo number_format($product['amount'] ?? 0); ?>
                                                                         </span>
                                                                         <small class="text-muted">
                                                                             <?php echo $product['category_name'] ?? 'Hakuna Kategoria'; ?>
@@ -488,17 +488,17 @@ $pendingSales = count(array_filter($businessSales, function ($s) {
                                                                 <h6 class="mb-1"><?php echo htmlspecialchars($sale['product_name']); ?></h6>
                                                                 <div class="d-flex align-items-center">
                                                                     <span class="me-3">
-                                                                        <strong>Idadi:</strong> <?php echo $sale['quantity']; ?>
+                                                                        <strong>Idadi:</strong> <?php echo $sale['quantity'] ?? 0; ?>
                                                                     </span>
                                                                     <span class="me-3">
-                                                                        <strong>Bei:</strong> TSh <?php echo number_format($sale['amount']); ?>
+                                                                        <strong>Bei:</strong> TSh <?php echo number_format($sale['amount'] ?? 0); ?>
                                                                     </span>
-                                                                    <span class="status-badge status-<?php echo $sale['status'] == '1' ? 'completed' : 'pending-sale'; ?>">
-                                                                        <?php echo $sale['status'] == '1' ? 'Imekamilika' : 'Inasubiri'; ?>
+                                                                    <span class="status-badge status-<?php echo ($sale['status'] ?? '0') == '1' ? 'completed' : 'pending-sale'; ?>">
+                                                                        <?php echo ($sale['status'] ?? '0') == '1' ? 'Imekamilika' : 'Inasubiri'; ?>
                                                                     </span>
                                                                 </div>
                                                                 <small class="text-muted">
-                                                                    Tarehe: <?php echo date('d/m/Y H:i', strtotime($sale['date'])); ?>
+                                                                    Tarehe: <?php echo date('d/m/Y H:i', strtotime($sale['date'] ?? 'now')); ?>
                                                                 </small>
                                                             </div>
                                                         </div>
