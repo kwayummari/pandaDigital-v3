@@ -398,6 +398,18 @@ $pendingSales = count(array_filter($businessSales, function ($s) {
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Business Actions -->
+                                        <div class="mt-4 pt-3 border-top">
+                                            <div class="d-flex gap-3">
+                                                <a href="<?= app_url('user/edit-business.php?business_id=' . $selectedBusinessId) ?>" class="btn btn-outline-primary">
+                                                    <i class="fas fa-edit me-2"></i>Hariri Biashara
+                                                </a>
+                                                <a href="<?= app_url('user/add-product.php?business_id=' . $selectedBusinessId) ?>" class="btn btn-primary">
+                                                    <i class="fas fa-plus me-2"></i>Ongeza Bidhaa
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <!-- Products Tab -->
@@ -423,17 +435,53 @@ $pendingSales = count(array_filter($businessSales, function ($s) {
                                                                         class="product-photo me-3">
                                                                 <?php endif; ?>
                                                                 <div class="flex-grow-1">
-                                                                    <h6 class="mb-1"><?php echo htmlspecialchars($product['name'] ?? ''); ?></h6>
+                                                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                                                        <h6 class="mb-0"><?php echo htmlspecialchars($product['name'] ?? ''); ?></h6>
+                                                                        <div class="d-flex gap-1">
+                                                                            <span class="badge bg-<?php echo ($product['status'] ?? '1') == '1' ? 'success' : 'secondary'; ?> fs-6">
+                                                                                <?php echo ($product['status'] ?? '1') == '1' ? 'Iko Soko' : 'Haiko Soko'; ?>
+                                                                            </span>
+                                                                            <?php if (($product['isOffered'] ?? '0') == '1' && !empty($product['offer'])): ?>
+                                                                                <span class="badge bg-danger fs-6">
+                                                                                    -<?php echo $product['offer']; ?>%
+                                                                                </span>
+                                                                            <?php endif; ?>
+                                                                        </div>
+                                                                    </div>
                                                                     <p class="mb-2 text-muted small">
                                                                         <?php echo htmlspecialchars(substr($product['description'] ?? '', 0, 100)) . '...'; ?>
                                                                     </p>
                                                                     <div class="d-flex justify-content-between align-items-center">
-                                                                        <span class="fw-bold text-primary">
-                                                                            TSh <?php echo number_format($product['amount'] ?? 0); ?>
-                                                                        </span>
-                                                                        <small class="text-muted">
-                                                                            <?php echo $product['category_name'] ?? 'Hakuna Kategoria'; ?>
-                                                                        </small>
+                                                                        <div class="d-flex flex-column">
+                                                                            <?php if (($product['isOffered'] ?? '0') == '1' && !empty($product['offer'])): ?>
+                                                                                <span class="text-decoration-line-through text-muted small">
+                                                                                    TSh <?php echo number_format($product['amount'] ?? 0); ?>
+                                                                                </span>
+                                                                                <span class="fw-bold text-danger">
+                                                                                    TSh <?php echo number_format(($product['amount'] ?? 0) - (($product['amount'] ?? 0) * ($product['offer'] ?? 0) / 100)) ?>
+                                                                                </span>
+                                                                            <?php else: ?>
+                                                                                <span class="fw-bold text-primary">
+                                                                                    TSh <?php echo number_format($product['amount'] ?? 0); ?>
+                                                                                </span>
+                                                                            <?php endif; ?>
+                                                                        </div>
+                                                                        <div class="d-flex align-items-center gap-2">
+                                                                            <small class="text-muted">
+                                                                                <?php echo $product['category_name'] ?? 'Hakuna Kategoria'; ?>
+                                                                            </small>
+                                                                            <div class="d-flex gap-1">
+                                                                                <a href="<?= app_url('user/edit-product.php?business_id=' . $selectedBusinessId . '&product_id=' . $product['id']) ?>"
+                                                                                    class="btn btn-sm btn-outline-primary">
+                                                                                    Hariri
+                                                                                </a>
+                                                                                <button type="button"
+                                                                                    class="btn btn-sm btn-<?php echo ($product['status'] ?? '1') == '1' ? 'outline-warning' : 'outline-success'; ?>"
+                                                                                    onclick="toggleProductStatus(<?php echo $product['id']; ?>, <?php echo $selectedBusinessId; ?>, <?php echo ($product['status'] ?? '1') == '1' ? 0 : 1; ?>)">
+                                                                                    <?php echo ($product['status'] ?? '1') == '1' ? 'Funga' : 'Fungua'; ?>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -525,6 +573,35 @@ $pendingSales = count(array_filter($businessSales, function ($s) {
             currentUrl.searchParams.set('business_id', businessId);
             currentUrl.searchParams.set('tab', 'overview');
             window.location.href = currentUrl.toString();
+        }
+
+        // Toggle product status
+        function toggleProductStatus(productId, businessId, newStatus) {
+            const statusText = newStatus == 1 ? 'Iko Soko' : 'Haiko Soko';
+            const buttonText = newStatus == 1 ? 'Funga' : 'Fungua';
+
+            if (confirm(`Una uhakika unataka kubadilisha hali ya bidhaa kuwa "${statusText}"?`)) {
+                fetch('<?= app_url("user/toggle-product-status.php") ?>', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `product_id=${productId}&business_id=${businessId}&status=${newStatus}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Reload the page to show updated status
+                            window.location.reload();
+                        } else {
+                            alert('Kuna tatizo la kiufundi. Jaribu tena.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Kuna tatizo la kiufundi. Jaribu tena.');
+                    });
+            }
         }
 
         // Set active tab based on URL parameter

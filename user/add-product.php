@@ -38,6 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = trim($_POST['description'] ?? '');
     $price = trim($_POST['price'] ?? '');
     $category = trim($_POST['category'] ?? '');
+    $isOffered = isset($_POST['isOffered']) ? '1' : '0';
+    $offer = trim($_POST['offer'] ?? '');
 
     // Validation
     if (empty($productName)) {
@@ -71,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        if ($businessModel->addProduct($businessId, $productName, $description, $price, $category ?: null, $imagePath)) {
+        if ($businessModel->addProduct($businessId, $productName, $description, $price, $category ?: null, $imagePath, $isOffered, $offer)) {
             $message = 'Bidhaa yako imeongezwa kwa mafanikio!';
             $messageType = 'success';
             $showSuccessActions = true;
@@ -275,7 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             </div>
 
                                             <!-- Category -->
-                                            <div class="col-md-6 mb-4">
+                                            <div class="col-md-6 mb-3">
                                                 <label for="category" class="form-label">Kategoria</label>
                                                 <select class="form-select" id="category" name="category">
                                                     <option value="">Chagua Kategoria</option>
@@ -286,6 +288,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                     <option value="5" <?php echo ($category ?? '') == '5' ? 'selected' : ''; ?>>Afya na Urembo</option>
                                                     <option value="6" <?php echo ($category ?? '') == '6' ? 'selected' : ''; ?>>Nyingine</option>
                                                 </select>
+                                            </div>
+
+                                            <!-- Offer Settings -->
+                                            <div class="col-md-12 mb-4">
+                                                <div class="card border-0 bg-light">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title mb-3">Mpango wa Punguzo (Si lazima)</h6>
+
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-check mb-2">
+                                                                    <input class="form-check-input" type="checkbox" id="isOffered" name="isOffered" value="1">
+                                                                    <label class="form-check-label" for="isOffered">
+                                                                        Weka punguzo kwenye bidhaa hii
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="offer" class="form-label">Asilimia ya Punguzo (%)</label>
+                                                                <input type="number" class="form-control" id="offer" name="offer"
+                                                                    placeholder="10" min="1" max="99" disabled>
+                                                                <small class="text-muted">Weka asilimia ya punguzo (1-99%)</small>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="mt-3 p-3 bg-white rounded border">
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <strong>Bei ya Kawaida:</strong><br>
+                                                                    <span class="text-muted" id="originalPrice">TSh 0</span>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <strong>Punguzo:</strong><br>
+                                                                    <span class="text-success" id="discountAmount">TSh 0</span>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <strong>Bei ya Punguzo:</strong><br>
+                                                                    <span class="text-primary fw-bold" id="finalPrice">TSh 0</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <!-- Submit Buttons -->
@@ -312,6 +357,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        // Handle offer checkbox interaction
+        document.getElementById('isOffered').addEventListener('change', function() {
+            const offerInput = document.getElementById('offer');
+            const priceInput = document.getElementById('price');
+
+            if (this.checked) {
+                offerInput.disabled = false;
+                offerInput.focus();
+                updateOfferCalculation();
+            } else {
+                offerInput.disabled = true;
+                offerInput.value = '';
+                updateOfferCalculation();
+            }
+        });
+
+        // Handle price and offer input changes
+        document.getElementById('price').addEventListener('input', updateOfferCalculation);
+        document.getElementById('offer').addEventListener('input', updateOfferCalculation);
+
+        function updateOfferCalculation() {
+            const priceInput = document.getElementById('price');
+            const offerInput = document.getElementById('offer');
+            const originalPrice = document.getElementById('originalPrice');
+            const discountAmount = document.getElementById('discountAmount');
+            const finalPrice = document.getElementById('finalPrice');
+
+            const price = parseFloat(priceInput.value) || 0;
+            const offer = parseFloat(offerInput.value) || 0;
+
+            originalPrice.textContent = 'TSh ' + price.toLocaleString();
+
+            if (offer > 0 && price > 0) {
+                const discount = price * offer / 100;
+                const final = price - discount;
+
+                discountAmount.textContent = 'TSh ' + discount.toLocaleString();
+                finalPrice.textContent = 'TSh ' + final.toLocaleString();
+            } else {
+                discountAmount.textContent = 'TSh 0';
+                finalPrice.textContent = 'TSh ' + price.toLocaleString();
+            }
+        }
+
+        // Initialize calculation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateOfferCalculation();
+        });
+    </script>
 </body>
 
 </html>

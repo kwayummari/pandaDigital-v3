@@ -319,21 +319,107 @@ class Business
     }
 
     /**
-     * Add a product to a business
+     * Update an existing business using the old system table structure
      */
-    public function addProduct($businessId, $productName, $description, $price, $categoryId = null, $imagePath = null)
+    public function updateBusinessOldSystem($businessId, $businessName, $description, $location, $phone = null, $email = null, $website = null)
     {
         try {
             $conn = $this->db->getConnection();
 
             $stmt = $conn->prepare("
-                INSERT INTO products (name, description, amount, image, categoryId, sellerId, status, date) 
-                VALUES (?, ?, ?, ?, ?, ?, '1', NOW())
+                UPDATE business 
+                SET name = ?, maelezo = ?, location = ?, phone = ?, email = ?, website = ?
+                WHERE id = ?
             ");
 
-            return $stmt->execute([$productName, $description, $price, $imagePath, $categoryId, $businessId]);
+            return $stmt->execute([$businessName, $description, $location, $phone, $email, $website, $businessId]);
+        } catch (PDOException $e) {
+            error_log("Error updating business in old system: " . $e->getMessage());
+            return false;
+        }
+    }
+
+
+
+    /**
+     * Add a product to a business
+     */
+    public function addProduct($businessId, $productName, $description, $price, $categoryId = null, $imagePath = null, $isOffered = '0', $offer = '')
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                INSERT INTO products (name, description, amount, image, categoryId, sellerId, status, isOffered, offer, date) 
+                VALUES (?, ?, ?, ?, ?, ?, '1', ?, ?, NOW())
+            ");
+
+            return $stmt->execute([$productName, $description, $price, $imagePath, $categoryId, $businessId, $isOffered, $offer]);
         } catch (PDOException $e) {
             error_log("Error adding product: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get a single product by ID
+     */
+    public function getProductById($productId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("
+                SELECT p.*, b.name as business_name
+                FROM products p
+                LEFT JOIN business b ON p.sellerId = b.id
+                WHERE p.id = ?
+            ");
+            $stmt->execute([$productId]);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Error getting product by ID: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Update an existing product
+     */
+    public function updateProduct($productId, $productName, $description, $price, $categoryId = null, $imagePath = null, $status = '1', $isOffered = '0', $offer = '')
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                UPDATE products 
+                SET name = ?, description = ?, amount = ?, image = ?, categoryId = ?, status = ?, isOffered = ?, offer = ?
+                WHERE id = ?
+            ");
+
+            return $stmt->execute([$productName, $description, $price, $imagePath, $categoryId, $status, $isOffered, $offer, $productId]);
+        } catch (PDOException $e) {
+            error_log("Error updating product: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Toggle product status (available/not available)
+     */
+    public function toggleProductStatus($productId, $newStatus)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                UPDATE products 
+                SET status = ?
+                WHERE id = ?
+            ");
+
+            return $stmt->execute([$newStatus, $productId]);
+        } catch (PDOException $e) {
+            error_log("Error toggling product status: " . $e->getMessage());
             return false;
         }
     }
