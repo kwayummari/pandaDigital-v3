@@ -24,7 +24,9 @@ class Course
                            CASE WHEN e.user_id IS NOT NULL THEN 1 ELSE 0 END as is_enrolled,
                            '0' as payment_status,
                            COUNT(DISTINCT v.id) as total_videos,
-                           COUNT(DISTINCT q.id) as total_questions
+                           COUNT(DISTINCT q.id) as total_questions,
+                           c.price,
+                           c.courseIsPaidStatusId
                     FROM course c
                     LEFT JOIN video v ON v.course_id = c.id
                     LEFT JOIN questions q ON q.video_id = v.id
@@ -38,7 +40,9 @@ class Course
                 $stmt = $conn->prepare("
                     SELECT c.*, 
                            COUNT(DISTINCT v.id) as total_videos,
-                           COUNT(DISTINCT q.id) as total_questions
+                           COUNT(DISTINCT q.id) as total_questions,
+                           c.price,
+                           c.courseIsPaidStatusId
                     FROM course c
                     LEFT JOIN video v ON v.course_id = c.id
                     LEFT JOIN questions q ON q.video_id = v.id
@@ -70,7 +74,9 @@ class Course
                            CASE WHEN e.user_id IS NOT NULL THEN 1 ELSE 0 END as is_enrolled,
                            '0' as payment_status,
                            COUNT(DISTINCT v.id) as total_videos,
-                           COUNT(DISTINCT q.id) as total_questions
+                           COUNT(DISTINCT q.id) as total_questions,
+                           c.price,
+                           c.courseIsPaidStatusId
                     FROM course c
                     LEFT JOIN video v ON v.course_id = c.id
                     LEFT JOIN questions q ON q.video_id = v.id
@@ -83,7 +89,9 @@ class Course
                 $stmt = $conn->prepare("
                     SELECT c.*, 
                            COUNT(DISTINCT v.id) as total_videos,
-                           COUNT(DISTINCT q.id) as total_questions
+                           COUNT(DISTINCT q.id) as total_questions,
+                           c.price,
+                           c.courseIsPaidStatusId
                     FROM course c
                     LEFT JOIN video v ON v.course_id = c.id
                     LEFT JOIN questions q ON q.video_id = v.id
@@ -1086,5 +1094,164 @@ class Course
 
         // Fallback to a default image
         return 'images/courses/default-course.jpg';
+    }
+
+    // Payment Transaction Methods - Using existing courseTransactions table
+    public function createPaymentTransaction($transactionData)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Map provider names to database format
+            $providerMapping = [
+                'mpesa' => 'mpesa',
+                'tigo' => 'tigo', // Store as 'tigo' in database (Mix by YAS)
+                'airtel' => 'airtel'
+            ];
+
+            $dbProvider = $providerMapping[$transactionData['provider']] ?? $transactionData['provider'];
+
+            $stmt = $conn->prepare("
+                INSERT INTO courseTransactions (
+                    studentId, courseId, quantity, amount, phone, 
+                    referenceNo, mobileType, status, dateCreated
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            ");
+
+            $stmt->execute([
+                $transactionData['userId'],
+                $transactionData['courseId'],
+                1, // quantity
+                $transactionData['amount'],
+                $transactionData['phone'],
+                $transactionData['referenceNumber'],
+                $dbProvider,
+                0 // status: 0 = pending, 1 = completed
+            ]);
+
+            return $conn->lastInsertId();
+        } catch (PDOException $e) {
+            error_log("Error creating payment transaction: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updatePaymentTransaction($transactionId, $status)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                UPDATE courseTransactions 
+                SET status = ? 
+                WHERE id = ?
+            ");
+
+            return $stmt->execute([$status, $transactionId]);
+        } catch (PDOException $e) {
+            error_log("Error updating payment transaction: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updatePaymentTransactionByReference($referenceNumber, $status)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                UPDATE courseTransactions 
+                SET status = ? 
+                WHERE referenceNo = ?
+            ");
+
+            return $stmt->execute([$status, $referenceNumber]);
+        } catch (PDOException $e) {
+            error_log("Error updating payment transaction by reference: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getPendingPaymentTransaction($userId, $courseId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT * FROM courseTransactions 
+                WHERE studentId = ? AND courseId = ? 
+                AND status IN (0, 2) -- 0 = pending, 2 = processing
+                ORDER BY dateCreated DESC 
+                LIMIT 1
+            ");
+
+            $stmt->execute([$userId, $courseId]);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Error getting pending payment transaction: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function hasPaidCourseAccess($userId, $courseId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT id FROM paidCourse 
+                WHERE userId = ? AND courseId = ?
+            ");
+
+            $stmt->execute([$userId, $courseId]);
+            return $stmt->fetch() ? true : false;
+        } catch (PDOException $e) {
+            error_log("Error checking paid course access: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function createPaidCourseAccess($userId, $courseId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if access already exists
+            $stmt = $conn->prepare("
+                SELECT id FROM paidCourse 
+                WHERE userId = ? AND courseId = ?
+            ");
+
+            $stmt->execute([$userId, $courseId]);
+            if ($stmt->fetch()) {
+                return true; // Access already exists
+            }
+
+            // Create new access record
+            $stmt = $conn->prepare("
+                INSERT INTO paidCourse (userId, courseId, dateCreated) 
+                VALUES (?, ?, NOW())
+            ");
+
+            return $stmt->execute([$userId, $courseId]);
+        } catch (PDOException $e) {
+            error_log("Error creating paid course access: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function logPaymentCallback($callbackData)
+    {
+        try {
+            // Log to a simple text file for now, or you can create a callbacks table if needed
+            $logFile = __DIR__ . '/../user/payment_callback_log.txt';
+            $logData = date('Y-m-d H:i:s') . " - Callback: " . json_encode($callbackData) . "\n";
+            file_put_contents($logFile, $logData, FILE_APPEND);
+
+            return true;
+        } catch (Exception $e) {
+            error_log("Error logging payment callback: " . $e->getMessage());
+            return false;
+        }
     }
 }

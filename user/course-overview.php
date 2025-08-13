@@ -118,9 +118,15 @@ if ($isEnrolled) {
                                 Endelea Kusoma
                             </a>
                         <?php else: ?>
-                            <button class="btn btn-primary" onclick="enrollCourse(<?php echo $courseId; ?>)">
-                                Jiunge Bure
-                            </button>
+                            <?php if ($course['courseIsPaidStatusId'] == 1): ?>
+                                <button type="button" class="btn btn-primary" onclick="openPaymentModal(<?php echo $courseId; ?>, '<?php echo htmlspecialchars($course['name']); ?>', <?php echo $course['price']; ?>)">
+                                    Jiunge kwa TSh <?php echo number_format($course['price'] ?? 0); ?>
+                                </button>
+                            <?php else: ?>
+                                <button class="btn btn-primary" onclick="enrollCourse(<?php echo $courseId; ?>)">
+                                    Jiunge Bure
+                                </button>
+                            <?php endif; ?>
                         <?php endif; ?>
                         <a href="<?php echo app_url('user/courses.php'); ?>" class="btn btn-outline-secondary ms-2">
                             Rudi
@@ -138,11 +144,11 @@ if ($isEnrolled) {
                                 <img src="<?php echo app_url($courseModel->getImageUrl($course['photo'])); ?>"
                                     alt="<?php echo htmlspecialchars($course['name']); ?>"
                                     class="img-fluid w-100 rounded"
-                                    style="height: 300px; object-fit: cover;">
+                                    style="height: 400px; object-fit: cover;">
                             </div>
                         <?php else: ?>
                             <div class="course-main-image-placeholder d-flex align-items-center justify-content-center bg-light rounded"
-                                style="height: 300px;">
+                                style="height: 400px;">
                                 <span class="text-muted">Picha ya kozi haijapatikana</span>
                             </div>
                         <?php endif; ?>
@@ -196,7 +202,13 @@ if ($isEnrolled) {
                 </div>
                 <div class="col-md-3">
                     <div class="stat-card">
-                        <div class="stat-number">Bure</div>
+                        <div class="stat-number">
+                            <?php if ($course['courseIsPaidStatusId'] == 1): ?>
+                                TSh <?php echo number_format($course['price'] ?? 0); ?>
+                            <?php else: ?>
+                                Bure
+                            <?php endif; ?>
+                        </div>
                         <div class="stat-label">Bei</div>
                     </div>
                 </div>
@@ -295,6 +307,74 @@ if ($isEnrolled) {
         </div>
     </div>
 
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Payment Header -->
+                <div class="modal-header" style="background: var(--primary-color); color: white; border: none;">
+                    <h5 class="modal-title" id="paymentModalLabel">Malipo ya Kozi</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Payment Body -->
+                <div class="modal-body p-4">
+                    <!-- Course Info -->
+                    <div class="course-info mb-4 p-3" style="background: #f8f9fa; border-left: 4px solid var(--primary-color);">
+                        <h6 class="mb-2">Kozi: <span id="courseName"></span></h6>
+                        <p class="text-muted mb-0">Jiunge kwenye kozi hii</p>
+                    </div>
+
+                    <!-- Price Display -->
+                    <div class="text-center mb-4">
+                        <div class="price-display" style="font-size: 2.5rem; font-weight: bold; color: var(--primary-color);">
+                            <span id="coursePrice"></span>
+                        </div>
+                    </div>
+
+                    <!-- Payment Status -->
+                    <div id="paymentStatus" class="payment-status mb-3" style="display: none;"></div>
+
+                    <!-- Countdown Timer -->
+                    <div id="countdown" class="countdown mb-3" style="display: none; text-align: center; font-size: 1.2rem; color: var(--secondary-color);"></div>
+
+                    <!-- Payment Form -->
+                    <form id="paymentForm">
+                        <input type="hidden" id="courseId">
+                        <input type="hidden" id="amount">
+
+                        <!-- Mobile Provider Selection -->
+                        <div class="mb-3">
+                            <label class="form-label">Chagua Mtoa Huduma wa Simu</label>
+                            <div class="mobile-providers d-flex gap-3">
+                                <div class="mobile-provider flex-fill text-center p-3 border rounded cursor-pointer" data-provider="mpesa" style="cursor: pointer; transition: all 0.3s ease; min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <img src="<?php echo app_url('assets/images/mpesa.png'); ?>" alt="M-Pesa" style="width: 80px; height: 80px; object-fit: contain;">
+                                </div>
+                                <div class="mobile-provider flex-fill text-center p-3 border rounded cursor-pointer" data-provider="tigo" style="cursor: pointer; transition: all 0.3s ease; min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <img src="<?php echo app_url('assets/images/tigo.png'); ?>" alt="Mix by YAS" style="width: 80px; height: 80px; object-fit: contain;">
+                                </div>
+                                <div class="mobile-provider flex-fill text-center p-3 border rounded cursor-pointer" data-provider="airtel" style="cursor: pointer; transition: all 0.3s ease; min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <img src="<?php echo app_url('assets/images/airtel.png'); ?>" alt="Airtel Money" style="width: 80px; height: 80px; object-fit: contain;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Namba ya Simu</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Mfano: 0712345678" required>
+                        </div>
+
+                        <!-- Payment Button -->
+                        <button type="submit" id="payButton" class="btn w-100" style="background: var(--primary-color); color: white; padding: 12px; font-size: 1.1rem; border: none; border-radius: 8px; transition: all 0.3s ease;">
+                            Lipa Sasa
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -326,6 +406,178 @@ if ($isEnrolled) {
                 });
             }
         });
+
+        // Payment Modal Functions
+        function openPaymentModal(courseId, courseName, coursePrice) {
+            // Set modal content
+            document.getElementById('courseName').textContent = courseName;
+            document.getElementById('coursePrice').textContent = 'TSh ' + coursePrice.toLocaleString();
+            document.getElementById('courseId').value = courseId;
+            document.getElementById('amount').value = coursePrice;
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+            modal.show();
+        }
+
+        let selectedProvider = '';
+        let paymentInterval;
+        let attemptCount = 0;
+        const maxAttempts = 4;
+        const checkInterval = 30000; // 30 seconds
+
+        // Mobile provider selection
+        document.querySelectorAll('.mobile-provider').forEach(provider => {
+            provider.addEventListener('click', function() {
+                // Remove selection from all providers
+                document.querySelectorAll('.mobile-provider').forEach(p => p.classList.remove('selected'));
+                // Add selection to clicked provider
+                this.classList.add('selected');
+                selectedProvider = this.dataset.provider;
+            });
+        });
+
+        // Payment form submission
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!selectedProvider) {
+                showStatus('Tafadhali chagua mtoa huduma wa simu', 'error');
+                return;
+            }
+
+            const phone = document.getElementById('phone').value;
+            if (!phone) {
+                showStatus('Tafadhali weka namba ya simu', 'error');
+                return;
+            }
+
+            // Start payment process
+            initiatePayment();
+        });
+
+        function initiatePayment() {
+            const courseId = document.getElementById('courseId').value;
+            const userId = <?php echo $currentUser['id']; ?>;
+            const amount = document.getElementById('amount').value;
+            const phone = document.getElementById('phone').value;
+
+            // Disable form
+            document.getElementById('payButton').disabled = true;
+            document.getElementById('payButton').textContent = 'Inatumia Malipo...';
+
+            // Show processing status
+            showStatus('Inatumia malipo, tafadhali subiri...', 'processing');
+
+            // Make payment request
+            fetch('<?php echo app_url('user/process-payment.php'); ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        courseId: courseId,
+                        userId: userId,
+                        amount: amount,
+                        phone: phone,
+                        provider: selectedProvider
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showStatus('Malipo yamepokelewa! Inakaguliwa...', 'success');
+                        startPaymentCheck();
+                    } else {
+                        showStatus(data.message || 'Kulikuwa na tatizo, jaribu tena', 'error');
+                        resetForm();
+                    }
+                })
+                .catch(error => {
+                    console.error('Payment error:', error);
+                    showStatus('Kulikuwa na tatizo, jaribu tena', 'error');
+                    resetForm();
+                });
+        }
+
+        function startPaymentCheck() {
+            attemptCount = 0;
+            showCountdown();
+
+            paymentInterval = setInterval(() => {
+                attemptCount++;
+                checkPaymentStatus();
+
+                if (attemptCount >= maxAttempts) {
+                    clearInterval(paymentInterval);
+                    hideCountdown();
+                    showStatus('Muda wa kukagua malipo umekwisha. Tafadhali jaribu tena au wasiliana na msaada.', 'error');
+                    resetForm();
+                }
+            }, checkInterval);
+        }
+
+        function checkPaymentStatus() {
+            const courseId = document.getElementById('courseId').value;
+            const userId = <?php echo $currentUser['id']; ?>;
+
+            fetch('<?php echo app_url('user/check-payment-status.php'); ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        courseId: courseId,
+                        userId: userId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.paid) {
+                        clearInterval(paymentInterval);
+                        showStatus('Hongera! Malipo yamekamilika. Unaweza kuanza kujifunza.', 'success');
+                        setTimeout(() => {
+                            window.location.reload(); // Reload page to show enrolled status
+                        }, 2000);
+                    } else {
+                        updateCountdown();
+                    }
+                })
+                .catch(error => {
+                    console.error('Status check error:', error);
+                });
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('paymentStatus');
+            statusDiv.textContent = message;
+            statusDiv.className = 'payment-status ' + type;
+            statusDiv.style.display = 'block';
+        }
+
+        function showCountdown() {
+            document.getElementById('countdown').style.display = 'block';
+            updateCountdown();
+        }
+
+        function hideCountdown() {
+            document.getElementById('countdown').style.display = 'none';
+        }
+
+        function updateCountdown() {
+            const remainingAttempts = maxAttempts - attemptCount;
+            const remainingTime = Math.ceil((checkInterval * remainingAttempts) / 1000);
+            document.getElementById('countdown').textContent =
+                `Inakagua malipo... (Mabaki: ${remainingAttempts} mara, Muda: ${remainingTime}s)`;
+        }
+
+        function resetForm() {
+            document.getElementById('payButton').disabled = false;
+            document.getElementById('payButton').textContent = 'Lipa Sasa';
+            document.getElementById('phone').value = '';
+            selectedProvider = '';
+            document.querySelectorAll('.mobile-provider').forEach(p => p.classList.remove('selected'));
+        }
     </script>
 </body>
 

@@ -275,6 +275,34 @@ class Quiz
     }
 
     /**
+     * Get questions for a specific video
+     */
+    public function getQuestionsByVideo($videoId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    q.id,
+                    q.name as question,
+                    q.options,
+                    q.correct_answer,
+                    q.video_id
+                FROM questions q
+                WHERE q.video_id = ?
+                ORDER BY q.id ASC
+            ");
+
+            $stmt->execute([$videoId]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting questions by video: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
      * Calculate grade based on score percentage
      */
     private function calculateGrade($scorePercentage)

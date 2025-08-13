@@ -3791,3 +3791,203 @@ html {
   padding-top: 1rem;
   border-top: 1px solid var(--border-color);
 }
+
+/* Course Learning Page Styles */
+.course-learning-page .course-header {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  border-top: 4px solid var(--primary-color);
+  margin-bottom: 2rem;
+}
+
+.course-learning-page .course-title {
+  color: var(--secondary-color);
+  margin-bottom: 0.5rem;
+}
+
+.course-learning-page .video-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-top: 4px solid var(--primary-color);
+}
+
+.course-learning-page .video-container {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.course-learning-page .video-placeholder {
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+}
+
+.course-learning-page .video-info h3 {
+  color: var(--secondary-color);
+  margin-bottom: 0.5rem;
+}
+
+.course-learning-page .quiz-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-top: 4px solid var(--primary-color);
+  margin-top: 1.5rem;
+}
+
+.course-learning-page .question-item {
+  background: #f8f9fa;
+  border-left: 4px solid var(--primary-color) !important;
+}
+
+.course-learning-page .question-text {
+  color: var(--secondary-color);
+  font-weight: 600;
+}
+
+.course-learning-page .course-navigation {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-top: 4px solid var(--primary-color);
+  position: sticky;
+  top: 2rem;
+}
+
+.course-learning-page .lessons-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.course-learning-page .lesson-item {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.course-learning-page .lesson-item:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(255, 188, 59, 0.2);
+}
+
+.course-learning-page .lesson-item.active {
+  border-color: var(--primary-color);
+  background: rgba(255, 188, 59, 0.1);
+}
+
+.course-learning-page .lesson-link {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.course-learning-page .lesson-number {
+  background: var(--primary-color);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.course-learning-page .lesson-title {
+  color: var(--secondary-color);
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.course-learning-page .lesson-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.course-learning-page .lesson-type {
+  color: #6c757d;
+}
+
+.course-learning-page .lesson-status.completed {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.course-learning-page .progress-info {
+  text-align: center;
+}
+
+.course-learning-page .progress {
+  height: 8px;
+  border-radius: 4px;
+}
+
+.course-learning-page .progress-bar {
+  background-color: var(--primary-color);
+}
+
+/* Payment Modal Styles */
+.mobile-provider {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid #e9ecef;
+}
+
+.mobile-provider:hover {
+  border-color: var(--primary-color);
+  background: rgba(255, 188, 59, 0.1);
+}
+
+.mobile-provider.selected {
+  border-color: var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+}
+
+.mobile-provider img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.payment-status {
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.payment-status.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.payment-status.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.payment-status.processing {
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.countdown {
+  font-size: 1.2rem;
+  color: var(--secondary-color);
+  text-align: center;
+  margin: 1rem 0;
+}
