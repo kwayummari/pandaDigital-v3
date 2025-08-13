@@ -73,11 +73,13 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
     <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=8">
     <style>
         .skill-card {
-            border: none;
+            background: white !important;
+            color: var(--secondary-color) !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef !important;
+            border-top: 3px solid var(--primary-color) !important;
             border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease;
-            background: white;
             margin-bottom: 20px;
         }
 
@@ -86,20 +88,23 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
         }
 
         .overall-level-display {
-            background: var(--primary-color);
-            color: white;
+            background: white;
+            color: var(--secondary-color);
             padding: 30px;
             border-radius: 15px;
             text-align: center;
             margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+            border-top: 3px solid var(--primary-color);
         }
 
         .level-circle {
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: white;
-            color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -112,13 +117,14 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
             border-left: 4px solid var(--primary-color);
             padding: 20px;
             margin-bottom: 20px;
-            background: #f8f9fa;
+            background: white;
             border-radius: 0 10px 10px 0;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
         }
 
         .skill-item:hover {
-            background: white;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
@@ -169,7 +175,7 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
         }
 
         .improvement-tips {
-            background: rgba(255, 188, 59, 0.1);
+            background: rgba(255, 188, 59, 0.05);
             border: 1px solid var(--primary-color);
             border-radius: 10px;
             padding: 20px;
@@ -182,14 +188,25 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
         }
 
         .stats-card {
-            border: none;
+            background: white !important;
+            color: var(--secondary-color) !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef !important;
+            border-top: 3px solid var(--primary-color) !important;
             border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease;
         }
 
         .stats-card:hover {
             transform: translateY(-2px);
+        }
+
+        .stats-card.success {
+            border-top: 3px solid var(--secondary-color) !important;
+        }
+
+        .stats-card.info {
+            border-top: 3px solid var(--primary-color) !important;
         }
     </style>
 </head>
@@ -207,7 +224,7 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h1 class="h3 mb-0">Daraja la Uwezo</h1>
-                            <p class="text-muted">Tazama na uone maendeleo ya uwezo wako katika fani mbalimbali</p>
+                            <p class="text-muted">Tazama na uone maendeleo ya uwezo wako na uwezo wako wa jumla katika jukwaa</p>
                         </div>
                     </div>
                 </div>
@@ -230,7 +247,7 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card stats-card">
+                        <div class="card stats-card success">
                             <div class="card-body text-center">
                                 <h3 class="mb-1"><?php echo $improvingSkills; ?></h3>
                                 <p class="mb-0">Fani Zinazoboreshwa</p>
@@ -238,7 +255,7 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card stats-card">
+                        <div class="card stats-card info">
                             <div class="card-body text-center">
                                 <h3 class="mb-1"><?php echo $totalCourses; ?></h3>
                                 <p class="mb-0">Kozi Zilizokamilika</p>
@@ -249,7 +266,7 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
 
                 <!-- Skill Levels -->
                 <div class="card skill-card">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header border-0 pb-0">
                         <h4 class="mb-0">Viwango vya Uwezo</h4>
                     </div>
                     <div class="card-body">
@@ -323,7 +340,7 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
 
                 <!-- Recommendations -->
                 <div class="card skill-card">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header border-0 pb-0">
                         <h4 class="mb-0">Mapendekezo ya Kuboresha</h4>
                     </div>
                     <div class="card-body">
