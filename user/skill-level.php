@@ -69,37 +69,24 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=8">
     <style>
         .skill-card {
-            border: 2px solid var(--primary-color);
+            border: none;
             border-radius: 15px;
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
             background: white;
             margin-bottom: 20px;
         }
 
         .skill-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 188, 59, 0.2);
-        }
-
-        .skill-header {
-            background: var(--primary-color);
-            color: black;
-            border-radius: 13px 13px 0 0;
-            padding: 20px;
-        }
-
-        .skill-body {
-            padding: 20px;
+            transform: translateY(-2px);
         }
 
         .overall-level-display {
-            background: var(--secondary-color);
+            background: var(--primary-color);
             color: white;
             padding: 30px;
             border-radius: 15px;
@@ -111,8 +98,8 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: var(--primary-color);
-            color: black;
+            background: white;
+            color: var(--primary-color);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -152,7 +139,7 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
 
         .grade-badge {
             background: var(--primary-color);
-            color: black;
+            color: white;
             padding: 8px 16px;
             border-radius: 20px;
             font-weight: bold;
@@ -194,35 +181,34 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
             padding: 60px 20px;
         }
 
-        .empty-state i {
-            font-size: 4rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
+        .stats-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
         }
     </style>
 </head>
 
 <body>
-    <!-- Sidebar and Main Content Layout -->
-    <div class="dashboard-container">
-        <?php include __DIR__ . '/../includes/user_sidebar.php'; ?>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <?php include '../includes/user_sidebar.php'; ?>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <?php
-            $page_title = 'Daraja la Uwezo';
-            include __DIR__ . '/../includes/user_top_nav.php';
-            ?>
-
-            <div class="content-wrapper">
-                <!-- Header -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h1 class="h3 mb-0">
-                            <i class="fas fa-star me-2" style="color: var(--primary-color);"></i>
-                            Daraja la Uwezo
-                        </h1>
-                        <p class="text-muted">Tazama na uone maendeleo ya uwezo wako katika fani mbalimbali</p>
+            <!-- Main Content -->
+            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Page Header -->
+                <div class="page-header mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="h3 mb-0">Daraja la Uwezo</h1>
+                            <p class="text-muted">Tazama na uone maendeleo ya uwezo wako katika fani mbalimbali</p>
+                        </div>
                     </div>
                 </div>
 
@@ -238,25 +224,22 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
                     <div class="col-md-4">
                         <div class="card stats-card">
                             <div class="card-body text-center">
-                                <i class="fas fa-star fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo count($skillLevels); ?></h3>
                                 <p class="mb-0">Fani Zilizopimwa</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card stats-card success">
+                        <div class="card stats-card">
                             <div class="card-body text-center">
-                                <i class="fas fa-arrow-up fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo $improvingSkills; ?></h3>
                                 <p class="mb-0">Fani Zinazoboreshwa</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card stats-card info">
+                        <div class="card stats-card">
                             <div class="card-body text-center">
-                                <i class="fas fa-book fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo $totalCourses; ?></h3>
                                 <p class="mb-0">Kozi Zilizokamilika</p>
                             </div>
@@ -265,21 +248,16 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
                 </div>
 
                 <!-- Skill Levels -->
-                <div class="skill-card">
-                    <div class="skill-header">
-                        <h4 class="mb-0">
-                            <i class="fas fa-chart-line me-2"></i>
-                            Viwango vya Uwezo
-                        </h4>
+                <div class="card skill-card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Viwango vya Uwezo</h4>
                     </div>
-                    <div class="skill-body">
+                    <div class="card-body">
                         <?php if (empty($skillLevels)): ?>
                             <div class="empty-state">
-                                <i class="fas fa-star"></i>
                                 <h5>Huna viwango vya uwezo bado</h5>
                                 <p class="text-muted">Jisajili kwenye kozi na ukamilishe ili upate viwango vya uwezo</p>
                                 <a href="<?= app_url('user/courses.php') ?>" class="btn btn-primary">
-                                    <i class="fas fa-book me-2"></i>
                                     Tazama Kozi
                                 </a>
                             </div>
@@ -294,11 +272,11 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
                                                 <span class="trend-indicator trend-<?php echo $skill['trend']; ?>">
                                                     <?php
                                                     if ($skill['trend'] == 'up') {
-                                                        echo '<i class="fas fa-arrow-up me-1"></i>Inaboreshwa';
+                                                        echo 'Inaboreshwa';
                                                     } elseif ($skill['trend'] == 'down') {
-                                                        echo '<i class="fas fa-arrow-down me-1"></i>Inapungua';
+                                                        echo 'Inapungua';
                                                     } else {
-                                                        echo '<i class="fas fa-minus me-1"></i>Imara';
+                                                        echo 'Imara';
                                                     }
                                                     ?>
                                                 </span>
@@ -307,7 +285,6 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
                                         <div class="text-end">
                                             <div class="fw-bold"><?php echo $skill['level']; ?>%</div>
                                             <small class="text-muted">
-                                                <i class="fas fa-calendar me-1"></i>
                                                 <?php echo date('d/m/Y', strtotime($skill['last_updated'])); ?>
                                             </small>
                                         </div>
@@ -330,7 +307,7 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
 
                                     <?php if ($skill['level'] < 80): ?>
                                         <div class="improvement-tips">
-                                            <h6><i class="fas fa-lightbulb me-2" style="color: var(--primary-color);"></i>Ushauri wa Kuboresha</h6>
+                                            <h6>Ushauri wa Kuboresha</h6>
                                             <ul class="mb-0">
                                                 <li>Jisajili kwenye kozi zaidi za <?php echo htmlspecialchars($skill['skill']); ?></li>
                                                 <li>Fanya mazoezi ya vitendo</li>
@@ -345,29 +322,26 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
                 </div>
 
                 <!-- Recommendations -->
-                <div class="skill-card">
-                    <div class="skill-header">
-                        <h4 class="mb-0">
-                            <i class="fas fa-lightbulb me-2"></i>
-                            Mapendekezo ya Kuboresha
-                        </h4>
+                <div class="card skill-card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Mapendekezo ya Kuboresha</h4>
                     </div>
-                    <div class="skill-body">
+                    <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <h6>Fani za Kipaumbele</h6>
                                 <ul class="list-unstyled">
-                                    <li><i class="fas fa-arrow-up me-2" style="color: var(--primary-color);"></i>SEO - Uwezo wa sasa: 38%</li>
-                                    <li><i class="fas fa-arrow-up me-2" style="color: var(--primary-color);"></i>E-commerce - Uwezo wa sasa: 45%</li>
-                                    <li><i class="fas fa-arrow-up me-2" style="color: var(--primary-color);"></i>Content Creation - Uwezo wa sasa: 90%</li>
+                                    <li>SEO - Uwezo wa sasa: 38%</li>
+                                    <li>E-commerce - Uwezo wa sasa: 45%</li>
+                                    <li>Content Creation - Uwezo wa sasa: 90%</li>
                                 </ul>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <h6>Vitendo vya Haraka</h6>
                                 <ul class="list-unstyled">
-                                    <li><i class="fas fa-check me-2" style="color: var(--primary-color);"></i>Jisajili kwenye kozi mpya</li>
-                                    <li><i class="fas fa-check me-2" style="color: var(--primary-color);"></i>Fanya mazoezi ya vitendo</li>
-                                    <li><i class="fas fa-check me-2" style="color: var(--primary-color);"></i>Uliza maswali kwa wataalam</li>
+                                    <li>Jisajili kwenye kozi mpya</li>
+                                    <li>Fanya mazoezi ya vitendo</li>
+                                    <li>Uliza maswali kwa wataalam</li>
                                 </ul>
                             </div>
                         </div>
@@ -378,10 +352,7 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
     </div>
 
     <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Sidebar Toggle Script -->
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>
