@@ -7,48 +7,28 @@ $auth->requireRole('user');
 
 $currentUser = $auth->getCurrentUser();
 
-// Mock data for user feedback - in real app this would come from database
-$userFeedbacks = [
-    [
-        'id' => 1,
-        'type' => 'course_feedback',
-        'title' => 'Ushauri wa Kozi ya Digital Marketing',
-        'message' => 'Kozi hii ilikuwa nzuri sana. Nimejifunza mengi na nina ushauri wa kuboresha sehemu ya SEO...',
-        'rating' => 5,
-        'date_submitted' => '2024-03-15',
-        'status' => 'reviewed',
-        'response' => 'Asante kwa ushauri wako. Tumeuboresha sehemu ya SEO kama ulivyopendekeza.'
-    ],
-    [
-        'id' => 2,
-        'type' => 'platform_feedback',
-        'title' => 'Uboreshaji wa Platform',
-        'message' => 'Platform yenu ni nzuri lakini inahitaji kuboreshwa kwa upangaji wa kozi...',
-        'rating' => 4,
-        'date_submitted' => '2024-03-10',
-        'status' => 'pending',
-        'response' => null
-    ],
-    [
-        'id' => 3,
-        'type' => 'general_feedback',
-        'title' => 'Ushauri wa Jumla',
-        'message' => 'Nina ushauri wa kuongeza kozi za programming na web development...',
-        'rating' => 5,
-        'date_submitted' => '2024-03-08',
-        'status' => 'reviewed',
-        'response' => 'Ushauri wako umewezeshwa. Tumeanza kuandaa kozi za programming.'
-    ]
-];
+// Get available courses for the user
+try {
+    require_once __DIR__ . "/../config/database.php";
+    $database = new Database();
+    $conn = $database->getConnection();
 
-$totalFeedbacks = count($userFeedbacks);
-$reviewedFeedbacks = count(array_filter($userFeedbacks, function ($f) {
-    return $f['status'] == 'reviewed';
-}));
-$pendingFeedbacks = count(array_filter($userFeedbacks, function ($f) {
-    return $f['status'] == 'pending';
-}));
-$averageRating = array_sum(array_column($userFeedbacks, 'rating')) / count($userFeedbacks);
+    if (!$conn) {
+        throw new Exception("Database connection failed");
+    }
+
+    // Get user's courses
+    $courseQuery = "SELECT DISTINCT c.id, c.title FROM course c 
+                    INNER JOIN video v ON c.id = v.course_id 
+                    WHERE c.status = '1' 
+                    ORDER BY c.title ASC";
+    $courseStmt = $conn->prepare($courseQuery);
+    $courseStmt->execute();
+    $courses = $courseStmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    error_log("Database error: " . $e->getMessage());
+    $courses = [];
+}
 ?>
 
 <!DOCTYPE html>
@@ -57,410 +37,311 @@ $averageRating = array_sum(array_column($userFeedbacks, 'rating')) / count($user
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toa Mrejesho - Panda Digital</title>
+    <title>Toa Maoni - Panda Digital</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=3">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=10">
     <style>
         .feedback-card {
-            border: 2px solid var(--primary-color);
+            background: white !important;
+            color: var(--secondary-color) !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef !important;
+            border-top: 3px solid var(--primary-color) !important;
             border-radius: 15px;
-            transition: all 0.3s ease;
-            background: white;
+            transition: transform 0.2s ease;
             margin-bottom: 20px;
         }
 
         .feedback-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 188, 59, 0.2);
-        }
-
-        .feedback-header {
-            background: var(--primary-color);
-            color: black;
-            border-radius: 13px 13px 0 0;
-            padding: 20px;
-        }
-
-        .feedback-body {
-            padding: 20px;
-        }
-
-        .rating-display {
-            background: var(--secondary-color);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .rating-stars {
-            font-size: 2rem;
-            margin-bottom: 15px;
-        }
-
-        .rating-stars .fas {
-            color: var(--primary-color);
-        }
-
-        .feedback-form {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .feedback-item {
-            border-left: 4px solid var(--primary-color);
-            padding: 20px;
-            margin-bottom: 20px;
-            background: #f8f9fa;
-            border-radius: 0 10px 10px 0;
-            transition: all 0.3s ease;
-        }
-
-        .feedback-item:hover {
-            background: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .feedback-type-badge {
-            background: var(--secondary-color);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-reviewed {
-            background: var(--primary-color);
-            color: black;
-        }
-
-        .status-pending {
-            background: var(--secondary-color);
-            color: white;
-        }
-
-        .submit-feedback-btn {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            border-radius: 25px;
-            padding: 12px 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .submit-feedback-btn:hover {
-            background: var(--secondary-color);
-            color: white;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .response-section {
-            background: rgba(255, 188, 59, 0.1);
-            border: 1px solid var(--primary-color);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
-        .empty-state {
+        .category-card {
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 1.5rem;
             text-align: center;
-            padding: 60px 20px;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-
-        .star-rating {
-            display: inline-block;
-            direction: rtl;
-        }
-
-        .star-rating input {
-            display: none;
-        }
-
-        .star-rating label {
             cursor: pointer;
-            font-size: 1.5rem;
-            color: #ddd;
-            padding: 0 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .star-rating input:checked~label {
+        .category-card:hover {
+            border-color: var(--primary-color);
+            background: rgba(255, 188, 59, 0.05);
+        }
+
+        .category-card.selected {
+            border-color: var(--primary-color);
+            background: rgba(255, 188, 59, 0.1);
+        }
+
+        .category-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
             color: var(--primary-color);
         }
 
-        .star-rating label:hover,
-        .star-rating label:hover~label {
-            color: var(--primary-color);
+        .priority-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            color: var(--secondary-color);
+        }
+
+        .priority-badge:hover {
+            border-color: var(--primary-color);
+        }
+
+        .priority-badge.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .file-upload-area:hover,
+        .file-upload-area.dragover {
+            border-color: var(--primary-color);
+            background: rgba(255, 188, 59, 0.05);
+        }
+
+        .submit-btn {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .char-counter {
+            font-size: 0.85rem;
+            color: #6b7280;
+            text-align: right;
+            margin-top: 0.25rem;
+        }
+
+        .char-counter.warning {
+            color: var(--warning-color);
+        }
+
+        .char-counter.danger {
+            color: var(--danger-color);
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .success-animation {
+            animation: successPulse 0.6s ease-out;
+        }
+
+        @keyframes successPulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Sidebar and Main Content Layout -->
-    <div class="dashboard-container">
-        <?php include __DIR__ . '/../includes/user_sidebar.php'; ?>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <?php include '../includes/user_sidebar.php'; ?>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <?php
-            $page_title = 'Toa Mrejesho';
-            include __DIR__ . '/../includes/user_top_nav.php';
-            ?>
-
-            <div class="content-wrapper">
-                <!-- Header -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h1 class="h3 mb-0">
-                            <i class="fas fa-comment me-2" style="color: var(--primary-color);"></i>
-                            Toa Mrejesho
-                        </h1>
-                        <p class="text-muted">Shiriki maoni yako na ushauri wa kuboresha huduma zetu</p>
-                    </div>
-                </div>
-
-                <!-- Rating Overview -->
-                <div class="rating-display">
-                    <div class="rating-stars">
-                        <?php for ($i = 1; $i <= 5; $i++): ?>
-                            <?php if ($i <= $averageRating): ?>
-                                <i class="fas fa-star"></i>
-                            <?php else: ?>
-                                <i class="far fa-star"></i>
-                            <?php endif; ?>
-                        <?php endfor; ?>
-                    </div>
-                    <h3 class="mb-2">Wastani wa Ushauri: <?php echo number_format($averageRating, 1); ?>/5</h3>
-                    <p class="mb-0">Umeitoa ushauri <?php echo $totalFeedbacks; ?> mara</p>
-                </div>
-
-                <!-- Statistics Cards -->
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="card stats-card">
-                            <div class="card-body text-center">
-                                <i class="fas fa-comment fa-2x mb-2"></i>
-                                <h3 class="mb-1"><?php echo $totalFeedbacks; ?></h3>
-                                <p class="mb-0">Jumla ya Ushauri</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card stats-card success">
-                            <div class="card-body text-center">
-                                <i class="fas fa-check-circle fa-2x mb-2"></i>
-                                <h3 class="mb-1"><?php echo $reviewedFeedbacks; ?></h3>
-                                <p class="mb-0">Ushauri Uliotazamwa</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card stats-card info">
-                            <div class="card-body text-center">
-                                <i class="fas fa-clock fa-2x mb-2"></i>
-                                <h3 class="mb-1"><?php echo $pendingFeedbacks; ?></h3>
-                                <p class="mb-0">Ushauri Unasubiri</p>
-                            </div>
+            <!-- Main Content -->
+            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Page Header -->
+                <div class="page-header mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="h3 mb-0">Toa Maoni Yako</h1>
+                            <p class="text-muted">Tusaidie kuboresha huduma zetu kwa kutoa maoni yako muhimu</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Submit New Feedback -->
-                <div class="feedback-card">
-                    <div class="feedback-header">
-                        <h4 class="mb-0">
-                            <i class="fas fa-plus me-2"></i>
-                            Toa Ushauri Mpya
-                        </h4>
+                <!-- Feedback Form -->
+                <div class="card feedback-card">
+                    <div class="card-header border-0 pb-0">
+                        <h4 class="mb-0">Fomu ya Maoni</h4>
                     </div>
-                    <div class="feedback-body">
-                        <form class="feedback-form">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="feedbackType" class="form-label">Aina ya Ushauri</label>
-                                    <select class="form-select" id="feedbackType" required>
-                                        <option value="">Chagua aina</option>
-                                        <option value="course_feedback">Ushauri wa Kozi</option>
-                                        <option value="platform_feedback">Uboreshaji wa Platform</option>
-                                        <option value="general_feedback">Ushauri wa Jumla</option>
-                                        <option value="bug_report">Ripoti ya Tatizo</option>
-                                        <option value="feature_request">Ombi la Kipengele</option>
-                                    </select>
+                    <div class="card-body p-4">
+                        <form id="feedbackForm" enctype="multipart/form-data">
+                            <!-- Category Selection -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    Chagua Aina ya Maoni
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="category-grid" id="categoryGrid">
+                                    <!-- Categories will be loaded here -->
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="feedbackRating" class="form-label">Ushauri (Alama)</label>
-                                    <div class="star-rating">
-                                        <input type="radio" name="rating" id="star5" value="5">
-                                        <label for="star5"><i class="fas fa-star"></i></label>
-                                        <input type="radio" name="rating" id="star4" value="4">
-                                        <label for="star4"><i class="fas fa-star"></i></label>
-                                        <input type="radio" name="rating" id="star3" value="3">
-                                        <label for="star3"><i class="fas fa-star"></i></label>
-                                        <input type="radio" name="rating" id="star2" value="2">
-                                        <label for="star2"><i class="fas fa-star"></i></label>
-                                        <input type="radio" name="rating" id="star1" value="1">
-                                        <label for="star1"><i class="fas fa-star"></i></label>
+                                <input type="hidden" id="selectedCategory" name="category" required>
+                            </div>
+
+                            <!-- Course Selection (Optional) -->
+                            <div class="mb-4">
+                                <label for="courseId" class="form-label">
+                                    Kozi (si lazima)
+                                </label>
+                                <select class="form-select" id="courseId" name="courseId">
+                                    <option value="">Chagua kozi...</option>
+                                    <?php foreach ($courses as $course): ?>
+                                        <option value="<?php echo $course['id']; ?>">
+                                            <?php echo htmlspecialchars($course['title']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <!-- Subject -->
+                            <div class="mb-4">
+                                <label for="subject" class="form-label">
+                                    Kichwa cha Maoni
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="subject" name="subject"
+                                    placeholder="Ingiza kichwa cha maoni yako" maxlength="255" required>
+                                <div class="char-counter" id="subjectCounter">0/255</div>
+                            </div>
+
+                            <!-- Priority -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    Kipaumbele
+                                </label>
+                                <div>
+                                    <span class="priority-badge" data-priority="low">
+                                        Chini
+                                    </span>
+                                    <span class="priority-badge selected" data-priority="medium">
+                                        Wastani
+                                    </span>
+                                    <span class="priority-badge" data-priority="high">
+                                        Juu
+                                    </span>
+                                    <span class="priority-badge" data-priority="urgent">
+                                        Haraka
+                                    </span>
+                                </div>
+                                <input type="hidden" id="selectedPriority" name="priority" value="medium">
+                            </div>
+
+                            <!-- Message -->
+                            <div class="mb-4">
+                                <label for="message" class="form-label">
+                                    Maelezo ya Kina
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control" id="message" name="message" rows="6"
+                                    placeholder="Ingiza maelezo ya kina ya maoni yako" maxlength="2000" required></textarea>
+                                <div class="char-counter" id="messageCounter">0/2000</div>
+                            </div>
+
+                            <!-- File Upload -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    Ambatisha Faili (si lazima)
+                                </label>
+                                <div class="file-upload-area" id="fileUploadArea">
+                                    <p class="mb-2">Bofya au buruta faili hapa</p>
+                                    <small class="text-muted">PNG, JPG, PDF, DOC (Upeo: 5MB)</small>
+                                    <input type="file" id="attachment" name="attachment"
+                                        accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" hidden>
+                                </div>
+                                <div id="selectedFile" class="mt-2" style="display: none;">
+                                    <div class="alert alert-info">
+                                        <span id="fileName"></span>
+                                        <button type="button" class="btn btn-sm btn-outline-danger ms-2" id="removeFile">
+                                            Ondoa
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="feedbackTitle" class="form-label">Kichwa cha Ushauri</label>
-                                <input type="text" class="form-control" id="feedbackTitle" placeholder="Andika kichwa cha ushauri..." required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="feedbackMessage" class="form-label">Ushauri Wako</label>
-                                <textarea class="form-control" id="feedbackMessage" rows="4" placeholder="Andika ushauri wako hapa..." required></textarea>
-                            </div>
-                            <div class="text-end">
-                                <button type="submit" class="btn submit-feedback-btn">
-                                    <i class="fas fa-paper-plane me-2"></i>
-                                    Tuma Ushauri
+
+                            <!-- Submit Button -->
+                            <div class="text-center">
+                                <button type="submit" class="submit-btn" id="submitBtn">
+                                    Tuma Maoni
                                 </button>
                             </div>
                         </form>
-                    </div>
-                </div>
-
-                <!-- My Feedback History -->
-                <div class="feedback-card">
-                    <div class="feedback-header">
-                        <h4 class="mb-0">
-                            <i class="fas fa-history me-2"></i>
-                            Historia ya Ushauri Wangu
-                        </h4>
-                    </div>
-                    <div class="feedback-body">
-                        <?php if (empty($userFeedbacks)): ?>
-                            <div class="empty-state">
-                                <i class="fas fa-comment"></i>
-                                <h5>Hujaitoa ushauri wowote bado</h5>
-                                <p class="text-muted">Anza kwa kutoa ushauri wa kwanza na usaidie kuboresha huduma zetu</p>
-                            </div>
-                        <?php else: ?>
-                            <?php foreach ($userFeedbacks as $feedback): ?>
-                                <div class="feedback-item">
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div class="d-flex align-items-center">
-                                            <span class="feedback-type-badge me-3">
-                                                <?php
-                                                switch ($feedback['type']) {
-                                                    case 'course_feedback':
-                                                        echo 'Kozi';
-                                                        break;
-                                                    case 'platform_feedback':
-                                                        echo 'Platform';
-                                                        break;
-                                                    case 'general_feedback':
-                                                        echo 'Jumla';
-                                                        break;
-                                                    case 'bug_report':
-                                                        echo 'Tatizo';
-                                                        break;
-                                                    case 'feature_request':
-                                                        echo 'Kipengele';
-                                                        break;
-                                                    default:
-                                                        echo 'Nyingine';
-                                                }
-                                                ?>
-                                            </span>
-                                            <span class="status-badge status-<?php echo $feedback['status']; ?>">
-                                                <?php
-                                                if ($feedback['status'] == 'reviewed') {
-                                                    echo 'Imetazamwa';
-                                                } else {
-                                                    echo 'Inasubiri';
-                                                }
-                                                ?>
-                                            </span>
-                                        </div>
-                                        <div class="text-end">
-                                            <div class="mb-1">
-                                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                    <?php if ($i <= $feedback['rating']): ?>
-                                                        <i class="fas fa-star" style="color: var(--primary-color);"></i>
-                                                    <?php else: ?>
-                                                        <i class="far fa-star text-muted"></i>
-                                                    <?php endif; ?>
-                                                <?php endfor; ?>
-                                            </div>
-                                            <small class="text-muted">
-                                                <i class="fas fa-calendar me-1"></i>
-                                                <?php echo date('d/m/Y', strtotime($feedback['date_submitted'])); ?>
-                                            </small>
-                                        </div>
-                                    </div>
-
-                                    <h6 class="mb-2"><?php echo htmlspecialchars($feedback['title']); ?></h6>
-                                    <p class="mb-3"><?php echo htmlspecialchars($feedback['message']); ?></p>
-
-                                    <?php if ($feedback['status'] == 'reviewed' && $feedback['response']): ?>
-                                        <div class="response-section">
-                                            <h6><i class="fas fa-reply me-2" style="color: var(--primary-color);"></i>Jibu la Timu</h6>
-                                            <p class="mb-0"><?php echo htmlspecialchars($feedback['response']); ?></p>
-                                        </div>
-                                    <?php elseif ($feedback['status'] == 'pending'): ?>
-                                        <div class="text-center py-2">
-                                            <i class="fas fa-clock fa-2x text-muted mb-2"></i>
-                                            <p class="text-muted mb-0">Ushauri wako unasubiri kutatuliwa</p>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </div>
-                </div>
-
-                <!-- Feedback Tips -->
-                <div class="feedback-card">
-                    <div class="feedback-header">
-                        <h4 class="mb-0">
-                            <i class="fas fa-lightbulb me-2"></i>
-                            Ushauri wa Kutoa Ushauri
-                        </h4>
-                    </div>
-                    <div class="feedback-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <h6>Jinsi ya Kutoa Ushauri Mzuri</h6>
-                                <ul class="list-unstyled">
-                                    <li><i class="fas fa-check me-2" style="color: var(--primary-color);"></i>Toa maelezo ya kina</li>
-                                    <li><i class="fas fa-check me-2" style="color: var(--primary-color);"></i>Eleza tatizo au pendekezo</li>
-                                    <li><i class="fas fa-check me-2" style="color: var(--primary-color);"></i>Toa mifano ya vitendo</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <h6>Mada za Ushauri</h6>
-                                <ul class="list-unstyled">
-                                    <li><i class="fas fa-arrow-right me-2" style="color: var(--primary-color);"></i>Ubora wa kozi</li>
-                                    <li><i class="fas fa-arrow-right me-2" style="color: var(--primary-color);"></i>Uboreshaji wa platform</li>
-                                    <li><i class="fas fa-arrow-right me-2" style="color: var(--primary-color);"></i>Kozi mpya</li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -468,17 +349,250 @@ $averageRating = array_sum(array_column($userFeedbacks, 'rating')) / count($user
     </div>
 
     <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Sidebar Toggle Script -->
-
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
-        // Handle form submission
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Ushauri wako umetumwa! Asante kwa kusaidia kuboresha huduma zetu.');
+        // Initialize the feedback form
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCategories();
+            initializeEventListeners();
         });
+
+        // Load feedback categories
+        function loadCategories() {
+            const categories = [{
+                    id: 'technical',
+                    name: 'Matatizo ya Kiufundi',
+                    color: '#dc3545'
+                },
+                {
+                    id: 'content',
+                    name: 'Yaliyomo Kwenye Kozi',
+                    color: '#28a745'
+                },
+                {
+                    id: 'payment',
+                    name: 'Matatizo ya Malipo',
+                    color: '#ffc107'
+                },
+                {
+                    id: 'interface',
+                    name: 'Mfumo wa Kutumia',
+                    color: '#17a2b8'
+                },
+                {
+                    id: 'feature',
+                    name: 'Mapendekezo Mapya',
+                    color: '#6f42c1'
+                },
+                {
+                    id: 'account',
+                    name: 'Akaunti Yangu',
+                    color: '#fd7e14'
+                },
+                {
+                    id: 'general',
+                    name: 'Maoni ya Jumla',
+                    color: '#6c757d'
+                }
+            ];
+
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = categories.map(cat => `
+                <div class="category-card" data-category="${cat.id}">
+                    <div class="category-icon" style="color: ${cat.color}">
+                        ●
+                    </div>
+                    <h6>${cat.name}</h6>
+                </div>
+            `).join('');
+        }
+
+        // Initialize event listeners
+        function initializeEventListeners() {
+            // Category selection
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.category-card')) {
+                    const card = e.target.closest('.category-card');
+                    document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    document.getElementById('selectedCategory').value = card.dataset.category;
+                }
+            });
+
+            // Priority selection
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.priority-badge')) {
+                    const badge = e.target.closest('.priority-badge');
+                    document.querySelectorAll('.priority-badge').forEach(b => b.classList.remove('selected'));
+                    badge.classList.add('selected');
+                    document.getElementById('selectedPriority').value = badge.dataset.priority;
+                }
+            });
+
+            // Character counters
+            setupCharacterCounters();
+
+            // File upload
+            setupFileUpload();
+
+            // Form submission
+            document.getElementById('feedbackForm').addEventListener('submit', handleFormSubmission);
+        }
+
+        // Setup character counters
+        function setupCharacterCounters() {
+            const subject = document.getElementById('subject');
+            const message = document.getElementById('message');
+            const subjectCounter = document.getElementById('subjectCounter');
+            const messageCounter = document.getElementById('messageCounter');
+
+            subject.addEventListener('input', function() {
+                const length = this.value.length;
+                subjectCounter.textContent = `${length}/255`;
+                subjectCounter.className = length > 200 ? 'char-counter warning' :
+                    length > 240 ? 'char-counter danger' : 'char-counter';
+            });
+
+            message.addEventListener('input', function() {
+                const length = this.value.length;
+                messageCounter.textContent = `${length}/2000`;
+                messageCounter.className = length > 1500 ? 'char-counter warning' :
+                    length > 1800 ? 'char-counter danger' : 'char-counter';
+            });
+        }
+
+        // Setup file upload
+        function setupFileUpload() {
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const attachment = document.getElementById('attachment');
+            const selectedFile = document.getElementById('selectedFile');
+            const fileName = document.getElementById('fileName');
+            const removeFile = document.getElementById('removeFile');
+
+            fileUploadArea.addEventListener('click', () => attachment.click());
+
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.classList.remove('dragover');
+            });
+
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    attachment.files = files;
+                    handleFileSelection(files[0]);
+                }
+            });
+
+            attachment.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileSelection(e.target.files[0]);
+                }
+            });
+
+            removeFile.addEventListener('click', () => {
+                attachment.value = '';
+                selectedFile.style.display = 'none';
+                fileName.textContent = '';
+            });
+
+            function handleFileSelection(file) {
+                // Validate file
+                const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Aina ya faili haikubaliki. Tumia PNG, JPG, PDF au DOC');
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    alert('Faili ni kubwa sana. Tumia faili la chini ya 5MB');
+                    return;
+                }
+
+                fileName.textContent = file.name;
+                selectedFile.style.display = 'block';
+            }
+        }
+
+        // Handle form submission
+        async function handleFormSubmission(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+
+            // Show loading state
+            submitBtn.innerHTML = '<span class="loading-spinner"></span>Inatumwa...';
+            submitBtn.disabled = true;
+
+            try {
+                const formData = new FormData(e.target);
+
+                const response = await fetch('submit-feedback.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Show success message
+                    showAlert('success', result.message);
+
+                    // Reset form
+                    e.target.reset();
+                    document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+                    document.querySelectorAll('.priority-badge').forEach(b => b.classList.remove('selected'));
+                    document.querySelector('.priority-badge[data-priority="medium"]').classList.add('selected');
+                    document.getElementById('selectedFile').style.display = 'none';
+                    document.getElementById('subjectCounter').textContent = '0/255';
+                    document.getElementById('messageCounter').textContent = '0/2000';
+
+                    // Add success animation
+                    document.querySelector('.feedback-card').classList.add('success-animation');
+                    setTimeout(() => {
+                        document.querySelector('.feedback-card').classList.remove('success-animation');
+                    }, 600);
+                } else {
+                    showAlert('danger', result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('danger', 'Kuna tatizo la kiufundi. Jaribu tena.');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Show alert message
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            const form = document.getElementById('feedbackForm');
+            form.parentNode.insertBefore(alertDiv, form);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
     </script>
 </body>
 
