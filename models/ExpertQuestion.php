@@ -42,17 +42,58 @@ class ExpertQuestion
     }
 
     /**
-     * Ask a new question (simplified version for user interface)
+     * Get all available experts
      */
-    public function askQuestion($userId, $question, $category = '')
+    public function getAvailableExperts()
     {
         try {
             $conn = $this->db->getConnection();
 
-            // For now, assign to a default expert (you can modify this logic)
-            $defaultExpertId = 1; // You might want to implement expert selection logic
+            $stmt = $conn->prepare("
+                SELECT id, name, bio, photo, phone, email
+                FROM experts 
+                WHERE status = '1'
+                ORDER BY name ASC
+            ");
 
-            // Just store the question as-is, no need to embed category/priority
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error fetching experts: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get expert by ID
+     */
+    public function getExpertById($expertId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT id, name, bio, photo, phone, email
+                FROM experts 
+                WHERE id = ? AND status = '1'
+            ");
+
+            $stmt->execute([$expertId]);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Error fetching expert: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Ask a new question (simplified version for user interface)
+     */
+    public function askQuestion($userId, $expertId, $question, $category = '')
+    {
+        try {
+            $conn = $this->db->getConnection();
+
             $stmt = $conn->prepare("
                 INSERT INTO expertqn (user_id, expert_id, qn, phone, status, date_created)
                 VALUES (?, ?, ?, ?, '0', NOW())
@@ -60,7 +101,7 @@ class ExpertQuestion
 
             $result = $stmt->execute([
                 $userId,
-                $defaultExpertId,
+                $expertId,
                 $question,
                 '' // phone field is required but not used in this context
             ]);
