@@ -7,56 +7,52 @@ $auth->requireRole('user');
 
 $currentUser = $auth->getCurrentUser();
 
-// Mock data for skill levels - in real app this would come from database
-$skillLevels = [
-    [
-        'skill' => 'Digital Marketing',
-        'level' => 85,
-        'grade' => 'A',
-        'courses_completed' => 3,
-        'last_updated' => '2024-03-15',
-        'trend' => 'up'
-    ],
-    [
-        'skill' => 'Social Media Management',
-        'level' => 72,
-        'grade' => 'B+',
-        'courses_completed' => 2,
-        'last_updated' => '2024-03-10',
-        'trend' => 'up'
-    ],
-    [
-        'skill' => 'E-commerce',
-        'level' => 45,
-        'grade' => 'C+',
-        'courses_completed' => 1,
-        'last_updated' => '2024-02-28',
-        'trend' => 'stable'
-    ],
-    [
-        'skill' => 'Content Creation',
-        'level' => 90,
-        'grade' => 'A+',
-        'courses_completed' => 4,
-        'last_updated' => '2024-03-12',
-        'trend' => 'up'
-    ],
-    [
-        'skill' => 'SEO',
-        'level' => 38,
-        'grade' => 'C',
-        'courses_completed' => 1,
-        'last_updated' => '2024-02-20',
-        'trend' => 'stable'
-    ]
-];
+// Get power ranking data - same logic as old system
+try {
+    require_once __DIR__ . "/../config/database.php";
+    $database = new Database();
+    $conn = $database->getConnection();
 
-$overallLevel = array_sum(array_column($skillLevels, 'level')) / count($skillLevels);
-$overallGrade = $overallLevel >= 90 ? 'A+' : ($overallLevel >= 80 ? 'A' : ($overallLevel >= 70 ? 'B+' : ($overallLevel >= 60 ? 'B' : ($overallLevel >= 50 ? 'C+' : 'C'))));
-$totalCourses = array_sum(array_column($skillLevels, 'courses_completed'));
-$improvingSkills = count(array_filter($skillLevels, function ($s) {
-    return $s['trend'] == 'up';
-}));
+    if (!$conn) {
+        throw new Exception("Database connection failed");
+    }
+
+    $query = "SELECT 
+                  CONCAT(users.first_name, ' ', users.last_name) AS fullname,
+                  COUNT(algorithm.id) AS total_correct_answers
+              FROM 
+                  algorithm
+              JOIN 
+                  answers ON algorithm.ans_id = answers.id
+              JOIN 
+                  users ON algorithm.user_id = users.id
+              WHERE 
+                  answers.status = 'true'
+              GROUP BY 
+                  fullname, users.id
+              ORDER BY 
+                  total_correct_answers DESC";
+
+    $stmt = $conn->prepare($query);
+    $stmt->execute();
+    $rankings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Find current user's rank
+    $currentUserRank = 0;
+    $currentUserScore = 0;
+    foreach ($rankings as $index => $ranking) {
+        if (strtolower($ranking['fullname']) === strtolower($currentUser['first_name'] . ' ' . $currentUser['last_name'])) {
+            $currentUserRank = $index + 1;
+            $currentUserScore = $ranking['total_correct_answers'];
+            break;
+        }
+    }
+} catch (Exception $e) {
+    error_log("Database error: " . $e->getMessage());
+    $rankings = [];
+    $currentUserRank = 0;
+    $currentUserScore = 0;
+}
 ?>
 
 <!DOCTYPE html>
@@ -70,9 +66,9 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=8">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=9">
     <style>
-        .skill-card {
+        .ranking-card {
             background: white !important;
             color: var(--secondary-color) !important;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -83,108 +79,8 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
             margin-bottom: 20px;
         }
 
-        .skill-card:hover {
+        .ranking-card:hover {
             transform: translateY(-2px);
-        }
-
-        .overall-level-display {
-            background: white;
-            color: var(--secondary-color);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e9ecef;
-            border-top: 3px solid var(--primary-color);
-        }
-
-        .level-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
-
-        .skill-item {
-            border-left: 4px solid var(--primary-color);
-            padding: 20px;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 0 10px 10px 0;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e9ecef;
-        }
-
-        .skill-item:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .skill-progress {
-            background: #e9ecef;
-            border-radius: 10px;
-            height: 20px;
-            overflow: hidden;
-            margin: 15px 0;
-        }
-
-        .skill-progress-bar {
-            height: 100%;
-            background: var(--primary-color);
-            border-radius: 10px;
-            transition: width 1s ease;
-        }
-
-        .grade-badge {
-            background: var(--primary-color);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .trend-indicator {
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .trend-up {
-            background: #28a745;
-            color: white;
-        }
-
-        .trend-stable {
-            background: var(--secondary-color);
-            color: white;
-        }
-
-        .trend-down {
-            background: #dc3545;
-            color: white;
-        }
-
-        .improvement-tips {
-            background: rgba(255, 188, 59, 0.05);
-            border: 1px solid var(--primary-color);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
         }
 
         .stats-card {
@@ -208,6 +104,56 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
         .stats-card.info {
             border-top: 3px solid var(--primary-color) !important;
         }
+
+        .ranking-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .ranking-table th {
+            background: #f8f9fa;
+            border: none;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        .ranking-table td {
+            padding: 15px;
+            border: none;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+
+        .ranking-table tbody tr:hover {
+            background: rgba(255, 188, 59, 0.05);
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .crown-icon {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        .current-user-row {
+            background: rgba(255, 188, 59, 0.1) !important;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
     </style>
 </head>
 
@@ -224,141 +170,122 @@ $improvingSkills = count(array_filter($skillLevels, function ($s) {
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h1 class="h3 mb-0">Daraja la Uwezo</h1>
-                            <p class="text-muted">Tazama na uone maendeleo ya uwezo wako na uwezo wako wa jumla katika jukwaa</p>
+                            <p class="text-muted">Orodha ya wajibu maswali bora - Power Ranking</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Overall Level Display -->
-                <div class="overall-level-display">
-                    <div class="level-circle"><?php echo $overallGrade; ?></div>
-                    <h2 class="mb-2">Daraja la Uwezo: <?php echo $overallGrade; ?></h2>
-                    <p class="mb-0">Uwezo wako wa jumla: <?php echo round($overallLevel); ?>%</p>
-                </div>
-
-                <!-- Statistics Cards -->
+                <!-- Current User Stats -->
                 <div class="row mb-4">
                     <div class="col-md-4">
                         <div class="card stats-card">
                             <div class="card-body text-center">
-                                <h3 class="mb-1"><?php echo count($skillLevels); ?></h3>
-                                <p class="mb-0">Fani Zilizopimwa</p>
+                                <h3 class="mb-1"><?php echo $currentUserRank > 0 ? $currentUserRank : 'N/A'; ?></h3>
+                                <p class="mb-0">Cheo Chako</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card stats-card success">
                             <div class="card-body text-center">
-                                <h3 class="mb-1"><?php echo $improvingSkills; ?></h3>
-                                <p class="mb-0">Fani Zinazoboreshwa</p>
+                                <h3 class="mb-1"><?php echo $currentUserScore; ?></h3>
+                                <p class="mb-0">Maswali Sahihi</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card stats-card info">
                             <div class="card-body text-center">
-                                <h3 class="mb-1"><?php echo $totalCourses; ?></h3>
-                                <p class="mb-0">Kozi Zilizokamilika</p>
+                                <h3 class="mb-1"><?php echo count($rankings); ?></h3>
+                                <p class="mb-0">Washiriki Wote</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Skill Levels -->
-                <div class="card skill-card">
+                <!-- Power Ranking Table -->
+                <div class="card ranking-card">
                     <div class="card-header border-0 pb-0">
-                        <h4 class="mb-0">Viwango vya Uwezo</h4>
+                        <h4 class="mb-0">Orodha ya Wajibu Maswali Bora</h4>
                     </div>
-                    <div class="card-body">
-                        <?php if (empty($skillLevels)): ?>
+                    <div class="card-body p-0">
+                        <?php if (empty($rankings)): ?>
                             <div class="empty-state">
-                                <h5>Huna viwango vya uwezo bado</h5>
-                                <p class="text-muted">Jisajili kwenye kozi na ukamilishe ili upate viwango vya uwezo</p>
-                                <a href="<?= app_url('user/courses.php') ?>" class="btn btn-primary">
-                                    Tazama Kozi
-                                </a>
+                                <h5>Hakuna data ya power ranking</h5>
+                                <p class="text-muted">Hakuna washiriki waliopima uwezo wao bado</p>
                             </div>
                         <?php else: ?>
-                            <?php foreach ($skillLevels as $skill): ?>
-                                <div class="skill-item">
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div>
-                                            <h5 class="mb-1"><?php echo htmlspecialchars($skill['skill']); ?></h5>
-                                            <div class="d-flex align-items-center">
-                                                <span class="grade-badge me-3"><?php echo htmlspecialchars($skill['grade']); ?></span>
-                                                <span class="trend-indicator trend-<?php echo $skill['trend']; ?>">
-                                                    <?php
-                                                    if ($skill['trend'] == 'up') {
-                                                        echo 'Inaboreshwa';
-                                                    } elseif ($skill['trend'] == 'down') {
-                                                        echo 'Inapungua';
-                                                    } else {
-                                                        echo 'Imara';
-                                                    }
-                                                    ?>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="text-end">
-                                            <div class="fw-bold"><?php echo $skill['level']; ?>%</div>
-                                            <small class="text-muted">
-                                                <?php echo date('d/m/Y', strtotime($skill['last_updated'])); ?>
-                                            </small>
-                                        </div>
-                                    </div>
-
-                                    <div class="skill-progress">
-                                        <div class="skill-progress-bar" style="width: <?php echo $skill['level']; ?>%"></div>
-                                    </div>
-
-                                    <div class="row text-center">
-                                        <div class="col-6">
-                                            <div class="fw-bold"><?php echo $skill['courses_completed']; ?></div>
-                                            <small class="text-muted">Kozi Zilizokamilika</small>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="fw-bold"><?php echo $skill['level']; ?>%</div>
-                                            <small class="text-muted">Uwezo wa Sasa</small>
-                                        </div>
-                                    </div>
-
-                                    <?php if ($skill['level'] < 80): ?>
-                                        <div class="improvement-tips">
-                                            <h6>Ushauri wa Kuboresha</h6>
-                                            <ul class="mb-0">
-                                                <li>Jisajili kwenye kozi zaidi za <?php echo htmlspecialchars($skill['skill']); ?></li>
-                                                <li>Fanya mazoezi ya vitendo</li>
-                                                <li>Uliza maswali kwa wataalam</li>
-                                            </ul>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endforeach; ?>
+                            <div class="table-responsive">
+                                <table class="table ranking-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Cheo</th>
+                                            <th>Jina</th>
+                                            <th>Maswali Sahihi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($rankings as $index => $ranking): ?>
+                                            <?php
+                                            $rank = $index + 1;
+                                            $isCurrentUser = strtolower($ranking['fullname']) === strtolower($currentUser['first_name'] . ' ' . $currentUser['last_name']);
+                                            $rowClass = $isCurrentUser ? 'current-user-row' : '';
+                                            ?>
+                                            <tr class="<?php echo $rowClass; ?>">
+                                                <td>
+                                                    <div class="rank-badge">
+                                                        <?php echo $rank; ?>
+                                                        <?php if ($rank <= 3): ?>
+                                                            <img src="<?= app_url('assets/images/crowns/gold.png') ?>"
+                                                                alt="Gold Crown" class="crown-icon">
+                                                        <?php elseif ($rank <= 6): ?>
+                                                            <img src="<?= app_url('assets/images/crowns/silver.png') ?>"
+                                                                alt="Silver Crown" class="crown-icon">
+                                                        <?php elseif ($rank <= 9): ?>
+                                                            <img src="<?= app_url('assets/images/crowns/bronze.png') ?>"
+                                                                alt="Bronze Crown" class="crown-icon">
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <strong><?php echo htmlspecialchars($ranking['fullname']); ?></strong>
+                                                    <?php if ($isCurrentUser): ?>
+                                                        <span class="badge bg-primary ms-2">Wewe</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <span class="fw-bold"><?php echo $ranking['total_correct_answers']; ?></span>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </div>
 
-                <!-- Recommendations -->
-                <div class="card skill-card">
+                <!-- How It Works -->
+                <div class="card ranking-card">
                     <div class="card-header border-0 pb-0">
-                        <h4 class="mb-0">Mapendekezo ya Kuboresha</h4>
+                        <h4 class="mb-0">Jinsi ya Kupata Cheo Cha Juu</h4>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <h6>Fani za Kipaumbele</h6>
+                                <h6>Vipengele Muhimu</h6>
                                 <ul class="list-unstyled">
-                                    <li>SEO - Uwezo wa sasa: 38%</li>
-                                    <li>E-commerce - Uwezo wa sasa: 45%</li>
-                                    <li>Content Creation - Uwezo wa sasa: 90%</li>
+                                    <li>Jibu maswali sahihi zaidi</li>
+                                    <li>Kamilisha kozi na mazoezi</li>
+                                    <li>Fanya quiz na mtihani</li>
                                 </ul>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <h6>Vitendo vya Haraka</h6>
+                                <h6>Viwango vya Tuzo</h6>
                                 <ul class="list-unstyled">
-                                    <li>Jisajili kwenye kozi mpya</li>
-                                    <li>Fanya mazoezi ya vitendo</li>
-                                    <li>Uliza maswali kwa wataalam</li>
+                                    <li>Cheo 1-3: Tuzo ya Dhahabu</li>
+                                    <li>Cheo 4-6: Tuzo ya Fedha</li>
+                                    <li>Cheo 7-9: Tuzo ya Shaba</li>
                                 </ul>
                             </div>
                         </div>
