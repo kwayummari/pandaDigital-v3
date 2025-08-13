@@ -250,14 +250,16 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                 <?php endif; ?>
 
                 <!-- Debug Info -->
-                <?php if (empty($availableExperts)): ?>
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>Debug:</strong> Hakuna wataalamu waliopatikana.
-                        <br>Total experts: <?php echo count($availableExperts); ?>
-                        <br>SQL Query: SELECT id, name, bio, photo, phone, email FROM experts WHERE status IN ('free', 'premium') ORDER BY name ASC
-                    </div>
-                <?php endif; ?>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Debug Info:</strong>
+                    <br>Total experts: <?php echo count($availableExperts); ?>
+                    <br>Experts data: <?php echo !empty($availableExperts) ? 'Available' : 'Empty'; ?>
+                    <?php if (!empty($availableExperts)): ?>
+                        <br>First expert: <?php echo htmlspecialchars($availableExperts[0]['name'] ?? 'N/A'); ?>
+                        <br>Photo path: <?php echo htmlspecialchars($availableExperts[0]['photo'] ?? 'N/A'); ?>
+                    <?php endif; ?>
+                </div>
 
                 <!-- Statistics Cards -->
                 <div class="row mb-4">
@@ -433,7 +435,7 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                 </div>
                 <div class="modal-body">
                     <p class="text-muted mb-4">Chagua mtaalamu ambao unataka kumuliza swali lako</p>
-                    
+
                     <div class="row">
                         <?php if (empty($availableExperts)): ?>
                             <div class="col-12">
@@ -446,14 +448,14 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                             <?php foreach ($availableExperts as $expert): ?>
                                 <div class="col-md-6 mb-3">
                                     <div class="card expert-card h-100" style="cursor: pointer;"
-                                         onclick="selectExpert(<?php echo $expert['id']; ?>, '<?php echo htmlspecialchars($expert['name']); ?>')">
+                                        onclick="selectExpert(<?php echo $expert['id']; ?>, '<?php echo htmlspecialchars($expert['name']); ?>')">
                                         <div class="card-body text-center p-4">
                                             <div class="expert-avatar mb-3">
                                                 <?php if (!empty($expert['photo']) && $expert['photo'] !== 'not provided'): ?>
-                                                    <img src="<?php echo app_url('admin/uploads/' . htmlspecialchars($expert['photo'])); ?>"
-                                                         alt="<?php echo htmlspecialchars($expert['name']); ?>"
-                                                         class="rounded-circle" width="80" height="80"
-                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                                    <img src="<?php echo app_url('pandadigitalV2/admin/uploads/' . htmlspecialchars($expert['photo'])); ?>"
+                                                        alt="<?php echo htmlspecialchars($expert['name']); ?>"
+                                                        class="rounded-circle" width="80" height="80"
+                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                                                     <i class="fas fa-user-tie fa-3x text-primary" style="display: none;"></i>
                                                 <?php else: ?>
                                                     <i class="fas fa-user-tie fa-3x text-primary"></i>
