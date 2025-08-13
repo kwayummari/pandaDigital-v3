@@ -241,16 +241,6 @@
 <!-- AOS Animation JS -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-<!-- Global Configuration -->
-<script>
-    // Global configuration for API endpoints
-    window.PANDA_CONFIG = {
-        apiBaseUrl: '<?= app_url("api") ?>',
-        appBaseUrl: '<?= app_url("") ?>',
-        currentUrl: '<?= $_SERVER['REQUEST_URI'] ?? "" ?>'
-    };
-</script>
-
 <!-- Custom Scripts -->
 <script src="<?= asset('js/script.js') ?>?v=<?= time() ?>&cb=<?= uniqid() ?>"></script>
 

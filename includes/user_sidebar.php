@@ -52,7 +52,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
             <li class="nav-item">
                 <a href="<?= app_url('user/ask-questions.php') ?>" class="nav-link <?= $current_page == 'ask-questions.php' ? 'active' : '' ?>">
-                    <span>Uliza Maswali</span>
+                    <span>Uliza Swali</span>
                 </a>
             </li>
             <li class="nav-item">
