@@ -16,13 +16,7 @@ $messageType = '';
 // Get available experts
 $availableExperts = $expertQuestionModel->getAvailableExperts();
 
-// Check if expert is selected
-$selectedExpertId = $_GET['expert_id'] ?? null;
-$selectedExpert = null;
 
-if ($selectedExpertId) {
-    $selectedExpert = $expertQuestionModel->getExpertById($selectedExpertId);
-}
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -44,8 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Clear form data
             $question = $category = '';
-            $selectedExpertId = null;
-            $selectedExpert = null;
         } else {
             $message = 'Kuna tatizo la kiufundi. Jaribu tena.';
             $messageType = 'danger';
@@ -207,6 +199,24 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
         .expert-contact div {
             margin-bottom: 0.25rem;
         }
+
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -271,69 +281,28 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                     </div>
                 </div>
 
-                <?php if (!$selectedExpert): ?>
-                    <!-- Expert Selection -->
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body p-4">
-                                <h5 class="card-title mb-4">
-                                    <i class="fas fa-user-tie text-primary me-2"></i>
-                                    Chagua Mtaalamu
-                                </h5>
-                                <p class="text-muted mb-4">Chagua mtaalamu ambao unataka kumuliza swali lako</p>
-
-                                <div class="row">
-                                    <?php foreach ($availableExperts as $expert): ?>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="card expert-card h-100" style="cursor: pointer;"
-                                                onclick="selectExpert(<?php echo $expert['id']; ?>)">
-                                                <div class="card-body text-center p-4">
-                                                    <div class="expert-avatar mb-3">
-                                                        <?php if (!empty($expert['photo'])): ?>
-                                                            <img src="<?php echo htmlspecialchars($expert['photo']); ?>"
-                                                                alt="<?php echo htmlspecialchars($expert['name']); ?>"
-                                                                class="rounded-circle" width="80" height="80">
-                                                        <?php else: ?>
-                                                            <i class="fas fa-user-tie fa-3x text-primary"></i>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                    <h6 class="mb-2"><?php echo htmlspecialchars($expert['name']); ?></h6>
-                                                    <?php if (!empty($expert['bio'])): ?>
-                                                        <p class="text-muted small mb-2"><?php echo htmlspecialchars(substr($expert['bio'], 0, 100)) . '...'; ?></p>
-                                                    <?php endif; ?>
-                                                    <div class="expert-contact small text-muted">
-                                                        <?php if (!empty($expert['phone'])): ?>
-                                                            <div><i class="fas fa-phone me-1"></i><?php echo htmlspecialchars($expert['phone']); ?></div>
-                                                        <?php endif; ?>
-                                                        <?php if (!empty($expert['email'])): ?>
-                                                            <div><i class="fas fa-envelope me-1"></i><?php echo htmlspecialchars($expert['email']); ?></div>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php else: ?>
+                <div class="row">
                     <!-- Ask Question Form -->
                     <div class="col-lg-4">
                         <div class="card">
                             <div class="card-body p-4">
-                                <div class="d-flex align-items-center mb-4">
-                                    <a href="?expert_id=" class="btn btn-sm btn-outline-secondary me-3">
-                                        <i class="fas fa-arrow-left me-1"></i>Chagua Mtaalamu Mwingine
-                                    </a>
-                                    <h5 class="card-title mb-0">
-                                        <i class="fas fa-plus-circle text-primary me-2"></i>
-                                        Uliza Swali kwa <?php echo htmlspecialchars($selectedExpert['name']); ?>
-                                    </h5>
-                                </div>
+                                <h5 class="card-title mb-4">
+                                    <i class="fas fa-plus-circle text-primary me-2"></i>
+                                    Uliza Swali Jipya
+                                </h5>
 
                                 <form method="POST" action="">
-                                    <input type="hidden" name="expert_id" value="<?php echo $selectedExpert['id']; ?>">
+                                    <input type="hidden" name="expert_id" id="selected_expert_id" value="">
+
+                                    <!-- Expert Selection Button -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Chagua Mtaalamu *</label>
+                                        <button type="button" class="btn btn-outline-primary w-100" onclick="showExpertModal()">
+                                            <i class="fas fa-user-tie me-2"></i>
+                                            <span id="expert_selection_text">Chagua Mtaalamu</span>
+                                        </button>
+                                        <small class="text-muted">Bofya hapa kuchagua mtaalamu</small>
+                                    </div>
 
                                     <!-- Question -->
                                     <div class="mb-3">
@@ -359,7 +328,7 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                                     </div>
 
                                     <!-- Submit Button -->
-                                    <button type="submit" class="btn btn-primary w-100">
+                                    <button type="submit" class="btn btn-primary w-100" id="submit_btn" disabled>
                                         <i class="fas fa-paper-plane me-2"></i>
                                         Tumia Swali
                                     </button>
@@ -369,10 +338,10 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                                 <div class="mt-4 p-3 bg-light rounded">
                                     <h6 class="mb-2"><i class="fas fa-lightbulb text-warning me-2"></i>Vidokezo</h6>
                                     <ul class="mb-0 small">
+                                        <li>Chagua mtaalamu kwanza</li>
                                         <li>Andika swali kwa ufasaha na uelewa</li>
                                         <li>Chagua kategoria sahihi ya swali</li>
                                         <li>Mtaalamu atakujibu ndani ya siku 1-3</li>
-                                        <li>Unaweza kuuliza swali nyingine kwa urahisi</li>
                                     </ul>
                                 </div>
                             </div>
@@ -436,7 +405,58 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                             </div>
                         </div>
                     </div>
-                <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expert Selection Modal -->
+    <div class="modal fade" id="expertModal" tabindex="-1" aria-labelledby="expertModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="expertModalLabel">
+                        <i class="fas fa-user-tie text-primary me-2"></i>
+                        Chagua Mtaalamu
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-4">Chagua mtaalamu ambao unataka kumuliza swali lako</p>
+
+                    <div class="row">
+                        <?php foreach ($availableExperts as $expert): ?>
+                            <div class="col-md-6 mb-3">
+                                <div class="card expert-card h-100" style="cursor: pointer;"
+                                    onclick="selectExpert(<?php echo $expert['id']; ?>, '<?php echo htmlspecialchars($expert['name']); ?>')">
+                                    <div class="card-body text-center p-4">
+                                        <div class="expert-avatar mb-3">
+                                            <?php if (!empty($expert['photo'])): ?>
+                                                <img src="<?php echo htmlspecialchars($expert['photo']); ?>"
+                                                    alt="<?php echo htmlspecialchars($expert['name']); ?>"
+                                                    class="rounded-circle" width="80" height="80">
+                                            <?php else: ?>
+                                                <i class="fas fa-user-tie fa-3x text-primary"></i>
+                                            <?php endif; ?>
+                                        </div>
+                                        <h6 class="mb-2"><?php echo htmlspecialchars($expert['name']); ?></h6>
+                                        <?php if (!empty($expert['bio'])): ?>
+                                            <p class="text-muted small mb-2"><?php echo htmlspecialchars(substr($expert['bio'], 0, 100)) . '...'; ?></p>
+                                        <?php endif; ?>
+                                        <div class="expert-contact small text-muted">
+                                            <?php if (!empty($expert['phone'])): ?>
+                                                <div><i class="fas fa-phone me-1"></i><?php echo htmlspecialchars($expert['phone']); ?></div>
+                                            <?php endif; ?>
+                                            <?php if (!empty($expert['email'])): ?>
+                                                <div><i class="fas fa-envelope me-1"></i><?php echo htmlspecialchars($expert['email']); ?></div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -445,8 +465,20 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
     <script>
-        function selectExpert(expertId) {
-            window.location.href = '?expert_id=' + expertId;
+        function showExpertModal() {
+            const modal = new bootstrap.Modal(document.getElementById('expertModal'));
+            modal.show();
+        }
+
+        function selectExpert(expertId, expertName) {
+            // Update the form
+            document.getElementById('selected_expert_id').value = expertId;
+            document.getElementById('expert_selection_text').textContent = expertName;
+            document.getElementById('submit_btn').disabled = false;
+
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('expertModal'));
+            modal.hide();
         }
     </script>
 </body>
