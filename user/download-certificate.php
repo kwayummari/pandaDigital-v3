@@ -88,24 +88,80 @@ $page_title = 'Pakua Vyeti';
                             <!-- Certificate Preview -->
                             <div class="certificate-preview mb-4">
                                 <div class="certificate-container">
+                                    <!-- Certificate Background Pattern -->
+                                    <div class="certificate-bg-pattern"></div>
+
+                                    <!-- Logo Watermark -->
+                                    <div class="logo-watermark">
+                                        <div class="logo-circle">
+                                            <img src="<?php echo app_url('assets/images/logo.png'); ?>" alt="Panda Digital" class="watermark-logo">
+                                        </div>
+                                    </div>
+
+                                    <!-- Certificate Header -->
                                     <div class="certificate-header">
-                                        <h3>Vyeti vya Hitimu</h3>
-                                        <h4>Panda Digital</h4>
+                                        <div class="certificate-title">
+                                            <h2>CERTIFICATE OF COMPLETION</h2>
+                                            <p class="subtitle">Vyeti vya Hitimu</p>
+                                        </div>
                                     </div>
+
+                                    <!-- Certificate Body -->
                                     <div class="certificate-body">
-                                        <p class="certificate-text">
-                                            Inatolewa kwa <strong><?php echo htmlspecialchars($currentUser['first_name'] . ' ' . $currentUser['last_name']); ?></strong>
-                                            kwamba amemaliza kujifunza kozi ya:
-                                        </p>
-                                        <h5 class="course-name"><?php echo htmlspecialchars($course['name']); ?></h5>
-                                        <p class="completion-details">
-                                            Umehitimu: <strong><?php echo $completionPercentage; ?>%</strong><br>
-                                            Tarehe ya kumaliza: <strong><?php echo date('d/m/Y', strtotime($completionDate)); ?></strong><br>
-                                            Nambari ya vyeti: <strong><?php echo $certificateNumber; ?></strong>
-                                        </p>
+                                        <div class="award-text">
+                                            <p>This is to certify that</p>
+                                            <h3 class="student-name"><?php echo htmlspecialchars($currentUser['first_name'] . ' ' . $currentUser['last_name']); ?></h3>
+                                            <p>has successfully completed the course:</p>
+                                        </div>
+
+                                        <div class="course-section">
+                                            <h4 class="course-name"><?php echo htmlspecialchars($course['name']); ?></h4>
+                                        </div>
+
+                                        <div class="completion-details">
+                                            <div class="detail-row">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">Completion Rate:</span>
+                                                    <span class="detail-value"><?php echo $completionPercentage; ?>%</span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">Date Completed:</span>
+                                                    <span class="detail-value"><?php echo date('F j, Y', strtotime($completionDate)); ?></span>
+                                                </div>
+                                            </div>
+                                            <div class="detail-row">
+                                                <div class="detail-item">
+                                                    <span class="detail-label">Certificate Number:</span>
+                                                    <span class="detail-value certificate-number"><?php echo $certificateNumber; ?></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <span class="detail-label">Learning Duration:</span>
+                                                    <span class="detail-value"><?php echo $userProgress['total_questions']; ?> questions</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <!-- Certificate Footer -->
                                     <div class="certificate-footer">
-                                        <p>Vyeti hivi vina thamani na vinaweza kutumika kama ushahidi wa ujuzi uliopatikana.</p>
+                                        <div class="signature-section">
+                                            <div class="signature-line"></div>
+                                            <p class="signature-title">Training Manager</p>
+                                            <p class="signature-name">Panda Digital Team</p>
+                                        </div>
+
+                                        <div class="certificate-validity">
+                                            <p>This certificate is valid and can be used as proof of acquired skills and knowledge.</p>
+                                            <p class="validity-note">This certificate is authentic and can be verified through our platform.</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Certificate Border -->
+                                    <div class="certificate-border">
+                                        <div class="border-corner top-left"></div>
+                                        <div class="border-corner top-right"></div>
+                                        <div class="border-corner bottom-left"></div>
+                                        <div class="border-corner bottom-right"></div>
                                     </div>
                                 </div>
                             </div>

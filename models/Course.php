@@ -477,14 +477,18 @@ class Course
                 return true; // Certificate already exists
             }
 
+            // Get completion percentage
+            $userProgress = $this->calculateCourseProgress($userId, $courseId);
+            $completionPercentage = round($userProgress['completion_percentage']);
+
             // Generate new certificate
             $stmt = $conn->prepare("
-                INSERT INTO course_certificates (user_id, course_id, completion_date, certificate_number, status) 
-                VALUES (?, ?, NOW(), ?, 'active')
+                INSERT INTO course_certificates (user_id, course_id, completion_date, completion_percentage, certificate_number, status) 
+                VALUES (?, ?, NOW(), ?, ?, 'active')
             ");
 
             $certificateNumber = 'CERT-' . strtoupper(uniqid());
-            $stmt->execute([$userId, $courseId, $certificateNumber]);
+            $stmt->execute([$userId, $courseId, $completionPercentage, $certificateNumber]);
 
             return $certificateNumber;
         } catch (PDOException $e) {
