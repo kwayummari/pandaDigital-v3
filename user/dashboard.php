@@ -449,10 +449,10 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                                                         class="rounded"
                                                         style="width: 50px; height: 50px; object-fit: cover;"
                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                    <div class="course-placeholder d-flex align-items-center justify-content-center rounded bg-light"
+                                                    <!-- <div class="course-placeholder d-flex align-items-center justify-content-center rounded bg-light"
                                                         style="width: 50px; height: 50px; display: none;">
                                                         <i class="fas fa-book text-muted" style="font-size: 16px;"></i>
-                                                    </div>
+                                                    </div> -->
                                                 <?php else: ?>
                                                     <div class="course-placeholder d-flex align-items-center justify-content-center rounded bg-light"
                                                         style="width: 50px; height: 50px;">
