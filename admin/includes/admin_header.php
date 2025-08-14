@@ -93,6 +93,154 @@ $currentUser = $auth->getCurrentUser();
             border-bottom: 1px solid #e2e8f0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
+        /* Sidebar submenu styles */
+        .submenu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background: #f8f9fa;
+        }
+
+        .submenu li a {
+            display: block;
+            padding: 10px 20px 10px 52px;
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .submenu li a:hover {
+            background: rgba(102, 46, 145, 0.05);
+            color: #662e91;
+            border-left-color: #662e91;
+        }
+
+        /* Logout button styles */
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            background: #dc3545;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .logout-btn i {
+            margin-right: 8px;
+        }
+
+        /* Sidebar navigation styles */
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #FFC10B;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(102, 46, 145, 0.1);
+            color: #662e91;
+            border-left-color: #662e91;
+        }
+
+        .nav-link i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 0.9rem;
+        }
+
+        .nav-link.has-submenu {
+            justify-content: space-between;
+        }
+
+        .submenu-arrow {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link[aria-expanded="true"] .submenu-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Ensure submenu collapse works */
+        .submenu.collapse:not(.show) {
+            display: none;
+        }
+
+        .submenu.collapsing {
+            height: 0;
+            overflow: hidden;
+            transition: height 0.35s ease;
+        }
+
+        .submenu.collapse.show {
+            display: block;
+        }
+
+        /* Sidebar user section */
+        .sidebar-user {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8f9fa;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #662e91;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .user-info h6 {
+            margin: 0 0 4px 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .user-info small {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        /* Sidebar footer */
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            background: #f8f9fa;
+        }
+
+        /* Nav list styling */
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
     </style>
 
     <!-- Chart.js for admin dashboard -->
@@ -110,7 +258,7 @@ $currentUser = $auth->getCurrentUser();
 
             <!-- Brand -->
             <a class="navbar-brand" href="<?= app_url('admin/dashboard.php') ?>">
-                <img src="<?= asset('images/logo/favicon.png') ?>" alt="Panda Digital" class="brand-logo me-2">
+                <img src="<?= asset('images/logo/favicon.png') ?>" alt="Panda Digital" class="brand-logo">
             </a>
 
             <!-- Right Side Navigation -->
