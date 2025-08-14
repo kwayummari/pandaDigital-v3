@@ -60,7 +60,33 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
     <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
     <!-- Custom CSS -->
     <style>
-        /* All styles now handled by main CSS file */
+        .course-list-item {
+            transition: background-color 0.2s ease;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .course-list-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .course-list-item:last-child {
+            border-bottom: none !important;
+        }
+
+        .course-thumbnail img {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .course-info h6 {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .course-action .btn {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+        }
     </style>
 
 
@@ -415,31 +441,34 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                                     </div>
                                 <?php else: ?>
                                     <?php foreach ($displayCourses as $course): ?>
-                                        <div class="course-card mb-3">
-                                            <div class="course-image">
+                                        <div class="course-list-item d-flex align-items-center p-2 border-bottom">
+                                            <div class="course-thumbnail me-3">
                                                 <?php if (!empty($course['photo'])): ?>
                                                     <img src="<?= app_url($courseModel->getImageUrl($course['photo'])) ?>"
                                                         alt="<?= htmlspecialchars($course['name']) ?>"
-                                                        class="img-fluid w-100 h-100 object-fit-cover"
+                                                        class="rounded"
+                                                        style="width: 50px; height: 50px; object-fit: cover;"
                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                    <!-- <div class="course-placeholder d-flex align-items-center justify-content-center" style="display: none;">
-                                                        <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
-                                                    </div> -->
+                                                    <div class="course-placeholder d-flex align-items-center justify-content-center rounded bg-light"
+                                                        style="width: 50px; height: 50px; display: none;">
+                                                        <i class="fas fa-book text-muted" style="font-size: 16px;"></i>
+                                                    </div>
                                                 <?php else: ?>
-                                                    <div class="course-placeholder d-flex align-items-center justify-content-center">
-                                                        <i class="fas fa-book text-muted" style="font-size: 24px;"></i>
+                                                    <div class="course-placeholder d-flex align-items-center justify-content-center rounded bg-light"
+                                                        style="width: 50px; height: 50px;">
+                                                        <i class="fas fa-book text-muted" style="font-size: 16px;"></i>
                                                     </div>
                                                 <?php endif; ?>
                                             </div>
-                                            <div class="card-body course-body">
-                                                <h6 class="card-title"><?php echo htmlspecialchars($course['name']); ?></h6>
-                                                <p class="card-text text-muted small">
+                                            <div class="course-info flex-grow-1">
+                                                <h6 class="mb-1 text-truncate" style="max-width: 200px;"><?php echo htmlspecialchars($course['name']); ?></h6>
+                                                <p class="mb-0 text-muted small">
                                                     <?php echo $course['total_videos']; ?> masomo • <?php echo $course['total_questions']; ?> maswali
                                                 </p>
                                             </div>
-                                            <div class="card-footer course-footer bg-transparent border-0 p-2">
+                                            <div class="course-action">
                                                 <a href="<?= app_url('user/course.php?id=' . $course['id']) ?>"
-                                                    class="btn btn-primary-custom text-white btn-sm w-100">
+                                                    class="btn btn-outline-primary btn-sm">
                                                     Endelea
                                                 </a>
                                             </div>

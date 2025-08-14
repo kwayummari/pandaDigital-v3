@@ -445,9 +445,9 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
                                         <div class="card-body text-center p-4">
                                             <div class="expert-avatar mb-3">
                                                 <?php if (!empty($expert['photo']) && $expert['photo'] !== 'not provided'): ?>
-                                                                                                        <img src="<?php echo app_url('uploads/ProfilePhotos/' . htmlspecialchars($expert['photo'])); ?>"
-                                                         alt="<?php echo htmlspecialchars($expert['name']); ?>"
-                                                         class="rounded-circle" width="80" height="80">
+                                                    <img src="<?php echo app_url('uploads/ProfilePhotos/' . htmlspecialchars($expert['photo'])); ?>"
+                                                        alt="<?php echo htmlspecialchars($expert['name']); ?>"
+                                                        class="rounded-circle" width="80" height="80">
                                                 <?php endif; ?>
                                             </div>
                                             <h6 class="mb-2"><?php echo htmlspecialchars($expert['name']); ?></h6>
