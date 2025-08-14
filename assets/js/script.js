@@ -112,67 +112,46 @@ document.addEventListener('DOMContentLoaded', function () {
         submitBtn.innerHTML = '<span class="loading"></span> Inaingia...';
         submitBtn.disabled = true;
 
-        // Make actual API call
-        const loginUrl = window.PANDA_CONFIG?.apiUrl + '/auth/login.php' || '/api/auth/login.php';
-        console.log('Making login API call to:', loginUrl);
-        console.log('Login data:', { email, password, remember: rememberMe });
+        // Create a temporary form and submit it to the main login page
+        const tempForm = document.createElement('form');
+        tempForm.method = 'POST';
+        tempForm.action = window.PANDA_CONFIG?.baseUrl + '/login.php' || '/login.php';
+        tempForm.style.display = 'none';
 
-        fetch(loginUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password,
-                remember: rememberMe
-            })
-        })
-            .then(response => {
-                console.log('Login API response status:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('Login API response data:', data);
+        // Add form fields
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        tempForm.appendChild(emailInput);
 
-                // Reset button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+        const passwordInput = document.createElement('input');
+        passwordInput.type = 'hidden';
+        passwordInput.name = 'password';
+        passwordInput.value = password;
+        tempForm.appendChild(passwordInput);
 
-                if (data.success) {
-                    // Login successful
-                    showAlert(data.message || 'Umeingia kwa mafanikio!', 'success');
+        if (rememberMe) {
+            const rememberInput = document.createElement('input');
+            rememberInput.type = 'hidden';
+            rememberInput.name = 'remember';
+            rememberInput.value = '1';
+            tempForm.appendChild(rememberInput);
+        }
 
-                    // Close modal
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                    modal.hide();
+        // Add CSRF token if available
+        const csrfToken = document.querySelector('input[name="csrf_token"]')?.value;
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrfToken;
+            tempForm.appendChild(csrfInput);
+        }
 
-                    // Redirect to dashboard
-                    if (data.redirect_url) {
-                        // Construct full URL with proper prefix
-                        const baseUrl = window.PANDA_CONFIG?.baseUrl || '';
-                        const redirectUrl = baseUrl + data.redirect_url;
-                        console.log('Redirecting to:', redirectUrl);
-                        window.location.href = redirectUrl;
-                    } else {
-                        // Default redirect to user dashboard
-                        window.location.href = (window.PANDA_CONFIG?.baseUrl || '') + '/user/dashboard.php';
-                    }
-                } else {
-                    // Login failed
-                    showAlert(data.message || 'Kuna tatizo na kuingia. Jaribu tena.', 'danger');
-                }
-            })
-            .catch(error => {
-                console.error('Login error:', error);
-
-                // Reset button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-
-                // Show error message
-                showAlert('Kuna tatizo na mtandao. Jaribu tena.', 'danger');
-            });
+        // Submit the form
+        document.body.appendChild(tempForm);
+        tempForm.submit();
     }
 
     // Signup handler
