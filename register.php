@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . "/config/init.php";
 require_once __DIR__ . "/services/AuthService.php";
+require_once __DIR__ . "/services/GoogleOAuthService.php";
 
 // Check if user is already logged in
 $authService = new AuthService();
@@ -329,6 +330,28 @@ $genders = ['Male', 'Female', 'Other'];
                         <div class="mt-3">
                             <a href="/login.php" class="btn btn-primary">Ingia Sasa</a>
                             <a href="/" class="btn btn-outline-secondary ms-2">Rudi Nyumbani</a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Google OAuth Login -->
+                <?php
+                $googleOAuth = new GoogleOAuthService();
+                if ($googleOAuth->isConfigured()):
+                ?>
+                    <div class="google-auth-section mb-4">
+                        <div class="text-center mb-3">
+                            <p class="text-muted mb-2">Au jisajili kwa kutumia</p>
+                            <a href="<?php echo $googleOAuth->getAuthorizationUrl(); ?>"
+                                class="btn btn-outline-danger btn-lg w-100">
+                                <i class="fab fa-google me-2"></i>
+                                Jisajili na Google
+                            </a>
+                        </div>
+                        <div class="text-center">
+                            <hr class="my-3">
+                            <span class="text-muted">au</span>
+                            <hr class="my-3">
                         </div>
                     </div>
                 <?php endif; ?>

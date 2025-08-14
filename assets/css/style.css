@@ -4147,4 +4147,32 @@ canvas#performanceChart {
   margin-bottom: 1.5rem;
 }
 
+/* Google OAuth styling */
+.google-auth-section {
+  text-align: center;
+}
 
+.google-auth-section .btn-outline-danger {
+  border-color: #dc3545;
+  color: #dc3545;
+  transition: all 0.3s ease;
+}
+
+.google-auth-section .btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.google-auth-section hr {
+  border-color: #dee2e6;
+  opacity: 0.5;
+}
+
+.google-auth-section .text-muted {
+  background: white;
+  padding: 0 15px;
+  font-size: 0.9rem;
+}

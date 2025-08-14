@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . "/config/init.php";
 require_once __DIR__ . "/services/AuthService.php";
+require_once __DIR__ . "/services/GoogleOAuthService.php";
 
 // Check if user is already logged in
 $authService = new AuthService();
@@ -234,6 +235,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php if ($success): ?>
                     <div class="alert alert-success">
                         <i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($success); ?>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Google OAuth Login -->
+                <?php
+                $googleOAuth = new GoogleOAuthService();
+                if ($googleOAuth->isConfigured()):
+                ?>
+                    <div class="google-auth-section mb-4">
+                        <div class="text-center mb-3">
+                            <p class="text-muted mb-2">Au ingia kwa kutumia</p>
+                            <a href="<?php echo $googleOAuth->getAuthorizationUrl(); ?>"
+                                class="btn btn-outline-danger btn-lg w-100">
+                                <i class="fab fa-google me-2"></i>
+                                Ingia na Google
+                            </a>
+                        </div>
+                        <div class="text-center">
+                            <hr class="my-3">
+                            <span class="text-muted">au</span>
+                            <hr class="my-3">
+                        </div>
                     </div>
                 <?php endif; ?>
 

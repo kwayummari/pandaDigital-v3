@@ -160,6 +160,18 @@ class Environment
     }
 
     /**
+     * Get Google OAuth configuration
+     */
+    public static function getGoogleOAuthConfig()
+    {
+        return [
+            'client_id' => self::get('GOOGLE_CLIENT_ID', ''),
+            'client_secret' => self::get('GOOGLE_CLIENT_SECRET', ''),
+            'redirect_uri' => self::get('GOOGLE_REDIRECT_URI', '')
+        ];
+    }
+
+    /**
      * Get upload configuration
      */
     public static function getUploadConfig()

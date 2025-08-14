@@ -147,6 +147,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+                <!-- Google OAuth Login -->
+                <?php
+                $googleOAuth = new GoogleOAuthService();
+                if ($googleOAuth->isConfigured()):
+                ?>
+                    <div class="google-auth-section mb-3">
+                        <a href="<?php echo $googleOAuth->getAuthorizationUrl(); ?>"
+                            class="btn btn-outline-danger w-100 mb-2">
+                            <i class="fab fa-google me-2"></i>
+                            Ingia na Google
+                        </a>
+                        <div class="text-center">
+                            <small class="text-muted">au</small>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
                 <form id="loginForm">
                     <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                     <div class="mb-3">
@@ -185,6 +202,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+                <!-- Google OAuth Signup -->
+                <?php
+                $googleOAuth = new GoogleOAuthService();
+                if ($googleOAuth->isConfigured()):
+                ?>
+                    <div class="google-auth-section mb-3">
+                        <a href="<?php echo $googleOAuth->getAuthorizationUrl(); ?>"
+                            class="btn btn-outline-danger w-100 mb-2">
+                            <i class="fab fa-google me-2"></i>
+                            Jisajili na Google
+                        </a>
+                        <div class="text-center">
+                            <small class="text-muted">au</small>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
                 <form id="signupForm">
                     <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                     <div class="row">

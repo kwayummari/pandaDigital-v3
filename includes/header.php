@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/init.php';
 require_once __DIR__ . '/../services/AuthService.php';
+require_once __DIR__ . '/../services/GoogleOAuthService.php';
 
 // Initialize authentication service
 $authService = new AuthService();
