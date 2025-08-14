@@ -24,6 +24,9 @@ try {
         $input = $_POST; // Fallback to POST data
     }
 
+    // Debug logging
+    error_log("Login attempt for email: " . ($input['email'] ?? 'not provided'));
+
     // Validate required fields
     if (empty($input['email']) || empty($input['password'])) {
         http_response_code(400);
@@ -39,10 +42,14 @@ try {
     $password = trim($input['password']);
 
     // Initialize auth service
+    error_log("Initializing AuthService...");
     $authService = new AuthService();
+    error_log("AuthService initialized successfully");
 
     // Attempt login
+    error_log("Attempting login for user: " . $email);
     $result = $authService->loginUser($email, $password);
+    error_log("Login result: " . json_encode($result));
 
     if ($result['valid']) {
         // Login successful
@@ -66,9 +73,11 @@ try {
     }
 } catch (Exception $e) {
     error_log("Login error: " . $e->getMessage());
+    error_log("Login error trace: " . $e->getTraceAsString());
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'An error occurred during login. Please try again.'
+        'message' => 'An error occurred during login. Please try again.',
+        'debug' => Environment::isDebug() ? $e->getMessage() : null
     ]);
 }
