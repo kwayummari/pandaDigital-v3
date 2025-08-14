@@ -44,7 +44,12 @@ $topRankings = $rankingModel->getTopPerformers('monthly', 5);
 // Calculate financial metrics if finance user
 $financials = [];
 if ($currentUser['email'] === 'finance@pandadigital.com') {
-    $financials = $salesModel->getFinancialMetrics();
+    // $financials = $salesModel->getFinancialMetrics(); // Method not implemented yet
+    $financials = [
+        'total_income' => 0,
+        'total_sales' => 0,
+        'company_profit' => 0
+    ];
 }
 ?>
 
@@ -143,9 +148,9 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
                                 <i class="fas fa-blog"></i>
                             </div>
                             <div class="activity-content">
-                                <h6>Blogi Mpya: <?= htmlspecialchars($recentBlogs[0]['title']) ?></h6>
-                                <p class="text-muted mb-0">Imeandikwa na <?= htmlspecialchars($recentBlogs[0]['author_name']) ?></p>
-                                <small class="text-muted"><?= date('d/m/Y H:i', strtotime($recentBlogs[0]['date_created'])) ?></small>
+                                <h6>Blogi Mpya: <?= htmlspecialchars($recentBlogs[0]['title'] ?? '') ?></h6>
+                                <p class="text-muted mb-0">Imeandikwa na <?= htmlspecialchars($recentBlogs[0]['author_name'] ?? 'Mtaalamu') ?></p>
+                                <small class="text-muted"><?= date('d/m/Y H:i', strtotime($recentBlogs[0]['date_created'] ?? 'now')) ?></small>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -156,9 +161,9 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
                                 <i class="fas fa-comments"></i>
                             </div>
                             <div class="activity-content">
-                                <h6>Mrejesho Mpya: <?= htmlspecialchars($recentFeedback[0]['subject']) ?></h6>
-                                <p class="text-muted mb-0">Kutoka kwa <?= htmlspecialchars($recentFeedback[0]['student_name']) ?></p>
-                                <small class="text-muted"><?= date('d/m/Y H:i', strtotime($recentFeedback[0]['date_created'])) ?></small>
+                                <h6>Mrejesho Mpya: <?= htmlspecialchars($recentFeedback[0]['subject'] ?? '') ?></h6>
+                                <p class="text-muted mb-0">Kutoka kwa <?= htmlspecialchars($recentFeedback[0]['student_name'] ?? 'Mwanafunzi') ?></p>
+                                <small class="text-muted"><?= date('d/m/Y H:i', strtotime($recentFeedback[0]['date_created'] ?? 'now')) ?></small>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -169,9 +174,9 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
                                 <i class="fas fa-bullseye"></i>
                             </div>
                             <div class="activity-content">
-                                <h6>Fursa Mpya: <?= htmlspecialchars($recentOpportunities[0]['title']) ?></h6>
-                                <p class="text-muted mb-0">Imeandikwa na <?= htmlspecialchars($recentOpportunities[0]['author_name']) ?></p>
-                                <small class="text-muted"><?= date('d/m/Y H:i', strtotime($recentOpportunities[0]['date_created'])) ?></small>
+                                <h6>Fursa Mpya: <?= htmlspecialchars($recentOpportunities[0]['title'] ?? '') ?></h6>
+                                <p class="text-muted mb-0">Imeandikwa na <?= htmlspecialchars($recentOpportunities[0]['author_name'] ?? 'Mtaalamu') ?></p>
+                                <small class="text-muted"><?= date('d/m/Y H:i', strtotime($recentOpportunities[0]['date_created'] ?? 'now')) ?></small>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -182,9 +187,9 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
                                 <i class="fas fa-shopping-cart"></i>
                             </div>
                             <div class="activity-content">
-                                <h6>Mauzo Mpya: TSh. <?= number_format($recentSales[0]['amount'], 2) ?></h6>
-                                <p class="text-muted mb-0">Kutoka kwa <?= htmlspecialchars($recentSales[0]['customer_name']) ?></p>
-                                <small class="text-muted"><?= date('d/m/Y H:i', strtotime($recentSales[0]['date'])) ?></small>
+                                <h6>Mauzo Mpya: TSh. <?= number_format($recentSales[0]['amount'] ?? 0, 2) ?></h6>
+                                <p class="text-muted mb-0">Kutoka kwa <?= htmlspecialchars($recentSales[0]['customer_name'] ?? 'Mteja') ?></p>
+                                <small class="text-muted"><?= date('d/m/Y H:i', strtotime($recentSales[0]['date'] ?? 'now')) ?></small>
                             </div>
                         </div>
                     <?php endif; ?>

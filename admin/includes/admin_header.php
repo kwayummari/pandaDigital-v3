@@ -47,7 +47,6 @@ $currentUser = $auth->getCurrentUser();
             <!-- Brand -->
             <a class="navbar-brand" href="<?= app_url('admin/dashboard.php') ?>">
                 <img src="<?= asset('images/logo/favicon.png') ?>" alt="Panda Digital" class="brand-logo me-2">
-                <span class="brand-text">Admin Panel</span>
             </a>
 
             <!-- Right Side Navigation -->

@@ -4254,8 +4254,8 @@ canvas#performanceChart {
 }
 
 .admin-container .sidebar-brand .brand-logo {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   margin-right: 12px;
 }
 
@@ -4382,8 +4382,8 @@ canvas#performanceChart {
 }
 
 .admin-container .navbar-brand .brand-logo {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
 }
 
 .admin-container .navbar-nav .nav-link {
@@ -4417,27 +4417,16 @@ canvas#performanceChart {
   padding: 24px;
   margin-bottom: 24px;
   transition: all 0.3s ease;
+  position: relative;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .admin-container .stats-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-.admin-container .stats-card .card-title {
-  color: var(--gray-color);
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.admin-container .stats-card .card-value {
-  color: var(--secondary-color);
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0;
 }
 
 .admin-container .stats-card .card-icon {
@@ -4453,6 +4442,24 @@ canvas#performanceChart {
   justify-content: center;
   color: var(--primary-color);
   font-size: 1.2rem;
+}
+
+.admin-container .stats-card .card-title {
+  color: var(--gray-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 60px;
+}
+
+.admin-container .stats-card .card-value {
+  color: var(--secondary-color);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  margin-right: 60px;
 }
 
 /* Responsive Admin Design */
