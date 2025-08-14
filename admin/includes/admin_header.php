@@ -48,18 +48,98 @@ $currentUser = $auth->getCurrentUser();
                     </div>
                 </div>
                 <div class="col-lg-6 text-end">
-                    <div class="d-flex align-items-center justify-content-end">
-                        <span class="text-white me-3">
-                            <i class="fas fa-user me-1"></i><?= htmlspecialchars($currentUser['first_name'] . ' ' . $currentUser['last_name']) ?>
-                        </span>
-                        <a href="<?= app_url('logout.php') ?>" class="text-white">
-                            <i class="fas fa-sign-out-alt me-1"></i>Toka
-                        </a>
+                    <!-- Admin Profile Menu -->
+                    <div class="user-profile-menu">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-shield me-1"></i>
+                                <?= htmlspecialchars($currentUser['first_name'] ?? 'Admin') ?>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <div class="dropdown-header">
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar me-3">
+                                                <i class="fas fa-user-shield fa-2x text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="user-name"><?= htmlspecialchars($currentUser['first_name'] . ' ' . $currentUser['last_name']) ?></div>
+                                                <div class="user-email text-muted small"><?= htmlspecialchars($currentUser['email']) ?></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="<?= app_url('admin/dashboard.php') ?>">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="<?= app_url('admin/users.php') ?>">
+                                        <i class="fas fa-users me-2"></i>Watumiaji
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="<?= app_url('logout.php') ?>">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Ondoka
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modern Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="<?= app_url('admin/dashboard.php') ?>">
+                <img src="<?= asset('images/logo/logo.png') ?>" alt="<?= htmlspecialchars($appConfig['name']) ?>" height="50">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="<?= app_url('admin/dashboard.php') ?>">
+                            DASHBOARD
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= app_url('admin/users.php') ?>">
+                            WATUMIAJI
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= app_url('admin/courses.php') ?>">
+                            KOZI
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= app_url('admin/blogs.php') ?>">
+                            BLOGI
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= app_url('admin/feedback.php') ?>">
+                            MREJESHO
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
     <!-- Main Container -->
     <div class="main-container">
