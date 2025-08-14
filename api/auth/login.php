@@ -1,4 +1,7 @@
 <?php
+// Start output buffering to catch any unexpected output
+ob_start();
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
@@ -6,7 +9,8 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 // Basic error handling
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0); // Turn off HTML error display
+ini_set('log_errors', 1); // Log errors instead
 
 try {
     require_once __DIR__ . "/../../services/AuthService.php";
@@ -100,4 +104,19 @@ try {
         'message' => 'An error occurred during login. Please try again.',
         'debug' => Environment::isDebug() ? $e->getMessage() : null
     ]);
+}
+
+// Check for any unexpected output
+$unexpectedOutput = ob_get_clean();
+if (!empty($unexpectedOutput)) {
+    error_log("Unexpected output detected: " . $unexpectedOutput);
+    // If there was unexpected output, return error
+    if (!headers_sent()) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Server configuration error',
+            'debug' => 'Unexpected output detected'
+        ]);
+    }
 }
