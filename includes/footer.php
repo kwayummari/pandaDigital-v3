@@ -242,6 +242,14 @@
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <!-- Custom Scripts -->
+<script>
+    // Pass PHP configuration to JavaScript
+    window.PANDA_CONFIG = {
+        baseUrl: '<?= app_url() ?>',
+        apiUrl: '<?= app_url('api') ?>',
+        assetsUrl: '<?= asset('') ?>'
+    };
+</script>
 <script src="<?= asset('js/script.js') ?>?v=<?= time() ?>&cb=<?= uniqid() ?>"></script>
 
 <script>

@@ -113,10 +113,11 @@ document.addEventListener('DOMContentLoaded', function () {
         submitBtn.disabled = true;
 
         // Make actual API call
-        console.log('Making login API call to:', '/panda/pandadigitalV3/api/auth/login.php');
+        const loginUrl = window.PANDA_CONFIG?.apiUrl + '/auth/login.php' || '/api/auth/login.php';
+        console.log('Making login API call to:', loginUrl);
         console.log('Login data:', { email, password, remember: rememberMe });
 
-        fetch('/panda/pandadigitalV3/api/auth/login.php', {
+        fetch(loginUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -149,13 +150,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Redirect to dashboard
                     if (data.redirect_url) {
                         // Construct full URL with proper prefix
-                        const baseUrl = '/panda/pandadigitalV3';
+                        const baseUrl = window.PANDA_CONFIG?.baseUrl || '';
                         const redirectUrl = baseUrl + data.redirect_url;
                         console.log('Redirecting to:', redirectUrl);
                         window.location.href = redirectUrl;
                     } else {
                         // Default redirect to user dashboard
-                        window.location.href = '/panda/pandadigitalV3/user/dashboard.php';
+                        window.location.href = (window.PANDA_CONFIG?.baseUrl || '') + '/user/dashboard.php';
                     }
                 } else {
                     // Login failed
