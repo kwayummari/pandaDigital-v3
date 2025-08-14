@@ -4181,7 +4181,7 @@ canvas#performanceChart {
 .admin-container {
   display: flex;
   min-height: 100vh;
-  padding-top: 70px;
+  padding-top: 0;
 }
 
 .admin-container .sidebar {
@@ -4201,13 +4201,15 @@ canvas#performanceChart {
   flex: 1;
   background: #f8f9fa;
   min-height: calc(100vh - 70px);
+  margin-top: 70px;
 }
 
 .admin-container .page-header {
   background: white;
-  padding: 20px 0;
+  padding: 30px 0;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .admin-container .page-title {
@@ -4233,7 +4235,7 @@ canvas#performanceChart {
 }
 
 .admin-container .page-content {
-  padding: 0 20px 20px 20px;
+  padding: 30px 20px 20px 20px;
 }
 
 /* Admin Sidebar Styles */
@@ -4377,8 +4379,8 @@ canvas#performanceChart {
 }
 
 .admin-container .navbar-brand .brand-logo {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
 }
 
 .admin-container .navbar-nav .nav-link {
