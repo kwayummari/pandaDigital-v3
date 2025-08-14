@@ -8,8 +8,11 @@
 
                 <!-- Admin Scripts -->
                 <script>
+                    console.log('Admin footer script loaded successfully');
+
                     // Sidebar toggle functionality
                     document.addEventListener('DOMContentLoaded', function() {
+                        console.log('DOM loaded, initializing admin functionality');
                         const sidebarToggle = document.getElementById('sidebarToggle');
                         const adminContainer = document.querySelector('.admin-container');
                         const sidebar = document.querySelector('.sidebar');

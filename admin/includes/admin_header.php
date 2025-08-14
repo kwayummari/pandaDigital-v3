@@ -30,6 +30,70 @@ $currentUser = $auth->getCurrentUser();
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
+    <!-- Fallback CSS if asset helper fails -->
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>">
+
+    <!-- Inline CSS for critical admin styles -->
+    <style>
+        /* Critical admin styles in case external CSS fails */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .main-content {
+            flex: 1;
+            background: #f8f9fa;
+            margin-top: 70px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+
+        .page-content {
+            padding: 30px 20px 20px 20px;
+        }
+
+        .stats-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-top: 3px solid #662e91;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            min-height: 120px;
+        }
+
+        .card-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: rgba(102, 46, 145, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #662e91;
+        }
+
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 
     <!-- Chart.js for admin dashboard -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
