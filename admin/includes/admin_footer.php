@@ -6,27 +6,26 @@
                 <!-- Bootstrap 5 JS -->
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-                <!-- Admin Scripts -->
+                <!-- Sidebar Toggle Script -->
                 <script>
-                    // Sidebar toggle functionality
                     document.addEventListener('DOMContentLoaded', function() {
-                        const sidebarToggle = document.getElementById('sidebarToggle');
-                        const mainContainer = document.querySelector('.main-container');
+                        const sidebarToggles = document.querySelectorAll('.sidebar-toggle');
                         const sidebar = document.querySelector('.sidebar');
+                        const dashboardContainer = document.querySelector('.dashboard-container');
 
-                        if (sidebarToggle) {
-                            sidebarToggle.addEventListener('click', function() {
-                                mainContainer.classList.toggle('sidebar-collapsed');
+                        sidebarToggles.forEach(toggle => {
+                            toggle.addEventListener('click', function() {
                                 sidebar.classList.toggle('collapsed');
+                                dashboardContainer.classList.toggle('sidebar-collapsed');
                             });
-                        }
+                        });
 
                         // Close sidebar on mobile when clicking outside
                         document.addEventListener('click', function(e) {
                             if (window.innerWidth < 992) {
                                 if (!sidebar.contains(e.target) && !e.target.closest('.sidebar-toggle')) {
-                                    mainContainer.classList.remove('sidebar-collapsed');
                                     sidebar.classList.remove('collapsed');
+                                    dashboardContainer.classList.remove('sidebar-collapsed');
                                 }
                             }
                         });

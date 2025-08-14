@@ -13,6 +13,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 <div class="sidebar">
     <div class="sidebar-header">
         <a href="<?= app_url('admin/dashboard.php') ?>" class="sidebar-brand">
+            <i class="fas fa-user-shield me-2"></i>
             <span>Admin Panel</span>
         </a>
         <button class="sidebar-toggle d-lg-none" id="sidebarToggle">
@@ -32,70 +33,60 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 
     <nav class="sidebar-nav">
         <ul class="nav-list">
-            <li class="nav-item">
-                <a href="<?= app_url('admin/dashboard.php') ?>" class="nav-link <?= $currentPage === 'dashboard' ? 'active' : '' ?>">
+            <li class="nav-item <?= $currentPage === 'dashboard' ? 'active' : '' ?>">
+                <a href="<?= app_url('admin/dashboard.php') ?>" class="nav-link">
                     <span>Nyumbani</span>
                 </a>
             </li>
-
-            <li class="nav-item">
-                <a href="<?= app_url('admin/users.php') ?>" class="nav-link <?= $currentPage === 'users' ? 'active' : '' ?>">
+            <li class="nav-item <?= $currentPage === 'users' ? 'active' : '' ?>">
+                <a href="<?= app_url('admin/users.php') ?>" class="nav-link">
                     <span>Watumiaji</span>
                 </a>
             </li>
-
-            <li class="nav-item">
-                <a href="<?= app_url('admin/courses.php') ?>" class="nav-link <?= $currentPage === 'courses' ? 'active' : '' ?>">
+            <li class="nav-item <?= $currentPage === 'courses' ? 'active' : '' ?>">
+                <a href="<?= app_url('admin/courses.php') ?>" class="nav-link">
                     <span>Kozi</span>
                 </a>
             </li>
-
-            <li class="nav-item">
-                <a href="<?= app_url('admin/videos.php') ?>" class="nav-link <?= $currentPage === 'videos' ? 'active' : '' ?>">
+            <li class="nav-item <?= $currentPage === 'videos' ? 'active' : '' ?>">
+                <a href="<?= app_url('admin/videos.php') ?>" class="nav-link">
                     <span>Video</span>
                 </a>
             </li>
-
-            <li class="nav-item">
-                <a href="<?= app_url('admin/questions.php') ?>" class="nav-link <?= $currentPage === 'questions' ? 'active' : '' ?>">
+            <li class="nav-item <?= $currentPage === 'questions' ? 'active' : '' ?>">
+                <a href="<?= app_url('admin/questions.php') ?>" class="nav-link">
                     <span>Maswali</span>
                 </a>
             </li>
-
-            <li class="nav-item">
-                <a href="<?= app_url('admin/blogs.php') ?>" class="nav-link <?= $currentPage === 'blogs' ? 'active' : '' ?>">
+            <li class="nav-item <?= $currentPage === 'blogs' ? 'active' : '' ?>">
+                <a href="<?= app_url('admin/blogs.php') ?>" class="nav-link">
                     <span>Blogi</span>
                 </a>
             </li>
-
-            <li class="nav-item">
-                <a href="<?= app_url('admin/opportunities.php') ?>" class="nav-link <?= $currentPage === 'opportunities' ? 'active' : '' ?>">
+            <li class="nav-item <?= $currentPage === 'opportunities' ? 'active' : '' ?>">
+                <a href="<?= app_url('admin/opportunities.php') ?>" class="nav-link">
                     <span>Fursa</span>
                 </a>
             </li>
-
-            <li class="nav-item">
-                <a href="<?= app_url('admin/beneficiaries.php') ?>" class="nav-link <?= $currentPage === 'beneficiaries' ? 'active' : '' ?>">
+            <li class="nav-item <?= $currentPage === 'beneficiaries' ? 'active' : '' ?>">
+                <a href="<?= app_url('admin/beneficiaries.php') ?>" class="nav-link">
                     <span>Wanufaika</span>
                 </a>
             </li>
-
             <?php if ($currentUser['email'] === 'finance@pandadigital.com'): ?>
-                <li class="nav-item">
-                    <a href="<?= app_url('admin/sales.php') ?>" class="nav-link <?= $currentPage === 'sales' ? 'active' : '' ?>">
+                <li class="nav-item <?= $currentPage === 'sales' ? 'active' : '' ?>">
+                    <a href="<?= app_url('admin/sales.php') ?>" class="nav-link">
                         <span>Mapato</span>
                     </a>
                 </li>
             <?php endif; ?>
-
-            <li class="nav-item">
-                <a href="<?= app_url('admin/downloads.php') ?>" class="nav-link <?= $currentPage === 'downloads' ? 'active' : '' ?>">
+            <li class="nav-item <?= $currentPage === 'downloads' ? 'active' : '' ?>">
+                <a href="<?= app_url('admin/downloads.php') ?>" class="nav-link">
                     <span>Historia ya Vyeti</span>
                 </a>
             </li>
-
-            <li class="nav-item">
-                <a href="<?= app_url('admin/feedback.php') ?>" class="nav-link <?= $currentPage === 'feedback' ? 'active' : '' ?>">
+            <li class="nav-item <?= $currentPage === 'feedback' ? 'active' : '' ?>">
+                <a href="<?= app_url('admin/feedback.php') ?>" class="nav-link">
                     <span>Mrejesho</span>
                 </a>
             </li>
