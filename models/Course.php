@@ -497,7 +497,6 @@ class Course
 
             $certificateNumber = 'CERT-' . strtoupper(uniqid());
             $stmt->execute([$userId, $courseId, $completionPercentage, $certificateNumber]);
-
             return $certificateNumber;
         } catch (PDOException $e) {
             error_log("Error generating certificate: " . $e->getMessage());
