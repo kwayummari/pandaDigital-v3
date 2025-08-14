@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 try {
     // Get JSON input
+    error_log("Step 1: Getting input data");
     $input = json_decode(file_get_contents('php://input'), true);
 
     if (!$input) {
@@ -50,9 +51,12 @@ try {
 
     // Debug logging
     error_log("Login attempt for email: " . ($input['email'] ?? 'not provided'));
+    error_log("Input data: " . json_encode($input));
 
     // Validate required fields
+    error_log("Step 2: Validating required fields");
     if (empty($input['email']) || empty($input['password'])) {
+        error_log("Validation failed: missing email or password");
         http_response_code(400);
         echo json_encode([
             'success' => false,
@@ -60,10 +64,14 @@ try {
         ]);
         exit();
     }
+    error_log("Validation passed");
 
     // Sanitize input
+    error_log("Step 3: Sanitizing input");
     $email = filter_var(trim($input['email']), FILTER_SANITIZE_EMAIL);
     $password = trim($input['password']);
+    error_log("Sanitized email: " . $email);
+    error_log("Sanitization completed");
 
     // Initialize auth service
     error_log("Initializing AuthService...");
@@ -101,8 +109,7 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'An error occurred during login. Please try again.',
-        'debug' => Environment::isDebug() ? $e->getMessage() : null
+        'message' => 'An error occurred during login. Please try again.'
     ]);
 }
 
