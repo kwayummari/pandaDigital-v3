@@ -367,8 +367,4 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
     });
 </script>
 
-<?php
-echo "<!-- Footer include start -->";
-include __DIR__ . '/includes/admin_footer.php';
-echo "<!-- Footer include end -->";
-?>
+<?php include __DIR__ . '/includes/admin_footer.php'; ?>
