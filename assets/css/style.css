@@ -4251,12 +4251,7 @@ canvas#performanceChart {
   text-decoration: none;
   font-weight: 600;
   font-size: 1.1rem;
-}
-
-.admin-container .sidebar-brand .brand-logo {
-  width: 28px;
-  height: 28px;
-  margin-right: 12px;
+  justify-content: center;
 }
 
 .admin-container .sidebar-user {

@@ -12,8 +12,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 <div class="sidebar">
     <div class="sidebar-header">
         <a href="<?= app_url('admin/dashboard.php') ?>" class="sidebar-brand">
-            <img src="<?= asset('images/logo/favicon.png') ?>" alt="Panda Digital" class="brand-logo">
-            <span>Admin Panel</span>
+            <span>Dashboard</span>
         </a>
         <button class="sidebar-toggle d-lg-none" id="sidebarToggle">
             <i class="fas fa-bars"></i>
