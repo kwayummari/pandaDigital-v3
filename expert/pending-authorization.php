@@ -1,305 +1,144 @@
 <?php
-require_once __DIR__ . "/../services/AuthService.php";
+require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 
-$authService = new AuthService();
+$auth = new AuthMiddleware();
+$auth->requireRole('expert');
 
-// Check if user is logged in and is an expert
-if (!$authService->isLoggedIn()) {
-    header('Location: /login.php');
-    exit();
-}
+$currentUser = $auth->getCurrentUser();
 
-$currentUser = $authService->getCurrentUser();
-if ($currentUser['role'] !== 'expert') {
-    header('Location: /unauthorized.php');
-    exit();
-}
-
-// Check if expert is already authorized
-if (isset($currentUser['expert_authorization']) && $currentUser['expert_authorization'] == 1) {
-    header('Location: /expert/dashboard.php');
-    exit();
-}
+// Set page title
+$page_title = 'Uthibitisho Unasubiriwa';
 ?>
+
 <!DOCTYPE html>
 <html lang="sw">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subiri Kuidhinishwa - Panda Digital</title>
+    <title><?= htmlspecialchars($page_title) ?> - <?= htmlspecialchars($appConfig['name']) ?></title>
+    
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .pending-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .pending-header {
-            background: #ffc107;
-            color: #856404;
-            padding: 40px 30px;
-        }
-
-        .pending-header i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-
-        .pending-header h1 {
-            margin: 0;
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        .pending-body {
-            padding: 40px 30px;
-        }
-
-        .status-info {
-            background: #e3f2fd;
-            border: 1px solid #2196f3;
-            border-radius: 15px;
-            padding: 25px;
-            margin: 30px 0;
-        }
-
-        .status-info h3 {
-            color: #1976d2;
-            margin-bottom: 15px;
-        }
-
-        .status-info p {
-            color: #1565c0;
-            margin-bottom: 0;
-            line-height: 1.6;
-        }
-
-        .timeline {
-            text-align: left;
-            margin: 30px 0;
-        }
-
-        .timeline-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .timeline-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 1.2rem;
-        }
-
-        .timeline-icon.completed {
-            background: #28a745;
-            color: white;
-        }
-
-        .timeline-icon.pending {
-            background: #ffc107;
-            color: #856404;
-        }
-
-        .timeline-icon.waiting {
-            background: #6c757d;
-            color: white;
-        }
-
-        .timeline-content h5 {
-            margin: 0 0 5px 0;
-            font-size: 1rem;
-        }
-
-        .timeline-content p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 30px;
-            font-weight: 600;
-            margin: 10px;
-        }
-
-        .btn-primary:hover {
-            background: #5a6fd8;
-            transform: translateY(-2px);
-        }
-
-        .btn-outline-secondary {
-            border: 2px solid #6c757d;
-            border-radius: 10px;
-            padding: 12px 30px;
-            font-weight: 600;
-            margin: 10px;
-        }
-
-        .contact-info {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .contact-info h5 {
-            color: #856404;
-            margin-bottom: 15px;
-        }
-
-        .contact-info p {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .contact-info a {
-            color: #856404;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .contact-info a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="<?= asset('css/style.css') ?>?v=8">
 </head>
 
-<body>
+<body class="bg-light">
     <div class="container">
-        <div class="pending-card">
-            <div class="pending-header">
-                <i class="fas fa-clock"></i>
-                <h1>Subiri Kuidhinishwa</h1>
-                <p>Ombi lako la kuwa mtaalam limetumwa kikamilifu!</p>
-            </div>
-
-            <div class="pending-body">
-                <div class="status-info">
-                    <h3><i class="fas fa-info-circle"></i> Hali ya Ombi</h3>
-                    <p>Ombi lako la kuwa mtaalam bado linachunguzwa na wasimamizi.
-                        Utapata taarifa kupitia barua pepe yako mara tu ombi litakapoidhinishwa au kukataliwa.</p>
-                </div>
-
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-icon completed">
-                            <i class="fas fa-check"></i>
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body text-center p-5">
+                        <div class="mb-4">
+                            <i class="fas fa-clock fa-4x text-warning"></i>
                         </div>
-                        <div class="timeline-content">
-                            <h5>Usajili Umekamilika</h5>
-                            <p>Akaunti yako imeundwa kikamilifu</p>
+                        
+                        <h2 class="card-title text-dark mb-3">Uthibitisho Unasubiriwa</h2>
+                        
+                        <p class="text-muted mb-4">
+                            Asante kwa kujisajili kama mtaalam! Ombi lako la uthibitisho linachunguzwa na timu yetu. 
+                            Tutakupigia simu au kutuma barua pepe kuhusu uamuzi wetu.
+                        </p>
+                        
+                        <div class="alert alert-info text-start">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Mambo Muhimu:
+                            </h6>
+                            <ul class="mb-0 ps-3">
+                                <li>Uthibitisho hufanywa ndani ya siku 2-3 za kazi</li>
+                                <li>Tutakupigia simu kwenye namba uliyoandika</li>
+                                <li>Unaweza kuangalia hali ya ombi lako hapa</li>
+                                <li>Baada ya uthibitisho, utaweza kujibu maswali ya wanafunzi</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted">Jina</h6>
+                                        <p class="mb-0 fw-bold"><?= htmlspecialchars($currentUser['first_name'] . ' ' . $currentUser['last_name']) ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted">Barua Pepe</h6>
+                                        <p class="mb-0 fw-bold"><?= htmlspecialchars($currentUser['email']) ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted">Namba ya Simu</h6>
+                                        <p class="mb-0 fw-bold"><?= htmlspecialchars($currentUser['phone'] ?? 'Haijulikani') ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted">Mkoa</h6>
+                                        <p class="mb-0 fw-bold"><?= htmlspecialchars($currentUser['region'] ?? 'Haijulikani') ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="<?= app_url('logout.php') ?>" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                Toka
+                            </a>
+                            <button type="button" class="btn btn-primary" onclick="checkStatus()">
+                                <i class="fas fa-sync-alt me-2"></i>
+                Angalia Hali
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <small class="text-muted">
+                                Kama una swali, wasiliana nasi kupitia: 
+                                <a href="mailto:support@pandadigital.co.tz">support@pandadigital.co.tz</a>
+                            </small>
                         </div>
                     </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-icon completed">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <div class="timeline-content">
-                            <h5>Ombi la Mtaalam Limetumwa</h5>
-                            <p>Ombi lako la kuwa mtaalam limetumwa kwa wasimamizi</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-icon waiting">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="timeline-content">
-                            <h5>Kuchunguzwa</h5>
-                            <p>Wasimamizi wanachunguza ombi lako</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-icon pending">
-                            <i class="fas fa-hourglass-half"></i>
-                        </div>
-                        <div class="timeline-content">
-                            <h5>Kuidhinishwa</h5>
-                            <p>Utapata taarifa kupitia barua pepe</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="contact-info">
-                    <h5><i class="fas fa-phone"></i> Uhitaji Msaada?</h5>
-                    <p>Ikiwa una maswali au unahitaji msaada, wasiliana nasi:</p>
-                    <p><i class="fas fa-envelope"></i> <a href="mailto:support@pandadigital.co.tz">support@pandadigital.co.tz</a></p>
-                    <p><i class="fas fa-phone"></i> <a href="tel:+255123456789">+255 123 456 789</a></p>
-                    <p><i class="fas fa-clock"></i> Jumatano - Ijumaa: 8:00 AM - 6:00 PM</p>
-                </div>
-
-                <div class="mt-4">
-                    <a href="/" class="btn btn-primary">
-                        <i class="fas fa-home me-2"></i> Rudi Nyumbani
-                    </a>
-                    <a href="/login.php" class="btn btn-outline-secondary">
-                        <i class="fas fa-sign-in-alt me-2"></i> Ingia
-                    </a>
-                </div>
-
-                <div class="mt-4">
-                    <small class="text-muted">
-                        <i class="fas fa-info-circle"></i>
-                        Muda wa kuchunguza ombi ni kati ya siku 2-5 za kazi
-                    </small>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        // Auto-refresh status every 30 seconds
+        function checkStatus() {
+            // Reload the page to check if status has changed
+            window.location.reload();
+        }
+        
+        // Auto-refresh every 30 seconds to check status
         setInterval(function() {
-            // Check if user has been authorized
-            fetch('/api/check-expert-status.php')
+            // Make AJAX call to check status
+            fetch('<?= app_url("api/check-expert-status.php") ?>')
                 .then(response => response.json())
                 .then(data => {
                     if (data.authorized) {
-                        window.location.href = '/expert/dashboard.php';
+                        window.location.href = '<?= app_url("admin/expert-dashboard.php") ?>';
                     }
                 })
                 .catch(error => {
-                    console.log('Status check failed:', error);
+                    console.log('Checking status...');
                 });
         }, 30000);
     </script>
 </body>
-
 </html>
