@@ -104,6 +104,39 @@ $userStats = $userModel->getUserStatsByRole();
             width: 20px;
             text-align: center;
         }
+
+        /* Custom dropdown styling */
+        #exportDropdownContainer {
+            position: relative;
+        }
+
+        #exportDropdownMenu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            margin-top: 0.125rem;
+        }
+
+        #exportDropdownMenu .dropdown-item {
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #f8f9fa;
+            transition: all 0.2s ease;
+        }
+
+        #exportDropdownMenu .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        #exportDropdownMenu .dropdown-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+        }
     </style>
 </head>
 
@@ -195,12 +228,13 @@ $userStats = $userModel->getUserStatsByRole();
                                     <option value="suspended">Imezimwa</option>
                                 </select>
                             </div>
-                                                        <div class="col-md-2">
-                                <div class="dropdown">
-                                    <button class="btn btn-primary w-100 dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="col-md-2">
+                                <div class="dropdown" id="exportDropdownContainer">
+                                    <button class="btn btn-primary w-100" type="button" id="exportDropdown" onclick="toggleExportDropdown()">
                                         <i class="fas fa-download me-1"></i> Pakua
+                                        <i class="fas fa-chevron-down ms-1"></i>
                                     </button>
-                                    <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                                    <ul class="dropdown-menu" id="exportDropdownMenu" style="display: none;">
                                         <li><a class="dropdown-item" href="export_users.php?format=csv">
                                                 <i class="fas fa-file-csv me-2"></i> CSV (Direct)
                                             </a></li>
@@ -209,18 +243,14 @@ $userStats = $userModel->getUserStatsByRole();
                                             </a></li>
                                         <li><a class="dropdown-item" href="#" onclick="exportUsers('excel')">
                                                 <i class="fas fa-file-excel me-2"></i> Excel
-                                        </a></li>
+                                            </a></li>
                                         <li><a class="dropdown-item" href="#" onclick="exportUsers('pdf')">
                                                 <i class="fas fa-file-pdf me-2"></i> PDF
-                                        </a></li>
+                                            </a></li>
                                     </ul>
                                 </div>
                             </div>
-                            <div class="col-md-1">
-                                <button class="btn btn-success" onclick="testExport()">
-                                    <i class="fas fa-test-tube"></i> Test
-                                </button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -418,16 +448,36 @@ $userStats = $userModel->getUserStatsByRole();
             alert('View user functionality will be implemented here');
         }
 
-        // Test export function
-        function testExport() {
-            console.log('Test button clicked');
-            alert('Test button works! JavaScript is functioning.');
+
+
+        // Custom dropdown toggle function
+        function toggleExportDropdown() {
+            const dropdownMenu = document.getElementById('exportDropdownMenu');
+            const isVisible = dropdownMenu.style.display !== 'none';
+
+            console.log('Toggle dropdown, currently visible:', isVisible);
+
+            if (isVisible) {
+                dropdownMenu.style.display = 'none';
+            } else {
+                dropdownMenu.style.display = 'block';
+            }
         }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdownContainer = document.getElementById('exportDropdownContainer');
+            const dropdownMenu = document.getElementById('exportDropdownMenu');
+
+            if (!dropdownContainer.contains(event.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
 
         // Export users
         function exportUsers(format = 'csv') {
             console.log('Export function called with format:', format);
-            
+
             if (format === 'csv') {
                 // Show loading state
                 const exportBtn = document.getElementById('exportDropdown');
@@ -436,7 +486,7 @@ $userStats = $userModel->getUserStatsByRole();
                 exportBtn.disabled = true;
 
                 console.log('Starting CSV export...');
-                
+
                 // Redirect to export page for CSV
                 setTimeout(() => {
                     console.log('Redirecting to export_users.php');
@@ -462,37 +512,24 @@ $userStats = $userModel->getUserStatsByRole();
             if (pageTitle) {
                 pageTitle.textContent = 'Usimamizi wa Watumiaji';
             }
-            
+
             // Test if JavaScript is working
             console.log('DOM loaded, JavaScript is working');
-            
+
             // Test if export function exists
             if (typeof exportUsers === 'function') {
                 console.log('Export function is defined');
             } else {
                 console.log('Export function is NOT defined');
             }
-            
-            // Test if Bootstrap dropdown is working
+
+            // Test if export dropdown is working
             const exportDropdown = document.getElementById('exportDropdown');
             if (exportDropdown) {
-                console.log('Export dropdown found');
-                exportDropdown.addEventListener('click', function() {
-                    console.log('Export dropdown clicked');
-                });
+                console.log('Export dropdown found and ready');
             } else {
                 console.log('Export dropdown NOT found');
             }
-            
-            // Test dropdown menu items
-            const dropdownItems = document.querySelectorAll('.dropdown-item');
-            console.log('Found', dropdownItems.length, 'dropdown items');
-            
-            dropdownItems.forEach((item, index) => {
-                item.addEventListener('click', function(e) {
-                    console.log('Dropdown item', index, 'clicked');
-                });
-            });
         });
     </script>
 
