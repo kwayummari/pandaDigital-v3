@@ -514,4 +514,42 @@ class User
 
         return asset("images/logo/logo.png");
     }
+
+    /**
+     * Get total instructors
+     */
+    public function getTotalInstructors()
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE role = 'expert'");
+            $stmt->execute();
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("Error getting total instructors: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get all instructors
+     */
+    public function getAllInstructors()
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("
+                SELECT id, first_name, last_name, 
+                       CONCAT(first_name, ' ', last_name) as full_name
+                FROM users 
+                WHERE role = 'expert' 
+                ORDER BY first_name, last_name
+            ");
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting all instructors: " . $e->getMessage());
+            return [];
+        }
+    }
 }

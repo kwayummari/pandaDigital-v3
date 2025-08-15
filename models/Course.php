@@ -503,7 +503,7 @@ class Course
             return false;
         }
     }
-    
+
 
     /**
      * Get user's certificates
@@ -1251,6 +1251,121 @@ class Course
             return true;
         } catch (Exception $e) {
             error_log("Error logging payment callback: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get total published courses
+     */
+    public function getTotalPublishedCourses()
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM course WHERE status = 'published'");
+            $stmt->execute();
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("Error getting total published courses: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get total draft courses
+     */
+    public function getTotalDraftCourses()
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM course WHERE status = 'draft'");
+            $stmt->execute();
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("Error getting total draft courses: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get total enrollments
+     */
+    public function getTotalEnrollments()
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM enrolled");
+            $stmt->execute();
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("Error getting total enrollments: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Add a new course
+     */
+    public function addCourse($courseData)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                INSERT INTO course (
+                    title, description, instructor_id, price, status, 
+                    image_url, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+            ");
+
+            $result = $stmt->execute([
+                $courseData['title'],
+                $courseData['description'],
+                $courseData['instructor_id'],
+                $courseData['price'],
+                $courseData['status'],
+                $courseData['image_url']
+            ]);
+
+            if ($result) {
+                return $conn->lastInsertId();
+            }
+
+            return false;
+        } catch (PDOException $e) {
+            error_log("Error adding course: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update an existing course
+     */
+    public function updateCourse($courseId, $courseData)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                UPDATE course SET 
+                    title = ?, description = ?, instructor_id = ?, 
+                    price = ?, status = ?, image_url = ?, updated_at = NOW()
+                WHERE id = ?
+            ");
+
+            $result = $stmt->execute([
+                $courseData['title'],
+                $courseData['description'],
+                $courseData['instructor_id'],
+                $courseData['price'],
+                $courseData['status'],
+                $courseData['image_url'],
+                $courseId
+            ]);
+
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Error updating course: " . $e->getMessage());
             return false;
         }
     }

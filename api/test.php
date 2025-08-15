@@ -8,3 +8,4 @@ echo json_encode([
     'server' => $_SERVER['SERVER_NAME'] ?? 'unknown'
 ]);
 
+

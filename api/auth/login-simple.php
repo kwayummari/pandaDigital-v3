@@ -8,3 +8,4 @@ echo json_encode([
     'timestamp' => date('Y-m-d H:i:s')
 ]);
 
+
