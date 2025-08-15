@@ -69,6 +69,23 @@ class Download
         }
     }
 
+    /**
+     * Get total count from downloadHistory table
+     */
+    public function getTotalDownloadHistory()
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM downloadHistory");
+            $stmt->execute();
+            $result = $stmt->fetch();
+            return $result['total'] ?? 0;
+        } catch (PDOException $e) {
+            error_log("Error getting total download history: " . $e->getMessage());
+            return 0;
+        }
+    }
+
     public function getOverallDownloadStats($startDate = null, $endDate = null)
     {
         try {

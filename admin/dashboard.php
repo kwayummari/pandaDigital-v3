@@ -239,7 +239,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card stats-card">
             <div class="card-body text-center">
-                <h3 class="mb-1"><?= number_format($downloadModel->getTotalDownloads()) ?></h3>
+                <h3 class="mb-1"><?= number_format($downloadModel->getTotalDownloadHistory()) ?></h3>
                 <p class="mb-0">Vyeti Vilivyopakuliwa</p>
             </div>
         </div>
@@ -287,14 +287,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card stats-card">
-            <div class="card-body text-center">
-                <h3 class="mb-1"><?= number_format($rankingStats['total_rankings'] ?? 0) ?></h3>
-                <p class="mb-0">Mashindano</p>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Message Balance Card -->
     <div class="col-xl-3 col-md-6 mb-4">
