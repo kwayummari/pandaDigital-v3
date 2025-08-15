@@ -445,4 +445,40 @@ class Sales
             ];
         }
     }
+
+    /**
+     * Get financial metrics for admin dashboard
+     */
+    public function getFinancialMetrics()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $sql = "
+                SELECT 
+                    COUNT(*) as total_sales,
+                    SUM(amount) as total_income,
+                    SUM(amount * 0.06) as company_profit
+                FROM transactions 
+                WHERE status = 'completed'
+            ";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetch();
+
+            return [
+                'total_sales' => $result['total_sales'] ?? 0,
+                'total_income' => $result['total_income'] ?? 0,
+                'company_profit' => $result['company_profit'] ?? 0
+            ];
+        } catch (PDOException $e) {
+            error_log("Error getting financial metrics: " . $e->getMessage());
+            return [
+                'total_sales' => 0,
+                'total_income' => 0,
+                'company_profit' => 0
+            ];
+        }
+    }
 }

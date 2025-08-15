@@ -8,6 +8,13 @@ require_once __DIR__ . "/../models/Sales.php";
 require_once __DIR__ . "/../models/Download.php";
 require_once __DIR__ . "/../models/Business.php";
 require_once __DIR__ . "/../models/Ranking.php";
+require_once __DIR__ . "/../models/User.php";
+require_once __DIR__ . "/../models/Course.php";
+require_once __DIR__ . "/../models/ExpertQuestion.php";
+require_once __DIR__ . "/../models/OngeaHub.php";
+require_once __DIR__ . "/../models/Wanufaika.php";
+require_once __DIR__ . "/../models/Fursa.php";
+require_once __DIR__ . "/../models/Log.php";
 
 $auth = new AuthMiddleware();
 $auth->requireRole('admin');
@@ -23,6 +30,13 @@ $salesModel = new Sales();
 $downloadModel = new Download();
 $businessModel = new Business();
 $rankingModel = new Ranking();
+$userModel = new User();
+$courseModel = new Course();
+$expertQuestionModel = new ExpertQuestion();
+$ongeaHubModel = new OngeaHub();
+$wanufaikaModel = new Wanufaika();
+$fursaModel = new Fursa();
+$logModel = new Log();
 
 // Get statistics
 $blogStats = $blogModel->getOverallBlogStats();
@@ -34,6 +48,27 @@ $downloadStats = $downloadModel->getOverallDownloadStats();
 $businessStats = $businessModel->getOverallBusinessStats();
 $rankingStats = $rankingModel->getOverallRankingStats();
 
+// Get user statistics by role
+$totalUsers = $userModel->getTotalUsers();
+$userStatsByRole = $userModel->getUserStatsByRole();
+$adminUsers = $userStatsByRole['admin'] ?? 0;
+$studentUsers = $userStatsByRole['user'] ?? 0;
+$expertUsers = $userStatsByRole['expert'] ?? 0;
+
+// Get course and video statistics
+$totalCourses = $courseModel->getTotalCourses();
+$totalVideos = $courseModel->getTotalVideos();
+
+// Get question statistics
+$totalQuestions = $expertQuestionModel->getTotalQuestions();
+
+// Get other statistics (using available methods)
+$totalOngeaHub = 0; // Will implement when method is available
+$totalWanufaika = 0; // Will implement when method is available
+$totalFursa = 0; // Will implement when method is available
+$totalNewsletter = 0; // Will implement when method is available
+$totalLogs = 0; // Will implement when method is available
+
 // Get recent activities
 $recentBlogs = $blogModel->getRecentBlogs(5);
 $recentFeedback = $feedbackModel->getAllFeedbackForAdmin(1, 5);
@@ -44,16 +79,45 @@ $topRankings = $rankingModel->getTopPerformers('monthly', 5);
 // Calculate financial metrics if finance user
 $financials = [];
 if ($currentUser['email'] === 'finance@pandadigital.com') {
-    // $financials = $salesModel->getFinancialMetrics(); // Method not implemented yet
-    $financials = [
-        'total_income' => 0,
-        'total_sales' => 0,
-        'company_profit' => 0
-    ];
+    $financials = $salesModel->getFinancialMetrics();
 }
 ?>
 
 <?php include __DIR__ . '/includes/admin_header.php'; ?>
+
+<style>
+    .action-card {
+        background: linear-gradient(135deg, #662e91, #FFC10B) !important;
+        color: white !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .action-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 46, 145, 0.3);
+    }
+
+    .action-card .card-icon {
+        color: white !important;
+    }
+
+    .action-card .card-title {
+        color: white !important;
+    }
+
+    .action-card .card-value {
+        color: white !important;
+    }
+
+    .stats-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+</style>
 
 <!-- Welcome Section -->
 <div class="welcome-section">
@@ -67,47 +131,6 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
 
 <!-- Dashboard Content -->
 <div class="row">
-    <!-- Statistics Cards -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-users"></i>
-            </div>
-            <h6 class="card-title">Jumla ya Watumiaji</h6>
-            <p class="card-value"><?= number_format($blogStats['total_users'] ?? 0) ?></p>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-book"></i>
-            </div>
-            <h6 class="card-title">Jumla ya Kozi</h6>
-            <p class="card-value"><?= number_format($blogStats['total_courses'] ?? 0) ?></p>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-video"></i>
-            </div>
-            <h6 class="card-title">Jumla ya Video</h6>
-            <p class="card-value"><?= number_format($blogStats['total_videos'] ?? 0) ?></p>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-download"></i>
-            </div>
-            <h6 class="card-title">Vyeti Vilivyopakuliwa</h6>
-            <p class="card-value"><?= number_format($downloadStats['total_downloads'] ?? 0) ?></p>
-        </div>
-    </div>
-
     <?php if ($currentUser['email'] === 'finance@pandadigital.com'): ?>
         <!-- Financial Cards -->
         <div class="col-xl-3 col-md-6 mb-4">
@@ -135,11 +158,277 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
                 <div class="card-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
-                <h6 class="card-title">Faida ya Kampuni</h6>
+                <h6 class="card-title">Faida ya Kampuni (6%)</h6>
                 <p class="card-value">TSh. <?= number_format($financials['company_profit'] ?? 0, 2) ?></p>
             </div>
         </div>
     <?php endif; ?>
+
+    <!-- Action Cards -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <a href="<?= app_url('admin/users/add-user.php') ?>" class="text-decoration-none">
+            <div class="stats-card position-relative action-card">
+                <div class="card-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h6 class="card-title">Sajili Mtumiaji Mpya</h6>
+                <p class="card-value"><i class="fas fa-plus"></i></p>
+            </div>
+        </a>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h6 class="card-title">Watumiaji Wote</h6>
+            <p class="card-value"><?= number_format($totalUsers) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h6 class="card-title">Utawala</h6>
+            <p class="card-value"><?= number_format($adminUsers) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <h6 class="card-title">Wanafunzi</h6>
+            <p class="card-value"><?= number_format($studentUsers) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <h6 class="card-title">Wataalamu</h6>
+            <p class="card-value"><?= number_format($expertUsers) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <a href="<?= app_url('admin/courses/add-course.php') ?>" class="text-decoration-none">
+            <div class="stats-card position-relative action-card">
+                <div class="card-icon">
+                    <i class="fas fa-book-medical"></i>
+                </div>
+                <h6 class="card-title">Sajili Kozi Mpya</h6>
+                <p class="card-value"><i class="fas fa-plus"></i></p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <h6 class="card-title">Kozi Zote</h6>
+            <p class="card-value"><?= number_format($totalCourses) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <a href="<?= app_url('admin/videos/add-video.php') ?>" class="text-decoration-none">
+            <div class="stats-card position-relative action-card">
+                <div class="card-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h6 class="card-title">Ongeza Video Mpya</h6>
+                <p class="card-value"><i class="fas fa-plus"></i></p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-video"></i>
+            </div>
+            <h6 class="card-title">Video Zote</h6>
+            <p class="card-value"><?= number_format($totalVideos) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <a href="<?= app_url('admin/questions/add-question.php') ?>" class="text-decoration-none">
+            <div class="stats-card position-relative action-card">
+                <div class="card-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h6 class="card-title">Ongeza Swali Jipya</h6>
+                <p class="card-value"><i class="fas fa-plus"></i></p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h6 class="card-title">Maswali Yote</h6>
+            <p class="card-value"><?= number_format($totalQuestions) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <a href="<?= app_url('admin/feedback/view-feedback.php') ?>" class="text-decoration-none">
+            <div class="stats-card position-relative action-card">
+                <div class="card-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h6 class="card-title">Ona Mrejesho</h6>
+                <p class="card-value"><i class="fas fa-eye"></i></p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-download"></i>
+            </div>
+            <h6 class="card-title">Vyeti Vilivyopakuliwa</h6>
+            <p class="card-value"><?= number_format($downloadStats['total_downloads'] ?? 0) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <a href="<?= app_url('admin/blog/write-blog.php') ?>" class="text-decoration-none">
+            <div class="stats-card position-relative action-card">
+                <div class="card-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <h6 class="card-title">Andika Blogi</h6>
+                <p class="card-value"><i class="fas fa-plus"></i></p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-blog"></i>
+            </div>
+            <h6 class="card-title">Blogi Zote</h6>
+            <p class="card-value"><?= number_format($blogStats['total_blogs'] ?? 0) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <a href="<?= app_url('admin/opportunities/add-opportunity.php') ?>" class="text-decoration-none">
+            <div class="stats-card position-relative action-card">
+                <div class="card-icon">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <h6 class="card-title">Andika Fursa</h6>
+                <p class="card-value"><i class="fas fa-plus"></i></p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <h6 class="card-title">Fursa Zote</h6>
+            <p class="card-value"><?= number_format($opportunityStats['total_opportunities'] ?? 0) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <a href="<?= app_url('admin/beneficiaries/add-beneficiary.php') ?>" class="text-decoration-none">
+            <div class="stats-card position-relative action-card">
+                <div class="card-icon">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <h6 class="card-title">Ongeza Wanufaika</h6>
+                <p class="card-value"><i class="fas fa-plus"></i></p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-hand-holding-heart"></i>
+            </div>
+            <h6 class="card-title">Wanufaika Wote</h6>
+            <p class="card-value"><?= number_format($beneficiaryStats['total_beneficiaries'] ?? 0) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <h6 class="card-title">Biashara Zote</h6>
+            <p class="card-value"><?= number_format($businessStats['total_businesses'] ?? 0) ?></p>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h6 class="card-title">Mashindano</h6>
+            <p class="card-value"><?= number_format($rankingStats['total_rankings'] ?? 0) ?></p>
+        </div>
+    </div>
+
+    <!-- Message Balance Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card position-relative">
+            <div class="card-icon">
+                <i class="fas fa-sms"></i>
+            </div>
+            <h6 class="card-title">Salio la Meseji</h6>
+            <p class="card-value">
+                <?php
+                // SMS Balance API call (similar to old dashboard)
+                $username = '238b4b0ac1f3fbe1';
+                $password = 'NTdjOWFlZTdlNDRhMDk5OWU4ZTU3NzFiYjU2YzMxNGM0MzE0YjViOThkMzM4MTVkOTJlMmQ3NjMwNzk3ZTdmMw==';
+                $url = 'https://apisms.beem.africa/public/v1/vendors/balance';
+
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                curl_setopt_array($ch, array(
+                    CURLOPT_HTTPGET => TRUE,
+                    CURLOPT_RETURNTRANSFER => TRUE,
+                    CURLOPT_HTTPHEADER => array(
+                        'Authorization:Basic ' . base64_encode("$username:$password"),
+                        'Content-Type: application/json'
+                    ),
+                ));
+
+                $response = curl_exec($ch);
+                $responseData = json_decode($response, true);
+                $creditBalance = $responseData['data']['credit_balance'] ?? 'N/A';
+                echo $creditBalance;
+                curl_close($ch);
+                ?>
+            </p>
+        </div>
+    </div>
+
+
 </div>
 
 <!-- Content Overview -->
