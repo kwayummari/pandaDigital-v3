@@ -119,7 +119,7 @@ if ($isEnrolled) {
                             </a>
                         <?php else: ?>
                             <?php if ($course['courseIsPaidStatusId'] == 1): ?>
-                                <button type="button" class="btn btn-primary text-white" style="color: white;" onclick="openPaymentModal(<?php echo $courseId; ?>, '<?php echo htmlspecialchars($course['name']); ?>', <?php echo $course['price']; ?>)">
+                                <button type="button" class="btn btn-primary text-white" style="color: white !important;" onclick="openPaymentModal(<?php echo $courseId; ?>, '<?php echo htmlspecialchars($course['name']); ?>', <?php echo $course['price']; ?>)">
                                     Jiunge kwa TSh <?php echo number_format($course['price'] ?? 0); ?>
                                 </button>
                             <?php else: ?>
