@@ -324,13 +324,13 @@ $averageScore = $rankingStats['average_score'] ?? 0;
 
                             if ($rank <= 3) {
                                 $rankClass = 'gold';
-                                $crownIcon = '<img src="../assets/images/gold-crown.png" alt="Gold Crown" class="crown-icon">';
+                                $crownIcon = '<img src="assets/images/gold.png" alt="Gold Crown" class="crown-icon">';
                             } elseif ($rank <= 6) {
                                 $rankClass = 'silver';
-                                $crownIcon = '<img src="../assets/images/silver-crown.png" alt="Silver Crown" class="crown-icon">';
+                                $crownIcon = '<img src="assets/images/silver.png" alt="Silver Crown" class="crown-icon">';
                             } elseif ($rank <= 9) {
                                 $rankClass = 'bronze';
-                                $crownIcon = '<img src="../assets/images/bronze-crown.png" alt="Bronze Crown" class="crown-icon">';
+                                $crownIcon = '<img src="assets/images/bronze.png" alt="Bronze Crown" class="crown-icon">';
                             } else {
                                 $rankClass = 'regular';
                             }

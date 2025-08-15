@@ -351,12 +351,12 @@ $totalSellers = $salesStats['total_sellers'] ?? 0;
                                     <button class="btn btn-sm action-btn view" onclick="viewSale(<?= $item['sale_id'] ?>)">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <a href="edit-sale.php?id=<?= $item['sale_id'] ?>" class="btn btn-sm action-btn edit">
+                                    <!-- <a href="edit-sale.php?id=<?= $item['sale_id'] ?>" class="btn btn-sm action-btn edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <button class="btn btn-sm action-btn delete" onclick="deleteSale(<?= $item['sale_id'] ?>)">
                                         <i class="fas fa-trash"></i>
-                                    </button>
+                                    </button> -->
                                 </td>
                             </tr>
                         <?php endforeach; ?>
