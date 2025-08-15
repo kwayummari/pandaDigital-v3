@@ -62,10 +62,10 @@ $totalVideos = $courseModel->getTotalVideos();
 // Get question statistics
 $totalQuestions = $expertQuestionModel->getTotalQuestions();
 
-// Get other statistics (using available methods)
+// Get other statistics from correct tables
 $totalOngeaHub = 0; // Will implement when method is available
-$totalWanufaika = 0; // Will implement when method is available
-$totalFursa = 0; // Will implement when method is available
+$totalWanufaika = $wanufaikaModel->getTotalCount();
+$totalFursa = $fursaModel->getTotalFursa();
 $totalNewsletter = 0; // Will implement when method is available
 $totalLogs = 0; // Will implement when method is available
 
@@ -239,7 +239,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card stats-card">
             <div class="card-body text-center">
-                <h3 class="mb-1"><?= number_format($downloadStats['total_downloads'] ?? 0) ?></h3>
+                <h3 class="mb-1"><?= number_format($downloadModel->getTotalDownloads()) ?></h3>
                 <p class="mb-0">Vyeti Vilivyopakuliwa</p>
             </div>
         </div>
@@ -250,7 +250,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card stats-card">
             <div class="card-body text-center">
-                <h3 class="mb-1"><?= number_format($blogStats['total_blogs'] ?? 0) ?></h3>
+                <h3 class="mb-1"><?= number_format($blogModel->getTotalBlogs()) ?></h3>
                 <p class="mb-0">Blogi Zote</p>
             </div>
         </div>
@@ -261,7 +261,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card stats-card">
             <div class="card-body text-center">
-                <h3 class="mb-1"><?= number_format($opportunityStats['total_opportunities'] ?? 0) ?></h3>
+                <h3 class="mb-1"><?= number_format($totalFursa) ?></h3>
                 <p class="mb-0">Fursa Zote</p>
             </div>
         </div>
@@ -272,7 +272,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card stats-card">
             <div class="card-body text-center">
-                <h3 class="mb-1"><?= number_format($beneficiaryStats['total_beneficiaries'] ?? 0) ?></h3>
+                <h3 class="mb-1"><?= number_format($totalWanufaika) ?></h3>
                 <p class="mb-0">Wanufaika Wote</p>
             </div>
         </div>
@@ -281,7 +281,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card stats-card">
             <div class="card-body text-center">
-                <h3 class="mb-1"><?= number_format($businessStats['total_businesses'] ?? 0) ?></h3>
+                <h3 class="mb-1"><?= number_format($businessModel->getTotalBusinesses()) ?></h3>
                 <p class="mb-0">Biashara Zote</p>
             </div>
         </div>

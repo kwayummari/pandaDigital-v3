@@ -78,4 +78,21 @@ class Fursa
         // Fallback to a default image
         return asset('images/blog/post-1.jpg');
     }
+
+    /**
+     * Get total count of fursa
+     */
+    public function getTotalFursa()
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM fursa");
+            $stmt->execute();
+            $result = $stmt->fetch();
+            return $result['total'] ?? 0;
+        } catch (PDOException $e) {
+            error_log("Error getting total fursa: " . $e->getMessage());
+            return 0;
+        }
+    }
 }
