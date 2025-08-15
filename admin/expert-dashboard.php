@@ -45,7 +45,7 @@ $page_title = 'Expert Dashboard';
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <?php include __DIR__ . '/includes/admin_sidebar.php'; ?>
+        <?php include __DIR__ . '/includes/expert_sidebar.php'; ?>
 
         <!-- Main Content -->
         <div class="main-content">
