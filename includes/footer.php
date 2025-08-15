@@ -221,23 +221,9 @@
 
                 <form id="signupForm">
                     <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="signupFirstName" class="form-label">Jina la Kwanza</label>
-                            <input type="text" class="form-control" id="signupFirstName" name="first_name" value="<?= old('first_name') ?>" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="signupLastName" class="form-label">Jina la Mwisho</label>
-                            <input type="text" class="form-control" id="signupLastName" name="last_name" value="<?= old('last_name') ?>" required>
-                        </div>
-                    </div>
                     <div class="mb-3">
                         <label for="signupEmail" class="form-label">Barua Pepe</label>
                         <input type="email" class="form-control" id="signupEmail" name="email" value="<?= old('email') ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="signupPhone" class="form-label">Namba ya Simu</label>
-                        <input type="tel" class="form-control" id="signupPhone" name="phone" value="<?= old('phone') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="signupPassword" class="form-label">Nywila</label>
@@ -257,6 +243,87 @@
                         <span class="btn-text">Jisajili</span>
                         <span class="btn-loading d-none">
                             <span class="loading"></span> Inasajili...
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Completion Modal -->
+<div class="modal fade" id="profileCompletionModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kamilisha Profaili Yako</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeProfileModal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Tafadhali kamilisha maelezo yako ya msingi ili uweze kutumia huduma zote za jukwaa.
+                </div>
+                
+                <form id="profileCompletionForm">
+                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="profileFirstName" class="form-label">Jina la Kwanza *</label>
+                            <input type="text" class="form-control" id="profileFirstName" name="first_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="profileLastName" class="form-label">Jina la Mwisho *</label>
+                            <input type="text" class="form-control" id="profileLastName" name="last_name" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="profilePhone" class="form-label">Namba ya Simu *</label>
+                        <input type="tel" class="form-control" id="profilePhone" name="phone" placeholder="Mfano: 0712345678" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="profileRegion" class="form-label">Mkoa *</label>
+                        <select class="form-select" id="profileRegion" name="region" required>
+                            <option value="">Chagua Mkoa</option>
+                            <option value="Arusha">Arusha</option>
+                            <option value="Dar es Salaam">Dar es Salaam</option>
+                            <option value="Dodoma">Dodoma</option>
+                            <option value="Geita">Geita</option>
+                            <option value="Iringa">Iringa</option>
+                            <option value="Kagera">Kagera</option>
+                            <option value="Katavi">Katavi</option>
+                            <option value="Kigoma">Kigoma</option>
+                            <option value="Kilimanjaro">Kilimanjaro</option>
+                            <option value="Lindi">Lindi</option>
+                            <option value="Manyara">Manyara</option>
+                            <option value="Mara">Mara</option>
+                            <option value="Mbeya">Mbeya</option>
+                            <option value="Morogoro">Morogoro</option>
+                            <option value="Mtwara">Mtwara</option>
+                            <option value="Mwanza">Mwanza</option>
+                            <option value="Njombe">Njombe</option>
+                            <option value="Pemba North">Pemba North</option>
+                            <option value="Pemba South">Pemba South</option>
+                            <option value="Pwani">Pwani</option>
+                            <option value="Rukwa">Rukwa</option>
+                            <option value="Ruvuma">Ruvuma</option>
+                            <option value="Shinyanga">Shinyanga</option>
+                            <option value="Simiyu">Simiyu</option>
+                            <option value="Singida">Singida</option>
+                            <option value="Songwe">Songwe</option>
+                            <option value="Tabora">Tabora</option>
+                            <option value="Tanga">Tanga</option>
+                            <option value="Unguja North">Unguja North</option>
+                            <option value="Unguja South">Unguja South</option>
+                            <option value="Zanzibar Central">Zanzibar Central</option>
+                            <option value="Zanzibar Urban">Zanzibar Urban</option>
+                            <option value="Zanzibar West">Zanzibar West</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <span class="btn-text">Hifadhi Maelezo</span>
+                        <span class="btn-loading d-none">
+                            <span class="loading"></span> Inahifadhi...
                         </span>
                     </button>
                 </form>
@@ -298,16 +365,119 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
 
         // Initialize popovers
         var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-        var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
             return new bootstrap.Popover(popoverTriggerEl);
         });
+
+        // Check if user profile is complete and show modal if needed
+        checkProfileCompletion();
     });
+
+    // Function to check if user profile is complete
+    function checkProfileCompletion() {
+        // Only check if user is logged in
+        <?php if ($isLoggedIn && $currentUser): ?>
+        const user = <?= json_encode($currentUser) ?>;
+        
+        // Check if required profile fields are missing
+        if (!user.first_name || !user.last_name || !user.phone || !user.region) {
+            // Show profile completion modal
+            const profileModal = new bootstrap.Modal(document.getElementById('profileCompletionModal'));
+            profileModal.show();
+            
+            // Pre-fill existing data if available
+            if (user.first_name) document.getElementById('profileFirstName').value = user.first_name;
+            if (user.last_name) document.getElementById('profileLastName').value = user.last_name;
+            if (user.phone) document.getElementById('profilePhone').value = user.phone;
+            if (user.region) document.getElementById('profileRegion').value = user.region;
+        }
+        <?php endif; ?>
+    }
+
+    // Handle profile completion form submission
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileForm = document.getElementById('profileCompletionForm');
+        if (profileForm) {
+            profileForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const btnText = submitBtn.querySelector('.btn-text');
+                const btnLoading = submitBtn.querySelector('.btn-loading');
+                
+                // Show loading state
+                btnText.classList.add('d-none');
+                btnLoading.classList.remove('d-none');
+                submitBtn.disabled = true;
+                
+                // Submit form data
+                fetch('<?= app_url("api/update-profile.php") ?>', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        showAlert('success', 'Maelezo yako yamehifadhiwa kwa mafanikio!');
+                        
+                        // Close modal after delay
+                        setTimeout(() => {
+                            const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileCompletionModal'));
+                            profileModal.hide();
+                        }, 2000);
+                        
+                        // Reload page to reflect changes
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2500);
+                    } else {
+                        showAlert('danger', data.message || 'Kuna tatizo, jaribu tena.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('danger', 'Kuna tatizo la mtandao, jaribu tena.');
+                })
+                .finally(() => {
+                    // Reset button state
+                    btnText.classList.remove('d-none');
+                    btnLoading.classList.add('d-none');
+                    submitBtn.disabled = false;
+                });
+            });
+        }
+    });
+
+    // Function to show alerts
+    function showAlert(type, message) {
+        const alertContainer = document.getElementById('alertContainer');
+        const alertId = 'alert-' + Date.now();
+        
+        const alertHtml = `
+            <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        
+        alertContainer.insertAdjacentHTML('beforeend', alertHtml);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            const alert = document.getElementById(alertId);
+            if (alert) {
+                alert.remove();
+            }
+        }, 5000);
+    }
 </script>
 </body>
 
