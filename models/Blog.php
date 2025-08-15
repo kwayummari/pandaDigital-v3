@@ -168,17 +168,12 @@ class Blog
         try {
             $conn = $this->db->getConnection();
 
+            // Simple query matching the old system structure
             $stmt = $conn->prepare("
                 SELECT 
-                    b.*, u.first_name, u.last_name,
-                    COUNT(DISTINCT v.id) as views,
-                    COUNT(DISTINCT c.id) as comments
-                FROM blog b
-                LEFT JOIN users u ON b.author_id = u.id
-                LEFT JOIN blog_views v ON b.id = v.blog_id
-                LEFT JOIN blog_comments c ON b.id = c.blog_id
-                WHERE b.id = ?
-                GROUP BY b.id
+                    id, name, maelezo, photo, date_created
+                FROM blog 
+                WHERE id = ?
             ");
             $stmt->execute([$blogId]);
             return $stmt->fetch();
