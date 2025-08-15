@@ -530,6 +530,28 @@ class Business
         }
     }
 
+    public function getBusinessByIdOld($businessId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    b.id, b.name, b.location, b.maelezo, b.date_created,
+                    u.first_name, u.last_name, u.username
+                FROM business b
+                LEFT JOIN users u ON b.user_id = u.id
+                WHERE b.id = ?
+            ");
+
+            $stmt->execute([$businessId]);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Error getting business by ID (old system): " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function getBusinessByOwnerId($ownerId)
     {
         try {
