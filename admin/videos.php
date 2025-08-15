@@ -593,9 +593,9 @@ $videos = $videoModel->getAllVideosForAdmin();
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        const video = data.video;
-                        modalBody.innerHTML = `
+                        if (data.success) {
+                            const video = data.video;
+                            modalBody.innerHTML = `
                         <div class="row">
                             <div class="col-md-6">
                                 <h6><strong>ID:</strong></h6>
@@ -625,35 +625,42 @@ $videos = $videoModel->getAllVideosForAdmin();
                                                 ? `<iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`
                                                 : `<iframe src="${video.name}" frameborder="0" allowfullscreen></iframe>`;
                                         })()
-                                        : `<iframe src="${video.name}" frameborder="0" allowfullscreen></iframe>`
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                                        : ` < iframe src = "${video.name}"
+                            frameborder = "0"
+                            allowfullscreen > < /iframe>`
+                        } <
+                        /div> <
+                        /div> <
+                        /div>
+                        `;
                     } else {
-                        modalBody.innerHTML = `
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            ${data.message}
-                        </div>
-                    `;
+                        modalBody.innerHTML = ` <
+                        div class = "alert alert-danger" >
+                        <
+                        i class = "fas fa-exclamation-circle me-2" > < /i>
+                        $ {
+                            data.message
+                        } <
+                        /div>
+                        `;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    modalBody.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        Kuna tatizo la mtandao. Jaribu tena.
-                    </div>
-                `;
+                    modalBody.innerHTML = ` <
+                        div class = "alert alert-danger" >
+                        <
+                        i class = "fas fa-exclamation-circle me-2" > < /i>
+                        Kuna tatizo la mtandao.Jaribu tena. <
+                            /div>
+                        `;
                 });
         }
 
         // Delete video
         function deleteVideo(videoId, videoName) {
-            if (confirm(`Je, una uhakika unataka kufuta video "${videoName}"? Kitendo hiki hakiwezi kubatilishwa!`)) {
+            if (confirm(`
+                        Je, una uhakika unataka kufuta video "${videoName}" ? Kitendo hiki hakiwezi kubatilishwa!`)) {
                 fetch('delete_video.php', {
                         method: 'POST',
                         headers: {
