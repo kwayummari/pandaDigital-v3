@@ -570,6 +570,20 @@ class Business
         }
     }
 
+    public function deleteBusinessOld($id)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("DELETE FROM business WHERE id = ?");
+
+            return $stmt->execute([$id]);
+        } catch (PDOException $e) {
+            error_log("Error deleting business (old system): " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function getBusinessByOwnerId($ownerId)
     {
         try {
