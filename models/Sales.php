@@ -559,4 +559,39 @@ class Sales
             ];
         }
     }
+
+    /**
+     * Get recent transactions for admin dashboard
+     */
+    public function getAllTransactionsForAdmin($startDate = null, $endDate = null, $page = 1, $limit = 10)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $offset = ($page - 1) * $limit;
+
+            $sql = "
+                SELECT 
+                    t.id,
+                    t.reference,
+                    t.amount,
+                    t.status,
+                    t.date_created,
+                    u.first_name,
+                    u.last_name,
+                    u.email
+                FROM transactions t
+                LEFT JOIN users u ON t.user_id = u.id
+                ORDER BY t.date_created DESC
+                LIMIT ? OFFSET ?
+            ";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$limit, $offset]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting recent transactions for admin: " . $e->getMessage());
+            return [];
+        }
+    }
 }
