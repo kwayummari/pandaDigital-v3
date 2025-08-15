@@ -86,13 +86,13 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
 <?php include __DIR__ . '/includes/admin_header.php'; ?>
 
 <style>
-                    /* CSS Variables for consistent colors */
-                :root {
-                    --primary-color: #662e91;
-                    --secondary-color: #000000;
-                    --text-muted: #6c757d;
-                    --border-color: #e9ecef;
-                }
+    /* CSS Variables for consistent colors */
+    :root {
+        --primary-color: #662e91;
+        --secondary-color: #000000;
+        --text-muted: #6c757d;
+        --border-color: #e9ecef;
+    }
 
     /* Smooth, minimal card styling matching user dashboard */
     .stats-card {
