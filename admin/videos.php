@@ -406,7 +406,7 @@ $videos = $videoModel->getAllVideosForAdmin();
                             <?php foreach ($videos as $video): ?>
                                 <tr data-course="<?= htmlspecialchars($video['course_name']) ?>">
                                     <td>
-                                        <span class="badge bg-secondary">#<?= $video['id'] ?></span>
+                                        <strong><?= $video['id'] ?></strong>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
@@ -425,11 +425,14 @@ $videos = $videoModel->getAllVideosForAdmin();
                                                             $videoId = $matches[1];
                                                         }
                                                         if ($videoId) {
-                                                            echo '<a href="' . htmlspecialchars($videoUrl) . '" target="_blank" class="text-decoration-none">';
+                                                            echo '<div class="mb-2">';
                                                             echo '<i class="fab fa-youtube text-danger me-1"></i>';
-                                                            echo 'YouTube Video';
-                                                            echo '</a>';
-                                                            echo '<br><small class="text-muted">ID: ' . $videoId . '</small>';
+                                                            echo '<strong>YouTube Video</strong>';
+                                                            echo '</div>';
+                                                            echo '<div class="ratio ratio-16x9" style="width: 200px; height: 120px;">';
+                                                            echo '<iframe src="https://www.youtube.com/embed/' . $videoId . '" frameborder="0" allowfullscreen></iframe>';
+                                                            echo '</div>';
+                                                            echo '<small class="text-muted">ID: ' . $videoId . '</small>';
                                                         } else {
                                                             echo '<a href="' . htmlspecialchars($videoUrl) . '" target="_blank" class="text-decoration-none">';
                                                             echo '<i class="fas fa-external-link-alt me-1"></i>';
@@ -615,7 +618,15 @@ $videos = $videoModel->getAllVideosForAdmin();
                                 
                                 <h6><strong>Video Preview:</strong></h6>
                                 <div class="ratio ratio-16x9">
-                                    <iframe src="${video.name}" frameborder="0" allowfullscreen></iframe>
+                                    ${video.name.includes('youtube.com') || video.name.includes('youtu.be') 
+                                        ? (() => {
+                                            const videoId = video.name.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/)?.[1];
+                                            return videoId 
+                                                ? `<iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`
+                                                : `<iframe src="${video.name}" frameborder="0" allowfullscreen></iframe>`;
+                                        })()
+                                        : `<iframe src="${video.name}" frameborder="0" allowfullscreen></iframe>`
+                                    }
                                 </div>
                             </div>
                         </div>
