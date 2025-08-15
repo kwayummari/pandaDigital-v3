@@ -73,7 +73,7 @@ try {
     }
 
     // Check if user is already enrolled
-    if ($paymentService->hasPaidAccess($data['userId'], $data['courseId'])) {
+    if ($courseModel->hasPaidCourseAccess($data['userId'], $data['courseId'])) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Already enrolled in this course']);
         exit();
@@ -83,14 +83,15 @@ try {
     $referenceNumber = 'PAY-' . time() . '-' . $data['userId'] . '-' . $data['courseId'];
 
     // Create payment transaction record
-    $transactionId = $paymentService->createTransaction(
-        $data['userId'],
-        $data['courseId'],
-        $data['amount'],
-        $data['phone'],
-        $data['provider'],
-        $referenceNumber
-    );
+    $transactionId = $courseModel->createPaymentTransaction([
+        'userId' => $data['userId'],
+        'courseId' => $data['courseId'],
+        'amount' => $data['amount'],
+        'phone' => $data['phone'],
+        'provider' => $data['provider'],
+        'referenceNumber' => $referenceNumber,
+        'status' => 0 // pending
+    ]);
 
     if (!$transactionId) {
         http_response_code(500);
@@ -98,45 +99,41 @@ try {
         exit();
     }
 
-    // Process payment through AzamPay
-    // Map provider names to AzamPay format
-    $providerMapping = [
-        'mpesa' => 'mpesa',
-        'tigo' => 'tigopesa', // Mix by YAS (tigo) maps to tigopesa for AzamPay
-        'airtel' => 'airtel'
-    ];
+    // Process payment through AzamPay using the simplified method
+    try {
+        $paymentResult = $paymentService->processCoursePayment($data['phone'], $data['amount'], $data['provider']);
 
-    $azamPayProvider = $providerMapping[$data['provider']] ?? $data['provider'];
+        // Parse the response
+        $responseData = json_decode($paymentResult, true);
 
-    $paymentData = [
-        'accountNumber' => $data['phone'],
-        'amount' => $data['amount'],
-        'currency' => 'TZS',
-        'externalId' => $referenceNumber,
-        'provider' => $azamPayProvider,
-        'additionalProperties' => null
-    ];
+        if (isset($responseData['transactionId'])) {
+            // Update transaction status to processing
+            $courseModel->updatePaymentTransaction($transactionId, 2); // 2 = processing
 
-    $paymentResult = $paymentService->processPayment($paymentData);
+            echo json_encode([
+                'success' => true,
+                'message' => 'Payment initiated successfully',
+                'referenceNumber' => $referenceNumber,
+                'transactionId' => $responseData['transactionId']
+            ]);
+        } else {
+            // Update transaction status to failed
+            $courseModel->updatePaymentTransaction($transactionId, 3); // 3 = failed
 
-    if ($paymentResult['success']) {
-        // Update transaction status to processing
-        $paymentService->updateTransactionStatus($transactionId, 2); // 2 = processing
-
-        echo json_encode([
-            'success' => true,
-            'message' => 'Payment initiated successfully',
-            'referenceNumber' => $referenceNumber,
-            'transactionId' => $paymentResult['transactionId']
-        ]);
-    } else {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => $responseData['message'] ?? 'Payment initiation failed'
+            ]);
+        }
+    } catch (Exception $e) {
         // Update transaction status to failed
-        $paymentService->updateTransactionStatus($transactionId, 3); // 3 = failed
+        $courseModel->updatePaymentTransaction($transactionId, 3); // 3 = failed
 
         http_response_code(400);
         echo json_encode([
             'success' => false,
-            'message' => $paymentResult['message'] ?? 'Payment initiation failed'
+            'message' => $e->getMessage()
         ]);
     }
 } catch (Exception $e) {
