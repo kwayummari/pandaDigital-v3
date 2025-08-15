@@ -525,8 +525,8 @@ $userStats = $userModel->getUserStatsByRole();
             const rows = document.querySelectorAll('#usersTable tbody tr');
 
             rows.forEach(row => {
-                const role = row.querySelector('td:nth-child(5)').textContent.trim();
-                const status = row.querySelector('td:nth-child(6)').textContent.trim();
+                const role = row.querySelector('td:nth-child(6)').textContent.trim();
+                const status = row.querySelector('td:nth-child(7)').textContent.trim();
 
                 const roleMatch = !roleFilter || role.includes(roleFilter);
                 const statusMatch = !statusFilter || status.includes(statusFilter);
@@ -716,17 +716,17 @@ $userStats = $userModel->getUserStatsByRole();
             const tableRows = document.querySelectorAll('#usersTable tbody tr');
 
             tableRows.forEach(row => {
-                const roleCell = row.querySelector('td:nth-child(5)'); // Role column
+                const roleCell = row.querySelector('td:nth-child(6)'); // Role column
                 if (roleCell) {
                     const userRole = roleCell.textContent.trim().toLowerCase();
 
                     if (role === 'all') {
                         row.style.display = '';
-                    } else if (role === 'user' && userRole.includes('mwanafunzi')) {
+                    } else if (role === 'user' && (userRole.includes('user') || userRole.includes('mwanafunzi'))) {
                         row.style.display = '';
-                    } else if (role === 'expert' && userRole.includes('mtaalam')) {
+                    } else if (role === 'expert' && (userRole.includes('expert') || userRole.includes('mtaalam'))) {
                         row.style.display = '';
-                    } else if (role === 'admin' && userRole.includes('mkurugenzi')) {
+                    } else if (role === 'admin' && (userRole.includes('admin') || userRole.includes('mkurugenzi'))) {
                         row.style.display = '';
                     } else if (role === 'empty' && (userRole === '' || userRole === 'null' || userRole === 'undefined')) {
                         row.style.display = '';
@@ -754,14 +754,14 @@ $userStats = $userModel->getUserStatsByRole();
                     allCount++;
                 }
 
-                const roleCell = row.querySelector('td:nth-child(5)');
+                const roleCell = row.querySelector('td:nth-child(6)');
                 if (roleCell) {
-                    const userRole = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
-                    if (userRole.includes('mwanafunzi')) {
+                    const userRole = roleCell.textContent.trim().toLowerCase();
+                    if (userRole.includes('user') || userRole.includes('mwanafunzi')) {
                         userCount++;
-                    } else if (userRole.includes('mtaalam')) {
+                    } else if (userRole.includes('expert') || userRole.includes('mtaalam')) {
                         expertCount++;
-                    } else if (userRole.includes('mkurugenzi')) {
+                    } else if (userRole.includes('admin') || userRole.includes('mkurugenzi')) {
                         adminCount++;
                     } else if (userRole === '' || userRole === 'null' || userRole === 'undefined') {
                         emptyCount++;
