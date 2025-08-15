@@ -288,6 +288,17 @@ if (!empty($courses)) {
     <?php include __DIR__ . '/includes/admin_header.php'; ?>
 
     <div class="content-wrapper">
+        <!-- Debug Info -->
+        <div class="alert alert-info">
+            <strong>Debug Info:</strong><br>
+            Total Courses: <?= $totalCourses ?><br>
+            Courses Array Count: <?= count($courses) ?><br>
+            <?php if (!empty($courses)): ?>
+                First Course Photo: <?= htmlspecialchars($courses[0]['photo'] ?? 'NULL') ?><br>
+                First Course Data: <?= htmlspecialchars(json_encode($courses[0])) ?>
+            <?php endif; ?>
+        </div>
+
         <!-- Statistics Cards -->
         <div class="row g-3 mb-4">
             <div class="col-md-3">
@@ -405,17 +416,17 @@ if (!empty($courses)) {
                             <?php foreach ($courses as $course): ?>
                                 <tr>
                                     <td><?= $course['id'] ?></td>
-                                                                            <td>
-                                            <?php if (!empty($course['photo'])): ?>
-                                                <img src="../uploads/courses/<?= htmlspecialchars($course['photo']) ?>"
-                                                    alt="Course Image"
-                                                    class="course-thumbnail"
-                                                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-                                                <br><small class="text-muted">Path: <?= htmlspecialchars($course['photo']) ?></small>
-                                            <?php else: ?>
-                                                <span class="text-muted">Hakuna picha</span>
-                                            <?php endif; ?>
-                                        </td>
+                                    <td>
+                                        <?php if (!empty($course['photo'])): ?>
+                                            <img src="../uploads/courses/<?= htmlspecialchars($course['photo']) ?>"
+                                                alt="Course Image"
+                                                class="course-thumbnail"
+                                                style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                            <br><small class="text-muted">Path: <?= htmlspecialchars($course['photo']) ?></small>
+                                        <?php else: ?>
+                                            <span class="text-muted">Hakuna picha</span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td>
                                         <div>
                                             <strong><?= htmlspecialchars($course['title'] ?? 'N/A') ?></strong>
