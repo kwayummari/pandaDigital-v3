@@ -30,3 +30,4 @@ if ($result['valid']) {
     header('Location: ' . app_url('login.php?error=' . urlencode($result['message'])));
     exit();
 }
+

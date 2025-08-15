@@ -95,3 +95,4 @@ For issues with Google OAuth integration, check:
 2. Application error logs
 3. Network tab in browser developer tools
 4. Google OAuth documentation
+

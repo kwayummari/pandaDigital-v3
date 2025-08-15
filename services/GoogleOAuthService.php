@@ -246,3 +246,4 @@ class GoogleOAuthService
         return !empty($this->clientId) && !empty($this->clientSecret);
     }
 }
+

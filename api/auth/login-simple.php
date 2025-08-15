@@ -7,3 +7,4 @@ echo json_encode([
     'message' => 'Simple login endpoint working',
     'timestamp' => date('Y-m-d H:i:s')
 ]);
+
