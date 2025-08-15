@@ -248,6 +248,41 @@ $totalInstructors = $userModel->getTotalInstructors();
         .export-dropdown.show .export-dropdown-content {
             display: block;
         }
+
+        /* Optimize layout spacing */
+        .main-content {
+            margin-left: 280px !important;
+            padding-left: 0 !important;
+        }
+
+        .content-wrapper {
+            padding: 20px 30px;
+            margin-left: 0;
+        }
+
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .col-md-3,
+        .col-md-6 {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .search-box,
+        .filter-tabs,
+        .course-table {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
     </style>
 </head>
 
@@ -255,9 +290,9 @@ $totalInstructors = $userModel->getTotalInstructors();
     <?php include __DIR__ . '/includes/admin_header.php'; ?>
 
     <div class="main-content">
-        <div class="container-fluid">
+        <div class="content-wrapper">
             <!-- Statistics Cards -->
-            <div class="row mb-4">
+            <div class="row g-3 mb-4">
                 <div class="col-md-3">
                     <div class="stats-card">
                         <div class="stats-number"><?= number_format($totalCourses) ?></div>
