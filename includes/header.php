@@ -331,4 +331,55 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 padding: 1rem;
             }
         }
+
+        /* Fix for mobile dropdown menu */
+        @media (max-width: 991.98px) {
+            .navbar-nav .dropdown-menu {
+                position: static !important;
+                float: none;
+                width: 100%;
+                margin-top: 0;
+                border: none;
+                box-shadow: none;
+                background-color: #f8f9fa;
+            }
+
+            .navbar-nav .dropdown-toggle::after {
+                float: right;
+                margin-top: 8px;
+            }
+        }
     </style>
+
+    <script>
+        // Fix for mobile dropdown menu not closing navbar
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Toggle the dropdown
+                    const dropdownMenu = this.nextElementSibling;
+                    dropdownMenu.classList.toggle('show');
+
+                    // Add active class to parent
+                    this.parentElement.classList.toggle('active');
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    dropdownToggles.forEach(toggle => {
+                        const dropdownMenu = toggle.nextElementSibling;
+                        dropdownMenu.classList.remove('show');
+                        toggle.parentElement.classList.remove('active');
+                    });
+                }
+            });
+        });
+    </script>
