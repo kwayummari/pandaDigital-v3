@@ -45,7 +45,7 @@ class PaymentService
         $authData = [
             'clientId' => $this->config['azampay_api_key'],
             'clientSecret' => $this->config['azampay_secret_key'],
-            'appName' => 'Panda Digital'
+            'appName' => 'Panda Innovation'
         ];
 
         $this->logToFile("Auth URL: " . $authUrl);
