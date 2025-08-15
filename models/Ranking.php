@@ -493,4 +493,93 @@ class Ranking
                 return "";
         }
     }
+
+    public function getAllPowerRankings()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $sql = "
+                SELECT 
+                    CONCAT(u.first_name, ' ', u.last_name) AS fullname,
+                    COUNT(a.id) AS total_correct_answers
+                FROM 
+                    algorithm al
+                JOIN 
+                    answers a ON al.ans_id = a.id
+                JOIN 
+                    users u ON al.user_id = u.id
+                WHERE 
+                    a.status = 'true'
+                GROUP BY 
+                    u.id, u.first_name, u.last_name
+                ORDER BY 
+                    total_correct_answers DESC
+            ";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting power rankings: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getPowerRankingStats()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Get total participants
+            $stmt = $conn->prepare("
+                SELECT COUNT(DISTINCT al.user_id) as total_participants
+                FROM algorithm al
+                JOIN answers a ON al.ans_id = a.id
+                WHERE a.status = 'true'
+            ");
+            $stmt->execute();
+            $participantsResult = $stmt->fetch();
+
+            // Get total correct answers
+            $stmt = $conn->prepare("
+                SELECT COUNT(*) as total_correct_answers
+                FROM algorithm al
+                JOIN answers a ON al.ans_id = a.id
+                WHERE a.status = 'true'
+            ");
+            $stmt->execute();
+            $answersResult = $stmt->fetch();
+
+            // Get top score
+            $stmt = $conn->prepare("
+                SELECT MAX(correct_count) as top_score
+                FROM (
+                    SELECT COUNT(a.id) as correct_count
+                    FROM algorithm al
+                    JOIN answers a ON al.ans_id = a.id
+                    WHERE a.status = 'true'
+                    GROUP BY al.user_id
+                ) as user_scores
+            ");
+            $stmt->execute();
+            $topScoreResult = $stmt->fetch();
+
+            return [
+                'total_participants' => $participantsResult['total_participants'] ?? 0,
+                'total_correct_answers' => $answersResult['total_correct_answers'] ?? 0,
+                'top_score' => $topScoreResult['top_score'] ?? 0,
+                'average_score' => $participantsResult['total_participants'] > 0 ?
+                    round($answersResult['total_correct_answers'] / $participantsResult['total_participants']) : 0
+            ];
+        } catch (PDOException $e) {
+            error_log("Error getting power ranking stats: " . $e->getMessage());
+            return [
+                'total_participants' => 0,
+                'total_correct_answers' => 0,
+                'top_score' => 0,
+                'average_score' => 0
+            ];
+        }
+    }
 }
