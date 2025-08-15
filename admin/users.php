@@ -39,6 +39,7 @@ $totalPages = ceil($totalUsers / $perPage);
 
 // Get user statistics
 $userStats = $userModel->getUserStatsByRole();
+$userStatsByStatus = $userModel->getUserStatsByStatus();
 ?>
 
 <!DOCTYPE html>
@@ -137,33 +138,74 @@ $userStats = $userModel->getUserStatsByRole();
             background-color: #f8f9fa;
             transform: translateX(5px);
         }
-        
+
         /* User view modal styling */
         .user-avatar-large {
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        
+
         .modal-lg .modal-body {
             padding: 2rem;
         }
-        
+
         .form-label.fw-bold {
             color: #495057;
             font-size: 0.875rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         .modal-body p {
             color: #6c757d;
             font-size: 1rem;
         }
-        
+
         .modal-body .badge {
             font-size: 0.875rem;
             padding: 0.5rem 1rem;
+        }
+
+        /* Status filter tabs styling */
+        #statusTabs {
+            border-bottom: none;
+        }
+
+        #statusTabs .nav-link {
+            border: none;
+            border-radius: 0;
+            color: #6c757d;
+            font-weight: 500;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        #statusTabs .nav-link:hover {
+            color: #495057;
+            background-color: #f8f9fa;
+        }
+
+        #statusTabs .nav-link.active {
+            color: #000;
+            background-color: #fff;
+            border-bottom: 3px solid #000;
+            font-weight: 600;
+        }
+
+        #statusTabs .nav-link i {
+            margin-right: 0.5rem;
+            opacity: 0.7;
+        }
+
+        #statusTabs .nav-link.active i {
+            opacity: 1;
+        }
+
+        #statusTabs .nav-link span {
+            font-size: 0.875rem;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -270,6 +312,38 @@ $userStats = $userModel->getUserStatsByRole();
                     </div>
                 </div>
 
+                <!-- Status Filter Tabs -->
+                <div class="card mb-4">
+                    <div class="card-body p-0">
+                        <ul class="nav nav-tabs nav-fill" id="statusTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true" onclick="filterByStatus('all')">
+                                    <i class="fas fa-users me-1"></i>
+                                    Wote (<span id="all-count"><?php echo $totalUsers; ?></span>)
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button" role="tab" aria-controls="active" aria-selected="false" onclick="filterByStatus('active')">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    Inatumika (<span id="active-count"><?php echo $userStatsByStatus['active'] ?? 0; ?></span>)
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="inactive-tab" data-bs-toggle="tab" data-bs-target="#inactive" type="button" role="tab" aria-controls="inactive" aria-selected="false" onclick="filterByStatus('inactive')">
+                                    <i class="fas fa-ban me-1"></i>
+                                    Imezimwa (<span id="inactive-count"><?php echo $userStatsByStatus['inactive'] ?? 0; ?></span>)
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="false" onclick="filterByStatus('pending')">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Inasubiri (<span id="pending-count"><?php echo $userStatsByStatus['pending'] ?? 0; ?></span>)
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
                 <!-- Alerts -->
                 <?php if (isset($success)): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -297,7 +371,7 @@ $userStats = $userModel->getUserStatsByRole();
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover" id="usersTable">
                                 <thead>
                                     <tr>
                                         <th>Jina</th>
@@ -425,12 +499,15 @@ $userStats = $userModel->getUserStatsByRole();
         // Search functionality
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('tbody tr');
+            const rows = document.querySelectorAll('#usersTable tbody tr');
 
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
                 row.style.display = text.includes(searchTerm) ? '' : 'none';
             });
+
+            // Update status counts after search
+            updateStatusCounts('all');
         });
 
         // Filter functionality
@@ -440,17 +517,20 @@ $userStats = $userModel->getUserStatsByRole();
         function filterUsers() {
             const roleFilter = document.getElementById('roleFilter').value;
             const statusFilter = document.getElementById('statusFilter').value;
-            const rows = document.querySelectorAll('tbody tr');
+            const rows = document.querySelectorAll('#usersTable tbody tr');
 
             rows.forEach(row => {
-                const role = row.querySelector('td:nth-child(6)').textContent.trim();
-                const status = row.querySelector('td:nth-child(7)').textContent.trim();
+                const role = row.querySelector('td:nth-child(5)').textContent.trim();
+                const status = row.querySelector('td:nth-child(6)').textContent.trim();
 
                 const roleMatch = !roleFilter || role.includes(roleFilter);
                 const statusMatch = !statusFilter || status.includes(statusFilter);
 
                 row.style.display = (roleMatch && statusMatch) ? '' : 'none';
             });
+
+            // Update status counts after filter
+            updateStatusCounts('all');
         }
 
         // Toggle user status
@@ -475,19 +555,19 @@ $userStats = $userModel->getUserStatsByRole();
         // View user details
         function viewUser(userId) {
             console.log('Viewing user with ID:', userId);
-            
+
             // Show the modal
             const modal = new bootstrap.Modal(document.getElementById('userViewModal'));
             modal.show();
-            
+
             // Load user data
             loadUserDetails(userId);
         }
-        
+
         // Load user details via AJAX
         function loadUserDetails(userId) {
             const modalBody = document.getElementById('userViewModalBody');
-            
+
             // Show loading state
             modalBody.innerHTML = `
                 <div class="text-center">
@@ -497,7 +577,7 @@ $userStats = $userModel->getUserStatsByRole();
                     <p class="mt-2">Inapakia maelezo...</p>
                 </div>
             `;
-            
+
             // Fetch user details
             fetch(`get_user_details.php?id=${userId}`)
                 .then(response => response.json())
@@ -523,11 +603,11 @@ $userStats = $userModel->getUserStatsByRole();
                     `;
                 });
         }
-        
+
         // Display user details in modal
         function displayUserDetails(user) {
             const modalBody = document.getElementById('userViewModalBody');
-            
+
             modalBody.innerHTML = `
                 <div class="row">
                     <div class="col-md-4 text-center mb-3">
@@ -598,7 +678,7 @@ $userStats = $userModel->getUserStatsByRole();
                     </div>
                 </div>
             `;
-            
+
             // Show edit button for admins
             const editBtn = document.getElementById('editUserBtn');
             if (user.role !== 'admin') { // Don't show edit for other admins
@@ -606,10 +686,84 @@ $userStats = $userModel->getUserStatsByRole();
                 editBtn.onclick = () => editUser(user.id);
             }
         }
-        
+
         // Edit user function (placeholder for future implementation)
         function editUser(userId) {
             alert('Edit functionality will be implemented in the future for user ID: ' + userId);
+        }
+
+        // Initialize status counts when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStatusCounts('all');
+        });
+
+        // Filter users by status
+        function filterByStatus(status) {
+            console.log('Filtering by status:', status);
+
+            // Update active tab
+            document.querySelectorAll('#statusTabs .nav-link').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Get all table rows
+            const tableRows = document.querySelectorAll('#usersTable tbody tr');
+
+            tableRows.forEach(row => {
+                const statusCell = row.querySelector('td:nth-child(6)'); // Status column
+                if (statusCell) {
+                    const userStatus = statusCell.textContent.trim().toLowerCase();
+
+                    if (status === 'all') {
+                        row.style.display = '';
+                    } else if (status === 'active' && userStatus.includes('inatumika')) {
+                        row.style.display = '';
+                    } else if (status === 'inactive' && userStatus.includes('imezimwa')) {
+                        row.style.display = '';
+                    } else if (status === 'pending' && userStatus.includes('inasubiri')) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+
+            // Update counts display
+            updateStatusCounts(status);
+        }
+
+        // Update status counts display
+        function updateStatusCounts(activeStatus) {
+            const tableRows = document.querySelectorAll('#usersTable tbody tr');
+            let allCount = 0;
+            let activeCount = 0;
+            let inactiveCount = 0;
+            let pendingCount = 0;
+
+            tableRows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    allCount++;
+                }
+
+                const statusCell = row.querySelector('td:nth-child(6)');
+                if (statusCell) {
+                    const userStatus = statusCell.textContent.trim().toLowerCase();
+                    if (userStatus.includes('inatumika')) {
+                        activeCount++;
+                    } else if (userStatus.includes('imezimwa')) {
+                        inactiveCount++;
+                    } else if (userStatus.includes('inasubiri')) {
+                        pendingCount++;
+                    }
+                }
+            });
+
+            // Update count displays
+            document.getElementById('all-count').textContent = allCount;
+            document.getElementById('active-count').textContent = activeCount;
+            document.getElementById('inactive-count').textContent = inactiveCount;
+            document.getElementById('pending-count').textContent = pendingCount;
         }
 
 

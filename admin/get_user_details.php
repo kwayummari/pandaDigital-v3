@@ -24,7 +24,7 @@ if (!$userId) {
 try {
     // Get user details
     $user = $userModel->getUserById($userId);
-    
+
     if (!$user) {
         echo json_encode([
             'success' => false,
@@ -32,13 +32,12 @@ try {
         ]);
         exit;
     }
-    
+
     // Return user data
     echo json_encode([
         'success' => true,
         'user' => $user
     ]);
-    
 } catch (Exception $e) {
     error_log("Error getting user details: " . $e->getMessage());
     echo json_encode([
@@ -46,4 +45,3 @@ try {
         'message' => 'Error retrieving user details'
     ]);
 }
-?>
