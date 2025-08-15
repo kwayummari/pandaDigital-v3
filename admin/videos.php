@@ -272,7 +272,6 @@ $videos = $videoModel->getAllVideosForAdmin();
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h1 class="h3 mb-0">
-                            <i class="fas fa-video text-primary me-2"></i>
                             Usimamizi wa Video
                         </h1>
                         <p class="text-muted">Udhibiti video zote za mfumo</p>
@@ -304,7 +303,6 @@ $videos = $videoModel->getAllVideosForAdmin();
             <div class="col-md-3">
                 <div class="stats-card">
                     <div class="text-center">
-                        <i class="fas fa-video fa-2x text-primary mb-3"></i>
                         <div class="stats-number"><?= $totalVideos ?></div>
                         <div class="stats-label">Jumla ya Video</div>
                     </div>
@@ -313,7 +311,6 @@ $videos = $videoModel->getAllVideosForAdmin();
             <div class="col-md-3">
                 <div class="stats-card">
                     <div class="text-center">
-                        <i class="fas fa-book fa-2x text-primary mb-3"></i>
                         <div class="stats-number"><?= $totalCourses ?></div>
                         <div class="stats-label">Jumla ya Kozi</div>
                     </div>
@@ -322,7 +319,6 @@ $videos = $videoModel->getAllVideosForAdmin();
             <div class="col-md-3">
                 <div class="stats-card">
                     <div class="text-center">
-                        <i class="fas fa-calendar-alt fa-2x text-primary mb-3"></i>
                         <div class="stats-number"><?= $thisMonth ?></div>
                         <div class="stats-label">Mwezi Huu</div>
                     </div>
@@ -331,7 +327,6 @@ $videos = $videoModel->getAllVideosForAdmin();
             <div class="col-md-3">
                 <div class="stats-card">
                     <div class="text-center">
-                        <i class="fas fa-calendar fa-2x text-primary mb-3"></i>
                         <div class="stats-number"><?= $lastMonth ?></div>
                         <div class="stats-label">Mwezi Uliopita</div>
                     </div>
