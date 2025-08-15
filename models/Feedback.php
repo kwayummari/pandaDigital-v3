@@ -18,14 +18,21 @@ class Feedback
 
             $stmt = $conn->prepare("
                 SELECT 
-                    f.id, f.feedback_text, f.description, f.feedback_type, f.priority, f.status, f.date_created,
-                    u.first_name, u.last_name,
-                    COUNT(DISTINCT r.id) as responses
-                FROM feedback f
-                LEFT JOIN users u ON f.user_id = u.id
-                LEFT JOIN feedback_responses r ON f.id = r.feedback_id
-                GROUP BY f.id
-                ORDER BY f.date_created DESC 
+                    sf.id, sf.feedback_type, sf.subject, sf.message, sf.priority, sf.status, 
+                    sf.date_created, sf.date_updated, sf.attachment_url,
+                    u.username as student_name, u.email as student_email,
+                    c.name as course_name
+                FROM student_feedback sf
+                INNER JOIN users u ON sf.student_id = u.id
+                LEFT JOIN course c ON sf.course_id = c.id
+                ORDER BY 
+                    CASE sf.priority 
+                        WHEN 'urgent' THEN 1 
+                        WHEN 'high' THEN 2 
+                        WHEN 'medium' THEN 3 
+                        WHEN 'low' THEN 4 
+                    END,
+                    sf.date_created DESC
                 LIMIT ? OFFSET ?
             ");
             $stmt->execute([$perPage, $offset]);
@@ -40,7 +47,7 @@ class Feedback
     {
         try {
             $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM feedback");
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM student_feedback");
             $stmt->execute();
             $result = $stmt->fetch();
             return $result['total'] ?? 0;
@@ -55,32 +62,39 @@ class Feedback
         try {
             $conn = $this->db->getConnection();
 
-            // Get resolved feedback count
-            $stmt = $conn->prepare("SELECT COUNT(*) as resolved FROM feedback WHERE status = 'resolved'");
+            // Get total feedback count
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM student_feedback");
             $stmt->execute();
-            $resolvedResult = $stmt->fetch();
+            $totalResult = $stmt->fetch();
 
             // Get pending feedback count
-            $stmt = $conn->prepare("SELECT COUNT(*) as pending FROM feedback WHERE status = 'pending'");
+            $stmt = $conn->prepare("SELECT COUNT(*) as pending FROM student_feedback WHERE status = 'pending'");
             $stmt->execute();
             $pendingResult = $stmt->fetch();
 
-            // Get total users who submitted feedback
-            $stmt = $conn->prepare("SELECT COUNT(DISTINCT user_id) as total_users FROM feedback");
+            // Get resolved feedback count
+            $stmt = $conn->prepare("SELECT COUNT(*) as resolved FROM student_feedback WHERE status = 'resolved'");
             $stmt->execute();
-            $usersResult = $stmt->fetch();
+            $resolvedResult = $stmt->fetch();
+
+            // Get urgent feedback count
+            $stmt = $conn->prepare("SELECT COUNT(*) as urgent FROM student_feedback WHERE priority = 'urgent'");
+            $stmt->execute();
+            $urgentResult = $stmt->fetch();
 
             return [
-                'resolved' => $resolvedResult['resolved'] ?? 0,
+                'total' => $totalResult['total'] ?? 0,
                 'pending' => $pendingResult['pending'] ?? 0,
-                'total_users' => $usersResult['total_users'] ?? 0
+                'resolved' => $resolvedResult['resolved'] ?? 0,
+                'urgent' => $urgentResult['urgent'] ?? 0
             ];
         } catch (PDOException $e) {
             error_log("Error getting overall feedback stats: " . $e->getMessage());
             return [
-                'resolved' => 0,
+                'total' => 0,
                 'pending' => 0,
-                'total_users' => 0
+                'resolved' => 0,
+                'urgent' => 0
             ];
         }
     }
@@ -91,14 +105,14 @@ class Feedback
             $conn = $this->db->getConnection();
 
             // Check if feedback exists
-            $stmt = $conn->prepare("SELECT id FROM feedback WHERE id = ?");
+            $stmt = $conn->prepare("SELECT id FROM student_feedback WHERE id = ?");
             $stmt->execute([$feedbackId]);
             if (!$stmt->fetch()) {
                 return false;
             }
 
             // Delete feedback (you might want to soft delete instead)
-            $stmt = $conn->prepare("DELETE FROM feedback WHERE id = ?");
+            $stmt = $conn->prepare("DELETE FROM student_feedback WHERE id = ?");
             return $stmt->execute([$feedbackId]);
         } catch (PDOException $e) {
             error_log("Error deleting feedback: " . $e->getMessage());
@@ -112,14 +126,14 @@ class Feedback
             $conn = $this->db->getConnection();
 
             // Check if feedback exists
-            $stmt = $conn->prepare("SELECT id FROM feedback WHERE id = ?");
+            $stmt = $conn->prepare("SELECT id FROM student_feedback WHERE id = ?");
             $stmt->execute([$feedbackId]);
             if (!$stmt->fetch()) {
                 return false;
             }
 
             // Mark as resolved
-            $stmt = $conn->prepare("UPDATE feedback SET status = 'resolved', date_updated = NOW() WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE student_feedback SET status = 'resolved', date_updated = NOW() WHERE id = ?");
             return $stmt->execute([$feedbackId]);
         } catch (PDOException $e) {
             error_log("Error marking feedback resolved: " . $e->getMessage());
@@ -133,7 +147,7 @@ class Feedback
             $conn = $this->db->getConnection();
 
             // Check if feedback exists
-            $stmt = $conn->prepare("SELECT id FROM feedback WHERE id = ?");
+            $stmt = $conn->prepare("SELECT id FROM student_feedback WHERE id = ?");
             $stmt->execute([$feedbackId]);
             if (!$stmt->fetch()) {
                 return false;
@@ -184,13 +198,14 @@ class Feedback
 
             $stmt = $conn->prepare("
                 SELECT 
-                    f.*, u.first_name, u.last_name, u.email,
-                    COUNT(DISTINCT r.id) as responses
-                FROM feedback f
-                LEFT JOIN users u ON f.user_id = u.id
-                LEFT JOIN feedback_responses r ON f.id = r.feedback_id
-                WHERE f.id = ?
-                GROUP BY f.id
+                    sf.id, sf.feedback_type, sf.subject, sf.message, sf.priority, sf.status, 
+                    sf.date_created, sf.date_updated, sf.attachment_url,
+                    u.username as student_name, u.email as student_email,
+                    c.name as course_name
+                FROM student_feedback sf
+                INNER JOIN users u ON sf.student_id = u.id
+                LEFT JOIN course c ON sf.course_id = c.id
+                WHERE sf.id = ?
             ");
             $stmt->execute([$feedbackId]);
             return $stmt->fetch();
