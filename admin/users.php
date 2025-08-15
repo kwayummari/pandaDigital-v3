@@ -311,32 +311,38 @@ $userStats = $userModel->getUserStatsByRole();
                     </div>
                 </div>
 
-                <!-- Status Filter Tabs -->
+                <!-- Role Filter Tabs -->
                 <div class="card mb-4">
                     <div class="card-body p-0">
-                        <ul class="nav nav-tabs nav-fill" id="statusTabs" role="tablist">
+                        <ul class="nav nav-tabs nav-fill" id="roleTabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true" onclick="filterByStatus('all')">
+                                <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true" onclick="filterByRole('all')">
                                     <i class="fas fa-users me-1"></i>
                                     Wote (<span id="all-count"><?php echo $totalUsers; ?></span>)
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button" role="tab" aria-controls="active" aria-selected="false" onclick="filterByStatus('active')">
-                                    <i class="fas fa-check-circle me-1"></i>
-                                    Inatumika (<span id="active-count"><?php echo $userStatsByStatus['active'] ?? 0; ?></span>)
+                                <button class="nav-link" id="user-tab" data-bs-toggle="tab" data-bs-target="#user" type="button" role="tab" aria-controls="user" aria-selected="false" onclick="filterByRole('user')">
+                                    <i class="fas fa-user-graduate me-1"></i>
+                                    Wanafunzi (<span id="user-count"><?php echo $userStats['user'] ?? 0; ?></span>)
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="inactive-tab" data-bs-toggle="tab" data-bs-target="#inactive" type="button" role="tab" aria-controls="inactive" aria-selected="false" onclick="filterByStatus('inactive')">
-                                    <i class="fas fa-ban me-1"></i>
-                                    Imezimwa (<span id="inactive-count"><?php echo $userStatsByStatus['inactive'] ?? 0; ?></span>)
+                                <button class="nav-link" id="expert-tab" data-bs-toggle="tab" data-bs-target="#expert" type="button" role="tab" aria-controls="expert" aria-selected="false" onclick="filterByRole('expert')">
+                                    <i class="fas fa-user-tie me-1"></i>
+                                    Wataalam (<span id="expert-count"><?php echo $userStats['expert'] ?? 0; ?></span>)
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="false" onclick="filterByStatus('pending')">
-                                    <i class="fas fa-clock me-1"></i>
-                                    Inasubiri (<span id="pending-count"><?php echo $userStatsByStatus['pending'] ?? 0; ?></span>)
+                                <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" type="button" role="tab" aria-controls="admin" aria-selected="false" onclick="filterByRole('admin')">
+                                    <i class="fas fa-user-shield me-1"></i>
+                                    Wakurugenzi (<span id="admin-count"><?php echo $userStats['admin'] ?? 0; ?></span>)
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="empty-tab" data-bs-toggle="tab" data-bs-target="#empty" type="button" role="tab" aria-controls="empty" aria-selected="false" onclick="filterByRole('empty')">
+                                    <i class="fas fa-question-circle me-1"></i>
+                                    Bila Jukumu (<span id="empty-count"><?php echo $userStats['empty'] ?? 0; ?></span>)
                                 </button>
                             </li>
                         </ul>
