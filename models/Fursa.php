@@ -184,4 +184,29 @@ class Fursa
             return false;
         }
     }
+
+    public function addOpportunity($opportunityData)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Insert opportunity with fields matching the old system
+            $stmt = $conn->prepare("
+                INSERT INTO fursa (name, description, image, date, month, date_created) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+
+            return $stmt->execute([
+                $opportunityData['name'],
+                $opportunityData['description'],
+                $opportunityData['image'],
+                $opportunityData['date'],
+                $opportunityData['month'],
+                $opportunityData['date_created']
+            ]);
+        } catch (PDOException $e) {
+            error_log("Error adding opportunity: " . $e->getMessage());
+            return false;
+        }
+    }
 }
