@@ -55,6 +55,16 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
 
 <?php include __DIR__ . '/includes/admin_header.php'; ?>
 
+<!-- Welcome Section -->
+<div class="welcome-section">
+    <h1 class="mb-3">
+        Karibu tena, <?php echo htmlspecialchars($currentUser['first_name']); ?>!
+    </h1>
+    <p class="lead mb-0">
+        Tazama takwimu na udhibiti mfumo wa Panda Digital
+    </p>
+</div>
+
 <!-- Dashboard Content -->
 <div class="row">
     <!-- Statistics Cards -->
@@ -63,7 +73,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
             <div class="card-icon">
                 <i class="fas fa-users"></i>
             </div>
-            <h6 class="card-title">Jumla ya Watumiaj</h6>
+            <h6 class="card-title">Jumla ya Watumiaji</h6>
             <p class="card-value"><?= number_format($blogStats['total_users'] ?? 0) ?></p>
         </div>
     </div>

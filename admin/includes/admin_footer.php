@@ -30,15 +30,26 @@
                             }
                         });
 
-                        // Update page title and breadcrumb
+                        // Update page title
                         const pageTitle = document.getElementById('pageTitle');
-                        const breadcrumbCurrent = document.getElementById('breadcrumbCurrent');
-
-                        if (pageTitle && breadcrumbCurrent) {
+                        if (pageTitle) {
                             const title = document.title.replace(' - Admin Panel', '');
                             pageTitle.textContent = title;
-                            breadcrumbCurrent.textContent = title;
                         }
+
+                        // Set active navigation item based on current page
+                        const currentPath = window.location.pathname;
+                        const navItems = document.querySelectorAll('.sidebar-nav .nav-item');
+
+                        navItems.forEach(item => {
+                            const link = item.querySelector('a');
+                            if (link && currentPath.includes(link.getAttribute('href').split('/').pop())) {
+                                // Remove active class from all items
+                                navItems.forEach(navItem => navItem.classList.remove('active'));
+                                // Add active class to current item
+                                item.classList.add('active');
+                            }
+                        });
                     });
 
                     // Chart.js configuration for admin dashboard

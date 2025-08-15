@@ -18,7 +18,6 @@ $users = $userModel->getAllUsers();
 <script>
     document.title = 'Watumiaji Wote - Admin Panel';
     document.getElementById('pageTitle').textContent = 'Watumiaji Wote';
-    document.getElementById('breadcrumbCurrent').textContent = 'Watumiaji Wote';
 </script>
 
 <!-- Users Content -->
