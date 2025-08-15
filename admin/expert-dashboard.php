@@ -17,11 +17,11 @@ if (!isset($currentUser['expert_authorization']) || $currentUser['expert_authori
 $expertModel = new Expert();
 $expertQuestionModel = new ExpertQuestion();
 
-// Get expert statistics
 $pendingQuestions = $expertQuestionModel->getPendingQuestionsByExpert($currentUser['id']);
 $answeredQuestions = $expertQuestionModel->getAnsweredQuestionsByExpert($currentUser['id']);
 $totalEarnings = $expertModel->getTotalEarnings($currentUser['id']);
 $monthlyEarnings = $expertModel->getMonthlyEarnings($currentUser['id']);
+$recentQuestions = $expertQuestionModel->getRecentQuestionsByExpert($currentUser['id'], 5);
 
 // Set page title
 $page_title = 'Expert Dashboard';
@@ -192,7 +192,6 @@ $page_title = 'Expert Dashboard';
                             </div>
                             <div class="card-body">
                                 <?php
-                                $recentQuestions = $expertQuestionModel->getRecentQuestionsByExpert($currentUser['id'], 5);
                                 if (!empty($recentQuestions)):
                                 ?>
                                 <div class="table-responsive">

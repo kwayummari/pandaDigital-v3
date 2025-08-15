@@ -293,6 +293,14 @@ class Business
     }
 
     /**
+     * Get businesses by owner ID (alias for getBusinessesByUserId)
+     */
+    public function getBusinessesByOwner($ownerId)
+    {
+        return $this->getBusinessesByUserId($ownerId);
+    }
+
+    /**
      * Get business details with photos
      */
     public function getBusinessWithPhotos($businessId)

@@ -318,4 +318,121 @@ class ExpertQuestion
             return 0;
         }
     }
+
+    /**
+     * Get pending questions for a specific expert
+     */
+    public function getPendingQuestionsByExpert($expertId)
+    {
+        try {
+            $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
+            
+            $stmt = $db->prepare("
+                SELECT 
+                    eq.*,
+                    CONCAT(u.first_name, ' ', u.last_name) as student_name,
+                    u.phone as student_phone,
+                    u.region as student_region
+                FROM expert_questions eq
+                JOIN users u ON eq.student_id = u.id
+                WHERE eq.expert_id = ? 
+                AND eq.status = 'pending'
+                ORDER BY eq.created_at DESC
+            ");
+            $stmt->execute([$expertId]);
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (Exception $e) {
+            error_log("Error getting pending questions by expert: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get answered questions for a specific expert
+     */
+    public function getAnsweredQuestionsByExpert($expertId)
+    {
+        try {
+            $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
+            
+            $stmt = $db->prepare("
+                SELECT 
+                    eq.*,
+                    CONCAT(u.first_name, ' ', u.last_name) as student_name,
+                    u.phone as student_phone,
+                    u.region as student_region
+                FROM expert_questions eq
+                JOIN users u ON eq.student_id = u.id
+                WHERE eq.expert_id = ? 
+                AND eq.status = 'answered'
+                ORDER BY eq.answered_at DESC
+            ");
+            $stmt->execute([$expertId]);
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (Exception $e) {
+            error_log("Error getting answered questions by expert: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get all questions for a specific expert (pending and answered)
+     */
+    public function getAllQuestionsByExpert($expertId)
+    {
+        try {
+            $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
+            
+            $stmt = $db->prepare("
+                SELECT 
+                    eq.*,
+                    CONCAT(u.first_name, ' ', u.last_name) as student_name,
+                    u.phone as student_phone,
+                    u.region as student_region
+                FROM expert_questions eq
+                JOIN users u ON eq.student_id = u.id
+                WHERE eq.expert_id = ? 
+                ORDER BY eq.created_at DESC
+            ");
+            $stmt->execute([$expertId]);
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (Exception $e) {
+            error_log("Error getting all questions by expert: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get recent questions for a specific expert
+     */
+    public function getRecentQuestionsByExpert($expertId, $limit = 10)
+    {
+        try {
+            $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
+            
+            $stmt = $db->prepare("
+                SELECT 
+                    eq.*,
+                    CONCAT(u.first_name, ' ', u.last_name) as student_name
+                FROM expert_questions eq
+                JOIN users u ON eq.student_id = u.id
+                WHERE eq.expert_id = ? 
+                ORDER BY eq.created_at DESC
+                LIMIT ?
+            ");
+            $stmt->execute([$expertId, $limit]);
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (Exception $e) {
+            error_log("Error getting recent questions by expert: " . $e->getMessage());
+            return [];
+        }
+    }
 }

@@ -163,4 +163,89 @@ class Expert
             return [];
         }
     }
+
+    /**
+     * Get total earnings for an expert
+     */
+    public function getTotalEarnings($expertId)
+    {
+        try {
+            $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
+            
+            $stmt = $db->prepare("
+                SELECT COALESCE(SUM(eq.amount), 0) as total_earnings 
+                FROM expert_questions eq 
+                WHERE eq.expert_id = ? AND eq.status = 'answered' AND eq.payment_status = 'paid'
+            ");
+            $stmt->execute([$expertId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $result['total_earnings'] ?? 0;
+            
+        } catch (Exception $e) {
+            error_log("Error getting total earnings: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get monthly earnings for an expert
+     */
+    public function getMonthlyEarnings($expertId)
+    {
+        try {
+            $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
+            
+            $stmt = $db->prepare("
+                SELECT COALESCE(SUM(eq.amount), 0) as monthly_earnings 
+                FROM expert_questions eq 
+                WHERE eq.expert_id = ? 
+                AND eq.status = 'answered' 
+                AND eq.payment_status = 'paid'
+                AND MONTH(eq.answered_at) = MONTH(CURRENT_DATE())
+                AND YEAR(eq.answered_at) = YEAR(CURRENT_DATE())
+            ");
+            $stmt->execute([$expertId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $result['monthly_earnings'] ?? 0;
+            
+        } catch (Exception $e) {
+            error_log("Error getting monthly earnings: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get earnings history for an expert
+     */
+    public function getEarningsHistory($expertId)
+    {
+        try {
+            $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
+            
+            $stmt = $db->prepare("
+                SELECT 
+                    eq.id as question_id,
+                    eq.question,
+                    eq.amount,
+                    eq.payment_status as status,
+                    eq.answered_at as date,
+                    CONCAT(u.first_name, ' ', u.last_name) as student_name
+                FROM expert_questions eq
+                JOIN users u ON eq.student_id = u.id
+                WHERE eq.expert_id = ? 
+                AND eq.status = 'answered'
+                ORDER BY eq.answered_at DESC
+                LIMIT 50
+            ");
+            $stmt->execute([$expertId]);
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (Exception $e) {
+            error_log("Error getting earnings history: " . $e->getMessage());
+            return [];
+        }
+    }
 }

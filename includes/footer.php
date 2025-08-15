@@ -1,5 +1,8 @@
 <!-- Modern Professional Footer -->
 <footer class="footer">
+    <!-- Alert Container for Messages -->
+    <div id="alertContainer" class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;"></div>
+    
     <!-- Decorative floating elements -->
     <div class="footer-decoration">
         <div class="floating-element element-1"></div>
@@ -399,6 +402,64 @@
             }
         <?php endif; ?>
     }
+
+    // Handle signup form submission
+    document.addEventListener('DOMContentLoaded', function() {
+        const signupForm = document.getElementById('signupForm');
+        if (signupForm) {
+            signupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const btnText = submitBtn.querySelector('.btn-text');
+                const btnLoading = submitBtn.querySelector('.btn-loading');
+
+                // Show loading state
+                btnText.classList.add('d-none');
+                btnLoading.classList.remove('d-none');
+                submitBtn.disabled = true;
+
+                // Submit form data
+                fetch('<?= app_url("api/signup.php") ?>', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show success message
+                            showAlert('success', 'Usajili umekamilika kwa mafanikio! Sasa unaweza kuingia.');
+                            
+                            // Close signup modal
+                            const signupModal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
+                            signupModal.hide();
+                            
+                            // Clear form
+                            signupForm.reset();
+                            
+                            // Show login modal after delay
+                            setTimeout(() => {
+                                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                                loginModal.show();
+                            }, 2000);
+                        } else {
+                            showAlert('danger', data.message || 'Kuna tatizo, jaribu tena.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showAlert('danger', 'Kuna tatizo la mtandao, jaribu tena.');
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        btnText.classList.remove('d-none');
+                        btnLoading.classList.add('d-none');
+                        submitBtn.disabled = false;
+                    });
+            });
+        }
+    });
 
     // Handle profile completion form submission
     document.addEventListener('DOMContentLoaded', function() {
