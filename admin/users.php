@@ -150,23 +150,13 @@ $userStats = $userModel->getUserStatsByRole();
             <?php include __DIR__ . '/includes/admin_topnav.php'; ?>
 
             <div class="content-wrapper">
-                <!-- Page Header -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h1 class="h3 mb-0">
-                            <i class="fas fa-users text-primary me-2"></i>
-                            Usimamizi wa Watumiaji
-                        </h1>
-                        <p class="text-muted">Udhibiti watumiaji wote wa mfumo</p>
-                    </div>
-                </div>
+
 
                 <!-- Statistics Cards -->
                 <div class="row mb-4">
                     <div class="col-md-3">
                         <div class="card stats-card">
                             <div class="card-body text-center">
-                                <i class="fas fa-users fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo $totalUsers; ?></h3>
                                 <p class="mb-0">Jumla ya Watumiaji</p>
                             </div>
@@ -175,7 +165,6 @@ $userStats = $userModel->getUserStatsByRole();
                     <div class="col-md-3">
                         <div class="card stats-card success">
                             <div class="card-body text-center">
-                                <i class="fas fa-user-graduate fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo $userStats['user'] ?? 0; ?></h3>
                                 <p class="mb-0">Wanafunzi</p>
                             </div>
@@ -184,7 +173,6 @@ $userStats = $userModel->getUserStatsByRole();
                     <div class="col-md-3">
                         <div class="card stats-card info">
                             <div class="card-body text-center">
-                                <i class="fas fa-user-tie fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo $userStats['expert'] ?? 0; ?></h3>
                                 <p class="mb-0">Wataalam</p>
                             </div>
@@ -193,7 +181,6 @@ $userStats = $userModel->getUserStatsByRole();
                     <div class="col-md-3">
                         <div class="card stats-card warning">
                             <div class="card-body text-center">
-                                <i class="fas fa-user-shield fa-2x mb-2"></i>
                                 <h3 class="mb-1"><?php echo $userStats['admin'] ?? 0; ?></h3>
                                 <p class="mb-0">Wakurugenzi</p>
                             </div>
