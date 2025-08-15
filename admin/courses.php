@@ -258,176 +258,16 @@ if (!empty($courses)) {
             display: block;
         }
 
-        /* Fix layout spacing issues */
-        body {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .main-content {
-            margin-left: 280px !important;
-            padding: 0 !important;
-            width: calc(100% - 280px) !important;
-            max-width: none !important;
-        }
-
+        /* Simple layout fixes */
         .content-wrapper {
             padding: 20px 30px;
-            margin: 0 !important;
-            width: 100% !important;
-            box-sizing: border-box;
-            max-width: none !important;
         }
 
-        .row {
-            margin: 0 !important;
-            width: 100% !important;
-            max-width: none !important;
-        }
-
-        .col-md-3,
-        .col-md-6 {
-            padding: 0 15px;
-            box-sizing: border-box;
-            max-width: none !important;
-        }
-
-        .search-box,
-        .filter-tabs,
-        .course-table {
-            margin: 0 !important;
-            width: 100% !important;
-            box-sizing: border-box;
-            max-width: none !important;
-        }
-
-        /* Override any conflicting Bootstrap styles */
-        .container-fluid {
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-            margin-left: 0 !important;
-            margin-right: 0 !important;
-            max-width: none !important;
-        }
-
-        /* Force remove any left margins/padding */
-        * {
-            box-sizing: border-box;
-        }
-
-        .main-content * {
-            margin-left: 0 !important;
-            padding-left: 0 !important;
-        }
-
-        .content-wrapper * {
-            margin-left: 0 !important;
-            padding-left: 0 !important;
-        }
-
-        /* Override Bootstrap grid system */
-        .container,
-        .container-fluid {
-            max-width: none !important;
-            width: 100% !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-            margin-left: 0 !important;
-            margin-right: 0 !important;
-        }
-
-        /* Ensure no left spacing from any source */
-        .main-content .row>* {
-            margin-left: 0 !important;
-            padding-left: 15px !important;
-        }
-
-        .main-content .row>*:first-child {
-            padding-left: 0 !important;
-        }
-
-        /* Override dashboard-container flex behavior */
-        .dashboard-container {
-            display: block !important;
-        }
-
-        .dashboard-container .main-content {
-            margin-left: 280px !important;
-            width: calc(100% - 280px) !important;
-            max-width: none !important;
-        }
-
-        /* Nuclear option - force everything to start from left */
-        .main-content,
-        .content-wrapper,
-        .row,
-        .col-md-3,
-        .col-md-6,
-        .search-box,
-        .filter-tabs,
-        .course-table,
-        .stats-card {
-            margin-left: 0 !important;
-            padding-left: 0 !important;
-            transform: translateX(0) !important;
-        }
-
-        /* Only add padding to columns, not margins */
-        .col-md-3,
-        .col-md-6 {
-            padding-left: 15px !important;
-            padding-right: 15px !important;
-        }
-
-        /* Force content to start from absolute left */
-        .content-wrapper {
-            padding: 20px 30px !important;
-            margin: 0 !important;
-            position: relative !important;
-            left: 0 !important;
-        }
-
-        /* Override any potential CSS transforms or positioning */
-        .main-content * {
-            position: static !important;
-            left: auto !important;
-            right: auto !important;
-        }
-
-        /* Debug: Add border to see layout */
-        .main-content {
-            border: 2px solid red !important;
-        }
-
-        .content-wrapper {
-            border: 2px solid blue !important;
-        }
-
-        .row {
-            border: 2px solid green !important;
-        }
-
-        /* Force all content to start from left edge */
         .stats-card,
         .search-box,
         .filter-tabs,
         .course-table {
-            margin-left: 0 !important;
-            padding-left: 0 !important;
-            width: 100% !important;
-            max-width: none !important;
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 0 !important;
-                width: 100% !important;
-            }
-
-            .dashboard-container .main-content {
-                margin-left: 0 !important;
-                width: 100% !important;
-            }
+            margin-bottom: 1.5rem;
         }
     </style>
 </head>
@@ -435,170 +275,169 @@ if (!empty($courses)) {
 <body>
     <?php include __DIR__ . '/includes/admin_header.php'; ?>
 
-    <div class="main-content">
-        <div class="content-wrapper">
-            <!-- Statistics Cards -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number"><?= number_format($totalCourses) ?></div>
-                        <div class="stats-label">Kozi Zote</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number"><?= number_format($totalEnrollments) ?></div>
-                        <div class="stats-label">Jumla ya Usajili</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number"><?= number_format($totalInstructors) ?></div>
-                        <div class="stats-label">Waalimu</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number"><?= number_format($totalCourses) ?></div>
-                        <div class="stats-label">Video Zote</div>
-                    </div>
+    <div class="content-wrapper">
+        <!-- Statistics Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number"><?= number_format($totalCourses) ?></div>
+                    <div class="stats-label">Kozi Zote</div>
                 </div>
             </div>
-
-            <!-- Success Message -->
-            <?php if (isset($_GET['success'])): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <?php if ($_GET['success'] == '1'): ?>
-                        Kozi imehifadhiwa kwa mafanikio!
-                    <?php endif; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
-
-
-
-
-
-            <!-- Search and Actions -->
-            <div class="search-box">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="searchInput" placeholder="Tafuta kozi...">
-                            <button class="btn btn-outline-secondary" type="button" onclick="searchCourses()">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-md-6 text-end">
-                        <button class="add-course-btn me-2" onclick="openAddCourseModal()">
-                            <i class="fas fa-plus me-2"></i>Ongeza Kozi Mpya
-                        </button>
-                        <div class="export-dropdown">
-                            <button class="btn btn-outline-secondary" onclick="toggleExportDropdown()">
-                                <i class="fas fa-download me-2"></i>Pakua
-                            </button>
-                            <div class="export-dropdown-content">
-                                <a href="export_courses.php?format=csv">Excel (CSV)</a>
-                                <a href="export_courses.php?format=pdf">PDF</a>
-                            </div>
-                        </div>
-                    </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number"><?= number_format($totalEnrollments) ?></div>
+                    <div class="stats-label">Jumla ya Usajili</div>
                 </div>
             </div>
-
-            <!-- Filter Tabs -->
-            <div class="filter-tabs">
-                <ul class="nav nav-tabs" id="statusTabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#" onclick="filterByStatus('all')">
-                            Zote (<?= $totalCourses ?>)
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="filterByStatus('with_video')">
-                            Zilizo na Video (<?= $totalCourses ?>)
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="filterByStatus('with_photo')">
-                            Zilizo na Picha (<?= $totalCourses ?>)
-                        </a>
-                    </li>
-                </ul>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number"><?= number_format($totalInstructors) ?></div>
+                    <div class="stats-label">Waalimu</div>
+                </div>
             </div>
-
-            <!-- Courses Table -->
-            <div class="course-table">
-                <div class="table-responsive">
-                    <table class="table" id="coursesTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Jina la Kozi</th>
-                                <th>Maelezo</th>
-                                <th>Video</th>
-                                <th>Picha</th>
-                                <th>Vitendo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (empty($courses)): ?>
-                                <tr>
-                                    <td colspan="6" class="text-center py-4">
-                                        <p class="text-muted mb-0">Hakuna kozi zilizopatikana</p>
-                                    </td>
-                                </tr>
-                            <?php else: ?>
-                                <?php foreach ($courses as $course): ?>
-                                    <tr>
-                                        <td><?= $course['id'] ?></td>
-                                        <td>
-                                            <div>
-                                                <strong><?= htmlspecialchars($course['title'] ?? 'N/A') ?></strong>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <?php if (!empty($course['description'])): ?>
-                                                <?= htmlspecialchars(substr($course['description'], 0, 100)) ?>...
-                                            <?php else: ?>
-                                                <span class="text-muted">Hakuna maelezo</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if (!empty($course['video'])): ?>
-                                                <span class="text-success"><?= htmlspecialchars($course['video']) ?></span>
-                                            <?php else: ?>
-                                                <span class="text-muted">Hakuna video</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if (!empty($course['photo'])): ?>
-                                                <span class="text-info"><?= htmlspecialchars($course['photo']) ?></span>
-                                            <?php else: ?>
-                                                <span class="text-muted">Hakuna picha</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <button class="action-btn btn-view" onclick="viewCourse(<?= $course['id'] ?>)">
-                                                <i class="fas fa-eye me-1"></i>Ona
-                                            </button>
-                                            <button class="action-btn btn-edit" onclick="editCourse(<?= $course['id'] ?>)">
-                                                <i class="fas fa-edit me-1"></i>Hariri
-                                            </button>
-                                            <button class="action-btn btn-delete" onclick="deleteCourse(<?= $course['id'] ?>)">
-                                                <i class="fas fa-trash me-1"></i>Futa
-                                            </button>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number"><?= number_format($totalCourses) ?></div>
+                    <div class="stats-label">Video Zote</div>
                 </div>
             </div>
         </div>
+
+        <!-- Success Message -->
+        <?php if (isset($_GET['success'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <?php if ($_GET['success'] == '1'): ?>
+                    Kozi imehifadhiwa kwa mafanikio!
+                <?php endif; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+
+
+
+
+        <!-- Search and Actions -->
+        <div class="search-box">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Tafuta kozi...">
+                        <button class="btn btn-outline-secondary" type="button" onclick="searchCourses()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button class="add-course-btn me-2" onclick="openAddCourseModal()">
+                        <i class="fas fa-plus me-2"></i>Ongeza Kozi Mpya
+                    </button>
+                    <div class="export-dropdown">
+                        <button class="btn btn-outline-secondary" onclick="toggleExportDropdown()">
+                            <i class="fas fa-download me-2"></i>Pakua
+                        </button>
+                        <div class="export-dropdown-content">
+                            <a href="export_courses.php?format=csv">Excel (CSV)</a>
+                            <a href="export_courses.php?format=pdf">PDF</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <ul class="nav nav-tabs" id="statusTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" onclick="filterByStatus('all')">
+                        Zote (<?= $totalCourses ?>)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="filterByStatus('with_video')">
+                        Zilizo na Video (<?= $totalCourses ?>)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="filterByStatus('with_photo')">
+                        Zilizo na Picha (<?= $totalCourses ?>)
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Courses Table -->
+        <div class="course-table">
+            <div class="table-responsive">
+                <table class="table" id="coursesTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Jina la Kozi</th>
+                            <th>Maelezo</th>
+                            <th>Video</th>
+                            <th>Picha</th>
+                            <th>Vitendo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($courses)): ?>
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <p class="text-muted mb-0">Hakuna kozi zilizopatikana</p>
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($courses as $course): ?>
+                                <tr>
+                                    <td><?= $course['id'] ?></td>
+                                    <td>
+                                        <div>
+                                            <strong><?= htmlspecialchars($course['title'] ?? 'N/A') ?></strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($course['description'])): ?>
+                                            <?= htmlspecialchars(substr($course['description'], 0, 100)) ?>...
+                                        <?php else: ?>
+                                            <span class="text-muted">Hakuna maelezo</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($course['video'])): ?>
+                                            <span class="text-success"><?= htmlspecialchars($course['video']) ?></span>
+                                        <?php else: ?>
+                                            <span class="text-muted">Hakuna video</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($course['photo'])): ?>
+                                            <span class="text-info"><?= htmlspecialchars($course['photo']) ?></span>
+                                        <?php else: ?>
+                                            <span class="text-muted">Hakuna picha</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn btn-view" onclick="viewCourse(<?= $course['id'] ?>)">
+                                            <i class="fas fa-eye me-1"></i>Ona
+                                        </button>
+                                        <button class="action-btn btn-edit" onclick="editCourse(<?= $course['id'] ?>)">
+                                            <i class="fas fa-edit me-1"></i>Hariri
+                                        </button>
+                                        <button class="action-btn btn-delete" onclick="deleteCourse(<?= $course['id'] ?>)">
+                                            <i class="fas fa-trash me-1"></i>Futa
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     </div>
 
     <!-- Course View Modal -->
