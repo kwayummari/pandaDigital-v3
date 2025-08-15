@@ -32,6 +32,19 @@ class Fursa
         }
     }
 
+    public function getAllOpportunitiesForAdmin()
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("SELECT id, name, description, image, date, month, date_created FROM fursa ORDER BY id DESC");
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting all opportunities for admin: " . $e->getMessage());
+            return [];
+        }
+    }
+
     public function getOpportunityById($id)
     {
         try {
@@ -93,6 +106,51 @@ class Fursa
         } catch (PDOException $e) {
             error_log("Error getting total fursa: " . $e->getMessage());
             return 0;
+        }
+    }
+
+    public function getOverallOpportunityStats()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Get total opportunities count
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM fursa");
+            $stmt->execute();
+            $totalResult = $stmt->fetch();
+
+            // Get opportunities by month (this month)
+            $currentMonth = date('F');
+            $stmt = $conn->prepare("SELECT COUNT(*) as this_month FROM fursa WHERE month = ?");
+            $stmt->execute([$currentMonth]);
+            $thisMonthResult = $stmt->fetch();
+
+            // Get opportunities by month (last month)
+            $lastMonth = date('F', strtotime('-1 month'));
+            $stmt = $conn->prepare("SELECT COUNT(*) as last_month FROM fursa WHERE month = ?");
+            $stmt->execute([$lastMonth]);
+            $lastMonthResult = $stmt->fetch();
+
+            // Get opportunities by month (this year)
+            $currentYear = date('Y');
+            $stmt = $conn->prepare("SELECT COUNT(*) as this_year FROM fursa WHERE YEAR(date_created) = ?");
+            $stmt->execute([$currentYear]);
+            $thisYearResult = $stmt->fetch();
+
+            return [
+                'total' => $totalResult['total'] ?? 0,
+                'this_month' => $thisMonthResult['this_month'] ?? 0,
+                'last_month' => $lastMonthResult['last_month'] ?? 0,
+                'this_year' => $thisYearResult['this_year'] ?? 0
+            ];
+        } catch (PDOException $e) {
+            error_log("Error getting overall opportunity stats: " . $e->getMessage());
+            return [
+                'total' => 0,
+                'this_month' => 0,
+                'last_month' => 0,
+                'this_year' => 0
+            ];
         }
     }
 }

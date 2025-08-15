@@ -1,69 +1,23 @@
 <?php
 require_once __DIR__ . "/../middleware/AuthMiddleware.php";
-require_once __DIR__ . "/../models/Opportunity.php";
+require_once __DIR__ . "/../models/Fursa.php";
 
+// Check if user is admin
 $auth = new AuthMiddleware();
 $auth->requireRole('admin');
 
-$currentUser = $auth->getCurrentUser();
-$opportunityModel = new Opportunity();
+// Initialize models
+$fursaModel = new Fursa();
 
-// Handle opportunity actions
-if ($_POST && isset($_POST['action'])) {
-    $opportunityId = $_POST['opportunity_id'];
-    $action = $_POST['action'];
+// Get opportunities data
+$opportunities = $fursaModel->getAllOpportunitiesForAdmin();
+$opportunityStats = $fursaModel->getOverallOpportunityStats();
 
-    if ($action === 'delete') {
-        $result = $opportunityModel->deleteOpportunity($opportunityId);
-        if ($result) {
-            $success = "Fursa imefutwa kikamilifu!";
-        } else {
-            $error = "Imefeli kufuta fursa. Tafadhali jaribu tena.";
-        }
-    } elseif ($action === 'toggle_status') {
-        $result = $opportunityModel->toggleOpportunityStatus($opportunityId);
-        if ($result) {
-            $success = "Hali ya fursa imebadilishwa!";
-        } else {
-            $error = "Imefeli kubadilisha hali ya fursa. Tafadhali jaribu tena.";
-        }
-    } elseif ($action === 'add_opportunity') {
-        $title = trim($_POST['title']);
-        $description = trim($_POST['description']);
-        $requirements = trim($_POST['requirements']);
-        $budget = trim($_POST['budget']);
-        $deadline = $_POST['deadline'];
-        $category = $_POST['category'];
-        $location = trim($_POST['location']);
-        $contactInfo = trim($_POST['contact_info']);
-
-        // Validation
-        if (empty($title) || empty($description) || empty($requirements)) {
-            $error = "Tafadhali jaza sehemu zote muhimu (Jina, Maelezo, na Mahitaji).";
-        } elseif (strlen($title) < 10) {
-            $error = "Jina la fursa lazima liwe na herufi 10 au zaidi.";
-        } elseif (strlen($description) < 50) {
-            $error = "Maelezo lazima yawe na herufi 50 au zaidi.";
-        } else {
-            $result = $opportunityModel->addOpportunity($title, $description, $requirements, $budget, $deadline, $category, $location, $contactInfo);
-            if ($result) {
-                $success = "Fursa imeongezwa kikamilifu!";
-            } else {
-                $error = "Imefeli kuongeza fursa. Tafadhali jaribu tena.";
-            }
-        }
-    }
-}
-
-// Get all opportunities with pagination
-$page = $_GET['page'] ?? 1;
-$perPage = 20;
-$opportunities = $opportunityModel->getAllOpportunitiesForAdmin($page, $perPage);
-$totalOpportunities = $opportunityModel->getTotalOpportunities();
-$totalPages = ceil($totalOpportunities / $perPage);
-
-// Get opportunity statistics
-$opportunityStats = $opportunityModel->getOverallOpportunityStats();
+// Extract stats
+$totalOpportunities = $opportunityStats['total'] ?? 0;
+$thisMonth = $opportunityStats['this_month'] ?? 0;
+$lastMonth = $opportunityStats['last_month'] ?? 0;
+$thisYear = $opportunityStats['this_year'] ?? 0;
 ?>
 
 <!DOCTYPE html>
@@ -73,758 +27,513 @@ $opportunityStats = $opportunityModel->getOverallOpportunityStats();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usimamizi wa Fursa - Panda Digital</title>
-
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
     <style>
-        :root {
-            --primary-color: #662e91;
-            --secondary-color: #FFC10B;
-            --accent-color: #e74c3c;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --info-color: #3498db;
-        }
-
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .main-content {
-            padding: 20px;
-        }
-
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
         .stats-card {
-            background: linear-gradient(135deg, var(--accent-color), #c0392b);
-            color: white;
-        }
-
-        .stats-card.success {
-            background: linear-gradient(135deg, var(--success-color), #229954);
-        }
-
-        .stats-card.info {
-            background: linear-gradient(135deg, var(--info-color), #2980b9);
-        }
-
-        .stats-card.warning {
-            background: linear-gradient(135deg, var(--warning-color), #d68910);
-        }
-
-        .btn-primary-custom {
-            background: var(--primary-color);
-            border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
-            font-weight: 600;
-        }
-
-        .btn-primary-custom:hover {
-            background: var(--secondary-color);
-            transform: translateY(-1px);
-        }
-
-        .opportunity-table {
             background: white;
             border-radius: 15px;
-            overflow: hidden;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid;
+            transition: transform 0.2s ease;
+            margin-bottom: 1.5rem;
         }
 
-        .opportunity-table th {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            font-weight: 600;
+        .stats-card:hover {
+            transform: translateY(-2px);
         }
 
-        .opportunity-table td {
-            vertical-align: middle;
+        .stats-card.total {
+            border-left-color: #000;
         }
 
-        .badge-status {
-            font-size: 0.8rem;
-            padding: 6px 12px;
-            border-radius: 15px;
+        .stats-card.this-month {
+            border-left-color: #28a745;
+        }
+
+        .stats-card.last-month {
+            border-left-color: #ffc107;
+        }
+
+        .stats-card.this-year {
+            border-left-color: #17a2b8;
         }
 
         .search-box {
             background: white;
             border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
         }
 
-        .alert {
-            border-radius: 10px;
-            border: none;
-        }
-
-        .pagination .page-link {
-            border-radius: 10px;
-            margin: 0 2px;
-            border: none;
-            color: var(--primary-color);
-        }
-
-        .pagination .page-item.active .page-link {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .opportunity-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .category-badge {
-            background: var(--info-color);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-        }
-
-        .budget-badge {
-            background: var(--success-color);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .deadline-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .deadline-urgent {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        .deadline-normal {
-            background: var(--warning-color);
-            color: white;
-        }
-
-        .deadline-far {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .opportunity-text {
-            max-width: 300px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .add-opportunity-form {
+        .filter-tabs {
             background: white;
             border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
         }
 
-        .form-control,
-        .form-select {
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-            padding: 12px 15px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(102, 46, 145, 0.25);
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 8px;
-        }
-
-        .required {
-            color: var(--accent-color);
-        }
-
-        .help-text {
-            font-size: 0.9rem;
+        .filter-tabs .nav-link {
+            border: none;
             color: #6c757d;
-            margin-top: 5px;
+            border-radius: 10px;
+            margin-right: 0.5rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .filter-tabs .nav-link.active {
+            background: #000;
+            color: white;
+        }
+
+        .opportunity-table {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .opportunity-table .table {
+            margin-bottom: 0;
+        }
+
+        .opportunity-table .table th {
+            border-top: none;
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .opportunity-thumbnail {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .opportunity-thumbnail:hover {
+            transform: scale(1.1);
+        }
+
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-right: 0.25rem;
+        }
+
+        .action-btn.view {
+            background: #007bff;
+            color: white;
+        }
+
+        .action-btn.edit {
+            background: #28a745;
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .add-opportunity-btn {
+            background: #000;
+            border-color: #000;
+            border-radius: 10px;
+            padding: 0.5rem 1.5rem;
+        }
+
+        .add-opportunity-btn:hover {
+            background: #333;
+            border-color: #333;
+        }
+
+        .export-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .export-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .export-dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .export-dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .export-dropdown.show .export-dropdown-content {
+            display: block;
+        }
+
+        /* Layout fixes */
+        .content-wrapper {
+            padding: 20px 30px;
         }
     </style>
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/admin/dashboard.php">
-                <i class="fas fa-shield-alt me-2"></i>
-                Panda Digital - Admin
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/admin/dashboard.php">
-                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
-                </a>
-                <a class="nav-link" href="/admin/courses.php">
-                    <i class="fas fa-book me-1"></i> Kozi
-                </a>
-                <a class="nav-link" href="/admin/videos.php">
-                    <i class="fas fa-video me-1"></i> Video
-                </a>
-                <a class="nav-link" href="/admin/questions.php">
-                    <i class="fas fa-question-circle me-1"></i> Maswali
-                </a>
-                <a class="nav-link" href="/admin/blogs.php">
-                    <i class="fas fa-blog me-1"></i> Blog
-                </a>
-                <a class="nav-link" href="/admin/feedback.php">
-                    <i class="fas fa-comments me-1"></i> Maoni
-                </a>
-                <a class="nav-link active" href="/admin/opportunities.php">
-                    <i class="fas fa-briefcase me-1"></i> Fursa
-                </a>
-                <a class="nav-link" href="/logout.php">
-                    <i class="fas fa-sign-out-alt me-1"></i> Toka
-                </a>
+    <?php include __DIR__ . '/includes/admin_header.php'; ?>
+
+    <div class="content-wrapper">
+        <!-- Statistics Cards -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card total">
+                    <h3 class="mb-2"><?= number_format($totalOpportunities) ?></h3>
+                    <p class="text-muted mb-0">Fursa Zote</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card this-month">
+                    <h3 class="mb-2"><?= number_format($thisMonth) ?></h3>
+                    <p class="text-muted mb-0">Mwezi Huu</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card last-month">
+                    <h3 class="mb-2"><?= number_format($lastMonth) ?></h3>
+                    <p class="text-muted mb-0">Mwezi Uliopita</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card this-year">
+                    <h3 class="mb-2"><?= number_format($thisYear) ?></h3>
+                    <p class="text-muted mb-0">Mwaka Huu</p>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <div class="main-content">
-        <div class="container">
-            <!-- Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h1 class="h3 mb-0">
-                        <i class="fas fa-briefcase text-primary me-2"></i>
-                        Usimamizi wa Fursa za Biashara
-                    </h1>
-                    <p class="text-muted">Udhibiti fursa zote za biashara kwenye mfumo</p>
-                </div>
-            </div>
-
-            <!-- Statistics Cards -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card stats-card">
-                        <div class="card-body text-center">
-                            <i class="fas fa-briefcase fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $totalOpportunities; ?></h3>
-                            <p class="mb-0">Jumla ya Fursa</p>
-                        </div>
+        <!-- Search and Actions -->
+        <div class="search-box">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Tafuta fursa...">
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card stats-card success">
-                        <div class="card-body text-center">
-                            <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $opportunityStats['active'] ?? 0; ?></h3>
-                            <p class="mb-0">Zilizotumika</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card warning">
-                        <div class="card-body text-center">
-                            <i class="fas fa-clock fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $opportunityStats['pending'] ?? 0; ?></h3>
-                            <p class="mb-0">Zinazosubiri</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card info">
-                        <div class="card-body text-center">
-                            <i class="fas fa-users fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $opportunityStats['total_applications'] ?? 0; ?></h3>
-                            <p class="mb-0">Maombi Yote</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Alerts -->
-            <?php if (isset($success)): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <?php echo htmlspecialchars($success); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-
-            <?php if (isset($error)): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    <?php echo htmlspecialchars($error); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-
-            <!-- Add New Opportunity Form -->
-            <div class="add-opportunity-form">
-                <h5 class="mb-3">
-                    <i class="fas fa-plus text-primary me-2"></i>
-                    Ongeza Fursa Mpya
-                </h5>
-                <form method="POST" action="">
-                    <input type="hidden" name="action" value="add_opportunity">
-                    <div class="row">
-                        <div class="col-md-8 mb-3">
-                            <label for="title" class="form-label">
-                                Jina la Fursa <span class="required">*</span>
-                            </label>
-                            <input type="text" class="form-control" id="title" name="title"
-                                value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>"
-                                placeholder="Mfano: Mradi wa Ujenzi wa Ofisi" required>
-                            <div class="help-text">Jina la fursa linaloelezea yaliyomo</div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="category" class="form-label">
-                                Kategoria <span class="required">*</span>
-                            </label>
-                            <select class="form-select" id="category" name="category" required>
-                                <option value="">-- Chagua Kategoria --</option>
-                                <option value="construction" <?php echo (isset($_POST['category']) && $_POST['category'] == 'construction') ? 'selected' : ''; ?>>
-                                    Ujenzi
-                                </option>
-                                <option value="technology" <?php echo (isset($_POST['category']) && $_POST['category'] == 'technology') ? 'selected' : ''; ?>>
-                                    Teknolojia
-                                </option>
-                                <option value="agriculture" <?php echo (isset($_POST['category']) && $_POST['category'] == 'agriculture') ? 'selected' : ''; ?>>
-                                    Kilimo
-                                </option>
-                                <option value="services" <?php echo (isset($_POST['category']) && $_POST['category'] == 'services') ? 'selected' : ''; ?>>
-                                    Huduma
-                                </option>
-                                <option value="manufacturing" <?php echo (isset($_POST['category']) && $_POST['category'] == 'manufacturing') ? 'selected' : ''; ?>>
-                                    Uzalishaji
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="budget" class="form-label">Bajeti (TZS)</label>
-                            <input type="text" class="form-control" id="budget" name="budget"
-                                value="<?php echo htmlspecialchars($_POST['budget'] ?? ''); ?>"
-                                placeholder="Mfano: 5,000,000">
-                            <div class="help-text">Bajeti ya mradi au fursa</div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="deadline" class="form-label">Tarehe ya Mwisho</label>
-                            <input type="date" class="form-control" id="deadline" name="deadline"
-                                value="<?php echo htmlspecialchars($_POST['deadline'] ?? ''); ?>">
-                            <div class="help-text">Tarehe ya mwisho ya kuomba fursa</div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="location" class="form-label">Mahali</label>
-                            <input type="text" class="form-control" id="location" name="location"
-                                value="<?php echo htmlspecialchars($_POST['location'] ?? ''); ?>"
-                                placeholder="Mfano: Dar es Salaam">
-                            <div class="help-text">Mahali pa kufanyia kazi</div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="contact_info" class="form-label">Maelezo ya Mawasiliano</label>
-                            <input type="text" class="form-control" id="contact_info" name="contact_info"
-                                value="<?php echo htmlspecialchars($_POST['contact_info'] ?? ''); ?>"
-                                placeholder="Simu au email">
-                            <div class="help-text">Maelezo ya kuwasiliana nao</div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="description" class="form-label">
-                            Maelezo ya Fursa <span class="required">*</span>
-                        </label>
-                        <textarea class="form-control" id="description" name="description" rows="3"
-                            placeholder="Eleza kwa undani kuhusu fursa hii..." required><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
-                        <div class="help-text">Maelezo kamili ya fursa na yaliyomo</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="requirements" class="form-label">
-                            Mahitaji <span class="required">*</span>
-                        </label>
-                        <textarea class="form-control" id="requirements" name="requirements" rows="3"
-                            placeholder="Andika mahitaji ya fursa hii..." required><?php echo htmlspecialchars($_POST['requirements'] ?? ''); ?></textarea>
-                        <div class="help-text">Mahitaji ya mwombaji au kampuni</div>
-                    </div>
-
-                    <div class="text-end">
-                        <button type="submit" name="add_opportunity" class="btn btn-primary-custom">
-                            <i class="fas fa-plus me-2"></i>
-                            Ongeza Fursa
+                <div class="col-md-6 text-end">
+                    <a href="add-opportunity.php" class="btn btn-primary add-opportunity-btn">
+                        <i class="fas fa-plus me-2"></i>Ongeza Fursa
+                    </a>
+                    <div class="export-dropdown d-inline-block ms-2">
+                        <button class="btn btn-outline-secondary" onclick="toggleExportDropdown()">
+                            <i class="fas fa-download me-2"></i>Pakua
                         </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Search and Filters -->
-            <div class="search-box">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fas fa-search"></i>
-                            </span>
-                            <input type="text" class="form-control" id="searchInput" placeholder="Tafuta fursa...">
+                        <div class="export-dropdown-content" id="exportDropdown">
+                            <a href="export_opportunities.php?format=csv">CSV</a>
+                            <a href="export_opportunities.php?format=pdf">PDF</a>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="categoryFilter">
-                            <option value="">Kategoria Zote</option>
-                            <option value="construction">Ujenzi</option>
-                            <option value="technology">Teknolojia</option>
-                            <option value="agriculture">Kilimo</option>
-                            <option value="services">Huduma</option>
-                            <option value="manufacturing">Uzalishaji</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="statusFilter">
-                            <option value="">Hali Zote</option>
-                            <option value="active">Zilizotumika</option>
-                            <option value="pending">Zinazosubiri</option>
-                            <option value="closed">Zilizofungwa</option>
-                        </select>
-                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Opportunities Table -->
-            <div class="card opportunity-table">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-list me-2"></i>
-                        Orodha ya Fursa
-                    </h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Fursa</th>
-                                    <th>Kategoria</th>
-                                    <th>Bajeti</th>
-                                    <th>Tarehe ya Mwisho</th>
-                                    <th>Hali</th>
-                                    <th>Maombi</th>
-                                    <th>Vitendo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($opportunities as $item): ?>
-                                    <tr>
-                                        <td>
-                                            <span class="badge bg-secondary">#<?php echo $item['id']; ?></span>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="opportunity-icon me-3">
-                                                    <i class="fas fa-briefcase"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bold opportunity-text" title="<?php echo htmlspecialchars($item['title']); ?>">
-                                                        <?php echo htmlspecialchars($item['title']); ?>
-                                                    </div>
-                                                    <small class="text-muted">
-                                                        <?php echo htmlspecialchars($item['description']); ?>
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="category-badge">
-                                                <?php
-                                                switch ($item['category'] ?? 'general') {
-                                                    case 'construction':
-                                                        echo 'Ujenzi';
-                                                        break;
-                                                    case 'technology':
-                                                        echo 'Teknolojia';
-                                                        break;
-                                                    case 'agriculture':
-                                                        echo 'Kilimo';
-                                                        break;
-                                                    case 'services':
-                                                        echo 'Huduma';
-                                                        break;
-                                                    case 'manufacturing':
-                                                        echo 'Uzalishaji';
-                                                        break;
-                                                    default:
-                                                        echo 'Jumla';
-                                                }
-                                                ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <?php if ($item['budget']): ?>
-                                                <span class="budget-badge">
-                                                    TZS <?php echo number_format($item['budget']); ?>
-                                                </span>
-                                            <?php else: ?>
-                                                <span class="text-muted">Haijatolewa</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if ($item['deadline']): ?>
-                                                <?php
-                                                $deadline = new DateTime($item['deadline']);
-                                                $now = new DateTime();
-                                                $diff = $now->diff($deadline);
-                                                $daysLeft = $diff->invert ? -$diff->days : $diff->days;
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <ul class="nav nav-pills" id="filterTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-filter="all">
+                        Zote (<?= $totalOpportunities ?>)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-filter="this-month">
+                        Mwezi Huu (<?= $thisMonth ?>)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-filter="last-month">
+                        Mwezi Uliopita (<?= $lastMonth ?>)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-filter="this-year">
+                        Mwaka Huu (<?= $thisYear ?>)
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-                                                $deadlineClass = 'deadline-far';
-                                                if ($daysLeft <= 7) {
-                                                    $deadlineClass = 'deadline-urgent';
-                                                } elseif ($daysLeft <= 30) {
-                                                    $deadlineClass = 'deadline-normal';
-                                                }
-                                                ?>
-                                                <span class="deadline-badge <?php echo $deadlineClass; ?>">
-                                                    <?php echo $deadline->format('d M Y'); ?>
-                                                    <br>
-                                                    <small><?php echo $daysLeft > 0 ? "Siku $daysLeft" : "Imekwisha"; ?></small>
-                                                </span>
-                                            <?php else: ?>
-                                                <span class="text-muted">Haijatolewa</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-status bg-<?php
-                                                                                switch ($item['status'] ?? 'pending') {
-                                                                                    case 'active':
-                                                                                        echo 'success';
-                                                                                        break;
-                                                                                    case 'closed':
-                                                                                        echo 'secondary';
-                                                                                        break;
-                                                                                    default:
-                                                                                        echo 'warning';
-                                                                                }
-                                                                                ?>">
-                                                <?php
-                                                switch ($item['status'] ?? 'pending') {
-                                                    case 'active':
-                                                        echo 'Inatumika';
-                                                        break;
-                                                    case 'closed':
-                                                        echo 'Imefungwa';
-                                                        break;
-                                                    default:
-                                                        echo 'Inasubiri';
-                                                }
-                                                ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-info">
-                                                <?php echo $item['applications_count'] ?? 0; ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-info"
-                                                    onclick="viewOpportunity(<?php echo $item['id']; ?>)">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-primary"
-                                                    onclick="editOpportunity(<?php echo $item['id']; ?>)">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-<?php echo ($item['status'] == 'active') ? 'warning' : 'success'; ?>"
-                                                    onclick="toggleStatus(<?php echo $item['id']; ?>)">
-                                                    <i class="fas fa-<?php echo ($item['status'] == 'active') ? 'pause' : 'play'; ?>"></i>
-                                                </button>
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-danger"
-                                                    onclick="deleteOpportunity(<?php echo $item['id']; ?>)">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pagination -->
-            <?php if ($totalPages > 1): ?>
-                <nav aria-label="Opportunities pagination" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        <?php if ($page > 1): ?>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<?php echo $page - 1; ?>">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-
-                        <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                            <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
-                                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                            </li>
-                        <?php endfor; ?>
-
-                        <?php if ($page < $totalPages): ?>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<?php echo $page + 1; ?>">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
-            <?php endif; ?>
+        <!-- Opportunities Table -->
+        <div class="opportunity-table">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Picha</th>
+                        <th>Kichwa Cha Habari</th>
+                        <th>Maelezo</th>
+                        <th>Mwezi</th>
+                        <th>Tarehe</th>
+                        <th>Vitendo</th>
+                    </tr>
+                </thead>
+                <tbody id="opportunityTableBody">
+                    <?php if (empty($opportunities)): ?>
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <i class="fas fa-lightbulb fa-2x text-muted mb-2"></i>
+                                <p class="text-muted mb-0">Hakuna fursa zilizopatikana</p>
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($opportunities as $item): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($item['id']) ?></td>
+                                <td>
+                                    <?php if (!empty($item['image'])): ?>
+                                        <img src="../uploads/Fursa/<?= htmlspecialchars($item['image']) ?>"
+                                            alt="Opportunity Image"
+                                            class="opportunity-thumbnail">
+                                    <?php else: ?>
+                                        <span class="text-muted">Hakuna picha</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= htmlspecialchars($item['name'] ?? 'N/A') ?></td>
+                                <td>
+                                    <?php
+                                    $description = $item['description'] ?? '';
+                                    echo strlen($description) > 50 ? substr($description, 0, 50) . '...' : $description;
+                                    ?>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">
+                                        <?= htmlspecialchars($item['month'] ?? 'N/A') ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <?php
+                                    $date = $item['date_created'] ?? '';
+                                    echo $date ? date('d/m/Y H:i', strtotime($date)) : 'N/A';
+                                    ?>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm action-btn view" onclick="viewOpportunity(<?= $item['id'] ?>)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <a href="edit-opportunity.php?id=<?= $item['id'] ?>" class="btn btn-sm action-btn edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-sm action-btn delete" onclick="deleteOpportunity(<?= $item['id'] ?>)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Opportunity View Modal -->
+    <div class="modal fade" id="opportunityViewModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Maelezo ya Fursa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="opportunityModalBody">
+                    <!-- Content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php include __DIR__ . '/includes/admin_footer_common.php'; ?>
 
     <script>
+        // Toggle export dropdown
+        function toggleExportDropdown() {
+            document.getElementById("exportDropdown").classList.toggle("show");
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.export-dropdown')) {
+                var dropdowns = document.getElementsByClassName("export-dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
         // Search functionality
         document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('tbody tr');
+            searchOpportunities(this.value);
+        });
+
+        function searchOpportunities(query) {
+            const rows = document.querySelectorAll('#opportunityTableBody tr');
+            query = query.toLowerCase();
 
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        // Filter by month/period
+        document.querySelectorAll('#filterTabs .nav-link').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Remove active class from all tabs
+                document.querySelectorAll('#filterTabs .nav-link').forEach(t => t.classList.remove('active'));
+
+                // Add active class to clicked tab
+                this.classList.add('active');
+
+                // Filter table rows
+                const filter = this.dataset.filter;
+                filterByPeriod(filter);
             });
         });
 
-        // Filter functionality
-        document.getElementById('categoryFilter').addEventListener('change', filterOpportunities);
-        document.getElementById('statusFilter').addEventListener('change', filterOpportunities);
-
-        function filterOpportunities() {
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const rows = document.querySelectorAll('tbody tr');
+        function filterByPeriod(filter) {
+            const rows = document.querySelectorAll('#opportunityTableBody tr');
 
             rows.forEach(row => {
-                const category = row.querySelector('td:nth-child(3)').textContent.trim();
-                const status = row.querySelector('td:nth-child(6)').textContent.trim();
+                if (filter === 'all') {
+                    row.style.display = '';
+                    return;
+                }
 
-                const categoryMatch = !categoryFilter || category.includes(categoryFilter);
-                const statusMatch = !statusFilter || status.includes(statusFilter);
+                const monthCell = row.querySelector('td:nth-child(5) .badge');
+                const dateCell = row.querySelector('td:nth-child(6)');
 
-                row.style.display = (categoryMatch && statusMatch) ? '' : 'none';
+                if (monthCell && dateCell) {
+                    const month = monthCell.textContent.trim();
+                    const date = dateCell.textContent.trim();
+
+                    let shouldShow = false;
+
+                    switch (filter) {
+                        case 'this-month':
+                            shouldShow = month === new Date().toLocaleDateString('en-US', {
+                                month: 'long'
+                            });
+                            break;
+                        case 'last-month':
+                            const lastMonth = new Date();
+                            lastMonth.setMonth(lastMonth.getMonth() - 1);
+                            shouldShow = month === lastMonth.toLocaleDateString('en-US', {
+                                month: 'long'
+                            });
+                            break;
+                        case 'this-year':
+                            const currentYear = new Date().getFullYear().toString();
+                            shouldShow = date.includes(currentYear);
+                            break;
+                    }
+
+                    row.style.display = shouldShow ? '' : 'none';
+                }
             });
         }
 
         // View opportunity details
         function viewOpportunity(opportunityId) {
-            // This would typically load opportunity details via AJAX
-            alert('Tazama maelezo ya fursa #' + opportunityId);
-        }
+            fetch(`get_opportunity_details.php?id=${opportunityId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const opportunity = data.opportunity;
+                        document.getElementById('opportunityModalBody').innerHTML = `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Maelezo ya Msingi</h6>
+                                    <p><strong>Kichwa:</strong> ${opportunity.name || 'N/A'}</p>
+                                    <p><strong>Mwezi:</strong> ${opportunity.month || 'N/A'}</p>
+                                    <p><strong>Tarehe:</strong> ${opportunity.date_created ? new Date(opportunity.date_created).toLocaleDateString('sw-TZ') : 'N/A'}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Picha</h6>
+                                    ${opportunity.image ? `<img src="../uploads/Fursa/${opportunity.image}" alt="Opportunity Image" class="img-fluid rounded" style="max-width: 200px;">` : '<p class="text-muted">Hakuna picha</p>'}
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <h6>Maelezo ya Fursa</h6>
+                                    <p>${opportunity.description || 'N/A'}</p>
+                                </div>
+                            </div>
+                        `;
 
-        // Edit opportunity
-        function editOpportunity(opportunityId) {
-            // This would typically redirect to edit page
-            window.location.href = '/admin/edit-opportunity.php?id=' + opportunityId;
-        }
-
-        // Toggle opportunity status
-        function toggleStatus(opportunityId) {
-            if (confirm('Je, una uhakika unataka kubadilisha hali ya fursa hii?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.innerHTML = `
-                    <input type="hidden" name="opportunity_id" value="${opportunityId}">
-                    <input type="hidden" name="action" value="toggle_status">
-                `;
-                document.body.appendChild(form);
-                form.submit();
-            }
+                        const modal = new bootstrap.Modal(document.getElementById('opportunityViewModal'));
+                        modal.show();
+                    } else {
+                        alert('Kuna tatizo la mtandao. Jaribu tena.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Kuna tatizo la mtandao. Jaribu tena.');
+                });
         }
 
         // Delete opportunity
         function deleteOpportunity(opportunityId) {
-            if (confirm('Je, una uhakika unataka kufuta fursa hii? Kitendo hiki hakiwezi kubatilishwa!')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.innerHTML = `
-                    <input type="hidden" name="opportunity_id" value="${opportunityId}">
-                    <input type="hidden" name="action" value="delete">
-                `;
-                document.body.appendChild(form);
-                form.submit();
+            if (confirm('Una uhakika unataka kufuta fursa hii?')) {
+                fetch('delete_opportunity.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            opportunity_id: opportunityId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert(data.message || 'Imefeli kufuta fursa');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Kuna tatizo la mtandao. Jaribu tena.');
+                    });
             }
         }
-
-        // Form validation
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const title = document.getElementById('title').value.trim();
-            const description = document.getElementById('description').value.trim();
-            const requirements = document.getElementById('requirements').value.trim();
-
-            if (!title || title.length < 10) {
-                e.preventDefault();
-                alert('Jina la fursa lazima liwe na herufi 10 au zaidi.');
-                document.getElementById('title').focus();
-                return false;
-            }
-
-            if (!description || description.length < 50) {
-                e.preventDefault();
-                alert('Maelezo lazima yawe na herufi 50 au zaidi.');
-                document.getElementById('description').focus();
-                return false;
-            }
-
-            if (!requirements || requirements.length < 20) {
-                e.preventDefault();
-                alert('Mahitaji lazima yawe na herufi 20 au zaidi.');
-                document.getElementById('requirements').focus();
-                return false;
-            }
-        });
     </script>
 </body>
 
