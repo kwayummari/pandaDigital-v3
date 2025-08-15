@@ -21,7 +21,7 @@ class PaymentService
     }
 
     /**
-     * Generate a new AzamPay authentication token
+     * Generate a new AzamPay authentication token - EXACT COPY from working old code
      */
     private function generateToken()
     {
@@ -33,35 +33,33 @@ class PaymentService
             'appName' => $this->config['AZAMPAY_APP_NAME']
         ];
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $authUrl);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($authData));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json'
-        ]);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $authOptions = [
+            'http' => [
+                'method' => 'POST',
+                'header' => 'Content-Type: application/json',
+                'content' => json_encode($authData),
+                'ignore_errors' => true
+            ]
+        ];
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $authContext = stream_context_create($authOptions);
+        $authResponse = file_get_contents($authUrl, false, $authContext);
 
-        if ($response === false) {
-            throw new Exception('Failed to connect to AzamPay authentication service');
+        if ($authResponse === false) {
+            throw new Exception('Error fetching token from AzamPay');
         }
 
-        $responseData = json_decode($response, true);
-
-        if (!isset($responseData['data']['accessToken'])) {
-            throw new Exception('Invalid token response from AzamPay: ' . $response);
+        $authResponseData = json_decode($authResponse, true);
+        if (!isset($authResponseData['data']['accessToken'])) {
+            error_log("Invalid token response: " . $authResponse);
+            throw new Exception('Error: Invalid token response from AzamPay');
         }
 
-        return $responseData['data']['accessToken'];
+        return $authResponseData['data']['accessToken'];
     }
 
     /**
-     * Process payment request to AzamPay
+     * Process payment request to AzamPay - EXACT COPY from working old code
      */
     private function processPaymentRequest($paymentData, $token, $clientId)
     {
@@ -73,21 +71,27 @@ class PaymentService
             "X-API-Key: $clientId"
         ];
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $checkoutUrl);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($paymentData));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // Log the request for debugging
+        error_log("AzamPay Request: " . json_encode($paymentData));
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $options = [
+            'http' => [
+                'method' => 'POST',
+                'header' => implode("\r\n", $headers),
+                'content' => json_encode($paymentData),
+                'ignore_errors' => true
+            ]
+        ];
+
+        $context = stream_context_create($options);
+        $response = file_get_contents($checkoutUrl, false, $context);
 
         if ($response === false) {
-            throw new Exception('Failed to connect to AzamPay checkout service');
+            throw new Exception("Unable to process payment request - network error");
         }
+
+        // Log the response for debugging
+        error_log("AzamPay Response: " . $response);
 
         return $response;
     }
