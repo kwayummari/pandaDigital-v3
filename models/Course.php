@@ -549,27 +549,28 @@ class Course
             $conn = $this->db->getConnection();
             $offset = ($page - 1) * $perPage;
 
+            // Simple query to get basic course data
             $stmt = $conn->prepare("
                 SELECT 
-                    c.id, 
-                    c.name as title, 
-                    c.description, 
-                    c.video,
-                    c.photo,
-                    c.courseIsPaidStatusId,
-                    COUNT(DISTINCT v.id) as total_videos,
-                    COUNT(DISTINCT q.id) as total_questions,
-                    COUNT(DISTINCT e.user_id) as enrollment_count
-                FROM course c
-                LEFT JOIN video v ON c.id = v.course_id
-                LEFT JOIN question q ON v.id = q.video_id
-                LEFT JOIN enrolled e ON c.id = e.course_id
-                GROUP BY c.id, c.name, c.description, c.video, c.photo, c.courseIsPaidStatusId
-                ORDER BY c.id DESC 
+                    id, 
+                    name as title, 
+                    description, 
+                    video,
+                    photo,
+                    courseIsPaidStatusId
+                FROM course 
+                ORDER BY id DESC 
                 LIMIT ? OFFSET ?
             ");
             $stmt->execute([$perPage, $offset]);
-            return $stmt->fetchAll();
+            $courses = $stmt->fetchAll();
+
+            error_log("getAllCoursesForAdmin: Found " . count($courses) . " courses");
+            if (!empty($courses)) {
+                error_log("First course: " . json_encode($courses[0]));
+            }
+
+            return $courses;
         } catch (PDOException $e) {
             error_log("Error getting all courses for admin: " . $e->getMessage());
             return [];

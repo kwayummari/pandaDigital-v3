@@ -13,15 +13,24 @@ $userModel = new User();
 
 // Get course statistics
 $totalCourses = $courseModel->getTotalCourses();
-$publishedCourses = $courseModel->getTotalPublishedCourses();
-$draftCourses = $courseModel->getTotalDraftCourses();
 $totalEnrollments = $courseModel->getTotalEnrollments();
 
 // Get all courses for display
 $courses = $courseModel->getAllCoursesForAdmin();
 
+
+
 // Get instructor stats
 $totalInstructors = $userModel->getTotalInstructors();
+
+// Debug: Check what we're getting
+error_log("Total courses: " . $totalCourses);
+error_log("Courses array count: " . count($courses));
+if (!empty($courses)) {
+    error_log("First course data: " . json_encode($courses[0]));
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -347,6 +356,18 @@ $totalInstructors = $userModel->getTotalInstructors();
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
+
+            <!-- Debug Information -->
+            <div class="alert alert-info">
+                <strong>Debug Info:</strong><br>
+                Total Courses: <?= $totalCourses ?><br>
+                Courses Array Count: <?= count($courses) ?><br>
+                <?php if (!empty($courses)): ?>
+                    First Course: <?= json_encode($courses[0]) ?>
+                <?php else: ?>
+                    No courses found in array
+                <?php endif; ?>
+            </div>
 
 
 
