@@ -103,10 +103,8 @@ try {
     try {
         $paymentResult = $paymentService->processCoursePayment($data['phone'], $data['amount'], $data['provider']);
 
-        // Parse the response
-        $responseData = json_decode($paymentResult, true);
-
-        if (isset($responseData['transactionId'])) {
+        // PaymentService returns an array directly, not JSON
+        if ($paymentResult['success'] && isset($paymentResult['transactionId'])) {
             // Update transaction status to processing
             $courseModel->updatePaymentTransaction($transactionId, 2); // 2 = processing
 
@@ -114,7 +112,7 @@ try {
                 'success' => true,
                 'message' => 'Payment initiated successfully',
                 'referenceNumber' => $referenceNumber,
-                'transactionId' => $responseData['transactionId']
+                'transactionId' => $paymentResult['transactionId']
             ]);
         } else {
             // Update transaction status to failed
@@ -123,7 +121,7 @@ try {
             http_response_code(400);
             echo json_encode([
                 'success' => false,
-                'message' => $responseData['message'] ?? 'Payment initiation failed'
+                'message' => $paymentResult['message'] ?? 'Payment initiation failed'
             ]);
         }
     } catch (Exception $e) {
