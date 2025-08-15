@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Jina la kozi na mwalimu ni lazima';
         } else {
             // Handle file upload if new image is provided
-            $imageUrl = $course['image_url'] ?? null;
+            $photoPath = $course['photo'] ?? null;
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
                 $uploadDir = __DIR__ . '/../uploads/courses/';
                 if (!is_dir($uploadDir)) {
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $uploadPath = $uploadDir . $fileName;
 
                     if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
-                        $imageUrl = 'uploads/courses/' . $fileName;
+                        $photoPath = $fileName;
                     }
                 }
             }
@@ -66,12 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Update course using the Course model
                 $courseModel = new Course();
                 $result = $courseModel->updateCourse($courseId, [
-                    'title' => $title,
+                    'name' => $title,
                     'description' => $description,
                     'instructor_id' => $instructorId,
                     'price' => $price > 0 ? $price : 0,
                     'status' => $status,
-                    'image_url' => $imageUrl
+                    'photo' => $photoPath
                 ]);
 
                 if ($result) {
@@ -175,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="col-md-6 mb-3">
                         <label for="courseTitle" class="form-label">Jina la Kozi *</label>
                         <input type="text" class="form-control" id="courseTitle" name="title"
-                            value="<?= htmlspecialchars($course['title'] ?? '') ?>" required>
+                            value="<?= htmlspecialchars($course['name'] ?? '') ?>" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="courseInstructor" class="form-label">Mwalimu *</label>
@@ -215,10 +215,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="mb-3">
                     <label for="courseImage" class="form-label">Picha ya Kozi</label>
-                    <?php if (!empty($course['image_url'])): ?>
+                    <?php if (!empty($course['photo'])): ?>
                         <div class="mb-2">
                             <strong>Picha ya Sasa:</strong><br>
-                            <img src="<?= app_url($course['image_url']) ?>" alt="Current Course Image" class="current-image">
+                            <img src="../uploads/courses/<?= htmlspecialchars($course['photo']) ?>" alt="Current Course Image" class="current-image">
                         </div>
                     <?php endif; ?>
                     <input type="file" class="form-control" id="courseImage" name="image" accept="image/*">

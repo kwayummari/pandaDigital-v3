@@ -1318,18 +1318,18 @@ class Course
 
             $stmt = $conn->prepare("
                 INSERT INTO course (
-                    title, description, instructor_id, price, status, 
-                    image_url, created_at, updated_at
+                    name, description, instructor_id, price, status, 
+                    photo, created_at, updated_at
                 ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
             ");
 
             $result = $stmt->execute([
-                $courseData['title'],
+                $courseData['name'],
                 $courseData['description'],
                 $courseData['instructor_id'],
                 $courseData['price'],
                 $courseData['status'],
-                $courseData['image_url']
+                $courseData['photo']
             ]);
 
             if ($result) {
@@ -1353,18 +1353,18 @@ class Course
 
             $stmt = $conn->prepare("
                 UPDATE course SET 
-                    title = ?, description = ?, instructor_id = ?, 
-                    price = ?, status = ?, image_url = ?, updated_at = NOW()
+                    name = ?, description = ?, instructor_id = ?, 
+                    price = ?, status = ?, photo = ?, updated_at = NOW()
                 WHERE id = ?
             ");
 
             $result = $stmt->execute([
-                $courseData['title'],
+                $courseData['name'],
                 $courseData['description'],
                 $courseData['instructor_id'],
                 $courseData['price'],
                 $courseData['status'],
-                $courseData['image_url'],
+                $courseData['photo'],
                 $courseId
             ]);
 
