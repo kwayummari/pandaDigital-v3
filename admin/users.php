@@ -39,7 +39,6 @@ $totalPages = ceil($totalUsers / $perPage);
 
 // Get user statistics
 $userStats = $userModel->getUserStatsByRole();
-$userStatsByStatus = $userModel->getUserStatsByStatus();
 ?>
 
 <!DOCTYPE html>
@@ -167,12 +166,12 @@ $userStatsByStatus = $userModel->getUserStatsByStatus();
             padding: 0.5rem 1rem;
         }
 
-        /* Status filter tabs styling */
-        #statusTabs {
+                /* Role filter tabs styling */
+        #roleTabs {
             border-bottom: none;
         }
-
-        #statusTabs .nav-link {
+        
+        #roleTabs .nav-link {
             border: none;
             border-radius: 0;
             color: #6c757d;
@@ -181,29 +180,29 @@ $userStatsByStatus = $userModel->getUserStatsByStatus();
             transition: all 0.3s ease;
             position: relative;
         }
-
-        #statusTabs .nav-link:hover {
+        
+        #roleTabs .nav-link:hover {
             color: #495057;
             background-color: #f8f9fa;
         }
-
-        #statusTabs .nav-link.active {
+        
+        #roleTabs .nav-link.active {
             color: #000;
             background-color: #fff;
             border-bottom: 3px solid #000;
             font-weight: 600;
         }
-
-        #statusTabs .nav-link i {
+        
+        #roleTabs .nav-link i {
             margin-right: 0.5rem;
             opacity: 0.7;
         }
-
-        #statusTabs .nav-link.active i {
+        
+        #roleTabs .nav-link.active i {
             opacity: 1;
         }
-
-        #statusTabs .nav-link span {
+        
+        #roleTabs .nav-link span {
             font-size: 0.875rem;
             opacity: 0.8;
         }
@@ -506,8 +505,8 @@ $userStatsByStatus = $userModel->getUserStatsByStatus();
                 row.style.display = text.includes(searchTerm) ? '' : 'none';
             });
 
-            // Update status counts after search
-            updateStatusCounts('all');
+            // Update role counts after search
+            updateRoleCounts('all');
         });
 
         // Filter functionality
@@ -529,8 +528,8 @@ $userStatsByStatus = $userModel->getUserStatsByStatus();
                 row.style.display = (roleMatch && statusMatch) ? '' : 'none';
             });
 
-            // Update status counts after filter
-            updateStatusCounts('all');
+            // Update role counts after filter
+            updateRoleCounts('all');
         }
 
         // Toggle user status
@@ -692,78 +691,84 @@ $userStatsByStatus = $userModel->getUserStatsByStatus();
             alert('Edit functionality will be implemented in the future for user ID: ' + userId);
         }
 
-        // Initialize status counts when page loads
+                // Initialize role counts when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            updateStatusCounts('all');
+            updateRoleCounts('all');
         });
-
-        // Filter users by status
-        function filterByStatus(status) {
-            console.log('Filtering by status:', status);
-
+        
+        // Filter users by role
+        function filterByRole(role) {
+            console.log('Filtering by role:', role);
+            
             // Update active tab
-            document.querySelectorAll('#statusTabs .nav-link').forEach(tab => {
+            document.querySelectorAll('#roleTabs .nav-link').forEach(tab => {
                 tab.classList.remove('active');
             });
             event.target.classList.add('active');
-
+            
             // Get all table rows
             const tableRows = document.querySelectorAll('#usersTable tbody tr');
-
+            
             tableRows.forEach(row => {
-                const statusCell = row.querySelector('td:nth-child(6)'); // Status column
-                if (statusCell) {
-                    const userStatus = statusCell.textContent.trim().toLowerCase();
-
-                    if (status === 'all') {
+                const roleCell = row.querySelector('td:nth-child(5)'); // Role column
+                if (roleCell) {
+                    const userRole = roleCell.textContent.trim().toLowerCase();
+                    
+                    if (role === 'all') {
                         row.style.display = '';
-                    } else if (status === 'active' && userStatus.includes('inatumika')) {
+                    } else if (role === 'user' && userRole.includes('mwanafunzi')) {
                         row.style.display = '';
-                    } else if (status === 'inactive' && userStatus.includes('imezimwa')) {
+                    } else if (role === 'expert' && userRole.includes('mtaalam')) {
                         row.style.display = '';
-                    } else if (status === 'pending' && userStatus.includes('inasubiri')) {
+                    } else if (role === 'admin' && userRole.includes('mkurugenzi')) {
+                        row.style.display = '';
+                    } else if (role === 'empty' && (userRole === '' || userRole === 'null' || userRole === 'undefined')) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
                     }
                 }
             });
-
+            
             // Update counts display
-            updateStatusCounts(status);
+            updateRoleCounts(role);
         }
-
-        // Update status counts display
-        function updateStatusCounts(activeStatus) {
+        
+        // Update role counts display
+        function updateRoleCounts(activeRole) {
             const tableRows = document.querySelectorAll('#usersTable tbody tr');
             let allCount = 0;
-            let activeCount = 0;
-            let inactiveCount = 0;
-            let pendingCount = 0;
-
+            let userCount = 0;
+            let expertCount = 0;
+            let adminCount = 0;
+            let emptyCount = 0;
+            
             tableRows.forEach(row => {
                 if (row.style.display !== 'none') {
                     allCount++;
                 }
-
-                const statusCell = row.querySelector('td:nth-child(6)');
-                if (statusCell) {
-                    const userStatus = statusCell.textContent.trim().toLowerCase();
-                    if (userStatus.includes('inatumika')) {
-                        activeCount++;
-                    } else if (userStatus.includes('imezimwa')) {
-                        inactiveCount++;
-                    } else if (userStatus.includes('inasubiri')) {
-                        pendingCount++;
+                
+                const roleCell = row.querySelector('td:nth-child(5)');
+                if (roleCell) {
+                    const userRole = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+                    if (userRole.includes('mwanafunzi')) {
+                        userCount++;
+                    } else if (userRole.includes('mtaalam')) {
+                        expertCount++;
+                    } else if (userRole.includes('mkurugenzi')) {
+                        adminCount++;
+                    } else if (userRole === '' || userRole === 'null' || userRole === 'undefined') {
+                        emptyCount++;
                     }
                 }
             });
-
+            
             // Update count displays
             document.getElementById('all-count').textContent = allCount;
-            document.getElementById('active-count').textContent = activeCount;
-            document.getElementById('inactive-count').textContent = inactiveCount;
-            document.getElementById('pending-count').textContent = pendingCount;
+            document.getElementById('user-count').textContent = userCount;
+            document.getElementById('expert-count').textContent = expertCount;
+            document.getElementById('admin-count').textContent = adminCount;
+            document.getElementById('empty-count').textContent = emptyCount;
         }
 
 

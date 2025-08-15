@@ -367,16 +367,25 @@ class User
         try {
             $conn = $this->db->getConnection();
             $stmt = $conn->prepare("
-                SELECT role, COUNT(*) as count 
+                SELECT 
+                    CASE 
+                        WHEN role IS NULL OR role = '' THEN 'empty'
+                        ELSE role 
+                    END as role_group,
+                    COUNT(*) as count 
                 FROM users 
-                GROUP BY role
+                GROUP BY 
+                    CASE 
+                        WHEN role IS NULL OR role = '' THEN 'empty'
+                        ELSE role 
+                    END
             ");
             $stmt->execute();
             $results = $stmt->fetchAll();
 
             $stats = [];
             foreach ($results as $result) {
-                $stats[$result['role']] = $result['count'];
+                $stats[$result['role_group']] = $result['count'];
             }
 
             return $stats;
