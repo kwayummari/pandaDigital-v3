@@ -249,38 +249,56 @@ $totalInstructors = $userModel->getTotalInstructors();
             display: block;
         }
 
-        /* Optimize layout spacing */
+        /* Fix layout spacing issues */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
         .main-content {
             margin-left: 280px !important;
-            padding-left: 0 !important;
+            padding: 0 !important;
+            width: calc(100% - 280px) !important;
         }
 
         .content-wrapper {
             padding: 20px 30px;
-            margin-left: 0;
+            margin: 0;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .row {
-            margin-left: 0;
-            margin-right: 0;
+            margin: 0;
+            width: 100%;
         }
 
         .col-md-3,
         .col-md-6 {
-            padding-left: 15px;
-            padding-right: 15px;
+            padding: 0 15px;
+            box-sizing: border-box;
         }
 
         .search-box,
         .filter-tabs,
         .course-table {
-            margin-left: 0;
-            margin-right: 0;
+            margin: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Override any conflicting Bootstrap styles */
+        .container-fluid {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
         }
 
         @media (max-width: 768px) {
             .main-content {
                 margin-left: 0 !important;
+                width: 100% !important;
             }
         }
     </style>
@@ -301,20 +319,20 @@ $totalInstructors = $userModel->getTotalInstructors();
                 </div>
                 <div class="col-md-3">
                     <div class="stats-card">
-                        <div class="stats-number"><?= number_format($publishedCourses) ?></div>
-                        <div class="stats-label">Kozi Zilizochapishwa</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number"><?= number_format($draftCourses) ?></div>
-                        <div class="stats-label">Kozi za Rasimu</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
                         <div class="stats-number"><?= number_format($totalEnrollments) ?></div>
                         <div class="stats-label">Jumla ya Usajili</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number"><?= number_format($totalInstructors) ?></div>
+                        <div class="stats-label">Waalimu</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number"><?= number_format($totalCourses) ?></div>
+                        <div class="stats-label">Video Zote</div>
                     </div>
                 </div>
             </div>
@@ -329,6 +347,8 @@ $totalInstructors = $userModel->getTotalInstructors();
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
+
+
 
             <!-- Search and Actions -->
             <div class="search-box">
@@ -367,18 +387,13 @@ $totalInstructors = $userModel->getTotalInstructors();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="filterByStatus('published')">
-                            Zilizochapishwa (<?= $publishedCourses ?>)
+                        <a class="nav-link" href="#" onclick="filterByStatus('with_video')">
+                            Zilizo na Video (<?= $totalCourses ?>)
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="filterByStatus('draft')">
-                            Rasimu (<?= $draftCourses ?>)
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="filterByStatus('pending')">
-                            Zinasubiri (<?= $totalCourses - $publishedCourses - $draftCourses ?>)
+                        <a class="nav-link" href="#" onclick="filterByStatus('with_photo')">
+                            Zilizo na Picha (<?= $totalCourses ?>)
                         </a>
                     </li>
                 </ul>
@@ -392,64 +407,49 @@ $totalInstructors = $userModel->getTotalInstructors();
                             <tr>
                                 <th>ID</th>
                                 <th>Jina la Kozi</th>
-                                <th>Mwalimu</th>
-                                <th>Bei</th>
-                                <th>Hali</th>
-                                <th>Tarehe ya Uundaji</th>
+                                <th>Maelezo</th>
+                                <th>Video</th>
+                                <th>Picha</th>
                                 <th>Vitendo</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($courses)): ?>
                                 <tr>
-                                    <td colspan="7" class="text-center py-4">
+                                    <td colspan="6" class="text-center py-4">
                                         <p class="text-muted mb-0">Hakuna kozi zilizopatikana</p>
                                     </td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($courses as $course): ?>
-                                    <tr data-status="<?= strtolower($course['status'] ?? 'pending') ?>">
+                                    <tr>
                                         <td><?= $course['id'] ?></td>
                                         <td>
                                             <div>
                                                 <strong><?= htmlspecialchars($course['title'] ?? 'N/A') ?></strong>
-                                                <?php if (!empty($course['description'])): ?>
-                                                    <br><small class="text-muted"><?= htmlspecialchars(substr($course['description'], 0, 100)) ?>...</small>
-                                                <?php endif; ?>
                                             </div>
                                         </td>
-                                        <td><?= htmlspecialchars($course['instructor_name'] ?? 'N/A') ?></td>
                                         <td>
-                                            <?php if (!empty($course['price']) && $course['price'] > 0): ?>
-                                                TSh <?= number_format($course['price']) ?>
+                                            <?php if (!empty($course['description'])): ?>
+                                                <?= htmlspecialchars(substr($course['description'], 0, 100)) ?>...
                                             <?php else: ?>
-                                                <span class="text-success">Bure</span>
+                                                <span class="text-muted">Hakuna maelezo</span>
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <?php
-                                            $status = strtolower($course['status'] ?? 'pending');
-                                            $statusClass = 'status-' . $status;
-                                            $statusText = '';
-
-                                            switch ($status) {
-                                                case 'published':
-                                                    $statusText = 'Imechapishwa';
-                                                    break;
-                                                case 'draft':
-                                                    $statusText = 'Rasimu';
-                                                    break;
-                                                case 'pending':
-                                                    $statusText = 'Inasubiri';
-                                                    break;
-                                                default:
-                                                    $statusText = 'Haijulikani';
-                                                    $statusClass = 'status-pending';
-                                            }
-                                            ?>
-                                            <span class="status-badge <?= $statusClass ?>"><?= $statusText ?></span>
+                                            <?php if (!empty($course['video'])): ?>
+                                                <span class="text-success"><?= htmlspecialchars($course['video']) ?></span>
+                                            <?php else: ?>
+                                                <span class="text-muted">Hakuna video</span>
+                                            <?php endif; ?>
                                         </td>
-                                        <td><?= !empty($course['created_at']) ? date('d/m/Y H:i', strtotime($course['created_at'])) : 'N/A' ?></td>
+                                        <td>
+                                            <?php if (!empty($course['photo'])): ?>
+                                                <span class="text-info"><?= htmlspecialchars($course['photo']) ?></span>
+                                            <?php else: ?>
+                                                <span class="text-muted">Hakuna picha</span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td>
                                             <button class="action-btn btn-view" onclick="viewCourse(<?= $course['id'] ?>)">
                                                 <i class="fas fa-eye me-1"></i>Ona
@@ -608,9 +608,16 @@ $totalInstructors = $userModel->getTotalInstructors();
             for (let row of rows) {
                 if (status === 'all') {
                     row.style.display = '';
-                } else {
-                    const rowStatus = row.getAttribute('data-status');
-                    if (rowStatus === status) {
+                } else if (status === 'with_video') {
+                    const videoCell = row.cells[3]; // Video column
+                    if (videoCell && !videoCell.textContent.includes('Hakuna video')) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                } else if (status === 'with_photo') {
+                    const photoCell = row.cells[4]; // Photo column
+                    if (photoCell && !photoCell.textContent.includes('Hakuna picha')) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';

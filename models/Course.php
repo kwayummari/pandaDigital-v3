@@ -551,15 +551,20 @@ class Course
 
             $stmt = $conn->prepare("
                 SELECT 
-                    c.id, c.name, c.description, c.courseIsPaidStatusId,
+                    c.id, 
+                    c.name as title, 
+                    c.description, 
+                    c.video,
+                    c.photo,
+                    c.courseIsPaidStatusId,
                     COUNT(DISTINCT v.id) as total_videos,
                     COUNT(DISTINCT q.id) as total_questions,
-                    COUNT(DISTINCT e.user_id) as total_students
+                    COUNT(DISTINCT e.user_id) as enrollment_count
                 FROM course c
                 LEFT JOIN video v ON c.id = v.course_id
                 LEFT JOIN question q ON v.id = q.video_id
                 LEFT JOIN enrolled e ON c.id = e.course_id
-                GROUP BY c.id
+                GROUP BY c.id, c.name, c.description, c.video, c.photo, c.courseIsPaidStatusId
                 ORDER BY c.id DESC 
                 LIMIT ? OFFSET ?
             ");
