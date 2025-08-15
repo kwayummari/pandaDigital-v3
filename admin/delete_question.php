@@ -32,10 +32,10 @@ if (!$questionId || !is_numeric($questionId)) {
 try {
     // Initialize model
     $questionModel = new Question();
-    
+
     // Get question details first to check if it exists
     $question = $questionModel->getQuestionById($questionId);
-    
+
     if (!$question) {
         echo json_encode([
             'success' => false,
@@ -43,7 +43,7 @@ try {
         ]);
         exit;
     }
-    
+
     // Delete the question
     if ($questionModel->deleteQuestion($questionId)) {
         echo json_encode([
@@ -56,7 +56,6 @@ try {
             'message' => 'Imefeli kufuta swali. Tafadhali jaribu tena.'
         ]);
     }
-    
 } catch (Exception $e) {
     error_log("Error deleting question: " . $e->getMessage());
     echo json_encode([

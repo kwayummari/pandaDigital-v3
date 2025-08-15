@@ -32,10 +32,10 @@ if (!$questionId || !is_numeric($questionId)) {
 try {
     // Initialize model
     $questionModel = new Question();
-    
+
     // Get question details
     $question = $questionModel->getQuestionById($questionId);
-    
+
     if (!$question) {
         echo json_encode([
             'success' => false,
@@ -43,12 +43,11 @@ try {
         ]);
         exit;
     }
-    
+
     echo json_encode([
         'success' => true,
         'question' => $question
     ]);
-    
 } catch (Exception $e) {
     error_log("Error getting question details: " . $e->getMessage());
     echo json_encode([

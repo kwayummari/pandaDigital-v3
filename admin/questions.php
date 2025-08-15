@@ -515,13 +515,13 @@ $questions = $questionModel->getAllQuestionsForAdmin();
 
             rows.forEach(row => {
                 if (row.cells.length === 1) return; // Skip "no data" row
-                
+
                 const questionText = row.cells[1].textContent.toLowerCase();
                 const courseText = row.cells[2].textContent.toLowerCase();
-                
+
                 const matchesSearch = questionText.includes(searchTerm);
                 const matchesCourse = !courseFilter || courseText.includes(courseFilter.toLowerCase());
-                
+
                 row.style.display = (matchesSearch && matchesCourse) ? '' : 'none';
             });
         }
@@ -530,13 +530,13 @@ $questions = $questionModel->getAllQuestionsForAdmin();
         document.querySelectorAll('#filterTabs .nav-link').forEach(tab => {
             tab.addEventListener('click', function(e) {
                 e.preventDefault();
-                
+
                 // Remove active class from all tabs
                 document.querySelectorAll('#filterTabs .nav-link').forEach(t => t.classList.remove('active'));
-                
+
                 // Add active class to clicked tab
                 this.classList.add('active');
-                
+
                 const filter = this.getAttribute('data-filter');
                 filterByPeriod(filter);
             });
@@ -556,9 +556,9 @@ $questions = $questionModel->getAllQuestionsForAdmin();
         function viewQuestion(questionId) {
             const modal = new bootstrap.Modal(document.getElementById('questionViewModal'));
             const modalBody = document.getElementById('questionModalBody');
-            
+
             modal.show();
-            
+
             // Show loading
             modalBody.innerHTML = `
                 <div class="text-center">
@@ -567,20 +567,20 @@ $questions = $questionModel->getAllQuestionsForAdmin();
                     </div>
                 </div>
             `;
-            
+
             // Fetch question details
             fetch('get_question_details.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'id=' + questionId
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const question = data.question;
-                    modalBody.innerHTML = `
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'id=' + questionId
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const question = data.question;
+                        modalBody.innerHTML = `
                         <div class="row">
                             <div class="col-md-6">
                                 <h6><strong>ID:</strong></h6>
@@ -601,49 +601,49 @@ $questions = $questionModel->getAllQuestionsForAdmin();
                             </div>
                         </div>
                     `;
-                } else {
-                    modalBody.innerHTML = `
+                    } else {
+                        modalBody.innerHTML = `
                         <div class="alert alert-danger">
                             <i class="fas fa-exclamation-circle me-2"></i>
                             ${data.message}
                         </div>
                     `;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                modalBody.innerHTML = `
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    modalBody.innerHTML = `
                     <div class="alert alert-danger">
                         <i class="fas fa-exclamation-circle me-2"></i>
                         Kuna tatizo la mtandao. Jaribu tena.
                     </div>
                 `;
-            });
+                });
         }
 
         // Delete question
         function deleteQuestion(questionId, questionText) {
             if (confirm(`Je, una uhakika unataka kufuta swali "${questionText}..."? Kitendo hiki hakiwezi kubatilishwa!`)) {
                 fetch('delete_question.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'id=' + questionId
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Kuna tatizo la mtandao. Jaribu tena.');
-                });
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'id=' + questionId
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Kuna tatizo la mtandao. Jaribu tena.');
+                    });
             }
         }
 
