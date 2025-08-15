@@ -138,97 +138,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
+        /* Layout fixes */
+        .content-wrapper {
+            padding: 20px 30px;
+        }
+
+        .edit-form {
+            margin-top: 1rem;
+        }
     </style>
 </head>
 
 <body>
     <?php include __DIR__ . '/includes/admin_header.php'; ?>
 
-    <div class="main-content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="edit-form">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="mb-0">
-                                <i class="fas fa-edit me-2"></i>Hariri Kozi
-                            </h4>
-                            <a href="courses.php" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Rudi Nyuma
-                            </a>
-                        </div>
+    <div class="content-wrapper">
+        <div class="edit-form">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">
+                    <i class="fas fa-edit me-2"></i>Hariri Kozi
+                </h4>
+                <a href="courses.php" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Rudi Nyuma
+                </a>
+            </div>
 
-                        <?php if (isset($error)): ?>
-                            <div class="alert alert-danger">
-                                <i class="fas fa-exclamation-triangle me-2"></i><?= htmlspecialchars($error) ?>
-                            </div>
-                        <?php endif; ?>
+            <?php if (isset($error)): ?>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i><?= htmlspecialchars($error) ?>
+                </div>
+            <?php endif; ?>
 
-                        <form method="POST" enctype="multipart/form-data">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="courseTitle" class="form-label">Jina la Kozi *</label>
-                                    <input type="text" class="form-control" id="courseTitle" name="title"
-                                        value="<?= htmlspecialchars($course['title'] ?? '') ?>" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="courseInstructor" class="form-label">Mwalimu *</label>
-                                    <select class="form-select" id="courseInstructor" name="instructor_id" required>
-                                        <option value="">Chagua mwalimu</option>
-                                        <?php foreach ($instructors as $instructor): ?>
-                                            <option value="<?= $instructor['id'] ?>"
-                                                <?= ($course['instructor_id'] ?? '') == $instructor['id'] ? 'selected' : '' ?>>
-                                                <?= htmlspecialchars($instructor['full_name']) ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="courseDescription" class="form-label">Maelezo</label>
-                                <textarea class="form-control" id="courseDescription" name="description" rows="4"><?= htmlspecialchars($course['description'] ?? '') ?></textarea>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="coursePrice" class="form-label">Bei</label>
-                                    <input type="number" class="form-control" id="coursePrice" name="price"
-                                        value="<?= $course['price'] ?? 0 ?>" min="0" step="100">
-                                    <small class="form-text text-muted">Acha tupu kwa kozi ya bure</small>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="courseStatus" class="form-label">Hali</label>
-                                    <select class="form-select" id="courseStatus" name="status">
-                                        <option value="draft" <?= ($course['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Rasimu</option>
-                                        <option value="pending" <?= ($course['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Inasubiri</option>
-                                        <option value="published" <?= ($course['status'] ?? '') === 'published' ? 'selected' : '' ?>>Imechapishwa</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="courseImage" class="form-label">Picha ya Kozi</label>
-                                <?php if (!empty($course['image_url'])): ?>
-                                    <div class="mb-2">
-                                        <strong>Picha ya Sasa:</strong><br>
-                                        <img src="<?= app_url($course['image_url']) ?>" alt="Current Course Image" class="current-image">
-                                    </div>
-                                <?php endif; ?>
-                                <input type="file" class="form-control" id="courseImage" name="image" accept="image/*">
-                                <small class="form-text text-muted">Acha tupu kuhifadhi picha ya sasa</small>
-                            </div>
-
-                            <div class="d-flex justify-content-end gap-2">
-                                <a href="courses.php" class="btn btn-secondary">Futa</a>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save me-2"></i>Hifadhi Mabadiliko
-                                </button>
-                            </div>
-                        </form>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="courseTitle" class="form-label">Jina la Kozi *</label>
+                        <input type="text" class="form-control" id="courseTitle" name="title"
+                            value="<?= htmlspecialchars($course['title'] ?? '') ?>" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="courseInstructor" class="form-label">Mwalimu *</label>
+                        <select class="form-select" id="courseInstructor" name="instructor_id" required>
+                            <option value="">Chagua mwalimu</option>
+                            <?php foreach ($instructors as $instructor): ?>
+                                <option value="<?= $instructor['id'] ?>"
+                                    <?= ($course['instructor_id'] ?? '') == $instructor['id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($instructor['full_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
-            </div>
+
+                <div class="mb-3">
+                    <label for="courseDescription" class="form-label">Maelezo</label>
+                    <textarea class="form-control" id="courseDescription" name="description" rows="4"><?= htmlspecialchars($course['description'] ?? '') ?></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="coursePrice" class="form-label">Bei</label>
+                        <input type="number" class="form-control" id="coursePrice" name="price"
+                            value="<?= $course['price'] ?? 0 ?>" min="0" step="100">
+                        <small class="form-text text-muted">Acha tupu kwa kozi ya bure</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="courseStatus" class="form-label">Hali</label>
+                        <select class="form-select" id="courseStatus" name="status">
+                            <option value="draft" <?= ($course['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Rasimu</option>
+                            <option value="pending" <?= ($course['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Inasubiri</option>
+                            <option value="published" <?= ($course['status'] ?? '') === 'published' ? 'selected' : '' ?>>Imechapishwa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="courseImage" class="form-label">Picha ya Kozi</label>
+                    <?php if (!empty($course['image_url'])): ?>
+                        <div class="mb-2">
+                            <strong>Picha ya Sasa:</strong><br>
+                            <img src="<?= app_url($course['image_url']) ?>" alt="Current Course Image" class="current-image">
+                        </div>
+                    <?php endif; ?>
+                    <input type="file" class="form-control" id="courseImage" name="image" accept="image/*">
+                    <small class="form-text text-muted">Acha tupu kuhifadhi picha ya sasa</small>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="courses.php" class="btn btn-secondary">Futa</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Hifadhi Mabadiliko
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
