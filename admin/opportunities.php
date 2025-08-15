@@ -131,17 +131,17 @@ $thisYear = $opportunityStats['this_year'] ?? 0;
         }
 
         .action-btn.view {
-            background: #007bff;
+            background: #6c757d;
             color: white;
         }
 
         .action-btn.edit {
-            background: #28a745;
+            background: #6c757d;
             color: white;
         }
 
         .action-btn.delete {
-            background: #dc3545;
+            background: #6c757d;
             color: white;
         }
 
