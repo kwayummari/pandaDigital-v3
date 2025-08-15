@@ -412,7 +412,7 @@ class User
             $stmt = $conn->prepare("
                 SELECT id, first_name, last_name, email, phone, role, account_status, region, date_created
                 FROM users 
-                ORDER BY date_created DESC 
+                ORDER BY id DESC 
                 LIMIT ? OFFSET ?
             ");
             $stmt->execute([$perPage, $offset]);
@@ -432,7 +432,7 @@ class User
                 SELECT id, first_name, last_name, email, phone, role, account_status, region, 
                        date_created, last_login, login_count, bio, expert_authorization, isSeller
                 FROM users 
-                ORDER BY date_created DESC
+                ORDER BY id DESC
             ");
             $stmt->execute();
             return $stmt->fetchAll();
