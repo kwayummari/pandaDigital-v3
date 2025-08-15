@@ -1318,15 +1318,14 @@ class Course
 
             $stmt = $conn->prepare("
                 INSERT INTO course (
-                    name, description, instructor_id, price, status, 
+                    name, description, price, status, 
                     photo, created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+                ) VALUES (?, ?, ?, ?, ?, NOW(), NOW())
             ");
 
             $result = $stmt->execute([
                 $courseData['name'],
                 $courseData['description'],
-                $courseData['instructor_id'],
                 $courseData['price'],
                 $courseData['status'],
                 $courseData['photo']
@@ -1353,7 +1352,7 @@ class Course
 
             $stmt = $conn->prepare("
                 UPDATE course SET 
-                    name = ?, description = ?, instructor_id = ?, 
+                    name = ?, description = ?, 
                     price = ?, status = ?, photo = ?, updated_at = NOW()
                 WHERE id = ?
             ");
@@ -1361,7 +1360,6 @@ class Course
             $result = $stmt->execute([
                 $courseData['name'],
                 $courseData['description'],
-                $courseData['instructor_id'],
                 $courseData['price'],
                 $courseData['status'],
                 $courseData['photo'],

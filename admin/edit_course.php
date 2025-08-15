@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . "/../middleware/AuthMiddleware.php";
 require_once __DIR__ . "/../models/Course.php";
-require_once __DIR__ . "/../models/User.php";
 
 // Check if user is admin
 $auth = new AuthMiddleware();
@@ -15,7 +14,6 @@ if (!$courseId) {
 
 // Initialize models
 $courseModel = new Course();
-$userModel = new User();
 
 // Get course details
 $course = $courseModel->getCourseById($courseId);
@@ -24,20 +22,16 @@ if (!$course) {
     exit;
 }
 
-// Get all instructors for the dropdown
-$instructors = $userModel->getAllInstructors();
-
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $title = trim($_POST['title'] ?? '');
-        $instructorId = $_POST['instructor_id'] ?? '';
         $description = trim($_POST['description'] ?? '');
         $price = $_POST['price'] ?? 0;
         $status = $_POST['status'] ?? 'draft';
 
-        if (empty($title) || empty($instructorId)) {
-            $error = 'Jina la kozi na mwalimu ni lazima';
+        if (empty($title)) {
+            $error = 'Jina la kozi ni lazima';
         } else {
             // Handle file upload if new image is provided
             $photoPath = $course['photo'] ?? null;
@@ -68,7 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $result = $courseModel->updateCourse($courseId, [
                     'name' => $title,
                     'description' => $description,
-                    'instructor_id' => $instructorId,
                     'price' => $price > 0 ? $price : 0,
                     'status' => $status,
                     'photo' => $photoPath
@@ -177,18 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="text" class="form-control" id="courseTitle" name="title"
                             value="<?= htmlspecialchars($course['name'] ?? '') ?>" required>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="courseInstructor" class="form-label">Mwalimu *</label>
-                        <select class="form-select" id="courseInstructor" name="instructor_id" required>
-                            <option value="">Chagua mwalimu</option>
-                            <?php foreach ($instructors as $instructor): ?>
-                                <option value="<?= $instructor['id'] ?>"
-                                    <?= ($course['instructor_id'] ?? '') == $instructor['id'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($instructor['full_name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+
                 </div>
 
                 <div class="mb-3">
