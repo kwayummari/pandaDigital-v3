@@ -104,8 +104,8 @@ $videos = $videoModel->getAllVideosForAdmin();
         }
 
         .filter-tabs .nav-link.active {
-            background: #000;
-            color: white;
+            background: rgba(255, 193, 11, 0.8);
+            color: #000;
         }
 
         .video-table {
@@ -205,7 +205,7 @@ $videos = $videoModel->getAllVideosForAdmin();
             position: absolute;
             background-color: #f9f9f9;
             min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
             z-index: 1;
             border-radius: 8px;
             right: 0;
@@ -415,7 +415,33 @@ $videos = $videoModel->getAllVideosForAdmin();
                                             <div>
                                                 <div class="fw-bold">Video #<?= $video['id'] ?></div>
                                                 <div class="video-url text-muted" title="<?= htmlspecialchars($video['name']) ?>">
-                                                    <?= htmlspecialchars($video['name']) ?>
+                                                    <?php
+                                                    $videoUrl = $video['name'];
+                                                    if (strpos($videoUrl, 'youtube.com') !== false || strpos($videoUrl, 'youtu.be') !== false) {
+                                                        // Extract video ID from YouTube URL
+                                                        $videoId = '';
+                                                        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/', $videoUrl, $matches)) {
+                                                            $videoId = $matches[1];
+                                                        }
+                                                        if ($videoId) {
+                                                            echo '<a href="' . htmlspecialchars($videoUrl) . '" target="_blank" class="text-decoration-none">';
+                                                            echo '<i class="fab fa-youtube text-danger me-1"></i>';
+                                                            echo 'YouTube Video';
+                                                            echo '</a>';
+                                                            echo '<br><small class="text-muted">ID: ' . $videoId . '</small>';
+                                                        } else {
+                                                            echo '<a href="' . htmlspecialchars($videoUrl) . '" target="_blank" class="text-decoration-none">';
+                                                            echo '<i class="fas fa-external-link-alt me-1"></i>';
+                                                            echo 'Video Link';
+                                                            echo '</a>';
+                                                        }
+                                                    } else {
+                                                        echo '<a href="' . htmlspecialchars($videoUrl) . '" target="_blank" class="text-decoration-none">';
+                                                        echo '<i class="fas fa-video me-1"></i>';
+                                                        echo 'Video Link';
+                                                        echo '</a>';
+                                                    }
+                                                    ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -500,13 +526,13 @@ $videos = $videoModel->getAllVideosForAdmin();
 
             rows.forEach(row => {
                 if (row.cells.length === 1) return; // Skip "no data" row
-                
+
                 const videoText = row.cells[1].textContent.toLowerCase();
                 const courseText = row.cells[2].textContent.toLowerCase();
-                
+
                 const matchesSearch = videoText.includes(searchTerm);
                 const matchesCourse = !courseFilter || courseText.includes(courseFilter.toLowerCase());
-                
+
                 row.style.display = (matchesSearch && matchesCourse) ? '' : 'none';
             });
         }
@@ -515,13 +541,13 @@ $videos = $videoModel->getAllVideosForAdmin();
         document.querySelectorAll('#filterTabs .nav-link').forEach(tab => {
             tab.addEventListener('click', function(e) {
                 e.preventDefault();
-                
+
                 // Remove active class from all tabs
                 document.querySelectorAll('#filterTabs .nav-link').forEach(t => t.classList.remove('active'));
-                
+
                 // Add active class to clicked tab
                 this.classList.add('active');
-                
+
                 const filter = this.getAttribute('data-filter');
                 filterByPeriod(filter);
             });
@@ -541,9 +567,9 @@ $videos = $videoModel->getAllVideosForAdmin();
         function viewVideo(videoId) {
             const modal = new bootstrap.Modal(document.getElementById('videoViewModal'));
             const modalBody = document.getElementById('videoModalBody');
-            
+
             modal.show();
-            
+
             // Show loading
             modalBody.innerHTML = `
                 <div class="text-center">
@@ -552,20 +578,20 @@ $videos = $videoModel->getAllVideosForAdmin();
                     </div>
                 </div>
             `;
-            
+
             // Fetch video details
             fetch('get_video_details.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'id=' + videoId
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const video = data.video;
-                    modalBody.innerHTML = `
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'id=' + videoId
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const video = data.video;
+                        modalBody.innerHTML = `
                         <div class="row">
                             <div class="col-md-6">
                                 <h6><strong>ID:</strong></h6>
@@ -579,7 +605,12 @@ $videos = $videoModel->getAllVideosForAdmin();
                             </div>
                             <div class="col-md-6">
                                 <h6><strong>Video URL:</strong></h6>
-                                <p class="text-break">${video.name}</p>
+                                <p class="text-break">
+                                    ${video.name.includes('youtube.com') || video.name.includes('youtu.be') 
+                                        ? `<i class="fab fa-youtube text-danger me-2"></i><a href="${video.name}" target="_blank" class="text-decoration-none">YouTube Video</a>`
+                                        : `<i class="fas fa-video me-2"></i><a href="${video.name}" target="_blank" class="text-decoration-none">Video Link</a>`
+                                    }
+                                </p>
                                 
                                 <h6><strong>Video Preview:</strong></h6>
                                 <div class="ratio ratio-16x9">
@@ -588,49 +619,49 @@ $videos = $videoModel->getAllVideosForAdmin();
                             </div>
                         </div>
                     `;
-                } else {
-                    modalBody.innerHTML = `
+                    } else {
+                        modalBody.innerHTML = `
                         <div class="alert alert-danger">
                             <i class="fas fa-exclamation-circle me-2"></i>
                             ${data.message}
                         </div>
                     `;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                modalBody.innerHTML = `
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    modalBody.innerHTML = `
                     <div class="alert alert-danger">
                         <i class="fas fa-exclamation-circle me-2"></i>
                         Kuna tatizo la mtandao. Jaribu tena.
                     </div>
                 `;
-            });
+                });
         }
 
         // Delete video
         function deleteVideo(videoId, videoName) {
             if (confirm(`Je, una uhakika unataka kufuta video "${videoName}"? Kitendo hiki hakiwezi kubatilishwa!`)) {
                 fetch('delete_video.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'id=' + videoId
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Kuna tatizo la mtandao. Jaribu tena.');
-                });
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'id=' + videoId
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Kuna tatizo la mtandao. Jaribu tena.');
+                    });
             }
         }
 
