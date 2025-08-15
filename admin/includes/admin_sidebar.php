@@ -86,12 +86,7 @@
                     <span>Biashara</span>
                 </a>
             </li>
-            <li class="nav-item <?= basename($_SERVER['PHP_SELF']) == 'downloads.php' ? 'active' : '' ?>">
-                <a href="<?= app_url('admin/downloads.php') ?>" class="nav-link">
-                    <i class="fas fa-download me-2"></i>
-                    <span>Pakuli</span>
-                </a>
-            </li>
+
             <li class="nav-item <?= basename($_SERVER['PHP_SELF']) == 'videos.php' ? 'active' : '' ?>">
                 <a href="<?= app_url('admin/videos.php') ?>" class="nav-link">
                     <i class="fas fa-video me-2"></i>
