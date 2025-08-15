@@ -552,6 +552,24 @@ class Business
         }
     }
 
+    public function updateBusinessOld($id, $name, $location, $maelezo)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                UPDATE business 
+                SET name = ?, location = ?, maelezo = ?
+                WHERE id = ?
+            ");
+
+            return $stmt->execute([$name, $location, $maelezo, $id]);
+        } catch (PDOException $e) {
+            error_log("Error updating business (old system): " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function getBusinessByOwnerId($ownerId)
     {
         try {
