@@ -504,7 +504,6 @@ class Course
         }
     }
 
-
     /**
      * Get user's certificates
      */
