@@ -387,10 +387,10 @@ if (!empty($courses)) {
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Picha</th>
                             <th>Jina la Kozi</th>
                             <th>Maelezo</th>
                             <th>Video</th>
-                            <th>Picha</th>
                             <th>Vitendo</th>
                         </tr>
                     </thead>
@@ -405,6 +405,16 @@ if (!empty($courses)) {
                             <?php foreach ($courses as $course): ?>
                                 <tr>
                                     <td><?= $course['id'] ?></td>
+                                    <td>
+                                        <?php if (!empty($course['photo'])): ?>
+                                            <img src="uploads/<?= htmlspecialchars($course['photo']) ?>"
+                                                alt="Course Image"
+                                                class="course-thumbnail"
+                                                style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                        <?php else: ?>
+                                            <span class="text-muted">Hakuna picha</span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td>
                                         <div>
                                             <strong><?= htmlspecialchars($course['title'] ?? 'N/A') ?></strong>
@@ -422,16 +432,6 @@ if (!empty($courses)) {
                                             <span class="text-success"><?= htmlspecialchars($course['video']) ?></span>
                                         <?php else: ?>
                                             <span class="text-muted">Hakuna video</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($course['photo'])): ?>
-                                            <img src="<?= htmlspecialchars($course['photo']) ?>"
-                                                alt="Course Image"
-                                                class="course-thumbnail"
-                                                style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-                                        <?php else: ?>
-                                            <span class="text-muted">Hakuna picha</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
