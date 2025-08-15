@@ -104,8 +104,9 @@ $videos = $videoModel->getAllVideosForAdmin();
         }
 
         .filter-tabs .nav-link.active {
-            background: rgba(255, 193, 11, 0.8);
-            color: #000;
+            background: rgba(255, 193, 11, 0.8) !important;
+            color: #000 !important;
+            border-color: rgba(255, 193, 11, 0.8) !important;
         }
 
         .video-table {
