@@ -83,6 +83,71 @@ class Business
         }
     }
 
+    public function getAllBusinessesForAdminOld()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $sql = "
+                SELECT 
+                    b.id, b.name, b.location, b.maelezo, b.date_created,
+                    u.first_name, u.last_name, u.username
+                FROM business b
+                LEFT JOIN users u ON b.user_id = u.id
+                ORDER BY b.id DESC
+            ";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting all businesses for admin (old system): " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getBusinessStatsOld()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Get total businesses count
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM business");
+            $stmt->execute();
+            $totalResult = $stmt->fetch();
+
+            // Get this month's count
+            $stmt = $conn->prepare("SELECT COUNT(*) as this_month FROM business WHERE MONTH(date_created) = MONTH(NOW()) AND YEAR(date_created) = YEAR(NOW())");
+            $stmt->execute();
+            $thisMonthResult = $stmt->fetch();
+
+            // Get last month's count
+            $stmt = $conn->prepare("SELECT COUNT(*) as last_month FROM business WHERE MONTH(date_created) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH)) AND YEAR(date_created) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))");
+            $stmt->execute();
+            $lastMonthResult = $stmt->fetch();
+
+            // Get this year's count
+            $stmt = $conn->prepare("SELECT COUNT(*) as this_year FROM business WHERE YEAR(date_created) = YEAR(NOW())");
+            $stmt->execute();
+            $thisYearResult = $stmt->fetch();
+
+            return [
+                'total' => $totalResult['total'] ?? 0,
+                'this_month' => $thisMonthResult['this_month'] ?? 0,
+                'last_month' => $lastMonthResult['last_month'] ?? 0,
+                'this_year' => $thisYearResult['this_year'] ?? 0
+            ];
+        } catch (PDOException $e) {
+            error_log("Error getting business stats (old system): " . $e->getMessage());
+            return [
+                'total' => 0,
+                'this_month' => 0,
+                'last_month' => 0,
+                'this_year' => 0
+            ];
+        }
+    }
+
     public function addBusiness($ownerId, $businessName, $description, $businessType, $location, $phone, $email, $website = null)
     {
         try {
