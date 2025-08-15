@@ -200,11 +200,7 @@ $averageScore = $rankingStats['average_score'] ?? 0;
             display: block;
         }
 
-        .crown-icon {
-            width: 30px;
-            height: 30px;
-            margin-right: 10px;
-        }
+
 
         /* Layout fixes */
         .content-wrapper {
@@ -304,13 +300,12 @@ $averageScore = $rankingStats['average_score'] ?? 0;
                         <th>Nafasi</th>
                         <th>Jina</th>
                         <th>Alama</th>
-                        <th>Vitendo</th>
                     </tr>
                 </thead>
                 <tbody id="rankingsTableBody">
                     <?php if (empty($rankings)): ?>
                         <tr>
-                            <td colspan="4" class="text-center py-4">
+                            <td colspan="3" class="text-center py-4">
                                 <i class="fas fa-trophy fa-2x text-muted mb-2"></i>
                                 <p class="text-muted mb-0">Hakuna washiriki walio patikana</p>
                             </td>
@@ -324,13 +319,13 @@ $averageScore = $rankingStats['average_score'] ?? 0;
 
                             if ($rank <= 3) {
                                 $rankClass = 'gold';
-                                $crownIcon = '<img src="assets/images/gold.png" alt="Gold Crown" class="crown-icon">';
+                                $crownIcon = '<i class="fas fa-crown text-warning me-2"></i>';
                             } elseif ($rank <= 6) {
                                 $rankClass = 'silver';
-                                $crownIcon = '<img src="assets/images/silver.png" alt="Silver Crown" class="crown-icon">';
+                                $crownIcon = '<i class="fas fa-medal text-secondary me-2"></i>';
                             } elseif ($rank <= 9) {
                                 $rankClass = 'bronze';
-                                $crownIcon = '<img src="assets/images/bronze.png" alt="Bronze Crown" class="crown-icon">';
+                                $crownIcon = '<i class="fas fa-award text-warning me-2"></i>';
                             } else {
                                 $rankClass = 'regular';
                             }
@@ -346,17 +341,7 @@ $averageScore = $rankingStats['average_score'] ?? 0;
                                     <strong><?= number_format($item['total_correct_answers']) ?></strong>
                                     <small class="text-muted d-block">majibu sahihi</small>
                                 </td>
-                                <td>
-                                    <button class="btn btn-sm action-btn view" onclick="viewRanking(<?= $rank ?>)">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm action-btn edit" onclick="editRanking(<?= $rank ?>)">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm action-btn delete" onclick="deleteRanking(<?= $rank ?>)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
+
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
