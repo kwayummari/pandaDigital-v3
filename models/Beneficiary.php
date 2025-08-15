@@ -144,6 +144,23 @@ class Beneficiary
         }
     }
 
+    public function addWanufaika($name, $title, $description, $photo = '')
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                INSERT INTO wanufaika (name, title, description, photo, date_created) 
+                VALUES (?, ?, ?, ?, NOW())
+            ");
+
+            return $stmt->execute([$name, $title, $description, $photo]);
+        } catch (PDOException $e) {
+            error_log("Error adding wanufaika: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function addBeneficiary($firstName, $lastName, $email, $phone, $location, $benefitType, $description, $amount)
     {
         try {
