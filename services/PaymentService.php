@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Payment Service - EXACT COPY from pandadigitalV2/market/process_order.php
- * Using the working functions exactly as they are without any changes
+ * Payment Service - Using working functions from pandadigitalV2/market/process_order.php
+ * Calling the working functions exactly as the old system does
  */
 
-// Load configuration - EXACT COPY
+// Load configuration - EXACT COPY from working market system
 $config = [
     'AZAMPAY_CLIENT_ID' => '85e67f8b-d8f1-4027-b819-5a11979ec1f0',
     'AZAMPAY_CLIENT_SECRET' => 'Ifsfj5rIDtj3ypEzJfxM6XY4CuifdDK0MNj7CPEahATLEBQbvfYBZhMq/1vEcBnxwLHKt5nXfUSXSEX8nRNm1bwyZTRKDQw9et+pEYh9WpTuVP5cmSMcOs/jlQj9RqO6hzJcw9hRwzIJIzfEp3VWbZJCdho8ja0WUb1VJnoHyHPFiC2eS1i+d2PGgUpdI6P1HP8SgmcKTDIYj4r37ilK3Nx9P/1a/sTEYXgISZhdDQUv7epDBOBqPCaSeJmn8qw2WA4hdKbvlvIf3LP50t5lencCSCSoe6Qj91myg2hqQGe6QPo2ZiIs56FCXcPmeP1UN3xGYlvjI2A/axYkafxzfDuplxeqx4ITdi9z55R/BVvhmTFRbcTdTMEeUfYXCaTbpjIu3yNsg6abBF+GnU6lQeVqK3i4FwY+TdmeS+QnB32d0Pm1ZKeg1ToxFM3RRwWdzSC6jkUT6aU+R3c+oavnH/mHTxdTxlTNkyirWdKcEwUYz8E4zgW76W9iSWbXfA9gOjb+SviW4LXqrd+jyWbfTZZdTnCQqGvtLgbwmxNEX301kqS2XCm7uLYUux+qoy+OGMzaD0Gir30SzT1lE8Bhfz/pjdPdwqCAYQgffD5UPOdi5Nhvd1hpf1Lk7IuORbQfVE8XuoH9QhgWT6CDAnbmYCC+uTXfVxixF7j9QobA='
 ];
 
-// EXACT COPY of working functions - NO CHANGES
+// EXACT COPY of working functions from market system - NO CHANGES
 function generateNewToken($config)
 {
     $authUrl = 'https://authenticator.azampay.co.tz/AppRegistration/GenerateToken';
@@ -75,13 +75,13 @@ function processPayment($paymentData, $token, $clientId)
     return $response;
 }
 
-// Wrapper class that calls the working functions exactly as they are
+// Wrapper class that calls the working functions exactly as the old system does
 class PaymentService
 {
     public function processCoursePayment($phone, $amount, $provider)
     {
         try {
-            // Call the working functions exactly as they are - NO CHANGES
+            // Call the working functions exactly as the old system does - NO CHANGES
             $clientId = $GLOBALS['config']['AZAMPAY_CLIENT_ID'];
             $storedToken = $_SESSION['token'] ?? null;
             $storedExpiry = $_SESSION['token_expiry'] ?? null;
@@ -95,13 +95,13 @@ class PaymentService
                 $token = $storedToken;
             }
 
-            // Call processPayment exactly as it is - NO CHANGES
+            // Call processPayment exactly as the old system does - NO CHANGES
             $response = processPayment([
                 'accountNumber' => $phone,
                 'amount' => $amount,
                 'currency' => 'TZS',
                 'externalId' => '123',
-                'provider' => $provider,
+                'provider' => $provider, // Use provider directly like old system
                 'additionalProperties' => null
             ], $token, $clientId);
 
