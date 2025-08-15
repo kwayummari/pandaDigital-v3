@@ -311,13 +311,12 @@ $totalSellers = $salesStats['total_sellers'] ?? 0;
                         <th>Faida ya Kampuni</th>
                         <th>Tarehe</th>
                         <th>Hali</th>
-                        <th>Vitendo</th>
                     </tr>
                 </thead>
                 <tbody id="salesTableBody">
                     <?php if (empty($sales)): ?>
                         <tr>
-                            <td colspan="10" class="text-center py-4">
+                            <td colspan="9" class="text-center py-4">
                                 <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
                                 <p class="text-muted mb-0">Hakuna mauzo yaliyopatikana</p>
                             </td>
@@ -347,17 +346,7 @@ $totalSellers = $salesStats['total_sellers'] ?? 0;
                                         <span class="text-muted">N/A</span>
                                     <?php endif; ?>
                                 </td>
-                                <td>
-                                    <button class="btn btn-sm action-btn view" onclick="viewSale(<?= $item['sale_id'] ?>)">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <!-- <a href="edit-sale.php?id=<?= $item['sale_id'] ?>" class="btn btn-sm action-btn edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button class="btn btn-sm action-btn delete" onclick="deleteSale(<?= $item['sale_id'] ?>)">
-                                        <i class="fas fa-trash"></i>
-                                    </button> -->
-                                </td>
+
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
