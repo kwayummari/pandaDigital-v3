@@ -81,6 +81,69 @@ class Beneficiary
         }
     }
 
+    public function getAllWanufaikaForAdmin()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $sql = "
+                SELECT 
+                    id, name, title, description, photo, date_created
+                FROM wanufaika 
+                ORDER BY id DESC
+            ";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting all wanufaika for admin: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getWanufaikaStats()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Get total wanufaika count
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM wanufaika");
+            $stmt->execute();
+            $totalResult = $stmt->fetch();
+
+            // Get this month's count
+            $stmt = $conn->prepare("SELECT COUNT(*) as this_month FROM wanufaika WHERE MONTH(date_created) = MONTH(NOW()) AND YEAR(date_created) = YEAR(NOW())");
+            $stmt->execute();
+            $thisMonthResult = $stmt->fetch();
+
+            // Get last month's count
+            $stmt = $conn->prepare("SELECT COUNT(*) as last_month FROM wanufaika WHERE MONTH(date_created) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH)) AND YEAR(date_created) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))");
+            $stmt->execute();
+            $lastMonthResult = $stmt->fetch();
+
+            // Get this year's count
+            $stmt = $conn->prepare("SELECT COUNT(*) as this_year FROM wanufaika WHERE YEAR(date_created) = YEAR(NOW())");
+            $stmt->execute();
+            $thisYearResult = $stmt->fetch();
+
+            return [
+                'total' => $totalResult['total'] ?? 0,
+                'this_month' => $thisMonthResult['this_month'] ?? 0,
+                'last_month' => $lastMonthResult['last_month'] ?? 0,
+                'this_year' => $thisYearResult['this_year'] ?? 0
+            ];
+        } catch (PDOException $e) {
+            error_log("Error getting wanufaika stats: " . $e->getMessage());
+            return [
+                'total' => 0,
+                'this_month' => 0,
+                'last_month' => 0,
+                'this_year' => 0
+            ];
+        }
+    }
+
     public function addBeneficiary($firstName, $lastName, $email, $phone, $location, $benefitType, $description, $amount)
     {
         try {
