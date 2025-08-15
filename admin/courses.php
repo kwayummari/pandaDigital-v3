@@ -269,6 +269,18 @@ if (!empty($courses)) {
         .course-table {
             margin-bottom: 1.5rem;
         }
+
+        /* Course thumbnail styling */
+        .course-thumbnail {
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .course-thumbnail:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
     </style>
 </head>
 
@@ -414,7 +426,10 @@ if (!empty($courses)) {
                                     </td>
                                     <td>
                                         <?php if (!empty($course['photo'])): ?>
-                                            <span class="text-info"><?= htmlspecialchars($course['photo']) ?></span>
+                                            <img src="<?= htmlspecialchars($course['photo']) ?>"
+                                                alt="Course Image"
+                                                class="course-thumbnail"
+                                                style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
                                         <?php else: ?>
                                             <span class="text-muted">Hakuna picha</span>
                                         <?php endif; ?>
