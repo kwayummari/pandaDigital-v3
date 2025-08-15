@@ -248,7 +248,7 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                             </a>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <a href="<?= app_url('uliza-swali.php') ?>" class="action-btn">
+                            <a href="<?= app_url('user/ask-questions.php') ?>" class="action-btn">
                                 <span class="fw-bold">Uliza Swali</span>
                                 <small class="text-muted">Pata msaada kutoka kwa mitaalam</small>
                             </a>
@@ -519,4 +519,5 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
             });
         </script>
 </body>
+
 </html>
