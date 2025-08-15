@@ -423,6 +423,25 @@ class User
         }
     }
 
+    public function getAllUsersForExport()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT id, first_name, last_name, email, phone, role, account_status, region, 
+                       date_created, last_login, login_count, bio, expert_authorization, isSeller
+                FROM users 
+                ORDER BY date_created DESC
+            ");
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting all users for export: " . $e->getMessage());
+            return [];
+        }
+    }
+
     public function deleteUser($userId)
     {
         try {

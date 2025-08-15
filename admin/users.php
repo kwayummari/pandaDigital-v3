@@ -85,6 +85,25 @@ $userStats = $userModel->getUserStatsByRole();
             align-items: center;
             justify-content: center;
         }
+
+        .dropdown-menu {
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -177,9 +196,22 @@ $userStats = $userModel->getUserStatsByRole();
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <button class="btn btn-primary w-100" onclick="exportUsers()">
-                                    <i class="fas fa-download me-1"></i> Pakua
-                                </button>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary w-100 dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-download me-1"></i> Pakua
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                                        <li><a class="dropdown-item" href="export_users.php?format=csv">
+                                                <i class="fas fa-file-csv me-2"></i> CSV
+                                            </a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="exportUsers('excel')">
+                                                <i class="fas fa-file-excel me-2"></i> Excel
+                                            </a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="exportUsers('pdf')">
+                                                <i class="fas fa-file-pdf me-2"></i> PDF
+                                            </a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -379,9 +411,30 @@ $userStats = $userModel->getUserStatsByRole();
         }
 
         // Export users
-        function exportUsers() {
-            // Implement export functionality
-            alert('Export functionality will be implemented here');
+        function exportUsers(format = 'csv') {
+            if (format === 'csv') {
+                // Show loading state
+                const exportBtn = document.getElementById('exportDropdown');
+                const originalText = exportBtn.innerHTML;
+                exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Inapakua...';
+                exportBtn.disabled = true;
+
+                // Redirect to export page for CSV
+                setTimeout(() => {
+                    window.location.href = 'export_users.php?format=csv';
+                    // Reset button after a short delay
+                    setTimeout(() => {
+                        exportBtn.innerHTML = originalText;
+                        exportBtn.disabled = false;
+                    }, 2000);
+                }, 500);
+            } else if (format === 'excel') {
+                // For now, show message that Excel export is coming soon
+                alert('Excel export functionality will be implemented soon. For now, please use CSV export.');
+            } else if (format === 'pdf') {
+                // For now, show message that PDF export is coming soon
+                alert('PDF export functionality will be implemented soon. For now, please use CSV export.');
+            }
         }
 
         // Update page title
