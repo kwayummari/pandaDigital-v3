@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Payment Service - EXACT COPY from working old code
+ * Payment Service - EXACT COPY from working old code in pandadigitalV2/market/process_order.php
  * This ensures 100% compatibility with the proven AzamPay integration
  */
 class PaymentService
@@ -43,13 +43,12 @@ class PaymentService
         $authResponse = file_get_contents($authUrl, false, $authContext);
 
         if ($authResponse === false) {
-            throw new Exception('Error fetching token from AzamPay');
+            throw new Exception('Error fetching token');
         }
 
         $authResponseData = json_decode($authResponse, true);
         if (!isset($authResponseData['data']['accessToken'])) {
-            error_log("Invalid token response: " . $authResponse);
-            throw new Exception('Error: Invalid token response from AzamPay');
+            throw new Exception('Error: Invalid token response');
         }
 
         return $authResponseData['data']['accessToken'];
@@ -68,9 +67,6 @@ class PaymentService
             "X-API-Key: $clientId"
         ];
 
-        // Log the request for debugging
-        error_log("AzamPay Request: " . json_encode($paymentData));
-
         $options = [
             'http' => [
                 'method' => 'POST',
@@ -84,11 +80,8 @@ class PaymentService
         $response = file_get_contents($checkoutUrl, false, $context);
 
         if ($response === false) {
-            throw new Exception("Unable to process payment request - network error");
+            throw new Exception("Unable to process payment request");
         }
-
-        // Log the response for debugging
-        error_log("AzamPay Response: " . $response);
 
         return $response;
     }
@@ -101,7 +94,6 @@ class PaymentService
         try {
             // Get token using the exact same method as old code
             $token = $this->generateNewToken($this->config);
-            error_log("Token generated successfully: " . substr($token, 0, 20) . "...");
 
             // Process payment using the exact same method as old code
             $response = $this->processPaymentRequest($paymentData, $token, $this->config['AZAMPAY_CLIENT_ID']);
@@ -109,20 +101,8 @@ class PaymentService
             $responseData = json_decode($response, true);
 
             if (!isset($responseData['transactionId'])) {
-                // Log the full response for debugging
-                error_log("AzamPay Error Response: " . $response);
-
-                $errorMessage = "Transaction ID not found in response";
-                if (isset($responseData['message'])) {
-                    $errorMessage = $responseData['message'];
-                } elseif (isset($responseData['statusMessage'])) {
-                    $errorMessage = $responseData['statusMessage'];
-                }
-
-                throw new Exception("AzamPay Error: " . $errorMessage);
+                throw new Exception("Error: Transaction ID not found in the response.");
             }
-
-            error_log("Payment processed successfully. Transaction ID: " . $responseData['transactionId']);
 
             return [
                 'success' => true,
@@ -130,7 +110,6 @@ class PaymentService
                 'message' => 'Payment initiated successfully'
             ];
         } catch (Exception $e) {
-            error_log("AzamPay Payment Error: " . $e->getMessage());
             return [
                 'success' => false,
                 'message' => $e->getMessage()
