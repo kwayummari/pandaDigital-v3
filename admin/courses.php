@@ -407,7 +407,7 @@ if (!empty($courses)) {
                                     <td><?= $course['id'] ?></td>
                                     <td>
                                         <?php if (!empty($course['photo'])): ?>
-                                            <img src="uploads/<?= htmlspecialchars($course['photo']) ?>"
+                                            <img src="uploads/courses/<?= htmlspecialchars($course['photo']) ?>"
                                                 alt="Course Image"
                                                 class="course-thumbnail"
                                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
