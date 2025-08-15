@@ -86,36 +86,97 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
 <?php include __DIR__ . '/includes/admin_header.php'; ?>
 
 <style>
-    .action-card {
-        background: linear-gradient(135deg, #662e91, #FFC10B) !important;
-        color: white !important;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* CSS Variables for consistent colors */
+    :root {
+        --primary-color: #662e91;
+        --secondary-color: #FFC10B;
+        --text-muted: #6c757d;
+        --border-color: #e9ecef;
     }
 
-    .action-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(102, 46, 145, 0.3);
-    }
-
-    .action-card .card-icon {
-        color: white !important;
-    }
-
-    .action-card .card-title {
-        color: white !important;
-    }
-
-    .action-card .card-value {
-        color: white !important;
-    }
-
+    /* Smooth, minimal card styling matching user dashboard */
     .stats-card {
+        background: white !important;
+        color: var(--text-muted) !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border-color) !important;
+        border-top: 3px solid var(--primary-color) !important;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 8px;
     }
 
     .stats-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .stats-card .card-icon {
+        color: var(--primary-color) !important;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-card .card-title {
+        color: var(--text-muted) !important;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-card .card-value {
+        color: var(--primary-color) !important;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+
+    /* Action cards with subtle styling */
+    .action-card {
+        background: white !important;
+        color: var(--primary-color) !important;
+        border: 1px solid var(--border-color) !important;
+        border-top: 3px solid var(--secondary-color) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 8px;
+    }
+
+    .action-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        border-top-color: var(--primary-color) !important;
+    }
+
+    .action-card .card-icon {
+        color: var(--secondary-color) !important;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-card .card-title {
+        color: var(--text-muted) !important;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-card .card-value {
+        color: var(--secondary-color) !important;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+
+    /* Financial cards with subtle accent */
+    .stats-card.financial {
+        border-top-color: #28a745 !important;
+    }
+
+    .stats-card.financial .card-icon {
+        color: #28a745 !important;
+    }
+
+    .stats-card.financial .card-value {
+        color: #28a745 !important;
     }
 </style>
 
@@ -134,7 +195,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
     <?php if ($currentUser['email'] === 'finance@pandadigital.com'): ?>
         <!-- Financial Cards -->
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="stats-card position-relative">
+            <div class="stats-card position-relative financial">
                 <div class="card-icon">
                     <i class="fas fa-dollar-sign"></i>
                 </div>
@@ -144,7 +205,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="stats-card position-relative">
+            <div class="stats-card position-relative financial">
                 <div class="card-icon">
                     <i class="fas fa-shopping-cart"></i>
                 </div>
@@ -154,7 +215,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="stats-card position-relative">
+            <div class="stats-card position-relative financial">
                 <div class="card-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
