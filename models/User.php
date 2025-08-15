@@ -514,31 +514,4 @@ class User
 
         return asset("images/logo/logo.png");
     }
-
-    /**
-     * Get user statistics by account status
-     */
-    public function getUserStatsByStatus()
-    {
-        try {
-            $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("
-                SELECT account_status, COUNT(*) as count 
-                FROM users 
-                GROUP BY account_status
-            ");
-            $stmt->execute();
-            $results = $stmt->fetchAll();
-
-            $stats = [];
-            foreach ($results as $result) {
-                $stats[$result['account_status']] = $result['count'];
-            }
-
-            return $stats;
-        } catch (PDOException $e) {
-            error_log("Error getting user stats by status: " . $e->getMessage());
-            return [];
-        }
-    }
 }

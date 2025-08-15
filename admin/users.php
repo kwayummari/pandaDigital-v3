@@ -166,11 +166,11 @@ $userStats = $userModel->getUserStatsByRole();
             padding: 0.5rem 1rem;
         }
 
-                /* Role filter tabs styling */
+        /* Role filter tabs styling */
         #roleTabs {
             border-bottom: none;
         }
-        
+
         #roleTabs .nav-link {
             border: none;
             border-radius: 0;
@@ -180,28 +180,28 @@ $userStats = $userModel->getUserStatsByRole();
             transition: all 0.3s ease;
             position: relative;
         }
-        
+
         #roleTabs .nav-link:hover {
             color: #495057;
             background-color: #f8f9fa;
         }
-        
+
         #roleTabs .nav-link.active {
             color: #000;
             background-color: #fff;
             border-bottom: 3px solid #000;
             font-weight: 600;
         }
-        
+
         #roleTabs .nav-link i {
             margin-right: 0.5rem;
             opacity: 0.7;
         }
-        
+
         #roleTabs .nav-link.active i {
             opacity: 1;
         }
-        
+
         #roleTabs .nav-link span {
             font-size: 0.875rem;
             opacity: 0.8;
@@ -691,29 +691,29 @@ $userStats = $userModel->getUserStatsByRole();
             alert('Edit functionality will be implemented in the future for user ID: ' + userId);
         }
 
-                // Initialize role counts when page loads
+        // Initialize role counts when page loads
         document.addEventListener('DOMContentLoaded', function() {
             updateRoleCounts('all');
         });
-        
+
         // Filter users by role
         function filterByRole(role) {
             console.log('Filtering by role:', role);
-            
+
             // Update active tab
             document.querySelectorAll('#roleTabs .nav-link').forEach(tab => {
                 tab.classList.remove('active');
             });
             event.target.classList.add('active');
-            
+
             // Get all table rows
             const tableRows = document.querySelectorAll('#usersTable tbody tr');
-            
+
             tableRows.forEach(row => {
                 const roleCell = row.querySelector('td:nth-child(5)'); // Role column
                 if (roleCell) {
                     const userRole = roleCell.textContent.trim().toLowerCase();
-                    
+
                     if (role === 'all') {
                         row.style.display = '';
                     } else if (role === 'user' && userRole.includes('mwanafunzi')) {
@@ -729,11 +729,11 @@ $userStats = $userModel->getUserStatsByRole();
                     }
                 }
             });
-            
+
             // Update counts display
             updateRoleCounts(role);
         }
-        
+
         // Update role counts display
         function updateRoleCounts(activeRole) {
             const tableRows = document.querySelectorAll('#usersTable tbody tr');
@@ -742,12 +742,12 @@ $userStats = $userModel->getUserStatsByRole();
             let expertCount = 0;
             let adminCount = 0;
             let emptyCount = 0;
-            
+
             tableRows.forEach(row => {
                 if (row.style.display !== 'none') {
                     allCount++;
                 }
-                
+
                 const roleCell = row.querySelector('td:nth-child(5)');
                 if (roleCell) {
                     const userRole = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
@@ -762,7 +762,7 @@ $userStats = $userModel->getUserStatsByRole();
                     }
                 }
             });
-            
+
             // Update count displays
             document.getElementById('all-count').textContent = allCount;
             document.getElementById('user-count').textContent = userCount;
