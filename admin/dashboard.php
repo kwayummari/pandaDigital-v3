@@ -110,73 +110,13 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
         box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
     }
 
-    .stats-card .card-icon {
-        color: var(--primary-color) !important;
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-    }
 
-    .stats-card .card-title {
-        color: var(--text-muted) !important;
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
 
-    .stats-card .card-value {
-        color: var(--primary-color) !important;
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: 0;
-    }
 
-    /* Action cards with subtle styling */
-    .action-card {
-        background: white !important;
-        color: var(--primary-color) !important;
-        border: 1px solid var(--border-color) !important;
-        border-top: 3px solid var(--secondary-color) !important;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        border-radius: 8px;
-    }
-
-    .action-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-        border-top-color: var(--primary-color) !important;
-    }
-
-    .action-card .card-icon {
-        color: var(--secondary-color) !important;
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .action-card .card-title {
-        color: var(--text-muted) !important;
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-
-    .action-card .card-value {
-        color: var(--secondary-color) !important;
-        font-size: 1.2rem;
-        font-weight: 600;
-        margin-bottom: 0;
-    }
 
     /* Financial cards with subtle accent */
     .stats-card.financial {
         border-top-color: #28a745 !important;
-    }
-
-    .stats-card.financial .card-icon {
-        color: #28a745 !important;
-    }
-
-    .stats-card.financial .card-value {
-        color: #28a745 !important;
     }
 </style>
 
@@ -195,101 +135,73 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
     <?php if ($currentUser['email'] === 'finance@pandadigital.com'): ?>
         <!-- Financial Cards -->
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="stats-card position-relative financial">
-                <div class="card-icon">
-                    <i class="fas fa-dollar-sign"></i>
+            <div class="card stats-card financial">
+                <div class="card-body text-center">
+                    <h3 class="mb-1">TSh. <?= number_format($financials['total_income'] ?? 0, 2) ?></h3>
+                    <p class="mb-0">Jumla ya Mapato</p>
                 </div>
-                <h6 class="card-title">Jumla ya Mapato</h6>
-                <p class="card-value">TSh. <?= number_format($financials['total_income'] ?? 0, 2) ?></p>
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="stats-card position-relative financial">
-                <div class="card-icon">
-                    <i class="fas fa-shopping-cart"></i>
+            <div class="card stats-card financial">
+                <div class="card-body text-center">
+                    <h3 class="mb-1"><?= number_format($financials['total_sales'] ?? 0) ?></h3>
+                    <p class="mb-0">Jumla ya Mauzo</p>
                 </div>
-                <h6 class="card-title">Jumla ya Mauzo</h6>
-                <p class="card-value"><?= number_format($financials['total_sales'] ?? 0) ?></p>
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="stats-card position-relative financial">
-                <div class="card-icon">
-                    <i class="fas fa-chart-line"></i>
+            <div class="card stats-card financial">
+                <div class="card-body text-center">
+                    <h3 class="mb-1">TSh. <?= number_format($financials['company_profit'] ?? 0, 2) ?></h3>
+                    <p class="mb-0">Faida ya Kampuni (6%)</p>
                 </div>
-                <h6 class="card-title">Faida ya Kampuni (6%)</h6>
-                <p class="card-value">TSh. <?= number_format($financials['company_profit'] ?? 0, 2) ?></p>
             </div>
         </div>
     <?php endif; ?>
 
-    <!-- Action Cards -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <a href="<?= app_url('admin/users/add-user.php') ?>" class="text-decoration-none">
-            <div class="stats-card position-relative action-card">
-                <div class="card-icon">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <h6 class="card-title">Sajili Mtumiaji Mpya</h6>
-                <p class="card-value"><i class="fas fa-plus"></i></p>
-            </div>
-        </a>
-    </div>
+
 
     <!-- Statistics Cards -->
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-users"></i>
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($totalUsers) ?></h3>
+                <p class="mb-0">Watumiaji Wote</p>
             </div>
-            <h6 class="card-title">Watumiaji Wote</h6>
-            <p class="card-value"><?= number_format($totalUsers) ?></p>
         </div>
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-user-shield"></i>
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($adminUsers) ?></h3>
+                <p class="mb-0">Utawala</p>
             </div>
-            <h6 class="card-title">Utawala</h6>
-            <p class="card-value"><?= number_format($adminUsers) ?></p>
         </div>
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-user-graduate"></i>
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($studentUsers) ?></h3>
+                <p class="mb-0">Wanafunzi</p>
             </div>
-            <h6 class="card-title">Wanafunzi</h6>
-            <p class="card-value"><?= number_format($studentUsers) ?></p>
         </div>
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-user-tie"></i>
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($expertUsers) ?></h3>
+                <p class="mb-0">Wataalamu</p>
             </div>
-            <h6 class="card-title">Wataalamu</h6>
-            <p class="card-value"><?= number_format($expertUsers) ?></p>
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <a href="<?= app_url('admin/courses/add-course.php') ?>" class="text-decoration-none">
-            <div class="stats-card position-relative action-card">
-                <div class="card-icon">
-                    <i class="fas fa-book-medical"></i>
-                </div>
-                <h6 class="card-title">Sajili Kozi Mpya</h6>
-                <p class="card-value"><i class="fas fa-plus"></i></p>
-            </div>
-        </a>
-    </div>
+
 
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="stats-card position-relative">
@@ -301,191 +213,122 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <a href="<?= app_url('admin/videos/add-video.php') ?>" class="text-decoration-none">
-            <div class="stats-card position-relative action-card">
-                <div class="card-icon">
-                    <i class="fas fa-video"></i>
-                </div>
-                <h6 class="card-title">Ongeza Video Mpya</h6>
-                <p class="card-value"><i class="fas fa-plus"></i></p>
-            </div>
-        </a>
-    </div>
+
 
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-video"></i>
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($totalVideos) ?></h3>
+                <p class="mb-0">Video Zote</p>
             </div>
-            <h6 class="card-title">Video Zote</h6>
-            <p class="card-value"><?= number_format($totalVideos) ?></p>
+        </div>
+    </div>
+
+
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($totalQuestions) ?></h3>
+                <p class="mb-0">Maswali Yote</p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($downloadStats['total_downloads'] ?? 0) ?></h3>
+                <p class="mb-0">Vyeti Vilivyopakuliwa</p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($blogStats['total_blogs'] ?? 0) ?></h3>
+                <p class="mb-0">Blogi Zote</p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($opportunityStats['total_opportunities'] ?? 0) ?></h3>
+                <p class="mb-0">Fursa Zote</p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($beneficiaryStats['total_beneficiaries'] ?? 0) ?></h3>
+                <p class="mb-0">Wanufaika Wote</p>
+            </div>
         </div>
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
-        <a href="<?= app_url('admin/questions/add-question.php') ?>" class="text-decoration-none">
-            <div class="stats-card position-relative action-card">
-                <div class="card-icon">
-                    <i class="fas fa-question-circle"></i>
-                </div>
-                <h6 class="card-title">Ongeza Swali Jipya</h6>
-                <p class="card-value"><i class="fas fa-plus"></i></p>
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($businessStats['total_businesses'] ?? 0) ?></h3>
+                <p class="mb-0">Biashara Zote</p>
             </div>
-        </a>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-question-circle"></i>
-            </div>
-            <h6 class="card-title">Maswali Yote</h6>
-            <p class="card-value"><?= number_format($totalQuestions) ?></p>
         </div>
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
-        <a href="<?= app_url('admin/feedback/view-feedback.php') ?>" class="text-decoration-none">
-            <div class="stats-card position-relative action-card">
-                <div class="card-icon">
-                    <i class="fas fa-comments"></i>
-                </div>
-                <h6 class="card-title">Ona Mrejesho</h6>
-                <p class="card-value"><i class="fas fa-eye"></i></p>
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($rankingStats['total_rankings'] ?? 0) ?></h3>
+                <p class="mb-0">Mashindano</p>
             </div>
-        </a>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-download"></i>
-            </div>
-            <h6 class="card-title">Vyeti Vilivyopakuliwa</h6>
-            <p class="card-value"><?= number_format($downloadStats['total_downloads'] ?? 0) ?></p>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <a href="<?= app_url('admin/blog/write-blog.php') ?>" class="text-decoration-none">
-            <div class="stats-card position-relative action-card">
-                <div class="card-icon">
-                    <i class="fas fa-edit"></i>
-                </div>
-                <h6 class="card-title">Andika Blogi</h6>
-                <p class="card-value"><i class="fas fa-plus"></i></p>
-            </div>
-        </a>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-blog"></i>
-            </div>
-            <h6 class="card-title">Blogi Zote</h6>
-            <p class="card-value"><?= number_format($blogStats['total_blogs'] ?? 0) ?></p>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <a href="<?= app_url('admin/opportunities/add-opportunity.php') ?>" class="text-decoration-none">
-            <div class="stats-card position-relative action-card">
-                <div class="card-icon">
-                    <i class="fas fa-bullseye"></i>
-                </div>
-                <h6 class="card-title">Andika Fursa</h6>
-                <p class="card-value"><i class="fas fa-plus"></i></p>
-            </div>
-        </a>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-bullseye"></i>
-            </div>
-            <h6 class="card-title">Fursa Zote</h6>
-            <p class="card-value"><?= number_format($opportunityStats['total_opportunities'] ?? 0) ?></p>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <a href="<?= app_url('admin/beneficiaries/add-beneficiary.php') ?>" class="text-decoration-none">
-            <div class="stats-card position-relative action-card">
-                <div class="card-icon">
-                    <i class="fas fa-hand-holding-heart"></i>
-                </div>
-                <h6 class="card-title">Ongeza Wanufaika</h6>
-                <p class="card-value"><i class="fas fa-plus"></i></p>
-            </div>
-        </a>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-hand-holding-heart"></i>
-            </div>
-            <h6 class="card-title">Wanufaika Wote</h6>
-            <p class="card-value"><?= number_format($beneficiaryStats['total_beneficiaries'] ?? 0) ?></p>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-building"></i>
-            </div>
-            <h6 class="card-title">Biashara Zote</h6>
-            <p class="card-value"><?= number_format($businessStats['total_businesses'] ?? 0) ?></p>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-trophy"></i>
-            </div>
-            <h6 class="card-title">Mashindano</h6>
-            <p class="card-value"><?= number_format($rankingStats['total_rankings'] ?? 0) ?></p>
         </div>
     </div>
 
     <!-- Message Balance Card -->
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-sms"></i>
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1">
+                    <?php
+                    // SMS Balance API call (similar to old dashboard)
+                    $username = '238b4b0ac1f3fbe1';
+                    $password = 'NTdjOWFlZTdlNDRhMDk5OWU4ZTU3NzFiYjU2YzMxNGM0MzE0YjViOThkMzM4MTVkOTJlMmQ3NjMwNzk3ZTdmMw==';
+                    $url = 'https://apisms.beem.africa/public/v1/vendors/balance';
+
+                    $ch = curl_init($url);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                    curl_setopt_array($ch, array(
+                        CURLOPT_HTTPGET => TRUE,
+                        CURLOPT_RETURNTRANSFER => TRUE,
+                        CURLOPT_HTTPHEADER => array(
+                            'Authorization:Basic ' . base64_encode("$username:$password"),
+                            'Content-Type: application/json'
+                        ),
+                    ));
+
+                    $response = curl_exec($ch);
+                    $responseData = json_decode($response, true);
+                    $creditBalance = $responseData['data']['credit_balance'] ?? 'N/A';
+                    echo $creditBalance;
+                    curl_close($ch);
+                    ?>
+                </h3>
+                <p class="mb-0">Salio la Meseji</p>
             </div>
-            <h6 class="card-title">Salio la Meseji</h6>
-            <p class="card-value">
-                <?php
-                // SMS Balance API call (similar to old dashboard)
-                $username = '238b4b0ac1f3fbe1';
-                $password = 'NTdjOWFlZTdlNDRhMDk5OWU4ZTU3NzFiYjU2YzMxNGM0MzE0YjViOThkMzM4MTVkOTJlMmQ3NjMwNzk3ZTdmMw==';
-                $url = 'https://apisms.beem.africa/public/v1/vendors/balance';
-
-                $ch = curl_init($url);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                curl_setopt_array($ch, array(
-                    CURLOPT_HTTPGET => TRUE,
-                    CURLOPT_RETURNTRANSFER => TRUE,
-                    CURLOPT_HTTPHEADER => array(
-                        'Authorization:Basic ' . base64_encode("$username:$password"),
-                        'Content-Type: application/json'
-                    ),
-                ));
-
-                $response = curl_exec($ch);
-                $responseData = json_decode($response, true);
-                $creditBalance = $responseData['data']['credit_balance'] ?? 'N/A';
-                echo $creditBalance;
-                curl_close($ch);
-                ?>
-            </p>
         </div>
     </div>
 
