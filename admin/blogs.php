@@ -8,37 +8,15 @@ $auth->requireRole('admin');
 $currentUser = $auth->getCurrentUser();
 $blogModel = new Blog();
 
-// Handle blog actions
-if ($_POST && isset($_POST['action'])) {
-    $blogId = $_POST['blog_id'];
-    $action = $_POST['action'];
-
-    if ($action === 'delete') {
-        $result = $blogModel->deleteBlog($blogId);
-        if ($result) {
-            $success = "Blog imefutwa kikamilifu!";
-        } else {
-            $error = "Imefeli kufuta blog. Tafadhali jaribu tena.";
-        }
-    } elseif ($action === 'toggle_status') {
-        $result = $blogModel->toggleBlogStatus($blogId);
-        if ($result) {
-            $success = "Hali ya blog imebadilishwa!";
-        } else {
-            $error = "Imefeli kubadilisha hali ya blog. Tafadhali jaribu tena.";
-        }
-    }
-}
-
-// Get all blogs with pagination
-$page = $_GET['page'] ?? 1;
-$perPage = 20;
-$blogs = $blogModel->getAllBlogsForAdmin($page, $perPage);
-$totalBlogs = $blogModel->getTotalBlogs();
-$totalPages = ceil($totalBlogs / $perPage);
-
 // Get blog statistics
 $blogStats = $blogModel->getOverallBlogStats();
+$totalBlogs = $blogStats['total_blogs'] ?? 0;
+$totalViews = $blogStats['total_views'] ?? 0;
+$totalComments = $blogStats['total_comments'] ?? 0;
+$totalAuthors = $blogStats['total_authors'] ?? 0;
+
+// Get all blogs for admin
+$blogs = $blogModel->getAllBlogsForAdmin(1, 1000); // Get all blogs for now
 ?>
 
 <!DOCTYPE html>
@@ -48,533 +26,542 @@ $blogStats = $blogModel->getOverallBlogStats();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usimamizi wa Blog - Panda Digital</title>
-
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
     <style>
-        :root {
-            --primary-color: #662e91;
-            --secondary-color: #FFC10B;
-            --accent-color: #e74c3c;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --info-color: #3498db;
+        /* Simple layout fixes */
+        .content-wrapper {
+            padding: 20px 30px;
         }
 
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        .stats-card,
+        .search-box,
+        .filter-tabs,
+        .blog-table {
+            margin-bottom: 1.5rem;
         }
 
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        /* Blog thumbnail styling */
+        .blog-thumbnail {
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
         }
 
-        .main-content {
-            padding: 20px;
-        }
-
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .blog-thumbnail:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         .stats-card {
-            background: linear-gradient(135deg, var(--accent-color), #c0392b);
-            color: white;
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+            border-top: 3px solid #000;
+            transition: transform 0.2s ease;
         }
 
-        .stats-card.success {
-            background: linear-gradient(135deg, var(--success-color), #229954);
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
 
-        .stats-card.info {
-            background: linear-gradient(135deg, var(--info-color), #2980b9);
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 0.5rem;
         }
 
-        .stats-card.warning {
-            background: linear-gradient(135deg, var(--warning-color), #d68910);
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
         }
 
-        .btn-primary-custom {
-            background: var(--primary-color);
+        .search-box {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-tabs {
+            background: white;
+            border-radius: 15px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-tabs .nav-link {
             border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
-            font-weight: 600;
+            color: #6c757d;
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+            border-radius: 8px;
         }
 
-        .btn-primary-custom:hover {
-            background: var(--secondary-color);
-            transform: translateY(-1px);
+        .filter-tabs .nav-link.active {
+            background: #000;
+            color: white;
         }
 
         .blog-table {
             background: white;
             border-radius: 15px;
             overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .blog-table th {
-            background: var(--primary-color);
-            color: white;
+        .blog-table .table {
+            margin: 0;
+        }
+
+        .blog-table .table th {
+            background: #f8f9fa;
             border: none;
+            padding: 1rem;
             font-weight: 600;
+            color: #495057;
         }
 
-        .blog-table td {
-            vertical-align: middle;
-        }
-
-        .badge-status {
-            font-size: 0.8rem;
-            padding: 6px 12px;
-            border-radius: 15px;
-        }
-
-        .search-box {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .alert {
-            border-radius: 10px;
+        .blog-table .table td {
+            padding: 1rem;
             border: none;
+            border-bottom: 1px solid #e9ecef;
+            margin: 0;
         }
 
-        .pagination .page-link {
-            border-radius: 10px;
-            margin: 0 2px;
+        .blog-table .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-btn {
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view {
+            background: #000;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #333;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #5a6268;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+            color: white;
+        }
+
+        .add-blog-btn {
+            background: #000;
+            color: white;
             border: none;
-            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
         }
 
-        .pagination .page-item.active .page-link {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .blog-image {
-            width: 80px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .add-blog-btn:hover {
+            background: #333;
             color: white;
-            font-size: 1.2rem;
+            transform: translateY(-1px);
         }
 
-        .category-badge {
-            background: var(--info-color);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
+        .export-dropdown {
+            position: relative;
+            display: inline-block;
         }
 
-        .blog-title {
-            max-width: 300px;
+        .export-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 6px;
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
-        .blog-excerpt {
-            max-width: 250px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .export-dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .export-dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .export-dropdown.show .export-dropdown-content {
+            display: block;
         }
     </style>
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/admin/dashboard.php">
-                <i class="fas fa-shield-alt me-2"></i>
-                Panda Digital - Admin
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/admin/dashboard.php">
-                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
-                </a>
-                <a class="nav-link" href="/admin/courses.php">
-                    <i class="fas fa-book me-1"></i> Kozi
-                </a>
-                <a class="nav-link" href="/admin/videos.php">
-                    <i class="fas fa-video me-1"></i> Video
-                </a>
-                <a class="nav-link" href="/admin/questions.php">
-                    <i class="fas fa-question-circle me-1"></i> Maswali
-                </a>
-                <a class="nav-link active" href="/admin/blogs.php">
-                    <i class="fas fa-blog me-1"></i> Blog
-                </a>
-                <a class="nav-link" href="/logout.php">
-                    <i class="fas fa-sign-out-alt me-1"></i> Toka
-                </a>
+    <?php include __DIR__ . '/includes/admin_header.php'; ?>
+
+    <div class="content-wrapper">
+        <!-- Success Message -->
+        <?php if (isset($_GET['success'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <?php if ($_GET['success'] == '1'): ?>
+                    Blog imehifadhiwa kwa mafanikio!
+                <?php endif; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+        <!-- Statistics Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number"><?= number_format($totalBlogs) ?></div>
+                    <div class="stats-label">Blog Zote</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number"><?= number_format($totalViews) ?></div>
+                    <div class="stats-label">Jumla ya Matazamo</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number"><?= number_format($totalComments) ?></div>
+                    <div class="stats-label">Maoni Yote</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number"><?= number_format($totalAuthors) ?></div>
+                    <div class="stats-label">Waandishi</div>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <div class="main-content">
-        <div class="container">
-            <!-- Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h1 class="h3 mb-0">
-                        <i class="fas fa-blog text-primary me-2"></i>
-                        Usimamizi wa Blog
-                    </h1>
-                    <p class="text-muted">Udhibiti blog zote za mfumo</p>
-                </div>
-            </div>
-
-            <!-- Statistics Cards -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card stats-card">
-                        <div class="card-body text-center">
-                            <i class="fas fa-blog fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $totalBlogs; ?></h3>
-                            <p class="mb-0">Jumla ya Blog</p>
-                        </div>
+        <!-- Search and Actions -->
+        <div class="search-box">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Tafuta blog...">
+                        <button class="btn btn-outline-secondary" type="button" onclick="searchBlogs()">
+                            <i class="fas fa-search"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card stats-card success">
-                        <div class="card-body text-center">
-                            <i class="fas fa-eye fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $blogStats['total_views'] ?? 0; ?></h3>
-                            <p class="mb-0">Jumla ya Matazamo</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card info">
-                        <div class="card-body text-center">
-                            <i class="fas fa-comments fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $blogStats['total_comments'] ?? 0; ?></h3>
-                            <p class="mb-0">Jumla ya Maoni</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card warning">
-                        <div class="card-body text-center">
-                            <i class="fas fa-users fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $blogStats['total_authors'] ?? 0; ?></h3>
-                            <p class="mb-0">Waandishi</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Alerts -->
-            <?php if (isset($success)): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <?php echo htmlspecialchars($success); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-
-            <?php if (isset($error)): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    <?php echo htmlspecialchars($error); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-
-            <!-- Search and Filters -->
-            <div class="search-box">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fas fa-search"></i>
-                            </span>
-                            <input type="text" class="form-control" id="searchInput" placeholder="Tafuta blog...">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="categoryFilter">
-                            <option value="">Kategoria Zote</option>
-                            <option value="technology">Teknolojia</option>
-                            <option value="business">Biashara</option>
-                            <option value="education">Elimu</option>
-                            <option value="lifestyle">Maisha</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="statusFilter">
-                            <option value="">Hali Zote</option>
-                            <option value="published">Iliyochapishwa</option>
-                            <option value="draft">Draft</option>
-                            <option value="archived">Iliyohifadhiwa</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Blogs Table -->
-            <div class="card blog-table">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-list me-2"></i>
-                        Orodha ya Blog
-                    </h5>
-                    <a href="/admin/add-blog.php" class="btn btn-primary-custom text-white">
-                        <i class="fas fa-plus me-2"></i>
-                        Ongeza Blog
+                <div class="col-md-6 text-end">
+                    <a href="add-blog.php" class="add-blog-btn me-2">
+                        <i class="fas fa-plus me-2"></i>Ongeza Blog Mpya
                     </a>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Blog</th>
-                                    <th>Kategoria</th>
-                                    <th>Mwandishi</th>
-                                    <th>Matazamo</th>
-                                    <th>Maoni</th>
-                                    <th>Hali</th>
-                                    <th>Vitendo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($blogs as $blog): ?>
-                                    <tr>
-                                        <td>
-                                            <span class="badge bg-secondary">#<?php echo $blog['id']; ?></span>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="blog-image me-3">
-                                                    <i class="fas fa-newspaper"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bold blog-title" title="<?php echo htmlspecialchars($blog['title']); ?>">
-                                                        <?php echo htmlspecialchars($blog['title']); ?>
-                                                    </div>
-                                                    <div class="blog-excerpt text-muted" title="<?php echo htmlspecialchars($blog['excerpt'] ?? ''); ?>">
-                                                        <?php echo htmlspecialchars($blog['excerpt'] ?? 'Hakuna maelezo'); ?>
-                                                    </div>
-                                                    <small class="text-muted">
-                                                        <i class="fas fa-calendar me-1"></i>
-                                                        <?php echo date('d M Y', strtotime($blog['date_created'])); ?>
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="category-badge">
-                                                <?php
-                                                switch ($blog['category'] ?? 'general') {
-                                                    case 'technology':
-                                                        echo 'Teknolojia';
-                                                        break;
-                                                    case 'business':
-                                                        echo 'Biashara';
-                                                        break;
-                                                    case 'education':
-                                                        echo 'Elimu';
-                                                        break;
-                                                    case 'lifestyle':
-                                                        echo 'Maisha';
-                                                        break;
-                                                    default:
-                                                        echo 'Jumla';
-                                                }
-                                                ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-user-circle text-primary me-2"></i>
-                                                <span><?php echo htmlspecialchars($blog['author_name'] ?? 'Admin'); ?></span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-info">
-                                                <?php echo $blog['views'] ?? 0; ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-success">
-                                                <?php echo $blog['comments'] ?? 0; ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-status bg-<?php
-                                                                                switch ($blog['status'] ?? 'published') {
-                                                                                    case 'published':
-                                                                                        echo 'success';
-                                                                                        break;
-                                                                                    case 'draft':
-                                                                                        echo 'warning';
-                                                                                        break;
-                                                                                    case 'archived':
-                                                                                        echo 'secondary';
-                                                                                        break;
-                                                                                    default:
-                                                                                        echo 'success';
-                                                                                }
-                                                                                ?>">
-                                                <?php
-                                                switch ($blog['status'] ?? 'published') {
-                                                    case 'published':
-                                                        echo 'Iliyochapishwa';
-                                                        break;
-                                                    case 'draft':
-                                                        echo 'Draft';
-                                                        break;
-                                                    case 'archived':
-                                                        echo 'Iliyohifadhiwa';
-                                                        break;
-                                                    default:
-                                                        echo 'Iliyochapishwa';
-                                                }
-                                                ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                <a href="/admin/edit-blog.php?id=<?php echo $blog['id']; ?>"
-                                                    class="btn btn-sm btn-outline-primary">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="/admin/blog-details.php?id=<?php echo $blog['id']; ?>"
-                                                    class="btn btn-sm btn-outline-info">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-warning"
-                                                    onclick="toggleBlogStatus(<?php echo $blog['id']; ?>)">
-                                                    <i class="fas fa-pause"></i>
-                                                </button>
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-danger"
-                                                    onclick="deleteBlog(<?php echo $blog['id']; ?>, '<?php echo htmlspecialchars(substr($blog['title'], 0, 50)); ?>')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                    <div class="export-dropdown">
+                        <button class="btn btn-outline-secondary" onclick="toggleExportDropdown()">
+                            <i class="fas fa-download me-2"></i>Pakua
+                        </button>
+                        <div class="export-dropdown-content">
+                            <a href="export_blogs.php?format=csv">Excel (CSV)</a>
+                            <a href="export_blogs.php?format=pdf">PDF</a>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Pagination -->
-            <?php if ($totalPages > 1): ?>
-                <nav aria-label="Blog pagination" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        <?php if ($page > 1): ?>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<?php echo $page - 1; ?>">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <ul class="nav nav-tabs" id="statusTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" onclick="filterByStatus('all')">
+                        Zote (<?= $totalBlogs ?>)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="filterByStatus('published')">
+                        Zilizochapishwa (<?= $totalBlogs ?>)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="filterByStatus('draft')">
+                        Rasimu (<?= $totalBlogs ?>)
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Blogs Table -->
+        <div class="blog-table">
+            <div class="table-responsive">
+                <table class="table" id="blogsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Picha</th>
+                            <th>Kichwa Cha Habari</th>
+                            <th>Maelezo</th>
+                            <th>Muda</th>
+                            <th>Vitendo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($blogs)): ?>
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <p class="text-muted mb-0">Hakuna blog zilizopatikana</p>
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($blogs as $blog): ?>
+                                <tr>
+                                    <td><?= $blog['id'] ?></td>
+                                    <td>
+                                        <?php if (!empty($blog['photo'])): ?>
+                                            <img src="../uploads/Blog/<?= htmlspecialchars($blog['photo']) ?>"
+                                                alt="Blog Image"
+                                                class="blog-thumbnail"
+                                                style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                        <?php else: ?>
+                                            <span class="text-muted">Hakuna picha</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong><?= htmlspecialchars($blog['title'] ?? $blog['name'] ?? 'N/A') ?></strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($blog['excerpt'] ?? $blog['maelezo'])): ?>
+                                            <?= htmlspecialchars(substr($blog['excerpt'] ?? $blog['maelezo'], 0, 100)) ?>...
+                                        <?php else: ?>
+                                            <span class="text-muted">Hakuna maelezo</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?= htmlspecialchars($blog['date_created'] ?? 'N/A') ?>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn btn-view" onclick="viewBlog(<?= $blog['id'] ?>)">
+                                            <i class="fas fa-eye me-1"></i>Ona
+                                        </button>
+                                        <a href="edit-blog.php?id=<?= $blog['id'] ?>" class="action-btn btn-edit">
+                                            <i class="fas fa-edit me-1"></i>Hariri
+                                        </a>
+                                        <button class="action-btn btn-delete" onclick="deleteBlog(<?= $blog['id'] ?>)">
+                                            <i class="fas fa-trash me-1"></i>Futa
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                         <?php endif; ?>
-
-                        <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                            <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
-                                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                            </li>
-                        <?php endfor; ?>
-
-                        <?php if ($page < $totalPages): ?>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<?php echo $page + 1; ?>">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
-            <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Blog View Modal -->
+    <div class="modal fade" id="blogViewModal" tabindex="-1" aria-labelledby="blogViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="blogViewModalLabel">Maelezo ya Blog</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="blogViewModalBody">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Inapakia...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php include __DIR__ . '/includes/admin_footer_common.php'; ?>
 
     <script>
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('tbody tr');
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-
-        // Filter functionality
-        document.getElementById('categoryFilter').addEventListener('change', filterBlogs);
-        document.getElementById('statusFilter').addEventListener('change', filterBlogs);
-
-        function filterBlogs() {
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const rows = document.querySelectorAll('tbody tr');
-
-            rows.forEach(row => {
-                const category = row.querySelector('td:nth-child(3)').textContent.trim();
-                const status = row.querySelector('td:nth-child(7)').textContent.trim();
-
-                const categoryMatch = !categoryFilter || category.includes(categoryFilter);
-                const statusMatch = !statusFilter || status.includes(statusFilter);
-
-                row.style.display = (categoryMatch && statusMatch) ? '' : 'none';
-            });
+        // Export dropdown functionality
+        function toggleExportDropdown() {
+            document.querySelector('.export-dropdown').classList.toggle('show');
         }
 
-        // Toggle blog status
-        function toggleBlogStatus(blogId) {
-            if (confirm('Je, una uhakika unataka kubadilisha hali ya blog hii?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.innerHTML = `
-                    <input type="hidden" name="blog_id" value="${blogId}">
-                    <input type="hidden" name="action" value="toggle_status">
-                `;
-                document.body.appendChild(form);
-                form.submit();
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.export-dropdown')) {
+                const dropdowns = document.getElementsByClassName('export-dropdown');
+                for (let dropdown of dropdowns) {
+                    if (dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                    }
+                }
             }
+        }
+
+        // Search functionality
+        function searchBlogs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const table = document.getElementById('blogsTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            for (let row of rows) {
+                const title = row.cells[2].textContent.toLowerCase();
+                const description = row.cells[3].textContent.toLowerCase();
+
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        // Filter by status
+        function filterByStatus(status) {
+            // Update active tab
+            document.querySelectorAll('#statusTabs .nav-link').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter table rows
+            const table = document.getElementById('blogsTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            for (let row of rows) {
+                if (status === 'all') {
+                    row.style.display = '';
+                } else if (status === 'published') {
+                    // For now, show all since we don't have status field
+                    row.style.display = '';
+                } else if (status === 'draft') {
+                    // For now, show all since we don't have status field
+                    row.style.display = '';
+                }
+            }
+        }
+
+        // View blog details
+        function viewBlog(blogId) {
+            const modal = new bootstrap.Modal(document.getElementById('blogViewModal'));
+            modal.show();
+
+            // Fetch blog details via AJAX
+            fetch(`get_blog_details.php?id=${blogId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const blog = data.blog;
+                        document.getElementById('blogViewModalBody').innerHTML = `
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <img src="../uploads/Blog/${blog.photo || 'default-blog.jpg'}" 
+                                         class="img-fluid rounded" alt="Blog Image">
+                                </div>
+                                <div class="col-md-8">
+                                    <h5>${blog.title || blog.name}</h5>
+                                    <p class="text-muted">${blog.excerpt || blog.maelezo || 'Hakuna maelezo'}</p>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <strong>Mwandishi:</strong><br>
+                                            ${blog.author_name || 'Haijulikani'}
+                                        </div>
+                                        <div class="col-6">
+                                            <strong>Tarehe:</strong><br>
+                                            ${blog.date_created || 'Haijulikani'}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        document.getElementById('blogViewModalBody').innerHTML = `
+                            <div class="alert alert-danger">
+                                ${data.message || 'Haikuweza kupata maelezo ya blog'}
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('blogViewModalBody').innerHTML = `
+                        <div class="alert alert-danger">
+                            Kuna tatizo la mtandao. Jaribu tena.
+                        </div>
+                    `;
+                });
         }
 
         // Delete blog
-        function deleteBlog(blogId, blogTitle) {
-            if (confirm(`Je, una uhakika unataka kufuta blog "${blogTitle}..."? Kitendo hiki hakiwezi kubatilishwa!`)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.innerHTML = `
-                    <input type="hidden" name="blog_id" value="${blogId}">
-                    <input type="hidden" name="action" value="delete">
-                `;
-                document.body.appendChild(form);
-                form.submit();
+        function deleteBlog(blogId) {
+            if (confirm('Una uhakika unataka kufuta blog hii? Kitendo hiki hakiwezi kurekebishwa.')) {
+                fetch('delete-blog.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id: blogId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Blog imefutwa kwa mafanikio!');
+                            location.reload();
+                        } else {
+                            alert('Kuna tatizo: ' + (data.message || 'Haijulikani'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Kuna tatizo la mtandao. Jaribu tena.');
+                    });
             }
         }
+
+        // Initialize search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBlogs();
+            }
+        });
     </script>
 </body>
 
