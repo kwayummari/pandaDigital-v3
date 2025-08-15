@@ -263,7 +263,6 @@ $thisYear = $beneficiaryStats['this_year'] ?? 0;
                         <th>Picha</th>
                         <th>Jina</th>
                         <th>Kichwa Cha Habari</th>
-                        <th>Maelezo</th>
                         <th>Tarehe</th>
                         <th>Vitendo</th>
                     </tr>
@@ -271,7 +270,7 @@ $thisYear = $beneficiaryStats['this_year'] ?? 0;
                 <tbody id="beneficiariesTableBody">
                     <?php if (empty($beneficiaries)): ?>
                         <tr>
-                            <td colspan="7" class="text-center py-4">
+                            <td colspan="6" class="text-center py-4">
                                 <i class="fas fa-users fa-2x text-muted mb-2"></i>
                                 <p class="text-muted mb-0">Hakuna wanufaika walio patikana</p>
                             </td>
@@ -292,14 +291,6 @@ $thisYear = $beneficiaryStats['this_year'] ?? 0;
                                 </td>
                                 <td><?= htmlspecialchars($item['name'] ?? 'N/A') ?></td>
                                 <td><?= htmlspecialchars($item['title'] ?? 'N/A') ?></td>
-                                <td>
-                                    <?php
-                                    $description = $item['description'] ?? '';
-                                    echo strlen($description) > 100 ?
-                                        htmlspecialchars(substr($description, 0, 100)) . '...' :
-                                        htmlspecialchars($description);
-                                    ?>
-                                </td>
                                 <td>
                                     <?php
                                     $date = $item['date_created'] ?? '';
