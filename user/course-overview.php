@@ -347,8 +347,8 @@ if ($isEnrolled) {
                         <div class="mb-3">
                             <label class="form-label">Chagua Mtoa Huduma wa Simu</label>
                             <div class="mobile-providers d-flex gap-3">
-                                <div class="mobile-provider flex-fill text-center p-3 border rounded cursor-pointer" data-provider="mpesa" style="cursor: pointer; transition: all 0.3s ease; min-height: 100px; display: flex; align-items: center; justify-content: center;">
-                                    <img src="<?php echo app_url('assets/images/mpesa.png'); ?>" alt="M-Pesa" style="width: 80px; height: 80px; object-fit: contain;">
+                                <div class="mobile-provider flex-fill text-center p-3 border rounded cursor-pointer" data-provider="halopesa" style="cursor: pointer; transition: all 0.3s ease; min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <img src="<?php echo app_url('assets/images/halopesa.png'); ?>" alt="HaloPesa" style="width: 80px; height: 80px; object-fit: contain;">
                                 </div>
                                 <div class="mobile-provider flex-fill text-center p-3 border rounded cursor-pointer" data-provider="tigo" style="cursor: pointer; transition: all 0.3s ease; min-height: 100px; display: flex; align-items: center; justify-content: center;">
                                     <img src="<?php echo app_url('assets/images/tigo.png'); ?>" alt="Mix by YAS" style="width: 80px; height: 80px; object-fit: contain;">
