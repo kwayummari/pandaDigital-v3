@@ -1,9 +1,9 @@
 /* Modern Panda Digital V3 Styles - Minimalistic Design */
 
 :root {
-  --primary-color: #ffbc3b;
-  --primary-dark: #e6a92e;
-  --primary-light: #ffc85c;
+  --primary-color: #000000;
+  --primary-dark: #000000;
+  --primary-light: #333333;
   --secondary-color: #5f4594;
   --secondary-dark: #4a3675;
   --secondary-light: #7a5bb8;
@@ -123,7 +123,7 @@
 .nav-link:hover,
 .nav-link.active {
   color: var(--primary-color);
-  background: rgba(255, 188, 59, 0.1);
+  background: rgba(0, 0, 0, 0.1);
   border-left-color: var(--primary-color);
 }
 
@@ -724,7 +724,7 @@ html {
 
 .navbar-nav .nav-link.active {
   color: var(--primary-color) !important;
-  background: rgba(255, 188, 59, 0.15);
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .navbar-nav .nav-link.active::before {
@@ -762,7 +762,7 @@ html {
 }
 
 .dropdown-item:hover {
-  background-color: rgba(255, 188, 59, 0.08);
+  background-color: rgba(0, 0, 0, 0.08);
   color: var(--primary-color);
   transform: translateX(4px);
 }
@@ -827,13 +827,13 @@ html {
 
 .hero-badge {
   display: inline-block;
-  background: rgba(255, 188, 59, 0.2);
+  background: rgba(0, 0, 0, 0.2);
   padding: 0.75rem 2rem;
   border-radius: 50px;
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 2.5rem;
-  border: 1px solid rgba(255, 188, 59, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.3);
   color: var(--primary-color);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -913,7 +913,7 @@ html {
   background: transparent;
   color: var(--primary-color);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(255, 188, 59, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .hero-buttons .btn-outline-light {
@@ -2506,13 +2506,13 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 188, 59, 0.1);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   transition: all 0.3s ease;
 }
 
 .category-card:hover .category-icon {
-  background: rgba(255, 188, 59, 0.2);
+  background: rgba(0, 0, 0, 0.2);
   transform: scale(1.1);
 }
 
@@ -2667,13 +2667,13 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 188, 59, 0.1);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   transition: all 0.3s ease;
 }
 
 .benefit-card:hover .benefit-icon {
-  background: rgba(255, 188, 59, 0.2);
+  background: rgba(0, 0, 0, 0.2);
   transform: scale(1.1);
 }
 
@@ -2956,7 +2956,7 @@ html {
 
 .newsletter-form .form-control:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 0.2rem rgba(255, 188, 59, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25);
 }
 
 .newsletter-note {
@@ -3871,12 +3871,12 @@ html {
 
 .course-learning-page .lesson-item:hover {
   border-color: var(--primary-color);
-  box-shadow: 0 2px 8px rgba(255, 188, 59, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .course-learning-page .lesson-item.active {
   border-color: var(--primary-color);
-  background: rgba(255, 188, 59, 0.1);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .course-learning-page .lesson-link {
@@ -3945,7 +3945,7 @@ html {
 
 .mobile-provider:hover {
   border-color: var(--primary-color);
-  background: rgba(255, 188, 59, 0.1);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .mobile-provider.selected {
@@ -4090,7 +4090,7 @@ html {
 }
 
 .table-hover tbody tr:hover {
-  background: rgba(255, 188, 59, 0.05);
+  background: rgba(0, 0, 0, 0.05);
   transform: translateY(-1px);
   transition: var(--transition);
 }
