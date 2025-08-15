@@ -1,44 +1,22 @@
 <?php
 require_once __DIR__ . "/../middleware/AuthMiddleware.php";
-require_once __DIR__ . "/../models/Course.php";
+require_once __DIR__ . "/../models/Video.php";
 
 $auth = new AuthMiddleware();
 $auth->requireRole('admin');
 
 $currentUser = $auth->getCurrentUser();
-$courseModel = new Course();
-
-// Handle video actions
-if ($_POST && isset($_POST['action'])) {
-    $videoId = $_POST['video_id'];
-    $action = $_POST['action'];
-
-    if ($action === 'delete') {
-        $result = $courseModel->deleteVideo($videoId);
-        if ($result) {
-            $success = "Video imefutwa kikamilifu!";
-        } else {
-            $error = "Imefeli kufuta video. Tafadhali jaribu tena.";
-        }
-    } elseif ($action === 'toggle_status') {
-        $result = $courseModel->toggleVideoStatus($videoId);
-        if ($result) {
-            $success = "Hali ya video imebadilishwa!";
-        } else {
-            $error = "Imefeli kubadilisha hali ya video. Tafadhali jaribu tena.";
-        }
-    }
-}
-
-// Get all videos with pagination
-$page = $_GET['page'] ?? 1;
-$perPage = 20;
-$videos = $courseModel->getAllVideosForAdmin($page, $perPage);
-$totalVideos = $courseModel->getTotalVideos();
-$totalPages = ceil($totalVideos / $perPage);
+$videoModel = new Video();
 
 // Get video statistics
-$videoStats = $courseModel->getOverallVideoStats();
+$videoStats = $videoModel->getOverallVideoStats();
+$totalVideos = $videoStats['total_videos'] ?? 0;
+$totalCourses = $videoStats['total_courses'] ?? 0;
+$thisMonth = $videoStats['this_month'] ?? 0;
+$lastMonth = $videoStats['last_month'] ?? 0;
+
+// Get all videos for admin
+$videos = $videoModel->getAllVideosForAdmin();
 ?>
 
 <!DOCTYPE html>
@@ -48,464 +26,628 @@ $videoStats = $courseModel->getOverallVideoStats();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usimamizi wa Video - Panda Digital</title>
-
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
     <style>
-        :root {
-            --primary-color: #662e91;
-            --secondary-color: #FFC10B;
-            --accent-color: #e74c3c;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --info-color: #3498db;
+        /* Simple layout fixes */
+        .content-wrapper {
+            padding: 20px 30px;
         }
 
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        .stats-card,
+        .search-box,
+        .filter-tabs,
+        .video-table {
+            margin-bottom: 1.5rem;
         }
 
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        /* Video thumbnail styling */
+        .video-thumbnail {
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
         }
 
-        .main-content {
-            padding: 20px;
-        }
-
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .video-thumbnail:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         .stats-card {
-            background: linear-gradient(135deg, var(--accent-color), #c0392b);
-            color: white;
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+            border-top: 3px solid #000;
+            transition: transform 0.2s ease;
         }
 
-        .stats-card.success {
-            background: linear-gradient(135deg, var(--success-color), #229954);
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
 
-        .stats-card.info {
-            background: linear-gradient(135deg, var(--info-color), #2980b9);
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 0.5rem;
         }
 
-        .stats-card.warning {
-            background: linear-gradient(135deg, var(--warning-color), #d68910);
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
         }
 
-        .btn-primary-custom {
-            background: var(--primary-color);
+        .search-box {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-tabs {
+            background: white;
+            border-radius: 15px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-tabs .nav-link {
             border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
-            font-weight: 600;
+            color: #6c757d;
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+            border-radius: 8px;
         }
 
-        .btn-primary-custom:hover {
-            background: var(--secondary-color);
-            transform: translateY(-1px);
+        .filter-tabs .nav-link.active {
+            background: #000;
+            color: white;
         }
 
         .video-table {
             background: white;
             border-radius: 15px;
             overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .video-table th {
-            background: var(--primary-color);
-            color: white;
+        .video-table .table {
+            margin: 0;
+        }
+
+        .video-table .table th {
+            background: #f8f9fa;
             border: none;
+            padding: 1rem;
             font-weight: 600;
+            color: #495057;
         }
 
-        .video-table td {
-            vertical-align: middle;
-        }
-
-        .badge-status {
-            font-size: 0.8rem;
-            padding: 6px 12px;
-            border-radius: 15px;
-        }
-
-        .search-box {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .alert {
-            border-radius: 10px;
+        .video-table .table td {
+            padding: 1rem;
             border: none;
+            border-bottom: 1px solid #e9ecef;
+            margin: 0;
         }
 
-        .pagination .page-link {
-            border-radius: 10px;
-            margin: 0 2px;
-            border: none;
-            color: var(--primary-color);
+        .video-table .table tbody tr:hover {
+            background: #f8f9fa;
         }
 
-        .pagination .page-item.active .page-link {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
+        .action-btn {
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 0.25rem;
+            transition: all 0.2s ease;
         }
 
-        .video-thumbnail {
-            width: 80px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .btn-view {
+            background: #000;
             color: white;
-            font-size: 1.2rem;
+        }
+
+        .btn-view:hover {
+            background: #333;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #5a6268;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+            color: white;
+        }
+
+        .add-video-btn {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+
+        .add-video-btn:hover {
+            background: #333;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .export-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .export-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            right: 0;
+        }
+
+        .export-dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .export-dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .export-dropdown:hover .export-dropdown-content {
+            display: block;
+        }
+
+        .export-dropdown:hover .export-btn {
+            background-color: #333;
+        }
+
+        .export-btn {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .export-btn:hover {
+            background: #333;
         }
 
         .course-badge {
-            background: var(--info-color);
+            background: #6c757d;
             color: white;
             padding: 4px 8px;
             border-radius: 12px;
             font-size: 0.8rem;
         }
+
+        .video-url {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     </style>
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/admin/dashboard.php">
-                <i class="fas fa-shield-alt me-2"></i>
-                Panda Digital - Admin
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/admin/dashboard.php">
-                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
-                </a>
-                <a class="nav-link" href="/admin/users.php">
-                    <i class="fas fa-users me-1"></i> Watumiaji
-                </a>
-                <a class="nav-link" href="/admin/courses.php">
-                    <i class="fas fa-book me-1"></i> Kozi
-                </a>
-                <a class="nav-link active" href="/admin/videos.php">
-                    <i class="fas fa-video me-1"></i> Video
-                </a>
-                <a class="nav-link" href="/admin/expert-requests.php">
-                    <i class="fas fa-user-graduate me-1"></i> Maombi ya Mitaalam
-                </a>
-                <a class="nav-link" href="/logout.php">
-                    <i class="fas fa-sign-out-alt me-1"></i> Toka
-                </a>
+    <?php include __DIR__ . '/includes/admin_header.php'; ?>
+
+    <div class="content-wrapper">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h3 mb-0">
+                            <i class="fas fa-video text-primary me-2"></i>
+                            Usimamizi wa Video
+                        </h1>
+                        <p class="text-muted">Udhibiti video zote za mfumo</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <div class="export-dropdown">
+                            <button class="export-btn">
+                                <i class="fas fa-download me-2"></i>Pakua
+                            </button>
+                            <div class="export-dropdown-content">
+                                <a href="#" onclick="exportToCSV()">
+                                    <i class="fas fa-file-csv me-2"></i>CSV
+                                </a>
+                                <a href="#" onclick="exportToExcel()">
+                                    <i class="fas fa-file-excel me-2"></i>Excel
+                                </a>
+                            </div>
+                        </div>
+                        <a href="add-video.php" class="add-video-btn">
+                            <i class="fas fa-plus me-2"></i>Ongeza Video
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <div class="main-content">
-        <div class="container">
-            <!-- Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h1 class="h3 mb-0">
-                        <i class="fas fa-video text-primary me-2"></i>
-                        Usimamizi wa Video
-                    </h1>
-                    <p class="text-muted">Udhibiti video zote za mfumo</p>
-                </div>
-            </div>
-
-            <!-- Statistics Cards -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card stats-card">
-                        <div class="card-body text-center">
-                            <i class="fas fa-video fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $totalVideos; ?></h3>
-                            <p class="mb-0">Jumla ya Video</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card success">
-                        <div class="card-body text-center">
-                            <i class="fas fa-book fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $videoStats['total_courses'] ?? 0; ?></h3>
-                            <p class="mb-0">Kozi Zilizopakiwa</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card info">
-                        <div class="card-body text-center">
-                            <i class="fas fa-question-circle fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $videoStats['total_questions'] ?? 0; ?></h3>
-                            <p class="mb-0">Jumla ya Maswali</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card warning">
-                        <div class="card-body text-center">
-                            <i class="fas fa-users fa-2x mb-2"></i>
-                            <h3 class="mb-1"><?php echo $videoStats['total_students'] ?? 0; ?></h3>
-                            <p class="mb-0">Wanafunzi Waliosajiliwa</p>
-                        </div>
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="text-center">
+                        <i class="fas fa-video fa-2x text-primary mb-3"></i>
+                        <div class="stats-number"><?= $totalVideos ?></div>
+                        <div class="stats-label">Jumla ya Video</div>
                     </div>
                 </div>
             </div>
-
-            <!-- Alerts -->
-            <?php if (isset($success)): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <?php echo htmlspecialchars($success); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-
-            <?php if (isset($error)): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    <?php echo htmlspecialchars($error); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-
-            <!-- Search and Filters -->
-            <div class="search-box">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fas fa-search"></i>
-                            </span>
-                            <input type="text" class="form-control" id="searchInput" placeholder="Tafuta video...">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="courseFilter">
-                            <option value="">Kozi Zote</option>
-                            <!-- Course options will be populated dynamically -->
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="statusFilter">
-                            <option value="">Hali Zote</option>
-                            <option value="active">Zinazofanya Kazi</option>
-                            <option value="inactive">Zisizofanya Kazi</option>
-                        </select>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="text-center">
+                        <i class="fas fa-book fa-2x text-primary mb-3"></i>
+                        <div class="stats-number"><?= $totalCourses ?></div>
+                        <div class="stats-label">Jumla ya Kozi</div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="text-center">
+                        <i class="fas fa-calendar-alt fa-2x text-primary mb-3"></i>
+                        <div class="stats-number"><?= $thisMonth ?></div>
+                        <div class="stats-label">Mwezi Huu</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="text-center">
+                        <i class="fas fa-calendar fa-2x text-primary mb-3"></i>
+                        <div class="stats-number"><?= $lastMonth ?></div>
+                        <div class="stats-label">Mwezi Uliopita</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <!-- Videos Table -->
-            <div class="card video-table">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-list me-2"></i>
-                        Orodha ya Video
-                    </h5>
-                    <a href="/admin/add-video.php" class="btn btn-primary-custom text-white">
-                        <i class="fas fa-plus me-2"></i>
-                        Ongeza Video
+        <!-- Search and Actions -->
+        <div class="search-box">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Tafuta video...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="courseFilter">
+                        <option value="">Kozi Zote</option>
+                        <?php
+                        $courses = $videoModel->getAllCourses();
+                        foreach ($courses as $course) {
+                            echo '<option value="' . htmlspecialchars($course['name']) . '">' . htmlspecialchars($course['name']) . '</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <ul class="nav nav-pills" id="filterTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-filter="all">
+                        Zote <span class="badge bg-secondary ms-1"><?= $totalVideos ?></span>
                     </a>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Video</th>
-                                    <th>Kozi</th>
-                                    <th>Maelezo</th>
-                                    <th>Maswali</th>
-                                    <th>Muda</th>
-                                    <th>Hali</th>
-                                    <th>Vitendo</th>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-filter="this-month">
+                        Mwezi Huu <span class="badge bg-secondary ms-1"><?= $thisMonth ?></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-filter="last-month">
+                        Mwezi Uliopita <span class="badge bg-secondary ms-1"><?= $lastMonth ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Videos Table -->
+        <div class="video-table">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Video</th>
+                            <th>Kozi</th>
+                            <th>Maelezo</th>
+                            <th>Vitendo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="videosTableBody">
+                        <?php if (empty($videos)): ?>
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Hakuna video zilizopatikana</p>
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($videos as $video): ?>
+                                <tr data-course="<?= htmlspecialchars($video['course_name']) ?>">
+                                    <td>
+                                        <span class="badge bg-secondary">#<?= $video['id'] ?></span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="video-thumbnail me-3">
+                                                <i class="fas fa-play"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">Video #<?= $video['id'] ?></div>
+                                                <div class="video-url text-muted" title="<?= htmlspecialchars($video['name']) ?>">
+                                                    <?= htmlspecialchars($video['name']) ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="course-badge">
+                                            <?= htmlspecialchars($video['course_name'] ?? 'N/A') ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="text-truncate" style="max-width: 200px;" title="<?= htmlspecialchars($video['description'] ?? '') ?>">
+                                            <?= htmlspecialchars($video['description'] ?? 'Hakuna maelezo') ?>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="action-btn btn-view" onclick="viewVideo(<?= $video['id'] ?>)">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <a href="edit-video.php?id=<?= $video['id'] ?>" class="action-btn btn-edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="action-btn btn-delete" onclick="deleteVideo(<?= $video['id'] ?>, '<?= htmlspecialchars($video['name']) ?>')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($videos as $video): ?>
-                                    <tr>
-                                        <td>
-                                            <span class="badge bg-secondary">#<?php echo $video['id']; ?></span>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="video-thumbnail me-3">
-                                                    <i class="fas fa-play"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bold">
-                                                        <?php echo htmlspecialchars($video['title']); ?>
-                                                    </div>
-                                                    <small class="text-muted">
-                                                        <?php echo htmlspecialchars($video['video_url']); ?>
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="course-badge">
-                                                <?php echo htmlspecialchars($video['course_name']); ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div class="text-truncate" style="max-width: 200px;" title="<?php echo htmlspecialchars($video['description'] ?? ''); ?>">
-                                                <?php echo htmlspecialchars($video['description'] ?? 'Hakuna maelezo'); ?>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-success">
-                                                <?php echo $video['total_questions'] ?? 0; ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">
-                                                <?php echo $video['duration'] ?? 'N/A'; ?>
-                                            </small>
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-status bg-success">
-                                                Inafanya Kazi
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                <a href="/admin/edit-video.php?id=<?php echo $video['id']; ?>"
-                                                    class="btn btn-sm btn-outline-primary">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="/admin/video-details.php?id=<?php echo $video['id']; ?>"
-                                                    class="btn btn-sm btn-outline-info">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-warning"
-                                                    onclick="toggleVideoStatus(<?php echo $video['id']; ?>)">
-                                                    <i class="fas fa-pause"></i>
-                                                </button>
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-danger"
-                                                    onclick="deleteVideo(<?php echo $video['id']; ?>, '<?php echo htmlspecialchars($video['title']); ?>')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
-
-            <!-- Pagination -->
-            <?php if ($totalPages > 1): ?>
-                <nav aria-label="Video pagination" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        <?php if ($page > 1): ?>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<?php echo $page - 1; ?>">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-
-                        <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                            <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
-                                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                            </li>
-                        <?php endfor; ?>
-
-                        <?php if ($page < $totalPages): ?>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<?php echo $page + 1; ?>">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
-            <?php endif; ?>
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Video View Modal -->
+    <div class="modal fade" id="videoViewModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-video me-2"></i>Maelezo ya Video
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="videoModalBody">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Inapakia...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php include __DIR__ . '/includes/admin_footer_common.php'; ?>
 
     <script>
+        // Toggle export dropdown
+        function toggleExportDropdown() {
+            const dropdown = document.querySelector('.export-dropdown-content');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
         // Search functionality
         document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('tbody tr');
+            searchVideos();
+        });
+
+        // Course filter functionality
+        document.getElementById('courseFilter').addEventListener('change', function() {
+            searchVideos();
+        });
+
+        function searchVideos() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const courseFilter = document.getElementById('courseFilter').value;
+            const rows = document.querySelectorAll('#videosTableBody tr');
 
             rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+                if (row.cells.length === 1) return; // Skip "no data" row
+                
+                const videoText = row.cells[1].textContent.toLowerCase();
+                const courseText = row.cells[2].textContent.toLowerCase();
+                
+                const matchesSearch = videoText.includes(searchTerm);
+                const matchesCourse = !courseFilter || courseText.includes(courseFilter.toLowerCase());
+                
+                row.style.display = (matchesSearch && matchesCourse) ? '' : 'none';
+            });
+        }
+
+        // Filter by period
+        document.querySelectorAll('#filterTabs .nav-link').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all tabs
+                document.querySelectorAll('#filterTabs .nav-link').forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                filterByPeriod(filter);
             });
         });
 
-        // Filter functionality
-        document.getElementById('courseFilter').addEventListener('change', filterVideos);
-        document.getElementById('statusFilter').addEventListener('change', filterVideos);
-
-        function filterVideos() {
-            const courseFilter = document.getElementById('courseFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const rows = document.querySelectorAll('tbody tr');
-
+        function filterByPeriod(period) {
+            // For now, just show all videos
+            // This can be enhanced later with actual period filtering
+            const rows = document.querySelectorAll('#videosTableBody tr');
             rows.forEach(row => {
-                const course = row.querySelector('td:nth-child(3)').textContent.trim();
-                const status = row.querySelector('td:nth-child(7)').textContent.trim();
-
-                const courseMatch = !courseFilter || course.includes(courseFilter);
-                const statusMatch = !statusFilter || status.includes(statusFilter);
-
-                row.style.display = (courseMatch && statusMatch) ? '' : 'none';
+                if (row.cells.length === 1) return; // Skip "no data" row
+                row.style.display = '';
             });
         }
 
-        // Toggle video status
-        function toggleVideoStatus(videoId) {
-            if (confirm('Je, una uhakika unataka kubadilisha hali ya video hii?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.innerHTML = `
-                    <input type="hidden" name="video_id" value="${videoId}">
-                    <input type="hidden" name="action" value="toggle_status">
+        // View video details
+        function viewVideo(videoId) {
+            const modal = new bootstrap.Modal(document.getElementById('videoViewModal'));
+            const modalBody = document.getElementById('videoModalBody');
+            
+            modal.show();
+            
+            // Show loading
+            modalBody.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Inapakia...</span>
+                    </div>
+                </div>
+            `;
+            
+            // Fetch video details
+            fetch('get_video_details.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'id=' + videoId
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const video = data.video;
+                    modalBody.innerHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><strong>ID:</strong></h6>
+                                <p>${video.id}</p>
+                                
+                                <h6><strong>Kozi:</strong></h6>
+                                <p>${video.course_name || 'N/A'}</p>
+                                
+                                <h6><strong>Maelezo:</strong></h6>
+                                <p>${video.description || 'Hakuna maelezo'}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><strong>Video URL:</strong></h6>
+                                <p class="text-break">${video.name}</p>
+                                
+                                <h6><strong>Video Preview:</strong></h6>
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="${video.name}" frameborder="0" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    modalBody.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            ${data.message}
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                modalBody.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Kuna tatizo la mtandao. Jaribu tena.
+                    </div>
                 `;
-                document.body.appendChild(form);
-                form.submit();
-            }
+            });
         }
 
         // Delete video
-        function deleteVideo(videoId, videoTitle) {
-            if (confirm(`Je, una uhakika unataka kufuta video "${videoTitle}"? Kitendo hiki hakiwezi kubatilishwa!`)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.innerHTML = `
-                    <input type="hidden" name="video_id" value="${videoId}">
-                    <input type="hidden" name="action" value="delete">
-                `;
-                document.body.appendChild(form);
-                form.submit();
+        function deleteVideo(videoId, videoName) {
+            if (confirm(`Je, una uhakika unataka kufuta video "${videoName}"? Kitendo hiki hakiwezi kubatilishwa!`)) {
+                fetch('delete_video.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'id=' + videoId
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Kuna tatizo la mtandao. Jaribu tena.');
+                });
             }
+        }
+
+        // Export functions
+        function exportToCSV() {
+            // Implementation for CSV export
+            alert('CSV export itaongezwa hivi karibuni');
+        }
+
+        function exportToExcel() {
+            // Implementation for Excel export
+            alert('Excel export itaongezwa hivi karibuni');
         }
     </script>
 </body>

@@ -11,25 +11,40 @@ $videoModel = new Video();
 
 $success = '';
 $error = '';
+$video = null;
+
+// Get video ID from URL
+$videoId = $_GET['id'] ?? null;
+if (!$videoId || !is_numeric($videoId)) {
+    header('Location: videos.php');
+    exit;
+}
+
+// Get video data
+$video = $videoModel->getVideoById($videoId);
+if (!$video) {
+    header('Location: videos.php');
+    exit;
+}
 
 // Handle form submission
-if ($_POST && isset($_POST['action']) && $_POST['action'] === 'add_video') {
+if ($_POST && isset($_POST['action']) && $_POST['action'] === 'update_video') {
     $name = trim($_POST['name']);
     $description = trim($_POST['description']);
     $courseId = $_POST['course_id'];
 
     if (empty($error)) {
         try {
-            if ($videoModel->addVideo($name, $description, $courseId)) {
-                $success = "Video imepakiwa kikamilifu!";
-                // Clear form data
-                $_POST = array();
+            if ($videoModel->updateVideo($videoId, $name, $description, $courseId)) {
+                $success = "Video imebadilishwa kikamilifu!";
+                // Refresh video data
+                $video = $videoModel->getVideoById($videoId);
             } else {
-                $error = "Imefeli kupakia video. Tafadhali jaribu tena.";
+                $error = "Imefeli kubadilisha video. Tafadhali jaribu tena.";
             }
         } catch (Exception $e) {
-            error_log("Error adding video: " . $e->getMessage());
-            $error = "Imefeli kupakia video. Tafadhali jaribu tena.";
+            error_log("Error updating video: " . $e->getMessage());
+            $error = "Imefeli kubadilisha video. Tafadhali jaribu tena.";
         }
     }
 }
@@ -44,12 +59,12 @@ $courses = $videoModel->getAllCourses();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ongeza Video - Panda Digital</title>
+    <title>Hariri Video - Panda Digital</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
     <style>
-        .add-video-form {
+        .edit-video-form {
             background: white;
             border-radius: 15px;
             padding: 2rem;
@@ -90,6 +105,13 @@ $courses = $videoModel->getAllCourses();
             margin-top: 5px;
         }
 
+        .video-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
         /* Layout fixes */
         .content-wrapper {
             padding: 20px 30px;
@@ -107,10 +129,10 @@ $courses = $videoModel->getAllCourses();
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h1 class="h3 mb-0">
-                            <i class="fas fa-plus text-primary me-2"></i>
-                            Ongeza Video Mpya
+                            <i class="fas fa-edit text-primary me-2"></i>
+                            Hariri Video
                         </h1>
-                        <p class="text-muted">Pakia video mpya kwenye mfumo</p>
+                        <p class="text-muted">Badilisha maelezo ya video</p>
                     </div>
                     <a href="videos.php" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-2"></i>Rudi kwenye Video
@@ -136,10 +158,29 @@ $courses = $videoModel->getAllCourses();
             </div>
         <?php endif; ?>
 
-        <!-- Add Video Form -->
-        <div class="add-video-form">
-            <form method="POST" action="" id="addVideoForm">
-                <input type="hidden" name="action" value="add_video">
+        <!-- Video Information Display -->
+        <div class="video-info">
+            <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>Maelezo ya Video</h6>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>ID:</strong> <?= htmlspecialchars($video['id']) ?></p>
+                    <p><strong>Kozi:</strong> <?= htmlspecialchars($video['course_name'] ?? 'N/A') ?></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Video URL:</strong></p>
+                    <div class="text-break">
+                        <a href="<?= htmlspecialchars($video['name']) ?>" target="_blank" class="text-decoration-none">
+                            <?= htmlspecialchars($video['name']) ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Video Form -->
+        <div class="edit-video-form">
+            <form method="POST" action="" id="editVideoForm">
+                <input type="hidden" name="action" value="update_video">
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -147,7 +188,7 @@ $courses = $videoModel->getAllCourses();
                             Linki ya Video <span class="required">*</span>
                         </label>
                         <input type="url" class="form-control" id="name" name="name"
-                            value="<?= htmlspecialchars($_POST['name'] ?? '') ?>"
+                            value="<?= htmlspecialchars($video['name'] ?? '') ?>"
                             placeholder="https://www.youtube.com/watch?v=..." required>
                         <div class="help-text">Linki kamili ya video (YouTube, Vimeo, n.k.)</div>
                     </div>
@@ -159,7 +200,7 @@ $courses = $videoModel->getAllCourses();
                         <select class="form-select" id="course_id" name="course_id" required>
                             <option value="">--- Chagua Kozi ---</option>
                             <?php foreach ($courses as $course): ?>
-                                <option value="<?= $course['id'] ?>" <?= ($_POST['course_id'] ?? '') == $course['id'] ? 'selected' : '' ?>>
+                                <option value="<?= $course['id'] ?>" <?= ($video['course_id'] ?? '') == $course['id'] ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($course['name']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -174,7 +215,7 @@ $courses = $videoModel->getAllCourses();
                             Maelezo Mafupi
                         </label>
                         <textarea class="form-control form-textarea" id="description" name="description"
-                            rows="4" placeholder="Maelezo mafupi ya video..."><?= htmlspecialchars($_POST['description'] ?? '') ?></textarea>
+                            rows="4" placeholder="Maelezo mafupi ya video..."><?= htmlspecialchars($video['description'] ?? '') ?></textarea>
                         <div class="help-text">Maelezo ya video (si lazima, isizidi herufi 70)</div>
                     </div>
                 </div>
@@ -186,7 +227,7 @@ $courses = $videoModel->getAllCourses();
                                 <i class="fas fa-times me-2"></i>Ghairi
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Pakia Video
+                                <i class="fas fa-save me-2"></i>Hifadhi Mabadiliko
                             </button>
                         </div>
                     </div>
@@ -199,7 +240,7 @@ $courses = $videoModel->getAllCourses();
 
     <script>
         // Form validation
-        document.getElementById('addVideoForm').addEventListener('submit', function(e) {
+        document.getElementById('editVideoForm').addEventListener('submit', function(e) {
             const name = document.getElementById('name').value.trim();
             const courseId = document.getElementById('course_id').value;
             const description = document.getElementById('description').value.trim();

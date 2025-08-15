@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-3">
                     <label for="saleDate" class="form-label">Tarehe ya Muuzo</label>
                     <input type="text" class="form-control" id="saleDate" 
-                        value="<?= htmlspecialchars($sale['sale_date'] ? date('d/m/Y H:i', strtotime($sale['sale_date'])) : 'N/A' ?>" readonly>
+                        value="<?= htmlspecialchars($sale['sale_date'] ? date('d/m/Y H:i', strtotime($sale['sale_date'])) : 'N/A') ?>" readonly>
                     <small class="form-text text-muted">Haiwezi kubadilishwa</small>
                 </div>
 
