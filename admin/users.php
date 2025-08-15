@@ -54,6 +54,38 @@ $userStats = $userModel->getUserStatsByRole();
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
+
+    <style>
+        .table th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .badge-role,
+        .badge-status {
+            font-size: 0.75rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+        }
+
+        .btn-group .btn {
+            margin-right: 2px;
+        }
+
+        .avatar-sm {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -186,6 +218,7 @@ $userStats = $userModel->getUserStatsByRole();
                                         <th>Jina</th>
                                         <th>Barua Pepe</th>
                                         <th>Simu</th>
+                                        <th>Mkoa</th>
                                         <th>Tarehe ya Usajili</th>
                                         <th>Jukumu</th>
                                         <th>Hali</th>
@@ -207,7 +240,8 @@ $userStats = $userModel->getUserStatsByRole();
                                                 </div>
                                             </td>
                                             <td><?php echo htmlspecialchars($user['email']); ?></td>
-                                            <td><?php echo htmlspecialchars($user['phone'] ?? 'Haijulikani'); ?></td>
+                                            <td><?php echo ($user['phone'] && $user['phone'] !== 'null') ? '+255 ' . $user['phone'] : 'Haijulikani'; ?></td>
+                                            <td><?php echo htmlspecialchars($user['region'] ?? 'Haijulikani'); ?></td>
                                             <td><?php echo date('d/m/Y', strtotime($user['date_created'])); ?></td>
                                             <td>
                                                 <span class="badge badge-role bg-<?php echo $user['role'] === 'admin' ? 'danger' : ($user['role'] === 'expert' ? 'warning' : 'info'); ?>">
@@ -224,8 +258,8 @@ $userStats = $userModel->getUserStatsByRole();
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewUser(<?php echo $user['id']; ?>)">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-warning" onclick="toggleUserStatus(<?php echo $user['id']; ?>, '<?php echo $user['status']; ?>')">
-                                                        <i class="fas fa-<?php echo $user['status'] === 'active' ? 'ban' : 'check'; ?>"></i>
+                                                    <button type="button" class="btn btn-sm btn-outline-warning" onclick="toggleUserStatus(<?php echo $user['id']; ?>, '<?php echo $user['account_status']; ?>')">
+                                                        <i class="fas fa-<?php echo $user['account_status'] === 'active' ? 'ban' : 'check'; ?>"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteUser(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?>')">
                                                         <i class="fas fa-trash"></i>
@@ -297,8 +331,8 @@ $userStats = $userModel->getUserStatsByRole();
             const rows = document.querySelectorAll('tbody tr');
 
             rows.forEach(row => {
-                const role = row.querySelector('td:nth-child(5)').textContent.trim();
-                const status = row.querySelector('td:nth-child(6)').textContent.trim();
+                const role = row.querySelector('td:nth-child(6)').textContent.trim();
+                const status = row.querySelector('td:nth-child(7)').textContent.trim();
 
                 const roleMatch = !roleFilter || role.includes(roleFilter);
                 const statusMatch = !statusFilter || status.includes(statusFilter);
