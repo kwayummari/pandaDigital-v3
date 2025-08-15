@@ -16,18 +16,12 @@ class Blog
             $conn = $this->db->getConnection();
             $offset = ($page - 1) * $perPage;
 
+            // Simple query matching the old system structure
             $stmt = $conn->prepare("
                 SELECT 
-                    b.id, b.title, b.excerpt, b.content, b.category, b.status, b.date_created,
-                    u.first_name, u.last_name,
-                    COUNT(DISTINCT v.id) as views,
-                    COUNT(DISTINCT c.id) as comments
-                FROM blog b
-                LEFT JOIN users u ON b.author_id = u.id
-                LEFT JOIN blog_views v ON b.id = v.blog_id
-                LEFT JOIN blog_comments c ON b.id = c.blog_id
-                GROUP BY b.id
-                ORDER BY b.date_created DESC 
+                    id, name, maelezo, photo, date_created
+                FROM blog 
+                ORDER BY id DESC 
                 LIMIT ? OFFSET ?
             ");
             $stmt->execute([$perPage, $offset]);
@@ -62,26 +56,13 @@ class Blog
             $stmt->execute();
             $blogsResult = $stmt->fetch();
 
-            // Get total views
-            $stmt = $conn->prepare("SELECT COUNT(*) as total_views FROM blog_views");
-            $stmt->execute();
-            $viewsResult = $stmt->fetch();
-
-            // Get total comments
-            $stmt = $conn->prepare("SELECT COUNT(*) as total_comments FROM blog_comments");
-            $stmt->execute();
-            $commentsResult = $stmt->fetch();
-
-            // Get total authors
-            $stmt = $conn->prepare("SELECT COUNT(DISTINCT author_id) as total_authors FROM blog");
-            $stmt->execute();
-            $authorsResult = $stmt->fetch();
-
+            // For now, return only what we can get from the blog table
+            // Other stats can be added when those tables exist
             return [
                 'total_blogs' => $blogsResult['total_blogs'] ?? 0,
-                'total_views' => $viewsResult['total_views'] ?? 0,
-                'total_comments' => $commentsResult['total_comments'] ?? 0,
-                'total_authors' => $authorsResult['total_authors'] ?? 0
+                'total_views' => 0, // Will implement when blog_views table exists
+                'total_comments' => 0, // Will implement when blog_comments table exists
+                'total_authors' => 0 // Will implement when author_id field exists
             ];
         } catch (PDOException $e) {
             error_log("Error getting overall blog stats: " . $e->getMessage());

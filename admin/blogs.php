@@ -358,12 +358,12 @@ $blogs = $blogModel->getAllBlogsForAdmin(1, 1000); // Get all blogs for now
                                     </td>
                                     <td>
                                         <div>
-                                            <strong><?= htmlspecialchars($blog['title'] ?? $blog['name'] ?? 'N/A') ?></strong>
+                                            <strong><?= htmlspecialchars($blog['name'] ?? 'N/A') ?></strong>
                                         </div>
                                     </td>
                                     <td>
-                                        <?php if (!empty($blog['excerpt'] ?? $blog['maelezo'])): ?>
-                                            <?= htmlspecialchars(substr($blog['excerpt'] ?? $blog['maelezo'], 0, 100)) ?>...
+                                        <?php if (!empty($blog['maelezo'])): ?>
+                                            <?= htmlspecialchars(substr($blog['maelezo'], 0, 100)) ?>...
                                         <?php else: ?>
                                             <span class="text-muted">Hakuna maelezo</span>
                                         <?php endif; ?>
@@ -494,13 +494,13 @@ $blogs = $blogModel->getAllBlogsForAdmin(1, 1000); // Get all blogs for now
                                          class="img-fluid rounded" alt="Blog Image">
                                 </div>
                                 <div class="col-md-8">
-                                    <h5>${blog.title || blog.name}</h5>
-                                    <p class="text-muted">${blog.excerpt || blog.maelezo || 'Hakuna maelezo'}</p>
+                                    <h5>${blog.name || 'N/A'}</h5>
+                                    <p class="text-muted">${blog.maelezo || 'Hakuna maelezo'}</p>
                                     
                                     <div class="row mb-3">
                                         <div class="col-6">
                                             <strong>Mwandishi:</strong><br>
-                                            ${blog.author_name || 'Haijulikani'}
+                                            Admin
                                         </div>
                                         <div class="col-6">
                                             <strong>Tarehe:</strong><br>
