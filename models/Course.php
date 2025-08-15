@@ -503,6 +503,7 @@ class Course
             return false;
         }
     }
+    
 
     /**
      * Get user's certificates
