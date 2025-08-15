@@ -519,5 +519,4 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
             });
         </script>
 </body>
-
 </html>
