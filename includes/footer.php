@@ -264,7 +264,7 @@
                     <i class="fas fa-info-circle me-2"></i>
                     Tafadhali kamilisha maelezo yako ya msingi ili uweze kutumia huduma zote za jukwaa.
                 </div>
-                
+
                 <form id="profileCompletionForm">
                     <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                     <div class="row">
@@ -365,13 +365,13 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
 
         // Initialize popovers
         var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
             return new bootstrap.Popover(popoverTriggerEl);
         });
 
@@ -383,20 +383,20 @@
     function checkProfileCompletion() {
         // Only check if user is logged in
         <?php if ($isLoggedIn && $currentUser): ?>
-        const user = <?= json_encode($currentUser) ?>;
-        
-        // Check if required profile fields are missing
-        if (!user.first_name || !user.last_name || !user.phone || !user.region) {
-            // Show profile completion modal
-            const profileModal = new bootstrap.Modal(document.getElementById('profileCompletionModal'));
-            profileModal.show();
-            
-            // Pre-fill existing data if available
-            if (user.first_name) document.getElementById('profileFirstName').value = user.first_name;
-            if (user.last_name) document.getElementById('profileLastName').value = user.last_name;
-            if (user.phone) document.getElementById('profilePhone').value = user.phone;
-            if (user.region) document.getElementById('profileRegion').value = user.region;
-        }
+            const user = <?= json_encode($currentUser) ?>;
+
+            // Check if required profile fields are missing
+            if (!user.first_name || !user.last_name || !user.phone || !user.region) {
+                // Show profile completion modal
+                const profileModal = new bootstrap.Modal(document.getElementById('profileCompletionModal'));
+                profileModal.show();
+
+                // Pre-fill existing data if available
+                if (user.first_name) document.getElementById('profileFirstName').value = user.first_name;
+                if (user.last_name) document.getElementById('profileLastName').value = user.last_name;
+                if (user.phone) document.getElementById('profilePhone').value = user.phone;
+                if (user.region) document.getElementById('profileRegion').value = user.region;
+            }
         <?php endif; ?>
     }
 
@@ -406,52 +406,52 @@
         if (profileForm) {
             profileForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
+
                 const formData = new FormData(this);
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const btnText = submitBtn.querySelector('.btn-text');
                 const btnLoading = submitBtn.querySelector('.btn-loading');
-                
+
                 // Show loading state
                 btnText.classList.add('d-none');
                 btnLoading.classList.remove('d-none');
                 submitBtn.disabled = true;
-                
+
                 // Submit form data
                 fetch('<?= app_url("api/update-profile.php") ?>', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Show success message
-                        showAlert('success', 'Maelezo yako yamehifadhiwa kwa mafanikio!');
-                        
-                        // Close modal after delay
-                        setTimeout(() => {
-                            const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileCompletionModal'));
-                            profileModal.hide();
-                        }, 2000);
-                        
-                        // Reload page to reflect changes
-                        setTimeout(() => {
-                            location.reload();
-                        }, 2500);
-                    } else {
-                        showAlert('danger', data.message || 'Kuna tatizo, jaribu tena.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('danger', 'Kuna tatizo la mtandao, jaribu tena.');
-                })
-                .finally(() => {
-                    // Reset button state
-                    btnText.classList.remove('d-none');
-                    btnLoading.classList.add('d-none');
-                    submitBtn.disabled = false;
-                });
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show success message
+                            showAlert('success', 'Maelezo yako yamehifadhiwa kwa mafanikio!');
+
+                            // Close modal after delay
+                            setTimeout(() => {
+                                const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileCompletionModal'));
+                                profileModal.hide();
+                            }, 2000);
+
+                            // Reload page to reflect changes
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2500);
+                        } else {
+                            showAlert('danger', data.message || 'Kuna tatizo, jaribu tena.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showAlert('danger', 'Kuna tatizo la mtandao, jaribu tena.');
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        btnText.classList.remove('d-none');
+                        btnLoading.classList.add('d-none');
+                        submitBtn.disabled = false;
+                    });
             });
         }
     });
@@ -460,16 +460,16 @@
     function showAlert(type, message) {
         const alertContainer = document.getElementById('alertContainer');
         const alertId = 'alert-' + Date.now();
-        
+
         const alertHtml = `
             <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
                 ${message}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         `;
-        
+
         alertContainer.insertAdjacentHTML('beforeend', alertHtml);
-        
+
         // Auto-remove after 5 seconds
         setTimeout(() => {
             const alert = document.getElementById(alertId);
