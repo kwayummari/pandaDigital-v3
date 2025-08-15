@@ -137,7 +137,7 @@ class Blog
         }
     }
 
-    public function updateBlog($blogId, $title, $excerpt, $content, $category, $status)
+    public function updateBlog($blogId, $blogData)
     {
         try {
             $conn = $this->db->getConnection();
@@ -149,14 +149,19 @@ class Blog
                 return false;
             }
 
-            // Update blog
+            // Update blog with simple fields matching the old system
             $stmt = $conn->prepare("
                 UPDATE blog 
-                SET title = ?, excerpt = ?, content = ?, category = ?, status = ?, date_updated = NOW()
+                SET name = ?, maelezo = ?, photo = ?
                 WHERE id = ?
             ");
 
-            return $stmt->execute([$title, $excerpt, $content, $category, $status, $blogId]);
+            return $stmt->execute([
+                $blogData['name'],
+                $blogData['maelezo'],
+                $blogData['photo'],
+                $blogId
+            ]);
         } catch (PDOException $e) {
             error_log("Error updating blog: " . $e->getMessage());
             return false;
