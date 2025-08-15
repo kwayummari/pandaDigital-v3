@@ -405,16 +405,17 @@ if (!empty($courses)) {
                             <?php foreach ($courses as $course): ?>
                                 <tr>
                                     <td><?= $course['id'] ?></td>
-                                    <td>
-                                        <?php if (!empty($course['photo'])): ?>
-                                            <img src="uploads/courses/<?= htmlspecialchars($course['photo']) ?>"
-                                                alt="Course Image"
-                                                class="course-thumbnail"
-                                                style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-                                        <?php else: ?>
-                                            <span class="text-muted">Hakuna picha</span>
-                                        <?php endif; ?>
-                                    </td>
+                                                                            <td>
+                                            <?php if (!empty($course['photo'])): ?>
+                                                <img src="../uploads/courses/<?= htmlspecialchars($course['photo']) ?>"
+                                                    alt="Course Image"
+                                                    class="course-thumbnail"
+                                                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                                <br><small class="text-muted">Path: <?= htmlspecialchars($course['photo']) ?></small>
+                                            <?php else: ?>
+                                                <span class="text-muted">Hakuna picha</span>
+                                            <?php endif; ?>
+                                        </td>
                                     <td>
                                         <div>
                                             <strong><?= htmlspecialchars($course['title'] ?? 'N/A') ?></strong>
