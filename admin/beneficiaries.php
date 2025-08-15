@@ -265,12 +265,13 @@ $thisYear = $beneficiaryStats['this_year'] ?? 0;
                         <th>Kichwa Cha Habari</th>
                         <th>Maelezo</th>
                         <th>Tarehe</th>
+                        <th>Vitendo</th>
                     </tr>
                 </thead>
                 <tbody id="beneficiariesTableBody">
                     <?php if (empty($beneficiaries)): ?>
                         <tr>
-                            <td colspan="6" class="text-center py-4">
+                            <td colspan="7" class="text-center py-4">
                                 <i class="fas fa-users fa-2x text-muted mb-2"></i>
                                 <p class="text-muted mb-0">Hakuna wanufaika walio patikana</p>
                             </td>
@@ -305,11 +306,45 @@ $thisYear = $beneficiaryStats['this_year'] ?? 0;
                                     echo $date ? date('d/m/Y H:i', strtotime($date)) : 'N/A';
                                     ?>
                                 </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-outline-info"
+                                            onclick="viewBeneficiary(<?= $item['id'] ?>)">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <a href="edit-beneficiary.php?id=<?= $item['id'] ?>"
+                                            class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                            onclick="deleteBeneficiary(<?= $item['id'] ?>)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Beneficiary View Modal -->
+    <div class="modal fade" id="beneficiaryViewModal" tabindex="-1" aria-labelledby="beneficiaryViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="beneficiaryViewModalLabel">Maelezo ya Mwanufaika</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="beneficiaryModalBody">
+                    <!-- Content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -377,6 +412,98 @@ $thisYear = $beneficiaryStats['this_year'] ?? 0;
             // For now, just show all rows since filtering by date requires more complex logic
             // This can be enhanced later with actual date filtering
             rows.forEach(row => row.style.display = '');
+        }
+
+        // View beneficiary details
+        function viewBeneficiary(beneficiaryId) {
+            // Show loading state
+            document.getElementById('beneficiaryModalBody').innerHTML =
+                '<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Inapakia...</p></div>';
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('beneficiaryViewModal'));
+            modal.show();
+
+            // Fetch beneficiary details via AJAX
+            fetch(`get_beneficiary_details.php?id=${beneficiaryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const beneficiary = data.beneficiary;
+                        document.getElementById('beneficiaryModalBody').innerHTML = `
+                            <div class="row">
+                                <div class="col-md-4">
+                                    ${beneficiary.photo ? 
+                                        `<img src="../uploads/Wanufaika/${beneficiary.photo}" alt="Beneficiary Photo" class="img-fluid rounded">` :
+                                        `<div class="bg-light rounded p-4 text-center"><i class="fas fa-user fa-3x text-muted"></i></div>`
+                                    }
+                                </div>
+                                <div class="col-md-8">
+                                    <h5>${beneficiary.name}</h5>
+                                    <h6 class="text-muted">${beneficiary.title}</h6>
+                                    <hr>
+                                    <p><strong>Maelezo:</strong></p>
+                                    <p>${beneficiary.description}</p>
+                                    <hr>
+                                    <p><strong>Tarehe ya Uundaji:</strong> ${beneficiary.date_created}</p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        document.getElementById('beneficiaryModalBody').innerHTML =
+                            '<div class="alert alert-danger">Imefeli kupata maelezo ya mwanufaika.</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('beneficiaryModalBody').innerHTML =
+                        '<div class="alert alert-danger">Kuna tatizo la mtandao. Jaribu tena.</div>';
+                });
+        }
+
+        // Delete beneficiary
+        function deleteBeneficiary(beneficiaryId) {
+            if (confirm('Je, una uhakika unataka kufuta mwanufaika huyu? Kitendo hiki hakiwezi kubatilishwa!')) {
+                // Show loading state
+                const btn = event.target.closest('button');
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+
+                // Send delete request
+                fetch('delete_beneficiary.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `id=${beneficiaryId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove row from table
+                            const row = btn.closest('tr');
+                            row.remove();
+
+                            // Show success message
+                            alert('Mwanufaika amefutwa kikamilifu!');
+
+                            // Refresh page to update stats
+                            location.reload();
+                        } else {
+                            alert('Imefeli kufuta mwanufaika: ' + (data.message || 'Tafadhali jaribu tena.'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Kuna tatizo la mtandao. Jaribu tena.');
+                    })
+                    .finally(() => {
+                        // Restore button
+                        btn.innerHTML = originalContent;
+                        btn.disabled = false;
+                    });
+            }
         }
     </script>
 </body>

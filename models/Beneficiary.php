@@ -161,6 +161,38 @@ class Beneficiary
         }
     }
 
+    public function getWanufaikaById($id)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT id, name, title, description, photo, date_created
+                FROM wanufaika 
+                WHERE id = ?
+            ");
+
+            $stmt->execute([$id]);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Error getting wanufaika by ID: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function deleteWanufaika($id)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("DELETE FROM wanufaika WHERE id = ?");
+            return $stmt->execute([$id]);
+        } catch (PDOException $e) {
+            error_log("Error deleting wanufaika: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function addBeneficiary($firstName, $lastName, $email, $phone, $location, $benefitType, $description, $amount)
     {
         try {
