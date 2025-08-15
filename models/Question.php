@@ -14,7 +14,7 @@ class Question
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("
                 SELECT 
                     q.id, q.name as question_text, q.video_id,
@@ -24,7 +24,7 @@ class Question
                 LEFT JOIN course c ON v.course_id = c.id
                 ORDER BY q.id DESC
             ");
-            
+
             $stmt->execute();
             return $stmt->fetchAll();
         } catch (PDOException $e) {
@@ -37,22 +37,22 @@ class Question
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             // Get total questions
             $stmt = $conn->prepare("SELECT COUNT(*) as total_questions FROM questions");
             $stmt->execute();
             $totalQuestions = $stmt->fetch()['total_questions'];
-            
+
             // Get total videos
             $stmt = $conn->prepare("SELECT COUNT(*) as total_videos FROM video");
             $stmt->execute();
             $totalVideos = $stmt->fetch()['total_videos'];
-            
+
             // Get total courses
             $stmt = $conn->prepare("SELECT COUNT(*) as total_courses FROM course");
             $stmt->execute();
             $totalCourses = $stmt->fetch()['total_courses'];
-            
+
             // Get questions this month
             $stmt = $conn->prepare("
                 SELECT COUNT(*) as this_month 
@@ -62,7 +62,7 @@ class Question
             ");
             $stmt->execute();
             $thisMonth = $stmt->fetch()['this_month'];
-            
+
             // Get questions last month
             $stmt = $conn->prepare("
                 SELECT COUNT(*) as last_month 
@@ -72,7 +72,7 @@ class Question
             ");
             $stmt->execute();
             $lastMonth = $stmt->fetch()['last_month'];
-            
+
             return [
                 'total_questions' => $totalQuestions,
                 'total_videos' => $totalVideos,
@@ -96,7 +96,7 @@ class Question
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("
                 SELECT 
                     q.id, q.name as question_text, q.video_id,
@@ -106,7 +106,7 @@ class Question
                 LEFT JOIN course c ON v.course_id = c.id
                 WHERE q.id = ?
             ");
-            
+
             $stmt->execute([$id]);
             return $stmt->fetch();
         } catch (PDOException $e) {
@@ -119,12 +119,12 @@ class Question
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("
                 INSERT INTO questions (name, video_id, date_created) 
                 VALUES (?, ?, NOW())
             ");
-            
+
             return $stmt->execute([$questionText, $videoId]);
         } catch (PDOException $e) {
             error_log("Error adding question: " . $e->getMessage());
@@ -136,13 +136,13 @@ class Question
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("
                 UPDATE questions 
                 SET name = ?, video_id = ?
                 WHERE id = ?
             ");
-            
+
             return $stmt->execute([$questionText, $videoId, $id]);
         } catch (PDOException $e) {
             error_log("Error updating question: " . $e->getMessage());
@@ -154,9 +154,9 @@ class Question
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("DELETE FROM questions WHERE id = ?");
-            
+
             return $stmt->execute([$id]);
         } catch (PDOException $e) {
             error_log("Error deleting question: " . $e->getMessage());
@@ -168,7 +168,7 @@ class Question
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("SELECT id, name FROM video ORDER BY name");
             $stmt->execute();
             return $stmt->fetchAll();
