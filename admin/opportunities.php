@@ -106,6 +106,12 @@ $thisYear = $opportunityStats['this_year'] ?? 0;
             background: #f8f9fa;
             font-weight: 600;
             color: #495057;
+            padding: 12px 16px;
+        }
+
+        .opportunity-table .table td {
+            padding: 12px 16px;
+            vertical-align: middle;
         }
 
         .opportunity-thumbnail {
