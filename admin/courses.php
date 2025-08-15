@@ -357,6 +357,67 @@ if (!empty($courses)) {
             max-width: none !important;
         }
 
+        /* Nuclear option - force everything to start from left */
+        .main-content,
+        .content-wrapper,
+        .row,
+        .col-md-3,
+        .col-md-6,
+        .search-box,
+        .filter-tabs,
+        .course-table,
+        .stats-card {
+            margin-left: 0 !important;
+            padding-left: 0 !important;
+            transform: translateX(0) !important;
+        }
+
+        /* Only add padding to columns, not margins */
+        .col-md-3,
+        .col-md-6 {
+            padding-left: 15px !important;
+            padding-right: 15px !important;
+        }
+
+        /* Force content to start from absolute left */
+        .content-wrapper {
+            padding: 20px 30px !important;
+            margin: 0 !important;
+            position: relative !important;
+            left: 0 !important;
+        }
+
+        /* Override any potential CSS transforms or positioning */
+        .main-content * {
+            position: static !important;
+            left: auto !important;
+            right: auto !important;
+        }
+
+        /* Debug: Add border to see layout */
+        .main-content {
+            border: 2px solid red !important;
+        }
+
+        .content-wrapper {
+            border: 2px solid blue !important;
+        }
+
+        .row {
+            border: 2px solid green !important;
+        }
+
+        /* Force all content to start from left edge */
+        .stats-card,
+        .search-box,
+        .filter-tabs,
+        .course-table {
+            margin-left: 0 !important;
+            padding-left: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 margin-left: 0 !important;
