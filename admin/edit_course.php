@@ -27,8 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $title = trim($_POST['title'] ?? '');
         $description = trim($_POST['description'] ?? '');
-        $price = $_POST['price'] ?? 0;
-        $status = $_POST['status'] ?? 'draft';
 
         if (empty($title)) {
             $error = 'Jina la kozi ni lazima';
@@ -59,19 +57,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($error)) {
                 // Update course using the Course model
                 $courseModel = new Course();
-                $result = $courseModel->updateCourse($courseId, [
+
+                $updateData = [
                     'name' => $title,
                     'description' => $description,
-                    'price' => $price > 0 ? $price : 0,
-                    'status' => $status,
                     'photo' => $photoPath
-                ]);
+                ];
+
+                error_log("Attempting to update course ID: $courseId with data: " . json_encode($updateData));
+
+                $result = $courseModel->updateCourse($courseId, $updateData);
 
                 if ($result) {
                     header('Location: courses.php?success=1');
                     exit;
                 } else {
                     $error = 'Haikuweza kuhifadhi mabadiliko';
+                    error_log("Course update failed for course ID: $courseId");
                 }
             }
         }
@@ -178,22 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <textarea class="form-control" id="courseDescription" name="description" rows="4"><?= htmlspecialchars($course['description'] ?? '') ?></textarea>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="coursePrice" class="form-label">Bei</label>
-                        <input type="number" class="form-control" id="coursePrice" name="price"
-                            value="<?= $course['price'] ?? 0 ?>">
-                        <small class="form-text text-muted">Acha tupu kwa kozi ya bure</small>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="courseStatus" class="form-label">Hali</label>
-                        <select class="form-select" id="courseStatus" name="status">
-                            <option value="draft" <?= ($course['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Rasimu</option>
-                            <option value="pending" <?= ($course['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Inasubiri</option>
-                            <option value="published" <?= ($course['status'] ?? '') === 'published' ? 'selected' : '' ?>>Imechapishwa</option>
-                        </select>
-                    </div>
-                </div>
+
 
                 <div class="mb-3">
                     <label for="courseImage" class="form-label">Picha ya Kozi</label>

@@ -1352,16 +1352,13 @@ class Course
 
             $stmt = $conn->prepare("
                 UPDATE course SET 
-                    name = ?, description = ?, 
-                    price = ?, status = ?, photo = ?, updated_at = NOW()
+                    name = ?, description = ?, photo = ?
                 WHERE id = ?
             ");
 
             $result = $stmt->execute([
                 $courseData['name'],
                 $courseData['description'],
-                $courseData['price'],
-                $courseData['status'],
                 $courseData['photo'],
                 $courseId
             ]);
