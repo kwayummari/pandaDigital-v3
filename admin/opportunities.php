@@ -301,7 +301,6 @@ $thisYear = $opportunityStats['this_year'] ?? 0;
                         <th>Picha</th>
                         <th>Kichwa Cha Habari</th>
                         <th>Maelezo</th>
-                        <th>Mwezi</th>
                         <th>Tarehe</th>
                         <th>Vitendo</th>
                     </tr>
@@ -309,7 +308,7 @@ $thisYear = $opportunityStats['this_year'] ?? 0;
                 <tbody id="opportunityTableBody">
                     <?php if (empty($opportunities)): ?>
                         <tr>
-                            <td colspan="7" class="text-center py-4">
+                            <td colspan="6" class="text-center py-4">
                                 <i class="fas fa-lightbulb fa-2x text-muted mb-2"></i>
                                 <p class="text-muted mb-0">Hakuna fursa zilizopatikana</p>
                             </td>
@@ -333,11 +332,6 @@ $thisYear = $opportunityStats['this_year'] ?? 0;
                                     $description = $item['description'] ?? '';
                                     echo strlen($description) > 50 ? substr($description, 0, 50) . '...' : $description;
                                     ?>
-                                </td>
-                                <td>
-                                    <span class="badge bg-info">
-                                        <?= htmlspecialchars($item['month'] ?? 'N/A') ?>
-                                    </span>
                                 </td>
                                 <td>
                                     <?php
@@ -444,31 +438,29 @@ $thisYear = $opportunityStats['this_year'] ?? 0;
                     return;
                 }
 
-                const monthCell = row.querySelector('td:nth-child(5) .badge');
-                const dateCell = row.querySelector('td:nth-child(6)');
+                const dateCell = row.querySelector('td:nth-child(5)');
 
-                if (monthCell && dateCell) {
-                    const month = monthCell.textContent.trim();
+                if (dateCell) {
                     const date = dateCell.textContent.trim();
 
                     let shouldShow = false;
 
                     switch (filter) {
                         case 'this-month':
-                            shouldShow = month === new Date().toLocaleDateString('en-US', {
-                                month: 'long'
-                            });
+                            const currentMonth = new Date().getMonth();
+                            const currentYear = new Date().getFullYear();
+                            shouldShow = date.includes((currentMonth + 1).toString().padStart(2, '0') + '/' + currentYear.toString());
                             break;
                         case 'last-month':
                             const lastMonth = new Date();
                             lastMonth.setMonth(lastMonth.getMonth() - 1);
-                            shouldShow = month === lastMonth.toLocaleDateString('en-US', {
-                                month: 'long'
-                            });
+                            const lastMonthNum = lastMonth.getMonth() + 1;
+                            const lastMonthYear = lastMonth.getFullYear();
+                            shouldShow = date.includes(lastMonthNum.toString().padStart(2, '0') + '/' + lastMonthYear.toString());
                             break;
                         case 'this-year':
-                            const currentYear = new Date().getFullYear().toString();
-                            shouldShow = date.includes(currentYear);
+                            const year = new Date().getFullYear().toString();
+                            shouldShow = date.includes(year);
                             break;
                     }
 
