@@ -153,8 +153,8 @@ class Environment
     public static function getPaymentConfig()
     {
         return [
-            'azampay_api_key' => self::get('AZAMPAY_API_KEY', ''),
-            'azampay_secret_key' => self::get('AZAMPAY_SECRET_KEY', ''),
+            'azampay_api_key' => self::get('AZAMPAY_CLIENT_ID', ''),
+            'azampay_secret_key' => self::get('AZAMPAY_CLIENT_SECRET', ''),
             'azampay_environment' => self::get('AZAMPAY_ENVIRONMENT', 'sandbox')
         ];
     }

@@ -126,7 +126,7 @@ class PaymentService
             $token = $this->getAuthToken();
             $this->logToFile("Token obtained successfully");
 
-            $checkoutUrl = "https://checkout.azampay.co.tz/azamPay/mno/checkout";
+            $checkoutUrl = "https://checkout.azampay.co.tz/azampay/mno/checkout";
 
             // Map provider names to AzamPay format
             $providerMapping = [
