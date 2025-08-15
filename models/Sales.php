@@ -10,106 +10,184 @@ class Sales
         $this->db = new Database();
     }
 
-    public function getAllTransactionsForAdmin($startDate = null, $endDate = null, $page = 1, $perPage = 20)
+    public function getAllSalesForAdmin()
     {
         try {
             $conn = $this->db->getConnection();
-            $offset = ($page - 1) * $perPage;
 
             $sql = "
                 SELECT 
-                    t.id, t.transaction_id, t.amount, t.payment_method, t.status, t.description, t.date_created,
-                    u.first_name, u.last_name, u.email,
-                    p.name as product_name
-                FROM transactions t
-                LEFT JOIN users u ON t.user_id = u.id
-                LEFT JOIN products p ON t.product_id = p.id
-                WHERE 1=1
+                    s.id as sale_id,
+                    s.reference_no,
+                    s.amount,
+                    s.quantity,
+                    s.date as sale_date,
+                    s.status as sale_status,
+                    t.message as transaction_status,
+                    p.name as product_name,
+                    p.sellerId,
+                    u.first_name,
+                    u.last_name
+                FROM sales s
+                JOIN transactions t ON s.reference_no = t.reference
+                JOIN products p ON s.productId = p.id
+                JOIN users u ON p.sellerId = u.id
+                ORDER BY s.date DESC
             ";
-            $params = [];
-
-            if ($startDate && $endDate) {
-                $sql .= " AND DATE(t.date_created) BETWEEN ? AND ?";
-                $params[] = $startDate;
-                $params[] = $endDate;
-            }
-
-            $sql .= " ORDER BY t.date_created DESC LIMIT ? OFFSET ?";
-            $params[] = $perPage;
-            $params[] = $offset;
 
             $stmt = $conn->prepare($sql);
-            $stmt->execute($params);
+            $stmt->execute();
             return $stmt->fetchAll();
         } catch (PDOException $e) {
-            error_log("Error getting all transactions for admin: " . $e->getMessage());
+            error_log("Error getting all sales for admin: " . $e->getMessage());
             return [];
         }
     }
 
-    public function getTotalTransactions($startDate = null, $endDate = null)
+    public function getTotalSales()
     {
         try {
             $conn = $this->db->getConnection();
 
-            $sql = "SELECT COUNT(*) as total FROM transactions WHERE 1=1";
-            $params = [];
-
-            if ($startDate && $endDate) {
-                $sql .= " AND DATE(date_created) BETWEEN ? AND ?";
-                $params[] = $startDate;
-                $params[] = $endDate;
-            }
-
+            $sql = "SELECT COUNT(*) as total FROM sales";
             $stmt = $conn->prepare($sql);
-            $stmt->execute($params);
+            $stmt->execute();
             $result = $stmt->fetch();
             return $result['total'] ?? 0;
         } catch (PDOException $e) {
-            error_log("Error getting total transactions: " . $e->getMessage());
+            error_log("Error getting total sales: " . $e->getMessage());
             return 0;
         }
     }
 
-    public function getOverallSalesStats($startDate = null, $endDate = null)
+    public function getSaleById($saleId)
     {
         try {
             $conn = $this->db->getConnection();
 
             $sql = "
                 SELECT 
-                    COUNT(*) as total_transactions,
-                    SUM(amount) as total_revenue,
-                    COUNT(DISTINCT user_id) as unique_customers,
-                    AVG(amount) as average_order
-                FROM transactions 
-                WHERE status = 'completed'
+                    s.id as sale_id,
+                    s.reference_no,
+                    s.amount,
+                    s.quantity,
+                    s.date as sale_date,
+                    s.status as sale_status,
+                    t.message as transaction_status,
+                    p.name as product_name,
+                    p.sellerId,
+                    u.first_name,
+                    u.last_name
+                FROM sales s
+                JOIN transactions t ON s.reference_no = t.reference
+                JOIN products p ON s.productId = p.id
+                JOIN users u ON p.sellerId = u.id
+                WHERE s.id = ?
             ";
-            $params = [];
-
-            if ($startDate && $endDate) {
-                $sql .= " AND DATE(date_created) BETWEEN ? AND ?";
-                $params[] = $startDate;
-                $params[] = $endDate;
-            }
 
             $stmt = $conn->prepare($sql);
-            $stmt->execute($params);
+            $stmt->execute([$saleId]);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Error getting sale by ID: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function deleteSale($saleId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $sql = "DELETE FROM sales WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$saleId]);
+
+            return $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            error_log("Error deleting sale: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateSale($saleId, $saleData)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $sql = "UPDATE sales SET amount = ?, quantity = ?, status = ? WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([
+                $saleData['amount'],
+                $saleData['quantity'],
+                $saleData['status'],
+                $saleId
+            ]);
+
+            return $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            error_log("Error updating sale: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function addSale($saleData)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $sql = "INSERT INTO sales (reference_no, productId, buyersId, amount, quantity, date) VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([
+                $saleData['reference_no'],
+                $saleData['productId'],
+                $saleData['buyersId'],
+                $saleData['amount'],
+                $saleData['quantity'],
+                $saleData['date']
+            ]);
+
+            return $conn->lastInsertId();
+        } catch (PDOException $e) {
+            error_log("Error adding sale: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getOverallSalesStats()
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $sql = "
+                SELECT 
+                    COUNT(*) as total_sales,
+                    SUM(s.amount) as total_revenue,
+                    SUM(s.amount * 0.06) as company_profit,
+                    COUNT(DISTINCT p.sellerId) as total_sellers
+                FROM sales s
+                JOIN transactions t ON s.reference_no = t.reference
+                JOIN products p ON s.productId = p.id
+                WHERE t.message = 'Success'
+            ";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
             $result = $stmt->fetch();
 
             return [
-                'total_transactions' => $result['total_transactions'] ?? 0,
+                'total_sales' => $result['total_sales'] ?? 0,
                 'total_revenue' => $result['total_revenue'] ?? 0,
-                'unique_customers' => $result['unique_customers'] ?? 0,
-                'average_order' => $result['average_order'] ?? 0
+                'company_profit' => $result['company_profit'] ?? 0,
+                'total_sellers' => $result['total_sellers'] ?? 0
             ];
         } catch (PDOException $e) {
             error_log("Error getting overall sales stats: " . $e->getMessage());
             return [
-                'total_transactions' => 0,
+                'total_sales' => 0,
                 'total_revenue' => 0,
-                'unique_customers' => 0,
-                'average_order' => 0
+                'company_profit' => 0,
+                'total_sellers' => 0
             ];
         }
     }
