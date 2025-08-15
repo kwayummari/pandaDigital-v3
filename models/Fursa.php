@@ -209,4 +209,25 @@ class Fursa
             return false;
         }
     }
+
+    public function deleteOpportunity($opportunityId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if opportunity exists
+            $stmt = $conn->prepare("SELECT id FROM fursa WHERE id = ?");
+            $stmt->execute([$opportunityId]);
+            if (!$stmt->fetch()) {
+                return false;
+            }
+
+            // Delete opportunity
+            $stmt = $conn->prepare("DELETE FROM fursa WHERE id = ?");
+            return $stmt->execute([$opportunityId]);
+        } catch (PDOException $e) {
+            error_log("Error deleting opportunity: " . $e->getMessage());
+            return false;
+        }
+    }
 }
