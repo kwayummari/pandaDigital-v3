@@ -100,7 +100,8 @@ class User
 
             $stmt = $conn->prepare("
                 SELECT id, first_name, last_name, email, phone, role, region, business, 
-                       profile_photo, expert_authorization, date_created
+                       profile_photo, expert_authorization, date_created, account_status,
+                       bio, last_login, login_count, isSeller, gender, date_of_birth
                 FROM users 
                 WHERE id = ?
             ");

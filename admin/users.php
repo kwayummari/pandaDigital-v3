@@ -137,6 +137,34 @@ $userStats = $userModel->getUserStatsByRole();
             background-color: #f8f9fa;
             transform: translateX(5px);
         }
+        
+        /* User view modal styling */
+        .user-avatar-large {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-lg .modal-body {
+            padding: 2rem;
+        }
+        
+        .form-label.fw-bold {
+            color: #495057;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .modal-body p {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+        
+        .modal-body .badge {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
     </style>
 </head>
 
@@ -318,9 +346,6 @@ $userStats = $userModel->getUserStatsByRole();
                                                     <button type="button" class="btn btn-sm btn-outline-warning" onclick="toggleUserStatus(<?php echo $user['id']; ?>, '<?php echo $user['account_status']; ?>')">
                                                         <i class="fas fa-<?php echo $user['account_status'] === 'active' ? 'ban' : 'check'; ?>"></i>
                                                     </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteUser(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?>')">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -358,6 +383,36 @@ $userStats = $userModel->getUserStatsByRole();
                             </nav>
                         <?php endif; ?>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User View Modal -->
+    <div class="modal fade" id="userViewModal" tabindex="-1" aria-labelledby="userViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userViewModalLabel">
+                        <i class="fas fa-user me-2"></i>
+                        Maelezo ya Mtumiaji
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="userViewModalBody">
+                    <!-- User details will be loaded here -->
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Inapakia maelezo...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
+                    <button type="button" class="btn btn-primary" id="editUserBtn" style="display: none;">
+                        <i class="fas fa-edit me-1"></i> Hariri
+                    </button>
                 </div>
             </div>
         </div>
@@ -415,24 +470,146 @@ $userStats = $userModel->getUserStatsByRole();
             }
         }
 
-        // Delete user
-        function deleteUser(userId, userName) {
-            if (confirm(`Je, una uhakika unataka kufuta mtumiaji "${userName}"? Kitendo hiki hakiwezi kubatilishwa!`)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.innerHTML = `
-                    <input type="hidden" name="user_id" value="${userId}">
-                    <input type="hidden" name="action" value="delete">
-                `;
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
+
 
         // View user details
         function viewUser(userId) {
-            // Implement user view functionality
-            alert('View user functionality will be implemented here');
+            console.log('Viewing user with ID:', userId);
+            
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('userViewModal'));
+            modal.show();
+            
+            // Load user data
+            loadUserDetails(userId);
+        }
+        
+        // Load user details via AJAX
+        function loadUserDetails(userId) {
+            const modalBody = document.getElementById('userViewModalBody');
+            
+            // Show loading state
+            modalBody.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Inapakia maelezo...</p>
+                </div>
+            `;
+            
+            // Fetch user details
+            fetch(`get_user_details.php?id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayUserDetails(data.user);
+                    } else {
+                        modalBody.innerHTML = `
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Imefeli kupakua maelezo ya mtumiaji: ${data.message}
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading user details:', error);
+                    modalBody.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Imefeli kupakua maelezo ya mtumiaji. Tafadhali jaribu tena.
+                        </div>
+                    `;
+                });
+        }
+        
+        // Display user details in modal
+        function displayUserDetails(user) {
+            const modalBody = document.getElementById('userViewModalBody');
+            
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="user-avatar-large mb-3">
+                            <i class="fas fa-user-circle fa-5x text-muted"></i>
+                        </div>
+                        <h5 class="mb-1">${user.first_name} ${user.last_name}</h5>
+                        <span class="badge bg-${user.role === 'admin' ? 'danger' : (user.role === 'expert' ? 'warning' : 'info')}">
+                            ${user.role === 'admin' ? 'Mkurugenzi' : (user.role === 'expert' ? 'Mtaalam' : 'Mwanafunzi')}
+                        </span>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">ID ya Mtumiaji</label>
+                                <p class="mb-0">${user.id}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Barua Pepe</label>
+                                <p class="mb-0">${user.email}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Simu</label>
+                                <p class="mb-0">${user.phone && user.phone !== 'null' ? '+255 ' + user.phone : 'Haijulikani'}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Mkoa</label>
+                                <p class="mb-0">${user.region || 'Haijulikani'}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Hali ya Akaunti</label>
+                                <span class="badge bg-${user.account_status === 'active' ? 'success' : 'secondary'}">
+                                    ${user.account_status === 'active' ? 'Inatumika' : 'Imezimwa'}
+                                </span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Tarehe ya Usajili</label>
+                                <p class="mb-0">${user.date_created ? new Date(user.date_created).toLocaleDateString('sw-TZ') : 'Haijulikani'}</p>
+                            </div>
+                        </div>
+                        
+                        ${user.bio ? `
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Bio</label>
+                            <p class="mb-0">${user.bio}</p>
+                        </div>
+                        ` : ''}
+                        
+                        ${user.expert_authorization ? `
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Idhini ya Mtaalam</label>
+                            <p class="mb-0">${user.expert_authorization}</p>
+                        </div>
+                        ` : ''}
+                        
+                        ${user.last_login ? `
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Mara ya Mwisho Kuingia</label>
+                                <p class="mb-0">${new Date(user.last_login).toLocaleDateString('sw-TZ')}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Idadi ya Kuingia</label>
+                                <p class="mb-0">${user.login_count || 0}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            // Show edit button for admins
+            const editBtn = document.getElementById('editUserBtn');
+            if (user.role !== 'admin') { // Don't show edit for other admins
+                editBtn.style.display = 'inline-block';
+                editBtn.onclick = () => editUser(user.id);
+            }
+        }
+        
+        // Edit user function (placeholder for future implementation)
+        function editUser(userId) {
+            alert('Edit functionality will be implemented in the future for user ID: ' + userId);
         }
 
 
