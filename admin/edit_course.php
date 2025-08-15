@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="col-md-6 mb-3">
                         <label for="coursePrice" class="form-label">Bei</label>
                         <input type="number" class="form-control" id="coursePrice" name="price"
-                            value="<?= $course['price'] ?? 0 ?>" min="0" step="100">
+                            value="<?= $course['price'] ?? 0 ?>">
                         <small class="form-text text-muted">Acha tupu kwa kozi ya bure</small>
                     </div>
                     <div class="col-md-6 mb-3">
