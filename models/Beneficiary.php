@@ -180,11 +180,11 @@ class Beneficiary
         }
     }
 
-        public function deleteWanufaika($id)
+    public function deleteWanufaika($id)
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("DELETE FROM wanufaika WHERE id = ?");
             return $stmt->execute([$id]);
         } catch (PDOException $e) {
@@ -197,13 +197,13 @@ class Beneficiary
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("
                 UPDATE wanufaika 
                 SET name = ?, title = ?, description = ?, photo = ?
                 WHERE id = ?
             ");
-            
+
             return $stmt->execute([$name, $title, $description, $photo, $id]);
         } catch (PDOException $e) {
             error_log("Error updating wanufaika: " . $e->getMessage());

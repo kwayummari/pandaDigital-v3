@@ -261,9 +261,9 @@ $thisYear = $businessStats['this_year'] ?? 0;
                         <th>ID</th>
                         <th>Jina</th>
                         <th>Sehemu</th>
-                        <th>Maelezo</th>
                         <th>Mmiliki</th>
                         <th>Tarehe</th>
+                        <th>Vitendo</th>
                     </tr>
                 </thead>
                 <tbody id="businessesTableBody">
@@ -291,14 +291,6 @@ $thisYear = $businessStats['this_year'] ?? 0;
                                 <td><?= htmlspecialchars($item['location'] ?? 'N/A') ?></td>
                                 <td>
                                     <?php
-                                    $description = $item['maelezo'] ?? '';
-                                    echo strlen($description) > 100 ?
-                                        htmlspecialchars(substr($description, 0, 100)) . '...' :
-                                        htmlspecialchars($description);
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
                                     $ownerName = '';
                                     if (!empty($item['first_name']) && !empty($item['last_name'])) {
                                         $ownerName = $item['first_name'] . ' ' . $item['last_name'];
@@ -316,11 +308,45 @@ $thisYear = $businessStats['this_year'] ?? 0;
                                     echo $date ? date('d/m/Y H:i', strtotime($date)) : 'N/A';
                                     ?>
                                 </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-outline-info"
+                                            onclick="viewBusiness(<?= $item['id'] ?>)">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <a href="edit-business.php?id=<?= $item['id'] ?>"
+                                            class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                            onclick="deleteBusiness(<?= $item['id'] ?>)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Business View Modal -->
+    <div class="modal fade" id="businessViewModal" tabindex="-1" aria-labelledby="businessViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="businessViewModalLabel">Maelezo ya Biashara</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="businessModalBody">
+                    <!-- Content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -388,6 +414,98 @@ $thisYear = $businessStats['this_year'] ?? 0;
             // For now, just show all rows since filtering by date requires more complex logic
             // This can be enhanced later with actual date filtering
             rows.forEach(row => row.style.display = '');
+        }
+
+        // View business details
+        function viewBusiness(businessId) {
+            // Show loading state
+            document.getElementById('businessModalBody').innerHTML =
+                '<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Inapakia...</p></div>';
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('businessViewModal'));
+            modal.show();
+
+            // Fetch business details via AJAX
+            fetch(`get_business_details.php?id=${businessId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const business = data.business;
+                        document.getElementById('businessModalBody').innerHTML = `
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="bg-light rounded p-4 text-center">
+                                        <i class="fas fa-store fa-3x text-muted"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <h5>${business.name}</h5>
+                                    <h6 class="text-muted">${business.location}</h6>
+                                    <hr>
+                                    <p><strong>Maelezo:</strong></p>
+                                    <p>${business.maelezo || 'Hakuna maelezo'}</p>
+                                    <hr>
+                                    <p><strong>Mmiliki:</strong> ${business.owner_name}</p>
+                                    <p><strong>Tarehe ya Uundaji:</strong> ${business.date_created}</p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        document.getElementById('businessModalBody').innerHTML =
+                            '<div class="alert alert-danger">Imefeli kupata maelezo ya biashara.</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('businessModalBody').innerHTML =
+                        '<div class="alert alert-danger">Kuna tatizo la mtandao. Jaribu tena.</div>';
+                });
+        }
+
+        // Delete business
+        function deleteBusiness(businessId) {
+            if (confirm('Je, una uhakika unataka kufuta biashara hii? Kitendo hiki hakiwezi kubatilishwa!')) {
+                // Show loading state
+                const btn = event.target.closest('button');
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+
+                // Send delete request
+                fetch('delete_business.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `id=${businessId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove row from table
+                            const row = btn.closest('tr');
+                            row.remove();
+
+                            // Show success message
+                            alert('Biashara imefutwa kikamilifu!');
+
+                            // Refresh page to update stats
+                            location.reload();
+                        } else {
+                            alert('Imefeli kufuta biashara: ' + (data.message || 'Tafadhali jaribu tena.'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Kuna tatizo la mtandao. Jaribu tena.');
+                    })
+                    .finally(() => {
+                        // Restore button
+                        btn.innerHTML = originalContent;
+                        btn.disabled = false;
+                    });
+            }
         }
     </script>
 </body>

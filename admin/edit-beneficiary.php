@@ -32,24 +32,24 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'update_beneficiar
     $name = trim($_POST['name']);
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
-    
+
     // Handle file upload
     $photo = $beneficiary['photo']; // Keep existing photo by default
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = '../uploads/Wanufaika/';
-        
+
         // Create directory if it doesn't exist
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
-        
+
         $fileExtension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-        
+
         if (in_array($fileExtension, $allowedExtensions)) {
             $newPhoto = uniqid() . '.' . $fileExtension;
             $uploadPath = $uploadDir . $newPhoto;
-            
+
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadPath)) {
                 // Delete old photo if it exists and is different
                 if (!empty($beneficiary['photo']) && $beneficiary['photo'] !== $newPhoto) {
@@ -66,7 +66,7 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'update_beneficiar
             $error = "Muonekano wa faili haujakubalika. Tafadhali tumia JPG, PNG au GIF tu.";
         }
     }
-    
+
     if (empty($error)) {
         if ($beneficiaryModel->updateWanufaika($beneficiaryId, $name, $title, $description, $photo)) {
             $success = "Mwanufaika amebadilishwa kikamilifu!";
@@ -215,25 +215,25 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'update_beneficiar
         <div class="edit-beneficiary-form">
             <form method="POST" action="" enctype="multipart/form-data" id="editBeneficiaryForm">
                 <input type="hidden" name="action" value="update_beneficiary">
-                
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="name" class="form-label">
                             Jina la Mwanufaika <span class="required">*</span>
                         </label>
-                        <input type="text" class="form-control" id="name" name="name" 
-                               value="<?= htmlspecialchars($beneficiary['name'] ?? '') ?>"
-                               placeholder="Jina kamili la mwanufaika" required>
+                        <input type="text" class="form-control" id="name" name="name"
+                            value="<?= htmlspecialchars($beneficiary['name'] ?? '') ?>"
+                            placeholder="Jina kamili la mwanufaika" required>
                         <div class="help-text">Jina kamili la mwanufaika</div>
                     </div>
-                    
+
                     <div class="col-md-6 mb-3">
                         <label for="title" class="form-label">
                             Kichwa Cha Habari <span class="required">*</span>
                         </label>
-                        <input type="text" class="form-control" id="title" name="title" 
-                               value="<?= htmlspecialchars($beneficiary['title'] ?? '') ?>"
-                               placeholder="Kichwa cha habari ya mafanikio" required>
+                        <input type="text" class="form-control" id="title" name="title"
+                            value="<?= htmlspecialchars($beneficiary['title'] ?? '') ?>"
+                            placeholder="Kichwa cha habari ya mafanikio" required>
                         <div class="help-text">Kichwa cha habari ya mafanikio</div>
                     </div>
                 </div>
@@ -243,31 +243,31 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'update_beneficiar
                         <label for="description" class="form-label">
                             Maelezo <span class="required">*</span>
                         </label>
-                        <textarea class="form-control form-textarea" id="description" name="description" 
-                                  rows="6" placeholder="Maelezo kamili ya mafanikio ya mwanufaika..." required><?= htmlspecialchars($beneficiary['description'] ?? '') ?></textarea>
+                        <textarea class="form-control form-textarea" id="description" name="description"
+                            rows="6" placeholder="Maelezo kamili ya mafanikio ya mwanufaika..." required><?= htmlspecialchars($beneficiary['description'] ?? '') ?></textarea>
                         <div class="help-text">Maelezo kamili ya jinsi mwanufaika alivyofanikiwa kupitia jukwaa la Panda Digital</div>
                     </div>
-                    
+
                     <div class="col-md-4 mb-3">
                         <label for="photo" class="form-label">
                             Picha ya Mwanufaika
                         </label>
-                        
+
                         <!-- Current Image Display -->
                         <?php if (!empty($beneficiary['photo'])): ?>
                             <div class="mb-3">
                                 <p class="text-muted mb-2">Picha ya Sasa:</p>
-                                <img src="../uploads/Wanufaika/<?= htmlspecialchars($beneficiary['photo']) ?>" 
-                                     alt="Current Photo" class="current-image">
+                                <img src="../uploads/Wanufaika/<?= htmlspecialchars($beneficiary['photo']) ?>"
+                                    alt="Current Photo" class="current-image">
                             </div>
                         <?php endif; ?>
-                        
+
                         <div class="file-upload-area" onclick="document.getElementById('photo').click()">
                             <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
                             <p class="mb-1">Bofya au Buruta picha hapa</p>
                             <small class="text-muted">JPG, PNG, GIF (Max: 5MB)</small>
-                            <input type="file" id="photo" name="photo" accept="image/*" 
-                                   style="display: none;" onchange="previewImage(this)">
+                            <input type="file" id="photo" name="photo" accept="image/*"
+                                style="display: none;" onchange="previewImage(this)">
                         </div>
                         <div id="imagePreview"></div>
                         <div class="help-text">Picha mpya ya mwanufaika (tupu kuweka picha ya sasa)</div>
@@ -295,7 +295,7 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'update_beneficiar
     <script>
         // File upload drag and drop
         const fileUploadArea = document.querySelector('.file-upload-area');
-        
+
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             fileUploadArea.addEventListener(eventName, preventDefaults, false);
         });
@@ -334,10 +334,10 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'update_beneficiar
         function previewImage(input) {
             const preview = document.getElementById('imagePreview');
             preview.innerHTML = '';
-            
+
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                
+
                 reader.onload = function(e) {
                     const img = document.createElement('img');
                     img.src = e.target.result;
@@ -345,7 +345,7 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'update_beneficiar
                     img.alt = 'Preview';
                     preview.appendChild(img);
                 }
-                
+
                 reader.readAsDataURL(input.files[0]);
             }
         }
@@ -355,21 +355,21 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'update_beneficiar
             const name = document.getElementById('name').value.trim();
             const title = document.getElementById('title').value.trim();
             const description = document.getElementById('description').value.trim();
-            
+
             if (!name || name.length < 2) {
                 e.preventDefault();
                 alert('Jina la mwanufaika lazima liwe na herufi 2 au zaidi.');
                 document.getElementById('name').focus();
                 return false;
             }
-            
+
             if (!title || title.length < 5) {
                 e.preventDefault();
                 alert('Kichwa cha habari lazima kiwe na herufi 5 au zaidi.');
                 document.getElementById('title').focus();
                 return false;
             }
-            
+
             if (!description || description.length < 20) {
                 e.preventDefault();
                 alert('Maelezo lazima yawe na herufi 20 au zaidi.');
