@@ -195,23 +195,31 @@ $userStats = $userModel->getUserStatsByRole();
                                     <option value="suspended">Imezimwa</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
+                                                        <div class="col-md-2">
                                 <div class="dropdown">
                                     <button class="btn btn-primary w-100 dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fas fa-download me-1"></i> Pakua
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="exportDropdown">
                                         <li><a class="dropdown-item" href="export_users.php?format=csv">
-                                                <i class="fas fa-file-csv me-2"></i> CSV
+                                                <i class="fas fa-file-csv me-2"></i> CSV (Direct)
+                                            </a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="exportUsers('csv')">
+                                                <i class="fas fa-file-csv me-2"></i> CSV (JS)
                                             </a></li>
                                         <li><a class="dropdown-item" href="#" onclick="exportUsers('excel')">
                                                 <i class="fas fa-file-excel me-2"></i> Excel
-                                            </a></li>
+                                        </a></li>
                                         <li><a class="dropdown-item" href="#" onclick="exportUsers('pdf')">
                                                 <i class="fas fa-file-pdf me-2"></i> PDF
-                                            </a></li>
+                                        </a></li>
                                     </ul>
                                 </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-success" onclick="testExport()">
+                                    <i class="fas fa-test-tube"></i> Test
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -410,8 +418,16 @@ $userStats = $userModel->getUserStatsByRole();
             alert('View user functionality will be implemented here');
         }
 
+        // Test export function
+        function testExport() {
+            console.log('Test button clicked');
+            alert('Test button works! JavaScript is functioning.');
+        }
+
         // Export users
         function exportUsers(format = 'csv') {
+            console.log('Export function called with format:', format);
+            
             if (format === 'csv') {
                 // Show loading state
                 const exportBtn = document.getElementById('exportDropdown');
@@ -419,8 +435,11 @@ $userStats = $userModel->getUserStatsByRole();
                 exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Inapakua...';
                 exportBtn.disabled = true;
 
+                console.log('Starting CSV export...');
+                
                 // Redirect to export page for CSV
                 setTimeout(() => {
+                    console.log('Redirecting to export_users.php');
                     window.location.href = 'export_users.php?format=csv';
                     // Reset button after a short delay
                     setTimeout(() => {
@@ -433,7 +452,7 @@ $userStats = $userModel->getUserStatsByRole();
                 alert('Excel export functionality will be implemented soon. For now, please use CSV export.');
             } else if (format === 'pdf') {
                 // For now, show message that PDF export is coming soon
-                alert('PDF export functionality will be implemented soon. For now, please use CSV export.');
+                alert('PDF export functionality will be temporarily implemented soon. For now, please use CSV export.');
             }
         }
 
@@ -443,6 +462,37 @@ $userStats = $userModel->getUserStatsByRole();
             if (pageTitle) {
                 pageTitle.textContent = 'Usimamizi wa Watumiaji';
             }
+            
+            // Test if JavaScript is working
+            console.log('DOM loaded, JavaScript is working');
+            
+            // Test if export function exists
+            if (typeof exportUsers === 'function') {
+                console.log('Export function is defined');
+            } else {
+                console.log('Export function is NOT defined');
+            }
+            
+            // Test if Bootstrap dropdown is working
+            const exportDropdown = document.getElementById('exportDropdown');
+            if (exportDropdown) {
+                console.log('Export dropdown found');
+                exportDropdown.addEventListener('click', function() {
+                    console.log('Export dropdown clicked');
+                });
+            } else {
+                console.log('Export dropdown NOT found');
+            }
+            
+            // Test dropdown menu items
+            const dropdownItems = document.querySelectorAll('.dropdown-item');
+            console.log('Found', dropdownItems.length, 'dropdown items');
+            
+            dropdownItems.forEach((item, index) => {
+                item.addEventListener('click', function(e) {
+                    console.log('Dropdown item', index, 'clicked');
+                });
+            });
         });
     </script>
 
