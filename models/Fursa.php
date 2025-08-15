@@ -153,4 +153,35 @@ class Fursa
             ];
         }
     }
+
+    public function updateOpportunity($opportunityId, $opportunityData)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            // Check if opportunity exists
+            $stmt = $conn->prepare("SELECT id FROM fursa WHERE id = ?");
+            $stmt->execute([$opportunityId]);
+            if (!$stmt->fetch()) {
+                return false;
+            }
+
+            // Update opportunity with simple fields matching the old system
+            $stmt = $conn->prepare("
+                UPDATE fursa 
+                SET name = ?, description = ?, image = ?
+                WHERE id = ?
+            ");
+
+            return $stmt->execute([
+                $opportunityData['name'],
+                $opportunityData['description'],
+                $opportunityData['image'],
+                $opportunityId
+            ]);
+        } catch (PDOException $e) {
+            error_log("Error updating opportunity: " . $e->getMessage());
+            return false;
+        }
+    }
 }
