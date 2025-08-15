@@ -61,7 +61,7 @@ $currentUser = $auth->getCurrentUser();
 
     <script>
         // Your page-specific JavaScript goes here
-        
+
         // Update page title in the top navigation
         document.addEventListener('DOMContentLoaded', function() {
             const pageTitle = document.getElementById('pageTitle');

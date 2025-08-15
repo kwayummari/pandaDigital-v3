@@ -208,15 +208,15 @@ $userStats = $userModel->getUserStatsByRole();
                                             </td>
                                             <td><?php echo htmlspecialchars($user['email']); ?></td>
                                             <td><?php echo htmlspecialchars($user['phone'] ?? 'Haijulikani'); ?></td>
-                                            <td><?php echo date('d/m/Y', strtotime($user['created_at'])); ?></td>
+                                            <td><?php echo date('d/m/Y', strtotime($user['date_created'])); ?></td>
                                             <td>
                                                 <span class="badge badge-role bg-<?php echo $user['role'] === 'admin' ? 'danger' : ($user['role'] === 'expert' ? 'warning' : 'info'); ?>">
                                                     <?php echo ucfirst($user['role']); ?>
                                                 </span>
                                             </td>
                                             <td>
-                                                <span class="badge badge-status bg-<?php echo $user['status'] === 'active' ? 'success' : 'secondary'; ?>">
-                                                    <?php echo $user['status'] === 'active' ? 'Inatumika' : 'Imezimwa'; ?>
+                                                <span class="badge badge-status bg-<?php echo $user['account_status'] === 'active' ? 'success' : 'secondary'; ?>">
+                                                    <?php echo $user['account_status'] === 'active' ? 'Inatumika' : 'Imezimwa'; ?>
                                                 </span>
                                             </td>
                                             <td>
