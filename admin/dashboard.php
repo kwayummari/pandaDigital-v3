@@ -63,7 +63,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
             <div class="card-icon">
                 <i class="fas fa-users"></i>
             </div>
-            <h6 class="card-title">Jumla ya Watumiaji</h6>
+            <h6 class="card-title">Jumla ya Watumiaj</h6>
             <p class="card-value"><?= number_format($blogStats['total_users'] ?? 0) ?></p>
         </div>
     </div>
