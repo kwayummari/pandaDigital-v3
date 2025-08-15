@@ -260,40 +260,45 @@ if (!empty($courses)) {
 
         /* Fix layout spacing issues */
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         .main-content {
             margin-left: 280px !important;
             padding: 0 !important;
             width: calc(100% - 280px) !important;
+            max-width: none !important;
         }
 
         .content-wrapper {
             padding: 20px 30px;
-            margin: 0;
-            width: 100%;
+            margin: 0 !important;
+            width: 100% !important;
             box-sizing: border-box;
+            max-width: none !important;
         }
 
         .row {
-            margin: 0;
-            width: 100%;
+            margin: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
         }
 
         .col-md-3,
         .col-md-6 {
             padding: 0 15px;
             box-sizing: border-box;
+            max-width: none !important;
         }
 
         .search-box,
         .filter-tabs,
         .course-table {
-            margin: 0;
-            width: 100%;
+            margin: 0 !important;
+            width: 100% !important;
             box-sizing: border-box;
+            max-width: none !important;
         }
 
         /* Override any conflicting Bootstrap styles */
@@ -302,10 +307,63 @@ if (!empty($courses)) {
             padding-right: 0 !important;
             margin-left: 0 !important;
             margin-right: 0 !important;
+            max-width: none !important;
+        }
+
+        /* Force remove any left margins/padding */
+        * {
+            box-sizing: border-box;
+        }
+
+        .main-content * {
+            margin-left: 0 !important;
+            padding-left: 0 !important;
+        }
+
+        .content-wrapper * {
+            margin-left: 0 !important;
+            padding-left: 0 !important;
+        }
+
+        /* Override Bootstrap grid system */
+        .container,
+        .container-fluid {
+            max-width: none !important;
+            width: 100% !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        /* Ensure no left spacing from any source */
+        .main-content .row>* {
+            margin-left: 0 !important;
+            padding-left: 15px !important;
+        }
+
+        .main-content .row>*:first-child {
+            padding-left: 0 !important;
+        }
+
+        /* Override dashboard-container flex behavior */
+        .dashboard-container {
+            display: block !important;
+        }
+
+        .dashboard-container .main-content {
+            margin-left: 280px !important;
+            width: calc(100% - 280px) !important;
+            max-width: none !important;
         }
 
         @media (max-width: 768px) {
             .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+
+            .dashboard-container .main-content {
                 margin-left: 0 !important;
                 width: 100% !important;
             }
@@ -357,17 +415,7 @@ if (!empty($courses)) {
                 </div>
             <?php endif; ?>
 
-            <!-- Debug Information -->
-            <div class="alert alert-info">
-                <strong>Debug Info:</strong><br>
-                Total Courses: <?= $totalCourses ?><br>
-                Courses Array Count: <?= count($courses) ?><br>
-                <?php if (!empty($courses)): ?>
-                    First Course: <?= json_encode($courses[0]) ?>
-                <?php else: ?>
-                    No courses found in array
-                <?php endif; ?>
-            </div>
+
 
 
 
