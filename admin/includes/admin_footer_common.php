@@ -25,7 +25,11 @@
         // Close sidebar on mobile when clicking outside
         document.addEventListener('click', function(e) {
             if (window.innerWidth < 992) {
-                if (!sidebar.contains(e.target) && !e.target.closest('.sidebar-toggle')) {
+                // Don't close sidebar when clicking on menu items or navigation
+                if (!sidebar.contains(e.target) &&
+                    !e.target.closest('.sidebar-toggle') &&
+                    !e.target.closest('.sidebar-nav') &&
+                    !e.target.closest('.nav-link')) {
                     sidebar.classList.remove('collapsed');
                     dashboardContainer.classList.remove('sidebar-collapsed');
                 }
