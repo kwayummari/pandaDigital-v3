@@ -38,7 +38,7 @@ class Business
     {
         try {
             $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM businesses");
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM business");
             $stmt->execute();
             $result = $stmt->fetch();
             return $result['total'] ?? 0;
