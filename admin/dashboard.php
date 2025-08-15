@@ -204,12 +204,11 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
 
 
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card position-relative">
-            <div class="card-icon">
-                <i class="fas fa-book"></i>
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <h3 class="mb-1"><?= number_format($totalCourses) ?></h3>
+                <p class="mb-0">Kozi Zote</p>
             </div>
-            <h6 class="card-title">Kozi Zote</h6>
-            <p class="card-value"><?= number_format($totalCourses) ?></p>
         </div>
     </div>
 
