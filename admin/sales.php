@@ -258,10 +258,7 @@ $totalSellers = $salesStats['total_sellers'] ?? 0;
                     </div>
                 </div>
                 <div class="col-md-6 text-end">
-                    <a href="add-sale.php" class="btn btn-primary add-sale-btn">
-                        <i class="fas fa-plus me-2"></i>Ongeza Muuzo
-                    </a>
-                    <div class="export-dropdown d-inline-block ms-2">
+                    <div class="export-dropdown d-inline-block">
                         <button class="btn btn-outline-secondary" onclick="toggleExportDropdown()">
                             <i class="fas fa-download me-2"></i>Pakua
                         </button>
