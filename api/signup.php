@@ -91,8 +91,13 @@ if (!$agreeTerms) {
 }
 
 try {
-    $db = new PDO("mysql:host=localhost;dbname=pandadigital;charset=utf8mb4", "root", "");
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    require_once __DIR__ . '/../config/init.php';
+    $database = new Database();
+    $db = $database->getConnection();
+    
+    if (!$db) {
+        throw new Exception('Database connection failed');
+    }
 
     // Check if email already exists
     $stmt = $db->prepare("SELECT id FROM users WHERE email = ?");
@@ -110,8 +115,8 @@ try {
     // Hash password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Insert new user - using exact columns that exist
-    $stmt = $db->prepare("INSERT INTO users (email, pass, first_name, last_name, role, status, bio, expert_authorization) VALUES (?, ?, '', '', 'user', 'active', '', '0')");
+        // Insert new user - using correct table structure
+    $stmt = $db->prepare("INSERT INTO users (email, pass, first_name, last_name, role, status, bio, expert_authorization) VALUES (?, ?, '', '', 'user', 'free', 'none', '0')");
     
     $result = $stmt->execute([$email, $hashedPassword]);
 
