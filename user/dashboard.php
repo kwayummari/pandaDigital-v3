@@ -673,12 +673,12 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
 
                 // Check what fields are missing and show appropriate form
                 const missingFields = [];
-                if (!user.first_name || user.first_name === '') missingFields.push('first_name');
-                if (!user.last_name || user.last_name === '') missingFields.push('last_name');
-                if (!user.phone || user.phone === 'null' || user.phone === '') missingFields.push('phone');
-                if (!user.region || user.region === 'null' || user.region === '') missingFields.push('region');
-                if (!user.gender || user.gender === 'null' || user.gender === '') missingFields.push('gender');
-                if (!user.date_of_birth || user.date_of_birth === 'null' || user.date_of_birth === '') missingFields.push('date_of_birth');
+                if (!user.first_name || user.first_name === '' || user.first_name === 'null') missingFields.push('first_name');
+                if (!user.last_name || user.last_name === '' || user.last_name === 'null') missingFields.push('last_name');
+                if (!user.phone || user.phone === 'null' || user.phone === '' || user.phone === "'null'") missingFields.push('phone');
+                if (!user.region || user.region === 'null' || user.region === '' || user.region === "'null'") missingFields.push('region');
+                if (!user.gender || user.gender === 'null' || user.gender === '' || user.gender === "'null'") missingFields.push('gender');
+                if (!user.date_of_birth || user.date_of_birth === 'null' || user.date_of_birth === '' || user.date_of_birth === "'null'") missingFields.push('date_of_birth');
 
                 console.log('Missing fields:', missingFields);
 
@@ -692,12 +692,12 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                     showMissingFields(missingFields);
 
                     // Pre-fill existing data if available
-                    if (user.first_name && user.first_name !== '') document.getElementById('profileFirstName').value = user.first_name;
-                    if (user.last_name && user.last_name !== '') document.getElementById('profileLastName').value = user.last_name;
-                    if (user.phone && user.phone !== 'null' && user.phone !== '') document.getElementById('profilePhone').value = user.phone;
-                    if (user.region && user.region !== 'null' && user.region !== '') document.getElementById('profileRegion').value = user.region;
-                    if (user.gender && user.gender !== 'null' && user.gender !== '') document.getElementById('profileGender').value = user.gender;
-                    if (user.date_of_birth && user.date_of_birth !== 'null' && user.date_of_birth !== '') document.getElementById('profileDateOfBirth').value = user.date_of_birth;
+                    if (user.first_name && user.first_name !== '' && user.first_name !== 'null') document.getElementById('profileFirstName').value = user.first_name;
+                    if (user.last_name && user.last_name !== '' && user.last_name !== 'null') document.getElementById('profileLastName').value = user.last_name;
+                    if (user.phone && user.phone !== 'null' && user.phone !== '' && user.phone !== "'null'") document.getElementById('profilePhone').value = user.phone;
+                    if (user.region && user.region !== 'null' && user.region !== '' && user.region !== "'null'") document.getElementById('profileRegion').value = user.region;
+                    if (user.gender && user.gender !== 'null' && user.gender !== '' && user.gender !== "'null'") document.getElementById('profileGender').value = user.gender;
+                    if (user.date_of_birth && user.date_of_birth !== 'null' && user.date_of_birth !== '' && user.date_of_birth !== "'null'") document.getElementById('profileDateOfBirth').value = user.date_of_birth;
                 } else {
                     console.log('Profile is complete, no modal needed');
                 }
