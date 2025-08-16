@@ -405,6 +405,8 @@
         <?php if ($isLoggedIn && $currentUser): ?>
             const user = <?= json_encode($currentUser) ?>;
             
+            console.log('Checking profile completion for user:', user);
+            
             // Check what fields are missing and show appropriate form
             const missingFields = [];
             if (!user.first_name || user.first_name === '') missingFields.push('first_name');
@@ -414,7 +416,10 @@
             if (!user.gender || user.gender === 'null' || user.gender === '') missingFields.push('gender');
             if (!user.date_of_birth || user.date_of_birth === 'null' || user.date_of_birth === '') missingFields.push('date_of_birth');
             
+            console.log('Missing fields:', missingFields);
+            
             if (missingFields.length > 0) {
+                console.log('Showing profile completion modal');
                 // Show profile completion modal
                 const profileModal = new bootstrap.Modal(document.getElementById('profileCompletionModal'));
                 profileModal.show();
@@ -429,9 +434,18 @@
                 if (user.region && user.region !== 'null' && user.region !== '') document.getElementById('profileRegion').value = user.region;
                 if (user.gender && user.gender !== 'null' && user.gender !== '') document.getElementById('profileGender').value = user.gender;
                 if (user.date_of_birth && user.date_of_birth !== 'null' && user.date_of_birth !== '') document.getElementById('profileDateOfBirth').value = user.date_of_birth;
+            } else {
+                console.log('Profile is complete, no modal needed');
             }
+        <?php else: ?>
+            console.log('User not logged in or currentUser not available');
         <?php endif; ?>
     }
+
+    // Call profile completion check when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        checkProfileCompletion();
+    });
 
     // Handle signup form submission
     document.addEventListener('DOMContentLoaded', function() {

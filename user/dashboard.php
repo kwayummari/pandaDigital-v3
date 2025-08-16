@@ -291,7 +291,7 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                     <div class="col-md-3">
                         <div class="card stats-card warning">
                             <div class="card-body text-center">
-                                <h3 class="mb-1"><?php echo round($quizStats['average_score']); ?>%</h3>
+                                <h3 class="mb-1"><?php echo round($quizStats['average_score'] ?? 0); ?>%</h3>
                                 <p class="mb-0">Wastani wa Alama</p>
                             </div>
                         </div>
@@ -516,6 +516,247 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                         }
                     }
                 });
+            });
+        </script>
+
+        <!-- Profile Completion Modal -->
+        <div class="modal fade" id="profileCompletionModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Kamilisha Profaili Yako</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeProfileModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Tafadhali kamilisha maelezo yako ya msingi ili uweze kutumia huduma zote za jukwaa.
+                        </div>
+
+                        <form id="profileCompletionForm">
+                            <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
+
+                            <div id="first_nameGroup" class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="profileFirstName" class="form-label">Jina la Kwanza *</label>
+                                    <input type="text" class="form-control" id="profileFirstName" name="first_name">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="profileLastName" class="form-label">Jina la Mwisho *</label>
+                                    <input type="text" class="form-control" id="profileLastName" name="last_name">
+                                </div>
+                            </div>
+
+                            <div id="phoneGroup" class="mb-3">
+                                <label for="profilePhone" class="form-label">Namba ya Simu *</label>
+                                <input type="tel" class="form-control" id="profilePhone" name="phone" placeholder="Mfano: 0712345678">
+                            </div>
+
+                            <div id="regionGroup" class="mb-3">
+                                <label for="profileRegion" class="form-label">Mkoa *</label>
+                                <select class="form-select" id="profileRegion" name="region">
+                                    <option value="">Chagua Mkoa</option>
+                                    <option value="Arusha">Arusha</option>
+                                    <option value="Dar es Salaam">Dar es Salaam</option>
+                                    <option value="Dodoma">Dodoma</option>
+                                    <option value="Geita">Geita</option>
+                                    <option value="Iringa">Iringa</option>
+                                    <option value="Kagera">Kagera</option>
+                                    <option value="Katavi">Katavi</option>
+                                    <option value="Kigoma">Kigoma</option>
+                                    <option value="Kilimanjaro">Kilimanjaro</option>
+                                    <option value="Lindi">Lindi</option>
+                                    <option value="Manyara">Manyara</option>
+                                    <option value="Mara">Mara</option>
+                                    <option value="Mbeya">Mbeya</option>
+                                    <option value="Morogoro">Morogoro</option>
+                                    <option value="Mtwara">Mtwara</option>
+                                    <option value="Mwanza">Mwanza</option>
+                                    <option value="Njombe">Njombe</option>
+                                    <option value="Pemba North">Pemba North</option>
+                                    <option value="Pemba South">Pemba South</option>
+                                    <option value="Pwani">Pwani</option>
+                                    <option value="Rukwa">Rukwa</option>
+                                    <option value="Ruvuma">Ruvuma</option>
+                                    <option value="Shinyanga">Shinyanga</option>
+                                    <option value="Simiyu">Simiyu</option>
+                                    <option value="Singida">Singida</option>
+                                    <option value="Songwe">Songwe</option>
+                                    <option value="Tabora">Tabora</option>
+                                    <option value="Tanga">Tanga</option>
+                                    <option value="Unguja North">Unguja North</option>
+                                    <option value="Unguja South">Unguja South</option>
+                                    <option value="Zanzibar Central">Zanzibar Central</option>
+                                    <option value="Zanzibar Urban">Zanzibar Urban</option>
+                                    <option value="Zanzibar West">Zanzibar West</option>
+                                </select>
+                            </div>
+
+                            <div id="genderGroup" class="mb-3">
+                                <label for="profileGender" class="form-label">Jinsia *</label>
+                                <select class="form-select" id="profileGender" name="gender">
+                                    <option value="">Chagua Jinsia</option>
+                                    <option value="Mwanamke">Mwanamke</option>
+                                    <option value="Mwanaume">Mwanaume</option>
+                                </select>
+                            </div>
+
+                            <div id="dateOfBirthGroup" class="mb-3">
+                                <label for="profileDateOfBirth" class="form-label">Tarehe ya Kuzaliwa *</label>
+                                <input type="date" class="form-control" id="profileDateOfBirth" name="date_of_birth">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <span class="btn-text">Hifadhi Maelezo</span>
+                                <span class="btn-loading d-none">
+                                    <span class="loading"></span> Inahifadhi...
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Container for Messages -->
+        <div id="alertContainer" class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;"></div>
+
+        <!-- Profile Completion JavaScript -->
+        <script>
+            // Function to show/hide profile fields based on what's missing
+            function showMissingFields(missingFields) {
+                const allFields = ['first_name', 'last_name', 'phone', 'region', 'gender', 'date_of_birth'];
+
+                allFields.forEach(field => {
+                    const fieldGroup = document.getElementById(field + 'Group');
+                    if (fieldGroup) {
+                        if (missingFields.includes(field)) {
+                            fieldGroup.style.display = 'block';
+                            const input = fieldGroup.querySelector('input, select');
+                            if (input) input.required = true;
+                        } else {
+                            fieldGroup.style.display = 'none';
+                            const input = fieldGroup.querySelector('input, select');
+                            if (input) input.required = false;
+                        }
+                    }
+                });
+            }
+
+            // Function to show alerts
+            function showAlert(type, message) {
+                const alertContainer = document.getElementById('alertContainer');
+                const alertId = 'alert-' + Date.now();
+
+                const alertHtml = `
+                    <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+
+                alertContainer.insertAdjacentHTML('beforeend', alertHtml);
+
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    const alert = document.getElementById(alertId);
+                    if (alert) {
+                        alert.remove();
+                    }
+                }, 5000);
+            }
+
+            // Check profile completion when page loads
+            document.addEventListener('DOMContentLoaded', function() {
+                const user = <?= json_encode($currentUser) ?>;
+
+                console.log('Checking profile completion for user:', user);
+
+                // Check what fields are missing and show appropriate form
+                const missingFields = [];
+                if (!user.first_name || user.first_name === '') missingFields.push('first_name');
+                if (!user.last_name || user.last_name === '') missingFields.push('last_name');
+                if (!user.phone || user.phone === 'null' || user.phone === '') missingFields.push('phone');
+                if (!user.region || user.region === 'null' || user.region === '') missingFields.push('region');
+                if (!user.gender || user.gender === 'null' || user.gender === '') missingFields.push('gender');
+                if (!user.date_of_birth || user.date_of_birth === 'null' || user.date_of_birth === '') missingFields.push('date_of_birth');
+
+                console.log('Missing fields:', missingFields);
+
+                if (missingFields.length > 0) {
+                    console.log('Showing profile completion modal');
+                    // Show profile completion modal
+                    const profileModal = new bootstrap.Modal(document.getElementById('profileCompletionModal'));
+                    profileModal.show();
+
+                    // Show only the fields that are missing
+                    showMissingFields(missingFields);
+
+                    // Pre-fill existing data if available
+                    if (user.first_name && user.first_name !== '') document.getElementById('profileFirstName').value = user.first_name;
+                    if (user.last_name && user.last_name !== '') document.getElementById('profileLastName').value = user.last_name;
+                    if (user.phone && user.phone !== 'null' && user.phone !== '') document.getElementById('profilePhone').value = user.phone;
+                    if (user.region && user.region !== 'null' && user.region !== '') document.getElementById('profileRegion').value = user.region;
+                    if (user.gender && user.gender !== 'null' && user.gender !== '') document.getElementById('profileGender').value = user.gender;
+                    if (user.date_of_birth && user.date_of_birth !== 'null' && user.date_of_birth !== '') document.getElementById('profileDateOfBirth').value = user.date_of_birth;
+                } else {
+                    console.log('Profile is complete, no modal needed');
+                }
+            });
+
+            // Handle profile completion form submission
+            document.addEventListener('DOMContentLoaded', function() {
+                const profileForm = document.getElementById('profileCompletionForm');
+                if (profileForm) {
+                    profileForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+
+                        const formData = new FormData(this);
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        const btnText = submitBtn.querySelector('.btn-text');
+                        const btnLoading = submitBtn.querySelector('.btn-loading');
+
+                        // Show loading state
+                        btnText.classList.add('d-none');
+                        btnLoading.classList.remove('d-none');
+                        submitBtn.disabled = true;
+
+                        // Submit form data
+                        fetch('<?= app_url("api/update-profile.php") ?>', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Show success message
+                                    showAlert('success', 'Maelezo yako yamehifadhiwa kwa mafanikio!');
+
+                                    // Close modal after delay
+                                    setTimeout(() => {
+                                        const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileCompletionModal'));
+                                        profileModal.hide();
+                                    }, 2000);
+
+                                    // Reload page to reflect changes
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 2500);
+                                } else {
+                                    showAlert('danger', data.message || 'Kuna tatizo, jaribu tena.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                showAlert('danger', 'Kuna tatizo la mtandao, jaribu tena.');
+                            })
+                            .finally(() => {
+                                // Reset button state
+                                btnText.classList.remove('d-none');
+                                btnLoading.classList.add('d-none');
+                                submitBtn.disabled = false;
+                            });
+                    });
+                }
             });
         </script>
 </body>
