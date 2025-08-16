@@ -92,6 +92,7 @@ if (!$agreeTerms) {
 
 try {
     $db = new PDO("mysql:host=localhost;dbname=pandadigital;charset=utf8mb4", "root", "");
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Check if email already exists
     $stmt = $db->prepare("SELECT id FROM users WHERE email = ?");
@@ -109,17 +110,8 @@ try {
     // Hash password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insert new user
-    $stmt = $db->prepare("
-        INSERT INTO users (
-            email, 
-            pass, 
-            role, 
-            account_status, 
-            date_created, 
-            updated_at
-        ) VALUES (?, ?, 'user', 'active', NOW(), NOW())
-    ");
+    // Insert new user - using same structure as working code
+    $stmt = $db->prepare("INSERT INTO users (email, pass, first_name, last_name, role, status, profile_photo, bio, expert_authorization) VALUES (?, ?, '', '', 'user', 'active', '', '', 0)");
 
     $result = $stmt->execute([$email, $hashedPassword]);
 
