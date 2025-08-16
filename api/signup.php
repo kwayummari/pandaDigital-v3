@@ -91,12 +91,12 @@ if (!$agreeTerms) {
 }
 
 try {
-    $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
-    
+    $db = new PDO("mysql:host=localhost;dbname=pandadigital;charset=utf8mb4", "root", "");
+
     // Check if email already exists
     $stmt = $db->prepare("SELECT id FROM users WHERE email = ?");
     $stmt->execute([$email]);
-    
+
     if ($stmt->fetch()) {
         http_response_code(400);
         echo json_encode([
@@ -105,10 +105,10 @@ try {
         ]);
         exit();
     }
-    
+
     // Hash password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    
+
     // Insert new user
     $stmt = $db->prepare("
         INSERT INTO users (
@@ -120,9 +120,9 @@ try {
             updated_at
         ) VALUES (?, ?, 'user', 'active', NOW(), NOW())
     ");
-    
+
     $result = $stmt->execute([$email, $hashedPassword]);
-    
+
     if ($result) {
         echo json_encode([
             'success' => true,
@@ -132,7 +132,6 @@ try {
     } else {
         throw new Exception('Failed to insert user');
     }
-    
 } catch (Exception $e) {
     error_log("Signup error: " . $e->getMessage());
     http_response_code(500);
@@ -141,4 +140,3 @@ try {
         'message' => 'Kuna tatizo la mtandao. Jaribu tena.'
     ]);
 }
-?>

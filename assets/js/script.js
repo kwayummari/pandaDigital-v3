@@ -84,12 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('Login form not found!');
     }
 
-    if (signupForm) {
-        signupForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            handleSignup();
-        });
-    }
+    // Signup form is handled in footer.php
 
     // Login handler
     function handleLogin() {
@@ -154,48 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
         tempForm.submit();
     }
 
-    // Signup handler
-    function handleSignup() {
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const email = document.getElementById('signupEmail').value;
-        const phone = document.getElementById('phone').value;
-        const password = document.getElementById('signupPassword').value;
-        const agreeTerms = document.getElementById('agreeTerms').checked;
-
-        if (!firstName || !lastName || !email || !phone || !password) {
-            showAlert('Tafadhali jaza sehemu zote', 'danger');
-            return;
-        }
-
-        if (!agreeTerms) {
-            showAlert('Tafadhali kubaliana na sheria na masharti', 'danger');
-            return;
-        }
-
-        // Show loading state
-        const submitBtn = signupForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<span class="loading"></span> Inasajili...';
-        submitBtn.disabled = true;
-
-        // Simulate API call
-        setTimeout(() => {
-            // Here you would make actual API call
-            console.log('Signup attempt:', { firstName, lastName, email, phone, password });
-
-            // Reset button
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-
-            // Show success message
-            showAlert('Akaunti yako imeundwa kwa mafanikio!', 'success');
-
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
-            modal.hide();
-        }, 2000);
-    }
+    // Signup handler moved to footer.php
 
     // Alert system
     function showAlert(message, type = 'info') {

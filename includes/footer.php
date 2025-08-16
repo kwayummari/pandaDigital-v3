@@ -2,7 +2,7 @@
 <footer class="footer">
     <!-- Alert Container for Messages -->
     <div id="alertContainer" class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;"></div>
-    
+
     <!-- Decorative floating elements -->
     <div class="footer-decoration">
         <div class="floating-element element-1"></div>
@@ -430,14 +430,14 @@
                         if (data.success) {
                             // Show success message
                             showAlert('success', 'Usajili umekamilika kwa mafanikio! Sasa unaweza kuingia.');
-                            
+
                             // Close signup modal
                             const signupModal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
                             signupModal.hide();
-                            
+
                             // Clear form
                             signupForm.reset();
-                            
+
                             // Show login modal after delay
                             setTimeout(() => {
                                 const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
