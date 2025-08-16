@@ -270,23 +270,26 @@
 
                 <form id="profileCompletionForm">
                     <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
-                    <div class="row">
+                    
+                    <div id="first_nameGroup" class="row">
                         <div class="col-md-6 mb-3">
                             <label for="profileFirstName" class="form-label">Jina la Kwanza *</label>
-                            <input type="text" class="form-control" id="profileFirstName" name="first_name" required>
+                            <input type="text" class="form-control" id="profileFirstName" name="first_name">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="profileLastName" class="form-label">Jina la Mwisho *</label>
-                            <input type="text" class="form-control" id="profileLastName" name="last_name" required>
+                            <input type="text" class="form-control" id="profileLastName" name="last_name">
                         </div>
                     </div>
-                    <div class="mb-3">
+                    
+                    <div id="phoneGroup" class="mb-3">
                         <label for="profilePhone" class="form-label">Namba ya Simu *</label>
-                        <input type="tel" class="form-control" id="profilePhone" name="phone" placeholder="Mfano: 0712345678" required>
+                        <input type="tel" class="form-control" id="profilePhone" name="phone" placeholder="Mfano: 0712345678">
                     </div>
-                    <div class="mb-3">
+                    
+                    <div id="regionGroup" class="mb-3">
                         <label for="profileRegion" class="form-label">Mkoa *</label>
-                        <select class="form-select" id="profileRegion" name="region" required>
+                        <select class="form-select" id="profileRegion" name="region">
                             <option value="">Chagua Mkoa</option>
                             <option value="Arusha">Arusha</option>
                             <option value="Dar es Salaam">Dar es Salaam</option>
@@ -322,6 +325,20 @@
                             <option value="Zanzibar Urban">Zanzibar Urban</option>
                             <option value="Zanzibar West">Zanzibar West</option>
                         </select>
+                    </div>
+                    
+                    <div id="genderGroup" class="mb-3">
+                        <label for="profileGender" class="form-label">Jinsia *</label>
+                        <select class="form-select" id="profileGender" name="gender">
+                            <option value="">Chagua Jinsia</option>
+                            <option value="Mwanamke">Mwanamke</option>
+                            <option value="Mwanaume">Mwanaume</option>
+                        </select>
+                    </div>
+                    
+                    <div id="dateOfBirthGroup" class="mb-3">
+                        <label for="profileDateOfBirth" class="form-label">Tarehe ya Kuzaliwa *</label>
+                        <input type="date" class="form-control" id="profileDateOfBirth" name="date_of_birth">
                     </div>
                     <button type="submit" class="btn btn-primary w-100">
                         <span class="btn-text">Hifadhi Maelezo</span>
@@ -387,18 +404,31 @@
         // Only check if user is logged in
         <?php if ($isLoggedIn && $currentUser): ?>
             const user = <?= json_encode($currentUser) ?>;
-
-            // Check if required profile fields are missing
-            if (!user.first_name || !user.last_name || !user.phone || !user.region) {
+            
+            // Check what fields are missing and show appropriate form
+            const missingFields = [];
+            if (!user.first_name || user.first_name === '') missingFields.push('first_name');
+            if (!user.last_name || user.last_name === '') missingFields.push('last_name');
+            if (!user.phone || user.phone === 'null' || user.phone === '') missingFields.push('phone');
+            if (!user.region || user.region === 'null' || user.region === '') missingFields.push('region');
+            if (!user.gender || user.gender === 'null' || user.gender === '') missingFields.push('gender');
+            if (!user.date_of_birth || user.date_of_birth === 'null' || user.date_of_birth === '') missingFields.push('date_of_birth');
+            
+            if (missingFields.length > 0) {
                 // Show profile completion modal
                 const profileModal = new bootstrap.Modal(document.getElementById('profileCompletionModal'));
                 profileModal.show();
-
+                
+                // Show only the fields that are missing
+                showMissingFields(missingFields);
+                
                 // Pre-fill existing data if available
-                if (user.first_name) document.getElementById('profileFirstName').value = user.first_name;
-                if (user.last_name) document.getElementById('profileLastName').value = user.last_name;
-                if (user.phone) document.getElementById('profilePhone').value = user.phone;
-                if (user.region) document.getElementById('profileRegion').value = user.region;
+                if (user.first_name && user.first_name !== '') document.getElementById('profileFirstName').value = user.first_name;
+                if (user.last_name && user.last_name !== '') document.getElementById('profileLastName').value = user.last_name;
+                if (user.phone && user.phone !== 'null' && user.phone !== '') document.getElementById('profilePhone').value = user.phone;
+                if (user.region && user.region !== 'null' && user.region !== '') document.getElementById('profileRegion').value = user.region;
+                if (user.gender && user.gender !== 'null' && user.gender !== '') document.getElementById('profileGender').value = user.gender;
+                if (user.date_of_birth && user.date_of_birth !== 'null' && user.date_of_birth !== '') document.getElementById('profileDateOfBirth').value = user.date_of_birth;
             }
         <?php endif; ?>
     }
@@ -516,6 +546,26 @@
             });
         }
     });
+
+    // Function to show/hide profile fields based on what's missing
+    function showMissingFields(missingFields) {
+        const allFields = ['first_name', 'last_name', 'phone', 'region', 'gender', 'date_of_birth'];
+        
+        allFields.forEach(field => {
+            const fieldGroup = document.getElementById(field + 'Group');
+            if (fieldGroup) {
+                if (missingFields.includes(field)) {
+                    fieldGroup.style.display = 'block';
+                    const input = fieldGroup.querySelector('input, select');
+                    if (input) input.required = true;
+                } else {
+                    fieldGroup.style.display = 'none';
+                    const input = fieldGroup.querySelector('input, select');
+                    if (input) input.required = false;
+                }
+            }
+        });
+    }
 
     // Function to show alerts
     function showAlert(type, message) {

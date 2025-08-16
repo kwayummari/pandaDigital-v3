@@ -23,33 +23,31 @@ if (!$authService->isLoggedIn()) {
 $currentUser = $authService->getCurrentUser();
 
 try {
-    // Validate required fields
-    $requiredFields = ['first_name', 'last_name', 'phone', 'region'];
+    // Get all submitted fields
+    $fields = ['first_name', 'last_name', 'phone', 'region', 'gender', 'date_of_birth'];
+    $data = [];
     $missingFields = [];
 
-    foreach ($requiredFields as $field) {
-        if (!isset($_POST[$field]) || empty(trim($_POST[$field]))) {
+    foreach ($fields as $field) {
+        if (isset($_POST[$field]) && !empty(trim($_POST[$field]))) {
+            $data[$field] = trim($_POST[$field]);
+        } else {
             $missingFields[] = $field;
         }
     }
 
-    if (!empty($missingFields)) {
+    // Check if we have at least some data
+    if (empty($data)) {
         http_response_code(400);
         echo json_encode([
             'success' => false,
-            'message' => 'Tafadhali jaza sehemu zote zinazohitajika: ' . implode(', ', $missingFields)
+            'message' => 'Tafadhali jaza angalau sehemu moja ya maelezo'
         ]);
         exit();
     }
 
-    // Sanitize input data
-    $firstName = trim($_POST['first_name']);
-    $lastName = trim($_POST['last_name']);
-    $phone = trim($_POST['phone']);
-    $region = trim($_POST['region']);
-
-    // Validate phone number format (Tanzania format)
-    if (!preg_match('/^(\+255|0)[1-9][0-9]{8}$/', $phone)) {
+    // Validate phone number format if provided (Tanzania format)
+    if (isset($data['phone']) && !preg_match('/^(\+255|0)[1-9][0-9]{8}$/', $data['phone'])) {
         http_response_code(400);
         echo json_encode([
             'success' => false,
@@ -59,19 +57,33 @@ try {
     }
 
     // Update user profile in database
-    $db = new PDO(
-        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
-        DB_USER,
-        DB_PASSWORD
-    );
+    require_once __DIR__ . '/../config/init.php';
+    $database = new Database();
+    $db = $database->getConnection();
 
-    $stmt = $db->prepare("
-        UPDATE users 
-        SET first_name = ?, last_name = ?, phone = ?, region = ?, date_updated = NOW() 
-        WHERE id = ?
-    ");
+    if (!$db) {
+        throw new Exception('Database connection failed');
+    }
 
-    $result = $stmt->execute([$firstName, $lastName, $phone, $region, $currentUser['id']]);
+    // Build dynamic UPDATE query
+    $setClause = [];
+    $values = [];
+
+    foreach ($data as $field => $value) {
+        $setClause[] = "$field = ?";
+        $values[] = $value;
+    }
+
+    // Add updated_at timestamp
+    $setClause[] = "updated_at = NOW()";
+
+    // Add user ID for WHERE clause
+    $values[] = $currentUser['id'];
+
+    $sql = "UPDATE users SET " . implode(', ', $setClause) . " WHERE id = ?";
+    $stmt = $db->prepare($sql);
+
+    $result = $stmt->execute($values);
 
     if ($result) {
         echo json_encode([

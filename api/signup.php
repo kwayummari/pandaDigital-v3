@@ -94,7 +94,7 @@ try {
     require_once __DIR__ . '/../config/init.php';
     $database = new Database();
     $db = $database->getConnection();
-    
+
     if (!$db) {
         throw new Exception('Database connection failed');
     }
@@ -115,9 +115,9 @@ try {
     // Hash password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Insert new user - using correct table structure
+    // Insert new user - using correct table structure
     $stmt = $db->prepare("INSERT INTO users (email, pass, first_name, last_name, role, status, bio, expert_authorization) VALUES (?, ?, '', '', 'user', 'free', 'none', '0')");
-    
+
     $result = $stmt->execute([$email, $hashedPassword]);
 
     if ($result) {
