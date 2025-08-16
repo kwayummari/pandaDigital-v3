@@ -19,7 +19,7 @@ try {
     // Get fresh user data from database
     $database = new Database();
     $db = $database->getConnection();
-    
+
     if (!$db) {
         throw new Exception('Database connection failed');
     }
@@ -29,10 +29,10 @@ try {
         FROM users 
         WHERE id = ?
     ");
-    
+
     $stmt->execute([$currentUser['id']]);
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if ($userData) {
         echo json_encode([
             'success' => true,

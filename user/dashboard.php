@@ -307,7 +307,7 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                                     Maendeleo Yako ya Jumla
                                 </h5>
                                 <div class="progress-circle">
-                                    <div class="progress-text"><?php echo round($overallProgress); ?>%</div>
+                                    <div class="progress-text"><?php echo round($overallProgress ?? 0); ?>%</div>
                                 </div>
                                 <p class="text-muted mb-0">
                                     Umeendelea na <strong><?php echo count($displayCourses); ?></strong> kozi
@@ -339,10 +339,10 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                                 <div class="mt-3">
                                     <div class="d-flex justify-content-between mb-1">
                                         <small class="text-muted">Usahihi wa Majibu</small>
-                                        <small class="text-muted"><?php echo round($quizStats['average_score']); ?>%</small>
+                                        <small class="text-muted"><?php echo round($quizStats['average_score'] ?? 0); ?>%</small>
                                     </div>
                                     <div class="progress">
-                                        <div class="progress-bar" style="width: <?php echo $quizStats['average_score']; ?>%; background-color: var(--primary-color);"></div>
+                                        <div class="progress-bar" style="width: <?php echo $quizStats['average_score'] ?? 0; ?>%; background-color: var(--primary-color);"></div>
                                     </div>
                                 </div>
                             </div>
