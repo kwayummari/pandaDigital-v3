@@ -31,7 +31,7 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                             <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal">
                                 Jisajili
                             </a>
-                            <a href="<?= app_url('panda-sms.php') ?>" class="btn btn-outline-primary">
+                            <a href="#" class="btn btn-outline-primary">
                                 PandaSMS
                             </a>
                         </div>
