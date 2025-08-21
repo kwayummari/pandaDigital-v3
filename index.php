@@ -370,7 +370,7 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         min-height: 100vh;
         display: flex;
         align-items: center;
-        background: linear-gradient(135deg, var(--secondary-color, #5f4594) 0%, var(--secondary-dark, #4a3675) 100%);
+        background: linear-gradient(135deg, rgba(95, 69, 148, 0.4) 0%, rgba(74, 54, 117, 0.4) 100%);
         overflow: hidden;
         padding: 4rem 0;
     }
