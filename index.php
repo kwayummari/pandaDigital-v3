@@ -370,29 +370,9 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         min-height: 100vh;
         display: flex;
         align-items: center;
-        background: linear-gradient(135deg, rgba(95, 69, 148, 0.4) 0%, rgba(74, 54, 117, 0.4) 100%);
+        background: linear-gradient(135deg, var(--secondary-color, #5f4594) 0%, var(--secondary-dark, #4a3675) 100%);
         overflow: hidden;
         padding: 4rem 0;
-    }
-
-    .hero-section::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background:
-            radial-gradient(circle at 25% 25%, rgba(255, 188, 59, 0.1) 2px, transparent 2px),
-            radial-gradient(circle at 75% 75%, rgba(255, 188, 59, 0.1) 2px, transparent 2px),
-            radial-gradient(circle at 50% 10%, rgba(255, 188, 59, 0.08) 1px, transparent 1px),
-            radial-gradient(circle at 10% 50%, rgba(255, 188, 59, 0.08) 1px, transparent 1px),
-            radial-gradient(circle at 90% 50%, rgba(255, 188, 59, 0.08) 1px, transparent 1px);
-        background-size: 100px 100px, 100px 100px, 50px 50px, 50px 50px, 50px 50px;
-        background-position: 0 0, 50px 50px, 0 0, 0 0, 0 0;
-        opacity: 0.6;
-        z-index: 1;
-        pointer-events: none;
     }
 
     .hero-container {
