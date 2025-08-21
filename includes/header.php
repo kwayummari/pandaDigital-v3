@@ -523,18 +523,7 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 z-index: 1002;
             }
 
-            /* Prevent navbar from being hidden by any means */
-            .navbar-collapse.show[style*="display: none"] {
-                display: block !important;
-            }
-
-            .navbar-collapse.show[style*="height: 0"] {
-                height: auto !important;
-            }
-
-            .navbar-collapse.show[style*="max-height: 0"] {
-                max-height: none !important;
-            }
+            /* Basic dropdown protection without interfering with navbar toggle */
 
             /* Ensure dropdowns don't cause navbar to collapse */
             .navbar-nav .dropdown.show {
@@ -553,18 +542,7 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 cursor: pointer !important;
             }
 
-            /* Allow navbar to be toggled normally */
-            .navbar-collapse {
-                transition: all 0.35s ease !important;
-            }
-
-            .navbar-collapse:not(.show) {
-                display: none !important;
-            }
-
-            .navbar-collapse.show {
-                display: block !important;
-            }
+            /* Basic navbar functionality - let Bootstrap handle the rest */
         }
     </style>
 
@@ -808,70 +786,25 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 }
             }, true);
 
-            // Only prevent specific navbar interactions when dropdowns are active
-            document.addEventListener('click', function(e) {
-                const hasOpenDropdowns = Array.from(mobileDropdowns || []).some(dropdown =>
-                    dropdown.classList.contains('show')
-                );
-
-                // Only prevent closing events, not opening events
-                if (hasOpenDropdowns && e.target.closest('.navbar-collapse') && !e.target.closest('.navbar-toggler')) {
-                    console.log('Preventing navbar closing while dropdowns are open');
-                    e.stopPropagation();
-                }
-            }, true);
-
-            // Prevent Bootstrap collapse events from closing navbar when dropdowns are open
-            if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
-                const originalHide = bootstrap.Collapse.prototype.hide;
-                bootstrap.Collapse.prototype.hide = function() {
-                    const hasOpenDropdowns = Array.from(mobileDropdowns || []).some(dropdown =>
-                        dropdown.classList.contains('show')
-                    );
-
-                    if (hasOpenDropdowns && this._element.classList.contains('navbar-collapse')) {
-                        console.log('Preventing Bootstrap collapse while dropdowns are open');
-                        return;
-                    }
-
-                    return originalHide.call(this);
-                };
-
-                // Also prevent show events from being blocked
-                const originalShow = bootstrap.Collapse.prototype.show;
-                bootstrap.Collapse.prototype.show = function() {
-                    // Always allow showing the navbar
-                    return originalShow.call(this);
-                };
-            }
-
-            // Additional protection against navbar closing
+            // Simple solution: Only prevent dropdown clicks from closing navbar
             if (window.innerWidth <= 991.98) {
-                // Add protection against navbar closing when dropdowns are open
-                const navbarCollapse = document.querySelector('.navbar-collapse');
-                if (navbarCollapse) {
-                    // Prevent any programmatic navbar closing when dropdowns are open
-                    const originalRemoveClass = navbarCollapse.classList.remove;
-                    navbarCollapse.classList.remove = function(...classes) {
-                        const hasOpenDropdowns = Array.from(mobileDropdowns || []).some(dropdown =>
-                            dropdown.classList.contains('show')
-                        );
+                // Add a simple event listener to prevent dropdown clicks from bubbling up
+                document.addEventListener('click', function(e) {
+                    // If clicking on a dropdown toggle, prevent it from affecting navbar
+                    if (e.target.closest('.dropdown-toggle')) {
+                        e.stopPropagation();
+                    }
+                }, true);
 
-                        if (hasOpenDropdowns && classes.includes('show')) {
-                            console.log('Preventing navbar show class removal while dropdowns are open');
-                            return;
-                        }
-
-                        return originalRemoveClass.apply(this, classes);
-                    };
-
-                    // Add click protection for dropdown toggles
-                    navbarCollapse.addEventListener('click', function(e) {
-                        // If clicking on dropdown toggle, prevent event bubbling
-                        if (e.target.closest('.dropdown-toggle')) {
-                            e.stopPropagation();
-                        }
+                // Add basic debugging for navbar toggle
+                const navbarToggler = document.querySelector('.navbar-toggler');
+                if (navbarToggler) {
+                    console.log('Navbar toggler found and working');
+                    navbarToggler.addEventListener('click', function() {
+                        console.log('Navbar toggle clicked - should open/close normally');
                     });
+                } else {
+                    console.log('Navbar toggler not found - check HTML structure');
                 }
             }
 
