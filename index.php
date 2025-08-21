@@ -28,7 +28,7 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                         <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
                         <p class="hero-subtitle">Jisajili. Chagua kozi. Jifunze. Pata cheti. Kutana na fursa. <?= htmlspecialchars($appConfig['name']) ?></p>
                         <div class="hero-buttons">
-                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registrationModal">
+                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal">
                                 Jisajili
                             </a>
                             <a href="<?= app_url('panda-sms.php') ?>" class="btn btn-outline-primary">
