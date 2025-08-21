@@ -392,11 +392,6 @@ $featuredExperts = $expertModel->getAllExperts();
                                 <p class="expert-description">
                                     Mtaalamu wa kitaalamu na wenye uzoefu wa kutosha katika sekta ya kidijitali na biashara.
                                 </p>
-                                <div class="expert-expertise">
-                                    <span class="expertise-badge"><?= htmlspecialchars($expert['business'] ?? 'Kidijitali') ?></span>
-                                    <span class="expertise-badge">Mtaalamu</span>
-                                    <span class="expertise-badge">Uzoefu</span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -417,11 +412,6 @@ $featuredExperts = $expertModel->getAllExperts();
                             <p class="expert-description">
                                 Mtaalamu wa teknolojia na kidijitali na uzoefu wa zaidi ya miaka 10 katika sekta ya IT na biashara za kidijitali.
                             </p>
-                            <div class="expert-expertise">
-                                <span class="expertise-badge">Teknolojia</span>
-                                <span class="expertise-badge">Kidijitali</span>
-                                <span class="expertise-badge">Biashara</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -440,11 +430,6 @@ $featuredExperts = $expertModel->getAllExperts();
                             <p class="expert-description">
                                 Mjasiriamali mwenye uzoefu wa kuanza na kuendesha biashara za kidijitali na mafanikio makubwa katika sekta ya teknolojia.
                             </p>
-                            <div class="expert-expertise">
-                                <span class="expertise-badge">Mjasiriamali</span>
-                                <span class="expertise-badge">Biashara</span>
-                                <span class="expertise-badge">Ufadhili</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -463,11 +448,6 @@ $featuredExperts = $expertModel->getAllExperts();
                             <p class="expert-description">
                                 Mtaalamu wa elimu na mafunzo ya kidijitali na uzoefu wa kutosha katika kujifunza na kufundisha teknolojia.
                             </p>
-                            <div class="expert-expertise">
-                                <span class="expertise-badge">Elimu</span>
-                                <span class="expertise-badge">Mafunzo</span>
-                                <span class="expertise-badge">Kidijitali</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -486,11 +466,6 @@ $featuredExperts = $expertModel->getAllExperts();
                             <p class="expert-description">
                                 Tuna wataalamu wengine wengi kutoka sekta mbalimbali za kidijitali, biashara, elimu, na teknolojia.
                             </p>
-                            <div class="expert-expertise">
-                                <span class="expertise-badge">Sekta Mbalimbali</span>
-                                <span class="expertise-badge">Uzoefu</span>
-                                <span class="expertise-badge">Msaada</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1604,23 +1579,5 @@ $featuredExperts = $expertModel->getAllExperts();
         line-height: 1.6;
         margin-bottom: 1.5rem;
         font-size: 0.9rem;
-    }
-
-    .expert-expertise {
-        display: flex;
-        justify-content: center;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-    }
-
-    .expertise-badge {
-        background: var(--primary-color, #ffbc3b);
-        color: #333;
-        padding: 0.5rem 1.25rem;
-        border-radius: 25px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
     }
 </style>
