@@ -1057,7 +1057,7 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
     }
 
     .success-metrics {
-        color: #28a745;
+        color: var(--primary-color, #ffbc3b);
         font-weight: 600;
     }
 
@@ -1158,7 +1158,8 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
     }
 
     .impact-badge.success {
-        background: #28a745;
+        background: var(--primary-color, #ffbc3b);
+        color: #333;
     }
 
     .impact-badge.primary {
