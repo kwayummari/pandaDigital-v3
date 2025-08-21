@@ -154,18 +154,28 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
 
         <div class="row">
             <?php if (!empty($featuredWanufaika)): ?>
-                <?php foreach ($featuredWanufaika as $index => $testimonial): ?>
+                <?php foreach (array_slice($featuredWanufaika, 0, 3) as $index => $testimonial): ?>
                     <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="<?= ($index + 1) * 100 ?>">
                         <div class="testimonial-card">
+                            <div class="testimonial-image mb-3">
+                                <?php if (!empty($testimonial['photo'])): ?>
+                                    <img src="<?= $wanufaikaModel->getImageUrl($testimonial['photo']) ?>"
+                                        alt="<?= htmlspecialchars($testimonial['name']) ?>"
+                                        class="img-fluid rounded-circle"
+                                        style="width: 80px; height: 80px; object-fit: cover;">
+                                <?php else: ?>
+                                    <img src="<?= upload_url('Wanufaika/1.jpeg') ?>"
+                                        alt="Default Wanufaika Image"
+                                        class="img-fluid rounded-circle"
+                                        style="width: 80px; height: 80px; object-fit: cover;">
+                                <?php endif; ?>
+                            </div>
                             <div class="testimonial-content">
                                 <div class="testimonial-quote">
                                     <i class="fas fa-quote-left"></i>
                                     <p>"<?= htmlspecialchars($wanufaikaModel->truncateText($testimonial['description'], 120)) ?>"</p>
                                 </div>
                                 <div class="testimonial-author">
-                                    <div class="author-avatar">
-                                        <i class="fas fa-user-circle"></i>
-                                    </div>
                                     <div class="author-info">
                                         <h5><?= htmlspecialchars($testimonial['name']) ?></h5>
                                         <span><?= htmlspecialchars($testimonial['title']) ?></span>
@@ -182,15 +192,18 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
                 <!-- Fallback content if no testimonials found -->
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="testimonial-card">
+                        <div class="testimonial-image mb-3">
+                            <img src="<?= upload_url('Wanufaika/1.jpeg') ?>"
+                                alt="Default Wanufaika Image"
+                                class="img-fluid rounded-circle"
+                                style="width: 80px; height: 80px; object-fit: cover;">
+                        </div>
                         <div class="testimonial-content">
                             <div class="testimonial-quote">
                                 <i class="fas fa-quote-left"></i>
                                 <p>"Kupitia Panda Digital, nimejifunza ujuzi wa masoko mtandaoni na sasa biashara yangu inaendelea vizuri. Nimepata wateja wengi na mapato yangu yameongezeka mara tatu!"</p>
                             </div>
                             <div class="testimonial-author">
-                                <div class="author-avatar">
-                                    <i class="fas fa-user-circle"></i>
-                                </div>
                                 <div class="author-info">
                                     <h5>Sarah Mwambene</h5>
                                     <span>Mjasiriamali wa Vipodozi Asili</span>
@@ -205,15 +218,18 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
 
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="testimonial-card">
+                        <div class="testimonial-image mb-3">
+                            <img src="<?= upload_url('Wanufaika/1.jpeg') ?>"
+                                alt="Default Wanufaika Image"
+                                class="img-fluid rounded-circle"
+                                style="width: 80px; height: 80px; object-fit: cover;">
+                        </div>
                         <div class="testimonial-content">
                             <div class="testimonial-quote">
                                 <i class="fas fa-quote-left"></i>
                                 <p>"Kozi za Panda Digital zimenisaidia kujifunza usimamizi wa fedha na sasa ninaweza kuendesha biashara yangu kwa njia ya kitaalamu. Nimepata ufadhili wa milioni 2!"</p>
                             </div>
                             <div class="testimonial-author">
-                                <div class="author-avatar">
-                                    <i class="fas fa-user-circle"></i>
-                                </div>
                                 <div class="author-info">
                                     <h5>Fatima Hassan</h5>
                                     <span>Mjasiriamali wa Teknolojia</span>
@@ -228,15 +244,18 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
 
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="testimonial-card">
+                        <div class="testimonial-image mb-3">
+                            <img src="<?= upload_url('Wanufaika/1.jpeg') ?>"
+                                alt="Default Wanufaika Image"
+                                class="img-fluid rounded-circle"
+                                style="width: 80px; height: 80px; object-fit: cover;">
+                        </div>
                         <div class="testimonial-content">
                             <div class="testimonial-quote">
                                 <i class="fas fa-quote-left"></i>
                                 <p>"Panda Chat inanisaidia kupata ushauri wa haraka kutoka kwa wataalamu. Sikuwa na ujuzi wa kufanya masoko mtandaoni, lakini sasa ninafahamu kila kitu!"</p>
                             </div>
                             <div class="testimonial-author">
-                                <div class="author-avatar">
-                                    <i class="fas fa-user-circle"></i>
-                                </div>
                                 <div class="author-info">
                                     <h5>Grace Mushi</h5>
                                     <span>Mjasiriamali wa Mavazi</span>
@@ -1084,23 +1103,26 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
         font-size: 1rem;
     }
 
+    .testimonial-image {
+        text-align: center;
+    }
+
+    .testimonial-image img {
+        border: 3px solid var(--primary-color, #ffbc3b);
+        box-shadow: 0 5px 15px rgba(255, 188, 59, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .testimonial-card:hover .testimonial-image img {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(255, 188, 59, 0.4);
+    }
+
     .testimonial-author {
         display: flex;
         align-items: center;
         gap: 1rem;
-    }
-
-    .author-avatar {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, var(--secondary-color, #5f4594), #4a3675);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
         justify-content: center;
-        color: white;
-        font-size: 1.5rem;
-        flex-shrink: 0;
     }
 
     .author-info h5 {
@@ -1108,6 +1130,7 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
         font-weight: 700;
         margin: 0 0 0.25rem 0;
         font-size: 1.1rem;
+        text-align: center;
     }
 
     .author-info span {
@@ -1115,6 +1138,7 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
         font-size: 0.9rem;
         display: block;
         margin-bottom: 0.5rem;
+        text-align: center;
     }
 
     .success-metrics {
