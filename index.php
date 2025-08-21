@@ -351,10 +351,10 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
                         Ungana kupitia Panda Chat, tafuta fursa, na jiunge na Ongea Hub.
                     </p>
                     <div class="step-actions">
-                        <a href="<?= app_url('panda-chat.php') ?>" class="btn btn-sm btn-outline-primary">
+                        <a href="<?= app_url('uliza-swali.php') ?>" class="btn btn-sm btn-outline-primary">
                             <i class="fas fa-comments me-1"></i>Panda Chat
                         </a>
-                        <a href="<?= app_url('ongea-hub.php') ?>" class="btn btn-sm btn-outline-primary mt-1">
+                        <a href="<?= app_url('uliza-swali.php') ?>" class="btn btn-sm btn-outline-primary mt-1">
                             <i class="fas fa-shield-alt me-1"></i>Ongea Hub
                         </a>
                     </div>
