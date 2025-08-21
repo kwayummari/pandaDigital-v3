@@ -270,7 +270,7 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
             <?php endif; ?>
         </div>
 
-       
+
     </div>
 </section>
 
@@ -287,9 +287,6 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
         <div class="row">
             <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="step-card">
-                    <div class="step-number">
-                        <span>1</span>
-                    </div>
                     <div class="step-icon">
                         <i class="fas fa-user-plus"></i>
                     </div>
@@ -312,9 +309,6 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
 
             <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="step-card">
-                    <div class="step-number">
-                        <span>2</span>
-                    </div>
                     <div class="step-icon">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
@@ -332,9 +326,6 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
 
             <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="step-card">
-                    <div class="step-number">
-                        <span>3</span>
-                    </div>
                     <div class="step-icon">
                         <i class="fas fa-certificate"></i>
                     </div>
@@ -352,9 +343,6 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
 
             <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
                 <div class="step-card">
-                    <div class="step-number">
-                        <span>4</span>
-                    </div>
                     <div class="step-icon">
                         <i class="fas fa-users"></i>
                     </div>
@@ -1321,21 +1309,6 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
     .step-card:hover {
         transform: translateY(-10px);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-
-    .step-number {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, var(--primary-color, #ffbc3b), #e6a800);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem;
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: white;
-        box-shadow: 0 5px 15px rgba(255, 188, 59, 0.3);
     }
 
     .step-icon {
