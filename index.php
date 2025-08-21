@@ -382,9 +382,16 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         left: 0;
         right: 0;
         bottom: 0;
-        background: url("<?= asset('images/backgrounds/hero-pattern.png') ?>") center/cover;
+        background: url("<?= asset('images/backgrounds/hero-pattern.png') ?>") center/cover no-repeat,
+            linear-gradient(45deg, rgba(255, 188, 59, 0.1) 25%, transparent 25%),
+            linear-gradient(-45deg, rgba(255, 188, 59, 0.1) 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, rgba(255, 188, 59, 0.1) 75%),
+            linear-gradient(-45deg, transparent 75%, rgba(255, 188, 59, 0.1) 75%);
+        background-size: cover, 20px 20px, 20px 20px, 20px 20px, 20px 20px;
+        background-position: center, 0 0, 0 10px, 10px -10px, -10px 0px;
         opacity: 0.3;
         z-index: 1;
+        pointer-events: none;
     }
 
     .hero-container {
