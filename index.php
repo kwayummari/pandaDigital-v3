@@ -270,78 +270,7 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
             <?php endif; ?>
         </div>
 
-        <!-- Success Stories Row -->
-        <div class="row mt-5">
-            <?php
-            // Use the same wanufaika data for success stories
-            if (!empty($featuredWanufaika)):
-                foreach (array_slice($featuredWanufaika, 0, 2) as $index => $story):
-            ?>
-                    <div class="col-lg-6 mb-4" data-aos="fade-<?= $index === 0 ? 'right' : 'left' ?>">
-                        <div class="success-story-card">
-                            <div class="story-header">
-                                <div class="story-icon">
-                                    <i class="fas fa-<?= $index === 0 ? 'store' : 'laptop' ?>"></i>
-                                </div>
-                                <h4><?= htmlspecialchars($story['title']) ?></h4>
-                            </div>
-                            <div class="story-content">
-                                <p><strong>Mwanufaika:</strong> <?= htmlspecialchars($story['name']) ?></p>
-                                <p><strong>Hadithi:</strong> <?= htmlspecialchars($wanufaikaModel->truncateText($story['description'], 150)) ?></p>
-                                <div class="story-impact">
-                                    <span class="impact-badge success">Mafanikio</span>
-                                    <span class="impact-badge primary"><?= htmlspecialchars($story['title']) ?></span>
-                                    <span class="impact-badge info"><?= $wanufaikaModel->formatDate($story['date_created']) ?></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php
-                endforeach;
-            else:
-                // Fallback content if no success stories found
-                ?>
-                <div class="col-lg-6 mb-4" data-aos="fade-right">
-                    <div class="success-story-card">
-                        <div class="story-header">
-                            <div class="story-icon">
-                                <i class="fas fa-store"></i>
-                            </div>
-                            <h4>Biashara ya Vipodozi Asili</h4>
-                        </div>
-                        <div class="story-content">
-                            <p><strong>Kabla ya Panda Digital:</strong> Biashara ndogo ya vipodozi asili na mapato ya TZS 200,000 kwa mwezi.</p>
-                            <p><strong>Baada ya Panda Digital:</strong> Biashara kubwa ya mtandaoni na mapato ya TZS 800,000 kwa mwezi.</p>
-                            <div class="story-impact">
-                                <span class="impact-badge success">+300% Mapato</span>
-                                <span class="impact-badge primary">+150 Wateja</span>
-                                <span class="impact-badge info">+5 Bidhaa Mpya</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6 mb-4" data-aos="fade-left">
-                    <div class="success-story-card">
-                        <div class="story-header">
-                            <div class="story-icon">
-                                <i class="fas fa-laptop"></i>
-                            </div>
-                            <h4>Biashara ya Teknolojia</h4>
-                        </div>
-                        <div class="story-content">
-                            <p><strong>Kabla ya Panda Digital:</strong> Mradi wa teknolojia bila ufadhili na ujuzi wa biashara.</p>
-                            <p><strong>Baada ya Panda Digital:</strong> Kampuni ya teknolojia na ufadhili wa TZS 2,000,000.</p>
-                            <div class="story-impact">
-                                <span class="impact-badge success">+200% Ukuaji</span>
-                                <span class="impact-badge primary">Ufadhili TZS 2M</span>
-                                <span class="impact-badge info">+3 Wafanyakazi</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
+       
     </div>
 </section>
 
