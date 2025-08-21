@@ -426,6 +426,11 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 overflow: visible !important;
             }
 
+            /* Keep navbar open when dropdowns are active */
+            .navbar-collapse.show {
+                overflow: visible !important;
+            }
+
             /* Ensure proper z-index for dropdowns */
             .navbar-nav .dropdown-menu {
                 z-index: 1001;
@@ -469,6 +474,18 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
             .navbar-nav .dropdown.show .dropdown-item:nth-child(5) {
                 transition-delay: 0.3s;
             }
+
+            /* Prevent navbar from closing when dropdowns are open */
+            .navbar-nav .dropdown.show~.navbar-nav,
+            .navbar-nav .dropdown.show+.navbar-nav {
+                display: block !important;
+            }
+
+            /* Ensure navbar stays visible when dropdowns are active */
+            .navbar-collapse.show .navbar-nav .dropdown.show {
+                position: relative;
+                z-index: 1002;
+            }
         }
 
         /* Global dropdown fixes */
@@ -489,6 +506,46 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
 
         .dropdown-menu[style*="visibility: hidden"] {
             visibility: visible !important;
+        }
+
+        /* Prevent navbar from closing when dropdowns are active */
+        @media (max-width: 991.98px) {
+            .navbar-collapse.show {
+                display: block !important;
+                overflow: visible !important;
+                height: auto !important;
+                max-height: none !important;
+            }
+
+            /* Ensure navbar stays open when dropdowns are active */
+            .navbar-collapse.show .navbar-nav .dropdown.show {
+                position: relative;
+                z-index: 1002;
+            }
+
+            /* Prevent navbar from being hidden by any means */
+            .navbar-collapse.show[style*="display: none"] {
+                display: block !important;
+            }
+
+            .navbar-collapse.show[style*="height: 0"] {
+                height: auto !important;
+            }
+
+            .navbar-collapse.show[style*="max-height: 0"] {
+                max-height: none !important;
+            }
+
+            /* Ensure dropdowns don't cause navbar to collapse */
+            .navbar-nav .dropdown.show {
+                position: relative;
+                z-index: 1002;
+            }
+
+            .navbar-nav .dropdown.show .dropdown-menu {
+                position: relative !important;
+                z-index: 1003;
+            }
         }
     </style>
 
@@ -540,6 +597,15 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                             e.preventDefault();
                             e.stopPropagation();
 
+                            // Prevent navbar from closing
+                            const navbarCollapse = document.querySelector('.navbar-collapse');
+                            if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                                // Keep navbar open
+                                navbarCollapse.classList.add('show');
+                                navbarCollapse.style.display = 'block';
+                                navbarCollapse.style.overflow = 'visible';
+                            }
+
                             // Close other open dropdowns
                             mobileDropdowns.forEach(otherDropdown => {
                                 if (otherDropdown !== dropdown && otherDropdown.classList.contains('show')) {
@@ -573,6 +639,13 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                                 menu.style.visibility = 'visible';
                                 menu.style.opacity = '1';
                                 console.log('Dropdown opened');
+
+                                // Ensure navbar stays open
+                                if (navbarCollapse) {
+                                    navbarCollapse.classList.add('show');
+                                    navbarCollapse.style.display = 'block';
+                                    navbarCollapse.style.overflow = 'visible';
+                                }
                             }
                         };
 
@@ -626,6 +699,20 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 // Close dropdowns when navbar collapses
                 const navbarCollapse = document.querySelector('.navbar-collapse');
                 if (navbarCollapse) {
+                    // Prevent navbar from closing when dropdowns are open
+                    navbarCollapse.addEventListener('hide.bs.collapse', function(e) {
+                        const hasOpenDropdowns = Array.from(mobileDropdowns).some(dropdown =>
+                            dropdown.classList.contains('show')
+                        );
+
+                        if (hasOpenDropdowns) {
+                            console.log('Preventing navbar collapse - dropdowns are open');
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return false;
+                        }
+                    });
+
                     navbarCollapse.addEventListener('hidden.bs.collapse', function() {
                         console.log('Navbar collapsed, closing dropdowns...');
                         mobileDropdowns.forEach(dropdown => {
@@ -638,6 +725,31 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                                 menu.style.opacity = '0';
                             }
                         });
+                    });
+                }
+
+                // Prevent navbar toggle button from closing navbar when dropdowns are open
+                const navbarToggler = document.querySelector('.navbar-toggler');
+                if (navbarToggler) {
+                    navbarToggler.addEventListener('click', function(e) {
+                        const hasOpenDropdowns = Array.from(mobileDropdowns).some(dropdown =>
+                            dropdown.classList.contains('show')
+                        );
+
+                        if (hasOpenDropdowns) {
+                            console.log('Preventing navbar toggle - closing dropdowns first');
+                            // Close all dropdowns before allowing navbar toggle
+                            mobileDropdowns.forEach(dropdown => {
+                                dropdown.classList.remove('show');
+                                const menu = dropdown.querySelector('.dropdown-menu');
+                                if (menu) {
+                                    menu.classList.remove('show');
+                                    menu.style.display = 'none';
+                                    menu.style.visibility = 'hidden';
+                                    menu.style.opacity = '0';
+                                }
+                            });
+                        }
                     });
                 }
 
@@ -671,6 +783,72 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                     e.stopPropagation();
                 }
             }, true);
+
+            // Global handler to prevent navbar from closing when dropdowns are active
+            document.addEventListener('click', function(e) {
+                const hasOpenDropdowns = Array.from(mobileDropdowns || []).some(dropdown =>
+                    dropdown.classList.contains('show')
+                );
+
+                if (hasOpenDropdowns && e.target.closest('.navbar-collapse')) {
+                    console.log('Preventing navbar interaction while dropdowns are open');
+                    e.stopPropagation();
+                }
+            }, true);
+
+            // Prevent Bootstrap collapse events from closing navbar when dropdowns are open
+            if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
+                const originalHide = bootstrap.Collapse.prototype.hide;
+                bootstrap.Collapse.prototype.hide = function() {
+                    const hasOpenDropdowns = Array.from(mobileDropdowns || []).some(dropdown =>
+                        dropdown.classList.contains('show')
+                    );
+
+                    if (hasOpenDropdowns && this._element.classList.contains('navbar-collapse')) {
+                        console.log('Preventing Bootstrap collapse while dropdowns are open');
+                        return;
+                    }
+
+                    return originalHide.call(this);
+                };
+            }
+
+            // Additional protection against navbar closing
+            if (window.innerWidth <= 991.98) {
+                // Override Bootstrap's collapse behavior for navbar
+                const navbarCollapse = document.querySelector('.navbar-collapse');
+                if (navbarCollapse) {
+                    // Remove any existing Bootstrap collapse instance
+                    if (navbarCollapse._bsCollapse) {
+                        navbarCollapse._bsCollapse.dispose();
+                    }
+
+                    // Create custom collapse behavior that respects dropdowns
+                    navbarCollapse.addEventListener('click', function(e) {
+                        // If clicking on dropdown toggle, prevent navbar from closing
+                        if (e.target.closest('.dropdown-toggle')) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
+
+                    // Prevent any programmatic navbar closing when dropdowns are open
+                    const originalRemoveClass = navbarCollapse.classList.remove;
+                    navbarCollapse.classList.remove = function(...classes) {
+                        const hasOpenDropdowns = Array.from(mobileDropdowns || []).some(dropdown =>
+                            dropdown.classList.contains('show')
+                        );
+
+                        if (hasOpenDropdowns && classes.includes('show')) {
+                            console.log('Preventing navbar show class removal while dropdowns are open');
+                            return;
+                        }
+
+                        return originalRemoveClass.apply(this, classes);
+                    };
+                }
+            }
 
             console.log('Dropdown initialization complete');
         });
