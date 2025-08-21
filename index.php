@@ -14,6 +14,7 @@ $latestBlogPosts = $blogModel->getLatestPosts(6);
 $latestOpportunities = $fursaModel->getLatestOpportunities(6);
 ?>
 
+
 <!-- Modern Hero Section -->
 <section class="hero-section">
     <div class="hero-container">
