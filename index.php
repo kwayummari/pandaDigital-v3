@@ -23,7 +23,7 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                 <div class="col-lg-10 text-center" data-aos="fade-up">
                     <div class="hero-content">
                         <div class="hero-badge">
-                            Pata fursa, ujuzi wa kidijitali, anzisha biashara, na jijengee uhuru wa kiuchumi kupitia Panda Digital.
+                            Pata fursa, ujuzi wa kidijitali, anzisha biashara, <br> na jijengee uhuru wa kiuchumi kupitia Panda Digital.
                         </div>
                         <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
                         <p class="hero-subtitle">Jisajili. Chagua kozi. Jifunze. Pata cheti. Kutana na fursa. <?= htmlspecialchars($appConfig['name']) ?></p>
