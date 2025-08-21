@@ -2,16 +2,19 @@
 require_once 'config/init.php';
 require_once 'models/Blog.php';
 require_once 'models/Fursa.php';
+require_once 'models/Wanufaika.php';
 
 include 'includes/header.php';
 
 // Initialize models
 $blogModel = new Blog();
 $fursaModel = new Fursa();
+$wanufaikaModel = new Wanufaika();
 
 // Fetch data from database
 $latestBlogPosts = $blogModel->getLatestPosts(6);
 $latestOpportunities = $fursaModel->getLatestOpportunities(6);
+$featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
 ?>
 
 
@@ -150,74 +153,102 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         </div>
 
         <div class="row">
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="testimonial-quote">
-                            <i class="fas fa-quote-left"></i>
-                            <p>"Kupitia Panda Digital, nimejifunza ujuzi wa masoko mtandaoni na sasa biashara yangu inaendelea vizuri. Nimepata wateja wengi na mapato yangu yameongezeka mara tatu!"</p>
-                        </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <i class="fas fa-user-circle"></i>
+            <?php if (!empty($featuredWanufaika)): ?>
+                <?php foreach ($featuredWanufaika as $index => $testimonial): ?>
+                    <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="<?= ($index + 1) * 100 ?>">
+                        <div class="testimonial-card">
+                            <div class="testimonial-content">
+                                <div class="testimonial-quote">
+                                    <i class="fas fa-quote-left"></i>
+                                    <p>"<?= htmlspecialchars($wanufaikaModel->truncateText($testimonial['description'], 120)) ?>"</p>
+                                </div>
+                                <div class="testimonial-author">
+                                    <div class="author-avatar">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <div class="author-info">
+                                        <h5><?= htmlspecialchars($testimonial['name']) ?></h5>
+                                        <span><?= htmlspecialchars($testimonial['title']) ?></span>
+                                        <div class="success-metrics">
+                                            <small><i class="fas fa-chart-line text-success me-1"></i>Mafanikio</small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="author-info">
-                                <h5>Sarah Mwambene</h5>
-                                <span>Mjasiriamali wa Vipodozi Asili</span>
-                                <div class="success-metrics">
-                                    <small><i class="fas fa-chart-line text-success me-1"></i>Mapato yameongezeka 300%</small>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <!-- Fallback content if no testimonials found -->
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <div class="testimonial-quote">
+                                <i class="fas fa-quote-left"></i>
+                                <p>"Kupitia Panda Digital, nimejifunza ujuzi wa masoko mtandaoni na sasa biashara yangu inaendelea vizuri. Nimepata wateja wengi na mapato yangu yameongezeka mara tatu!"</p>
+                            </div>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="author-info">
+                                    <h5>Sarah Mwambene</h5>
+                                    <span>Mjasiriamali wa Vipodozi Asili</span>
+                                    <div class="success-metrics">
+                                        <small><i class="fas fa-chart-line text-success me-1"></i>Mapato yameongezeka 300%</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="testimonial-quote">
-                            <i class="fas fa-quote-left"></i>
-                            <p>"Kozi za Panda Digital zimenisaidia kujifunza usimamizi wa fedha na sasa ninaweza kuendesha biashara yangu kwa njia ya kitaalamu. Nimepata ufadhili wa milioni 2!"</p>
-                        </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <i class="fas fa-user-circle"></i>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <div class="testimonial-quote">
+                                <i class="fas fa-quote-left"></i>
+                                <p>"Kozi za Panda Digital zimenisaidia kujifunza usimamizi wa fedha na sasa ninaweza kuendesha biashara yangu kwa njia ya kitaalamu. Nimepata ufadhili wa milioni 2!"</p>
                             </div>
-                            <div class="author-info">
-                                <h5>Fatima Hassan</h5>
-                                <span>Mjasiriamali wa Teknolojia</span>
-                                <div class="success-metrics">
-                                    <small><i class="fas fa-handshake text-success me-1"></i>Ufadhili wa TZS 2M</small>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="author-info">
+                                    <h5>Fatima Hassan</h5>
+                                    <span>Mjasiriamali wa Teknolojia</span>
+                                    <div class="success-metrics">
+                                        <small><i class="fas fa-handshake text-success me-1"></i>Ufadhili wa TZS 2M</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="testimonial-quote">
-                            <i class="fas fa-quote-left"></i>
-                            <p>"Panda Chat inanisaidia kupata ushauri wa haraka kutoka kwa wataalamu. Sikuwa na ujuzi wa kufanya masoko mtandaoni, lakini sasa ninafahamu kila kitu!"</p>
-                        </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <i class="fas fa-user-circle"></i>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <div class="testimonial-quote">
+                                <i class="fas fa-quote-left"></i>
+                                <p>"Panda Chat inanisaidia kupata ushauri wa haraka kutoka kwa wataalamu. Sikuwa na ujuzi wa kufanya masoko mtandaoni, lakini sasa ninafahamu kila kitu!"</p>
                             </div>
-                            <div class="author-info">
-                                <h5>Grace Mushi</h5>
-                                <span>Mjasiriamali wa Mavazi</span>
-                                <div class="success-metrics">
-                                    <small><i class="fas fa-users text-success me-1"></i>Wateja 500+ mtandaoni</small>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="author-info">
+                                    <h5>Grace Mushi</h5>
+                                    <span>Mjasiriamali wa Mavazi</span>
+                                    <div class="success-metrics">
+                                        <small><i class="fas fa-users text-success me-1"></i>Wateja 500+ mtandaoni</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
 
         <!-- Success Stories Row -->
@@ -226,45 +257,75 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                 <h3 class="success-stories-title">Success Stories - Matokeo Halisi ya Biashara</h3>
             </div>
 
-            <div class="col-lg-6 mb-4" data-aos="fade-right">
-                <div class="success-story-card">
-                    <div class="story-header">
-                        <div class="story-icon">
-                            <i class="fas fa-store"></i>
+            <?php
+            // Use the same wanufaika data for success stories
+            if (!empty($featuredWanufaika)):
+                foreach (array_slice($featuredWanufaika, 0, 2) as $index => $story):
+            ?>
+                    <div class="col-lg-6 mb-4" data-aos="fade-<?= $index === 0 ? 'right' : 'left' ?>">
+                        <div class="success-story-card">
+                            <div class="story-header">
+                                <div class="story-icon">
+                                    <i class="fas fa-<?= $index === 0 ? 'store' : 'laptop' ?>"></i>
+                                </div>
+                                <h4><?= htmlspecialchars($story['title']) ?></h4>
+                            </div>
+                            <div class="story-content">
+                                <p><strong>Mwanufaika:</strong> <?= htmlspecialchars($story['name']) ?></p>
+                                <p><strong>Hadithi:</strong> <?= htmlspecialchars($wanufaikaModel->truncateText($story['description'], 150)) ?></p>
+                                <div class="story-impact">
+                                    <span class="impact-badge success">Mafanikio</span>
+                                    <span class="impact-badge primary"><?= htmlspecialchars($story['title']) ?></span>
+                                    <span class="impact-badge info"><?= $wanufaikaModel->formatDate($story['date_created']) ?></span>
+                                </div>
+                            </div>
                         </div>
-                        <h4>Biashara ya Vipodozi Asili</h4>
                     </div>
-                    <div class="story-content">
-                        <p><strong>Kabla ya Panda Digital:</strong> Biashara ndogo ya vipodozi asili na mapato ya TZS 200,000 kwa mwezi.</p>
-                        <p><strong>Baada ya Panda Digital:</strong> Biashara kubwa ya mtandaoni na mapato ya TZS 800,000 kwa mwezi.</p>
-                        <div class="story-impact">
-                            <span class="impact-badge success">+300% Mapato</span>
-                            <span class="impact-badge primary">+150 Wateja</span>
-                            <span class="impact-badge info">+5 Bidhaa Mpya</span>
+                <?php
+                endforeach;
+            else:
+                // Fallback content if no success stories found
+                ?>
+                <div class="col-lg-6 mb-4" data-aos="fade-right">
+                    <div class="success-story-card">
+                        <div class="story-header">
+                            <div class="story-icon">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <h4>Biashara ya Vipodozi Asili</h4>
+                        </div>
+                        <div class="story-content">
+                            <p><strong>Kabla ya Panda Digital:</strong> Biashara ndogo ya vipodozi asili na mapato ya TZS 200,000 kwa mwezi.</p>
+                            <p><strong>Baada ya Panda Digital:</strong> Biashara kubwa ya mtandaoni na mapato ya TZS 800,000 kwa mwezi.</p>
+                            <div class="story-impact">
+                                <span class="impact-badge success">+300% Mapato</span>
+                                <span class="impact-badge primary">+150 Wateja</span>
+                                <span class="impact-badge info">+5 Bidhaa Mpya</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-lg-6 mb-4" data-aos="fade-left">
-                <div class="success-story-card">
-                    <div class="story-header">
-                        <div class="story-icon">
-                            <i class="fas fa-laptop"></i>
+                <div class="col-lg-6 mb-4" data-aos="fade-left">
+                    <div class="success-story-card">
+                        <div class="story-header">
+                            <div class="story-icon">
+                                <i class="fas fa-laptop"></i>
+                            </div>
+                            <h4>Biashara ya Teknolojia</h4>
                         </div>
-                        <h4>Biashara ya Teknolojia</h4>
-                    </div>
-                    <div class="story-content">
-                        <p><strong>Kabla ya Panda Digital:</strong> Mradi wa teknolojia bila ufadhili na ujuzi wa biashara.</p>
-                        <p><strong>Baada ya Panda Digital:</strong> Kampuni ya teknolojia na ufadhili wa TZS 2,000,000.</p>
-                        <div class="story-impact">
-                            <span class="impact-badge success">+200% Ukuaji</span>
-                            <span class="impact-badge primary">Ufadhili TZS 2M</span>
-                            <span class="impact-badge info">+3 Wafanyakazi</span>
+                        <div class="story-content">
+                            <p><strong>Kabla ya Panda Digital:</strong> Mradi wa teknolojia bila ufadhili na ujuzi wa biashara.</p>
+                            <p><strong>Baada ya Panda Digital:</strong> Kampuni ya teknolojia na ufadhili wa TZS 2,000,000.</p>
+                            <div class="story-impact">
+                                <span class="impact-badge success">+200% Ukuaji</span>
+                                <span class="impact-badge primary">Ufadhili TZS 2M</span>
+                                <span class="impact-badge info">+3 Wafanyakazi</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 </section>
