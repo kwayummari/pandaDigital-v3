@@ -967,7 +967,7 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
 
     /* Testimonials Section Styles */
     .testimonials-section {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        background: white;
     }
 
     .testimonial-card {
@@ -982,8 +982,24 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         overflow: hidden;
     }
 
+    .testimonial-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color, #ffbc3b), var(--secondary-color, #5f4594));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .testimonial-card:hover::before {
+        transform: scaleX(1);
+    }
+
     .testimonial-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-10px);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
@@ -1061,10 +1077,28 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         transition: all 0.3s ease;
         border: 1px solid #f0f0f0;
         height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .success-story-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color, #ffbc3b), var(--secondary-color, #5f4594));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .success-story-card:hover::before {
+        transform: scaleX(1);
     }
 
     .success-story-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-10px);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
