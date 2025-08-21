@@ -15,7 +15,7 @@ $expertModel = new Expert();
 $latestBlogPosts = $blogModel->getLatestPosts(6);
 $latestOpportunities = $fursaModel->getLatestOpportunities(6);
 $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
-$featuredExperts = $expertModel->getAllExperts();
+$featuredExperts = array_slice($expertModel->getAllExperts(), 0, 4);
 ?>
 
 <?php include 'includes/header.php'; ?>
