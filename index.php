@@ -18,21 +18,52 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
 <section class="hero-section">
     <div class="hero-container">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10 text-center" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
                     <div class="hero-content">
                         <div class="hero-badge">
-                            Jukwaa la Kwanza la Kidijitali kwa Wasichana
+                            <i class="fas fa-star me-2"></i>Jukwaa la Kwanza la Kidijitali kwa Wasichana
                         </div>
-                        <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
-                        <p class="hero-subtitle">Jifunze ujuzi wa kidijitali, uwe na biashara yako, na uweze kujitegemea kiuchumi kupitia <?= htmlspecialchars($appConfig['name']) ?></p>
+                        <h1 class="hero-title">
+                            Pata fursa, ujuzi wa kidijitali, anzisha biashara, na jijengee uhuru wa kiuchumi kupitia Panda Digital.
+                        </h1>
+                        <p class="hero-subtitle">
+                            Jisajili. Chagua kozi. Jifunze. Pata cheti. Kutana na fursa.
+                        </p>
                         <div class="hero-buttons">
-                            <a href="<?= app_url('kozi.php') ?>" class="btn btn-primary">
-                                Anza Kozi
+                            <a href="<?= app_url('signup.php') ?>" class="btn btn-primary btn-lg me-3 mb-2">
+                                <i class="fas fa-user-plus me-2"></i>Jisajili Sasa
                             </a>
-                            <a href="<?= app_url('fursa.php') ?>" class="btn btn-outline-primary">
-                                Tazama Fursa
+                            <a href="<?= app_url('panda-sms.php') ?>" class="btn btn-outline-primary btn-lg mb-2">
+                                <i class="fas fa-sms me-2"></i>PandaSMS
                             </a>
+                        </div>
+                        <div class="hero-features">
+                            <div class="hero-feature">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Masomo ya kidijitali kwa Kiswahili</span>
+                            </div>
+                            <div class="hero-feature">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Kozi za bure na za kulipia</span>
+                            </div>
+                            <div class="hero-feature">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Msaada kupitia Panda Chat</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="hero-image">
+                        <img src="<?= asset('images/hero/young-women-entrepreneurs.jpg') ?>"
+                            alt="Young women entrepreneurs learning and working"
+                            class="img-fluid rounded-3 shadow-lg">
+                        <div class="hero-image-overlay">
+                            <div class="overlay-content">
+                                <h4>Wanawake Vijana Wajasiriamali</h4>
+                                <p>Jifunze na uendeleze biashara yako</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -40,9 +71,101 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         </div>
     </div>
     <div class="hero-scroll-indicator">
-        <a href="#stats" class="scroll-down">
+        <a href="#tunachokupa" class="scroll-down">
             <i class="fas fa-chevron-down"></i>
         </a>
+    </div>
+</section>
+
+<!-- Tunachokupa Section -->
+<section id="tunachokupa" class="features-section py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto" data-aos="fade-up">
+                <h2 class="section-title">Tunachokupa</h2>
+                <p class="section-subtitle">Jukwaa kamili la kujifunza, kuendeleza biashara, na kupata msaada wa kitaalamu</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="feature-title">Masomo ya Kidijitali kwa Kiswahili</h3>
+                    <p class="feature-description">
+                        Masoko mtandaoni, mbinu za biashara hadi uanzishaji biashara ya vipodozi asili.
+                        Kozi zote kwa lugha ya Kiswahili ili uweze kujifunza kwa urahisi.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="feature-title">Kozi za Bure na za Kulipia</h3>
+                    <p class="feature-description">
+                        Zinazopatikana muda wowote, mahali popote – mijini na vijijini.
+                        Jifunze kwa kasi yako mwenyewe na upate cheti cha kusadikika.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="feature-title">Msaada kupitia Panda Chat</h3>
+                    <p class="feature-description">
+                        Uliza maswali na pata ushauri wa kitaalamu kutoka kwa wataalamu wetu.
+                        Panda Chat inakupa msaada wa moja kwa moja na majibu ya haraka.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3 class="feature-title">Onesha na Tangaza Biashara</h3>
+                    <p class="feature-description">
+                        Kupitia jukwaa letu, unaweza kutangaza biashara yako na kufikia wateja wengi.
+                        Jukwaa salama na la kusadikika kwa biashara za kidijitali.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sms"></i>
+                    </div>
+                    <h3 class="feature-title">Jifunze kwa SMS</h3>
+                    <p class="feature-description">
+                        Bila intaneti au smartphone. PandaSMS inakupa fursa ya kujifunza
+                        kupitia ujumbe wa SMS, hata kwenye simu za kawaida.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Ongea Hub</h3>
+                    <p class="feature-description">
+                        Mahali salama pa kuripoti unyanyasaji wa kijinsia na rushwa ya ngono.
+                        Tunakupa msaada na usaidizi wa kisheria na kijamii.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -361,3 +484,327 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
 </section>
 
 <?php include 'includes/footer.php'; ?>
+
+<style>
+    /* Enhanced Hero Section Styles */
+    .hero-section {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, var(--secondary-color, #5f4594) 0%, var(--secondary-dark, #4a3675) 100%);
+        overflow: hidden;
+        padding: 4rem 0;
+    }
+
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("<?= asset('images/backgrounds/hero-pattern.png') ?>") center/cover;
+        opacity: 0.1;
+        z-index: 1;
+    }
+
+    .hero-container {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+    }
+
+    .hero-content {
+        color: white;
+        padding: 2rem 0;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        background: rgba(255, 188, 59, 0.2);
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        border: 2px solid var(--primary-color, #ffbc3b);
+        color: var(--primary-color, #ffbc3b);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        backdrop-filter: blur(10px);
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        color: white;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin-bottom: 2rem;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+    }
+
+    .hero-buttons {
+        margin-bottom: 2rem;
+    }
+
+    .hero-buttons .btn {
+        padding: 1rem 2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .hero-buttons .btn-primary {
+        background: var(--primary-color, #ffbc3b);
+        border-color: var(--primary-color, #ffbc3b);
+        color: #333;
+    }
+
+    .hero-buttons .btn-primary:hover {
+        background: #e6a800;
+        border-color: #e6a800;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 188, 59, 0.3);
+    }
+
+    .hero-buttons .btn-outline-primary {
+        border: 2px solid var(--primary-color, #ffbc3b);
+        color: var(--primary-color, #ffbc3b);
+        background: transparent;
+    }
+
+    .hero-buttons .btn-outline-primary:hover {
+        background: var(--primary-color, #ffbc3b);
+        color: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 188, 59, 0.3);
+    }
+
+    .hero-features {
+        margin-top: 2rem;
+    }
+
+    .hero-feature {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .hero-feature i {
+        font-size: 1.2rem;
+        margin-right: 0.75rem;
+        color: #28a745;
+    }
+
+    .hero-image {
+        position: relative;
+        text-align: center;
+    }
+
+    .hero-image img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-image-overlay {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+    }
+
+    .overlay-content h4 {
+        color: var(--secondary-color, #5f4594);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .overlay-content p {
+        color: #666;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .hero-scroll-indicator {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+    }
+
+    .scroll-down {
+        display: inline-block;
+        color: white;
+        font-size: 1.5rem;
+        animation: bounce 2s infinite;
+        text-decoration: none;
+    }
+
+    .scroll-down:hover {
+        color: var(--primary-color, #ffbc3b);
+    }
+
+    @keyframes bounce {
+
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+            transform: translateY(0);
+        }
+
+        40% {
+            transform: translateY(-10px);
+        }
+
+        60% {
+            transform: translateY(-5px);
+        }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 991.98px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .hero-buttons .btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .hero-image {
+            margin-top: 2rem;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-badge {
+            font-size: 0.8rem;
+            padding: 0.5rem 1.5rem;
+        }
+
+        .hero-feature {
+            font-size: 1rem;
+        }
+    }
+
+    /* Feature Cards Styles */
+    .feature-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 1px solid #f0f0f0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color, #ffbc3b), var(--secondary-color, #5f4594));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary-color, #ffbc3b), #e6a800);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: scale(1.1);
+        box-shadow: 0 10px 25px rgba(255, 188, 59, 0.4);
+    }
+
+    .feature-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--secondary-color, #5f4594);
+        margin-bottom: 1rem;
+        line-height: 1.3;
+    }
+
+    .feature-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 0;
+        font-size: 0.95rem;
+    }
+
+    /* Section Titles */
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--secondary-color, #5f4594);
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .section-subtitle {
+        font-size: 1.1rem;
+        color: #666;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+</style>
