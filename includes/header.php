@@ -611,6 +611,40 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
             .mobile-nav-toggle {
                 display: none !important;
             }
+
+            /* Hide entire mobile navigation on desktop */
+            .mobile-nav {
+                display: none !important;
+            }
+
+            /* Ensure Bootstrap navbar is visible on desktop */
+            .navbar-collapse {
+                display: flex !important;
+            }
+
+            /* Show Bootstrap navbar toggler on desktop for any remaining mobile functionality */
+            .navbar-toggler {
+                display: none !important;
+            }
+        }
+
+        /* Ensure mobile navigation is only visible on mobile */
+        @media (max-width: 991.98px) {
+
+            /* Hide Bootstrap navbar on mobile */
+            .navbar-collapse {
+                display: none !important;
+            }
+
+            /* Show mobile nav toggle on mobile */
+            .mobile-nav-toggle {
+                display: block !important;
+            }
+
+            /* Hide Bootstrap navbar toggler on mobile */
+            .navbar-toggler {
+                display: none !important;
+            }
         }
     </style>
 

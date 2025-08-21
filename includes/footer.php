@@ -239,7 +239,7 @@
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="agreeTerms" name="agree_terms" required>
                         <label class="form-check-label" for="agreeTerms">
-                            Nakubaliana na <a href="<?= app_url('terms.php') ?>" target="_blank">Sheria na Masharti</a>
+                            Nakubaliana na <a href="<?= app_url('terms.php') ?>" target="_blank">Vigezo na Masharti</a>
                         </label>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">

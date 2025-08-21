@@ -85,7 +85,7 @@ if (!$agreeTerms) {
     http_response_code(400);
     echo json_encode([
         'success' => false,
-        'message' => 'Lazima ukubaliane na sheria na masharti.'
+        'message' => 'Lazima ukubaliane na vigezo na masharti.'
     ]);
     exit();
 }
