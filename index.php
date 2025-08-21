@@ -375,18 +375,6 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         padding: 4rem 0;
     }
 
-    .hero-section::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url("<?= asset('images/backgrounds/hero-pattern.png') ?>") center/cover;
-        opacity: 0.1;
-        z-index: 1;
-    }
-
     .hero-container {
         position: relative;
         z-index: 3;
