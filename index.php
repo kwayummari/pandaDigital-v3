@@ -3,20 +3,22 @@ require_once 'config/init.php';
 require_once 'models/Blog.php';
 require_once 'models/Fursa.php';
 require_once 'models/Wanufaika.php';
-
-include 'includes/header.php';
+require_once 'models/Expert.php';
 
 // Initialize models
 $blogModel = new Blog();
 $fursaModel = new Fursa();
 $wanufaikaModel = new Wanufaika();
+$expertModel = new Expert();
 
 // Fetch data from database
 $latestBlogPosts = $blogModel->getLatestPosts(6);
 $latestOpportunities = $fursaModel->getLatestOpportunities(6);
 $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
+$featuredExperts = $expertModel->getAllExperts();
 ?>
 
+<?php include 'includes/header.php'; ?>
 
 <!-- Modern Hero Section -->
 <section class="hero-section">
@@ -375,97 +377,124 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
         </div>
 
         <div class="row">
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="expert-card">
-                    <div class="expert-image">
-                        <img src="<?= asset('images/experts/kennedy-mmari.jpg') ?>"
-                            alt="Kennedy Mmari"
-                            class="img-fluid rounded-circle"
-                            onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
+            <?php if (!empty($featuredExperts)): ?>
+                <?php foreach ($featuredExperts as $index => $expert): ?>
+                    <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="<?= ($index + 1) * 100 ?>">
+                        <div class="expert-card">
+                            <div class="expert-image">
+                                <img src="<?= $expertModel->getExpertImageUrl($expert['profile_photo']) ?>"
+                                    alt="<?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?>"
+                                    class="img-fluid rounded-circle">
+                            </div>
+                            <div class="expert-content">
+                                <h3 class="expert-name"><?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?></h3>
+                                <p class="expert-title"><?= htmlspecialchars($expert['business'] ?? 'Mtaalamu') ?></p>
+                                <p class="expert-description">
+                                    Mtaalamu wa kitaalamu na wenye uzoefu wa kutosha katika sekta ya kidijitali na biashara.
+                                </p>
+                                <div class="expert-expertise">
+                                    <span class="expertise-badge"><?= htmlspecialchars($expert['business'] ?? 'Kidijitali') ?></span>
+                                    <span class="expertise-badge">Mtaalamu</span>
+                                    <span class="expertise-badge">Uzoefu</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="expert-content">
-                        <h3 class="expert-name">Kennedy Mmari</h3>
-                        <p class="expert-title">Mtaalamu wa Kidijitali</p>
-                        <p class="expert-description">
-                            Mtaalamu wa teknolojia na kidijitali na uzoefu wa zaidi ya miaka 10 katika sekta ya IT na biashara za kidijitali.
-                        </p>
-                        <div class="expert-expertise">
-                            <span class="expertise-badge">Teknolojia</span>
-                            <span class="expertise-badge">Kidijitali</span>
-                            <span class="expertise-badge">Biashara</span>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <!-- Fallback content if no experts found -->
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="expert-card">
+                        <div class="expert-image">
+                            <img src="<?= asset('images/experts/default-expert.jpg') ?>"
+                                alt="Default Expert Image"
+                                class="img-fluid rounded-circle"
+                                onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
+                        </div>
+                        <div class="expert-content">
+                            <h3 class="expert-name">Kennedy Mmari</h3>
+                            <p class="expert-title">Mtaalamu wa Kidijitali</p>
+                            <p class="expert-description">
+                                Mtaalamu wa teknolojia na kidijitali na uzoefu wa zaidi ya miaka 10 katika sekta ya IT na biashara za kidijitali.
+                            </p>
+                            <div class="expert-expertise">
+                                <span class="expertise-badge">Teknolojia</span>
+                                <span class="expertise-badge">Kidijitali</span>
+                                <span class="expertise-badge">Biashara</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="expert-card">
-                    <div class="expert-image">
-                        <img src="<?= asset('images/experts/michael-valentine-mallya.jpg') ?>"
-                            alt="Michael Valentine Mallya"
-                            class="img-fluid rounded-circle"
-                            onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
-                    </div>
-                    <div class="expert-content">
-                        <h3 class="expert-name">Michael Valentine Mallya</h3>
-                        <p class="expert-title">Mtaalamu wa Biashara</p>
-                        <p class="expert-description">
-                            Mjasiriamali mwenye uzoefu wa kuanza na kuendesha biashara za kidijitali na mafanikio makubwa katika sekta ya teknolojia.
-                        </p>
-                        <div class="expert-expertise">
-                            <span class="expertise-badge">Mjasiriamali</span>
-                            <span class="expertise-badge">Biashara</span>
-                            <span class="expertise-badge">Ufadhili</span>
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="expert-card">
+                        <div class="expert-image">
+                            <img src="<?= asset('images/experts/default-expert.jpg') ?>"
+                                alt="Default Expert Image"
+                                class="img-fluid rounded-circle"
+                                onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
+                        </div>
+                        <div class="expert-content">
+                            <h3 class="expert-name">Michael Valentine Mallya</h3>
+                            <p class="expert-title">Mtaalamu wa Biashara</p>
+                            <p class="expert-description">
+                                Mjasiriamali mwenye uzoefu wa kuanza na kuendesha biashara za kidijitali na mafanikio makubwa katika sekta ya teknolojia.
+                            </p>
+                            <div class="expert-expertise">
+                                <span class="expertise-badge">Mjasiriamali</span>
+                                <span class="expertise-badge">Biashara</span>
+                                <span class="expertise-badge">Ufadhili</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="expert-card">
-                    <div class="expert-image">
-                        <img src="<?= asset('images/experts/getrude-joseph-mligo.jpg') ?>"
-                            alt="Getrude Joseph Mligo"
-                            class="img-fluid rounded-circle"
-                            onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
-                    </div>
-                    <div class="expert-content">
-                        <h3 class="expert-name">Getrude Joseph Mligo</h3>
-                        <p class="expert-title">Mtaalamu wa Elimu</p>
-                        <p class="expert-description">
-                            Mtaalamu wa elimu na mafunzo ya kidijitali na uzoefu wa kutosha katika kujifunza na kufundisha teknolojia.
-                        </p>
-                        <div class="expert-expertise">
-                            <span class="expertise-badge">Elimu</span>
-                            <span class="expertise-badge">Mafunzo</span>
-                            <span class="expertise-badge">Kidijitali</span>
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="expert-card">
+                        <div class="expert-image">
+                            <img src="<?= asset('images/experts/default-expert.jpg') ?>"
+                                alt="Default Expert Image"
+                                class="img-fluid rounded-circle"
+                                onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
+                        </div>
+                        <div class="expert-content">
+                            <h3 class="expert-name">Getrude Joseph Mligo</h3>
+                            <p class="expert-title">Mtaalamu wa Elimu</p>
+                            <p class="expert-description">
+                                Mtaalamu wa elimu na mafunzo ya kidijitali na uzoefu wa kutosha katika kujifunza na kufundisha teknolojia.
+                            </p>
+                            <div class="expert-expertise">
+                                <span class="expertise-badge">Elimu</span>
+                                <span class="expertise-badge">Mafunzo</span>
+                                <span class="expertise-badge">Kidijitali</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
-                <div class="expert-card">
-                    <div class="expert-image">
-                        <img src="<?= asset('images/experts/more-experts.jpg') ?>"
-                            alt="Wataalamu Wengine"
-                            class="img-fluid rounded-circle"
-                            onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
-                    </div>
-                    <div class="expert-content">
-                        <h3 class="expert-name">Jaza na Wengine</h3>
-                        <p class="expert-title">Wataalamu wa Sekta Mbalimbali</p>
-                        <p class="expert-description">
-                            Tuna wataalamu wengine wengi kutoka sekta mbalimbali za kidijitali, biashara, elimu, na teknolojia.
-                        </p>
-                        <div class="expert-expertise">
-                            <span class="expertise-badge">Sekta Mbalimbali</span>
-                            <span class="expertise-badge">Uzoefu</span>
-                            <span class="expertise-badge">Msaada</span>
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="expert-card">
+                        <div class="expert-image">
+                            <img src="<?= asset('images/experts/default-expert.jpg') ?>"
+                                alt="Default Expert Image"
+                                class="img-fluid rounded-circle"
+                                onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
+                        </div>
+                        <div class="expert-content">
+                            <h3 class="expert-name">Jaza na Wengine</h3>
+                            <p class="expert-title">Wataalamu wa Sekta Mbalimbali</p>
+                            <p class="expert-description">
+                                Tuna wataalamu wengine wengi kutoka sekta mbalimbali za kidijitali, biashara, elimu, na teknolojia.
+                            </p>
+                            <div class="expert-expertise">
+                                <span class="expertise-badge">Sekta Mbalimbali</span>
+                                <span class="expertise-badge">Uzoefu</span>
+                                <span class="expertise-badge">Msaada</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
 
         <!-- View All Experts Button -->
