@@ -139,6 +139,136 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
     </div>
 </section>
 
+<!-- Wasemavyo Wanufaika Section -->
+<section class="testimonials-section py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto" data-aos="fade-up">
+                <h2 class="section-title">Wasemavyo Wanufaika</h2>
+                <p class="section-subtitle">Sikia kutoka kwa wanawake wajasiriamali waliofanikiwa kupitia jukwaa letu</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="testimonial-quote">
+                            <i class="fas fa-quote-left"></i>
+                            <p>"Kupitia Panda Digital, nimejifunza ujuzi wa masoko mtandaoni na sasa biashara yangu inaendelea vizuri. Nimepata wateja wengi na mapato yangu yameongezeka mara tatu!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="author-info">
+                                <h5>Sarah Mwambene</h5>
+                                <span>Mjasiriamali wa Vipodozi Asili</span>
+                                <div class="success-metrics">
+                                    <small><i class="fas fa-chart-line text-success me-1"></i>Mapato yameongezeka 300%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="testimonial-quote">
+                            <i class="fas fa-quote-left"></i>
+                            <p>"Kozi za Panda Digital zimenisaidia kujifunza usimamizi wa fedha na sasa ninaweza kuendesha biashara yangu kwa njia ya kitaalamu. Nimepata ufadhili wa milioni 2!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="author-info">
+                                <h5>Fatima Hassan</h5>
+                                <span>Mjasiriamali wa Teknolojia</span>
+                                <div class="success-metrics">
+                                    <small><i class="fas fa-handshake text-success me-1"></i>Ufadhili wa TZS 2M</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="testimonial-quote">
+                            <i class="fas fa-quote-left"></i>
+                            <p>"Panda Chat inanisaidia kupata ushauri wa haraka kutoka kwa wataalamu. Sikuwa na ujuzi wa kufanya masoko mtandaoni, lakini sasa ninafahamu kila kitu!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="author-info">
+                                <h5>Grace Mushi</h5>
+                                <span>Mjasiriamali wa Mavazi</span>
+                                <div class="success-metrics">
+                                    <small><i class="fas fa-users text-success me-1"></i>Wateja 500+ mtandaoni</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Stories Row -->
+        <div class="row mt-5">
+            <div class="col-12 text-center mb-4" data-aos="fade-up">
+                <h3 class="success-stories-title">Success Stories - Matokeo Halisi ya Biashara</h3>
+            </div>
+
+            <div class="col-lg-6 mb-4" data-aos="fade-right">
+                <div class="success-story-card">
+                    <div class="story-header">
+                        <div class="story-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <h4>Biashara ya Vipodozi Asili</h4>
+                    </div>
+                    <div class="story-content">
+                        <p><strong>Kabla ya Panda Digital:</strong> Biashara ndogo ya vipodozi asili na mapato ya TZS 200,000 kwa mwezi.</p>
+                        <p><strong>Baada ya Panda Digital:</strong> Biashara kubwa ya mtandaoni na mapato ya TZS 800,000 kwa mwezi.</p>
+                        <div class="story-impact">
+                            <span class="impact-badge success">+300% Mapato</span>
+                            <span class="impact-badge primary">+150 Wateja</span>
+                            <span class="impact-badge info">+5 Bidhaa Mpya</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4" data-aos="fade-left">
+                <div class="success-story-card">
+                    <div class="story-header">
+                        <div class="story-icon">
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                        <h4>Biashara ya Teknolojia</h4>
+                    </div>
+                    <div class="story-content">
+                        <p><strong>Kabla ya Panda Digital:</strong> Mradi wa teknolojia bila ufadhili na ujuzi wa biashara.</p>
+                        <p><strong>Baada ya Panda Digital:</strong> Kampuni ya teknolojia na ufadhili wa TZS 2,000,000.</p>
+                        <div class="story-impact">
+                            <span class="impact-badge success">+200% Ukuaji</span>
+                            <span class="impact-badge primary">Ufadhili TZS 2M</span>
+                            <span class="impact-badge info">+3 Wafanyakazi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Stats Section -->
 <section id="stats" class="stats-section">
     <div class="container">
@@ -833,5 +963,176 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         line-height: 1.6;
         margin-bottom: 0;
         font-size: 0.95rem;
+    }
+
+    /* Testimonials Section Styles */
+    .testimonials-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .testimonial-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 1px solid #f0f0f0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .testimonial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .testimonial-quote {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .testimonial-quote i {
+        color: var(--primary-color, #ffbc3b);
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .testimonial-quote p {
+        font-style: italic;
+        color: #555;
+        line-height: 1.6;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .author-avatar {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--secondary-color, #5f4594), #4a3675);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .author-info h5 {
+        color: var(--secondary-color, #5f4594);
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        font-size: 1.1rem;
+    }
+
+    .author-info span {
+        color: #666;
+        font-size: 0.9rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .success-metrics {
+        color: #28a745;
+        font-weight: 600;
+    }
+
+    /* Success Stories Styles */
+    .success-stories-title {
+        color: var(--secondary-color, #5f4594);
+        font-weight: 700;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+    }
+
+    .success-story-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+        height: 100%;
+    }
+
+    .success-story-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .story-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .story-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary-color, #ffbc3b), #e6a800);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .story-header h4 {
+        color: var(--secondary-color, #5f4594);
+        font-weight: 700;
+        margin: 0;
+        font-size: 1.3rem;
+    }
+
+    .story-content p {
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .story-content p strong {
+        color: var(--secondary-color, #5f4594);
+    }
+
+    .story-impact {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .impact-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .impact-badge.success {
+        background: #28a745;
+    }
+
+    .impact-badge.primary {
+        background: var(--primary-color, #ffbc3b);
+        color: #333;
+    }
+
+    .impact-badge.info {
+        background: var(--secondary-color, #5f4594);
     }
 </style>
