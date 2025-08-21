@@ -191,9 +191,9 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 <!-- <span class="ms-2"><?= htmlspecialchars($appConfig['name']) ?></span> -->
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
-            </button>
+            </button> -->
 
             <!-- Custom Mobile Nav Toggle -->
             <button class="mobile-nav-toggle d-lg-none" type="button" id="mobileNavToggle">
