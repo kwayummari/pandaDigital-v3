@@ -47,6 +47,98 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
     </div>
 </section>
 
+<!-- Tunachokupa Section -->
+<section class="features-section py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto" data-aos="fade-up">
+                <h2 class="section-title">Tunachokupa</h2>
+                <p class="section-subtitle">Jukwaa kamili la kujifunza, kuendeleza biashara, na kupata msaada wa kitaalamu</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="feature-title">Masomo ya Kidijitali kwa Kiswahili</h3>
+                    <p class="feature-description">
+                        Masoko mtandaoni, mbinu za biashara hadi uanzishaji biashara ya vipodozi asili.
+                        Kozi zote kwa lugha ya Kiswahili ili uweze kujifunza kwa urahisi.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="feature-title">Kozi za Bure na za Kulipia</h3>
+                    <p class="feature-description">
+                        Zinazopatikana muda wowote, mahali popote – mijini na vijijini.
+                        Jifunze kwa kasi yako mwenyewe na upate cheti cha kusadikika.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="feature-title">Msaada kupitia Panda Chat</h3>
+                    <p class="feature-description">
+                        Uliza maswali na pata ushauri wa kitaalamu kutoka kwa wataalamu wetu.
+                        Panda Chat inakupa msaada wa moja kwa moja na majibu ya haraka.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3 class="feature-title">Onesha na Tangaza Biashara</h3>
+                    <p class="feature-description">
+                        Kupitia jukwaa letu, unaweza kutangaza biashara yako na kufikia wateja wengi.
+                        Jukwaa salama na la kusadikika kwa biashara za kidijitali.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sms"></i>
+                    </div>
+                    <h3 class="feature-title">Jifunze kwa SMS</h3>
+                    <p class="feature-description">
+                        Bila intaneti au smartphone. PandaSMS inakupa fursa ya kujifunza
+                        kupitia ujumbe wa SMS, hata kwenye simu za kawaida.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Ongea Hub</h3>
+                    <p class="feature-description">
+                        Mahali salama pa kuripoti unyanyasaji wa kijinsia na rushwa ya ngono.
+                        Tunakupa msaada na usaidizi wa kisheria na kijamii.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Stats Section -->
 <section id="stats" class="stats-section">
     <div class="container">
@@ -672,5 +764,74 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         max-width: 600px;
         margin: 0 auto;
         line-height: 1.6;
+    }
+
+    /* Feature Cards Styles */
+    .feature-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 1px solid #f0f0f0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color, #ffbc3b), var(--secondary-color, #5f4594));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary-color, #ffbc3b), #e6a800);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: scale(1.1);
+        box-shadow: 0 10px 25px rgba(255, 188, 59, 0.4);
+    }
+
+    .feature-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--secondary-color, #5f4594);
+        margin-bottom: 1rem;
+        line-height: 1.3;
+    }
+
+    .feature-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 0;
+        font-size: 0.95rem;
     }
 </style>
