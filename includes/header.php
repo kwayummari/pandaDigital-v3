@@ -332,7 +332,7 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
             }
         }
 
-        /* Fix for mobile dropdown menu */
+        /* Enhanced mobile dropdown menu styles */
         @media (max-width: 991.98px) {
             .navbar-nav .dropdown-menu {
                 position: static !important;
@@ -342,44 +342,336 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 border: none;
                 box-shadow: none;
                 background-color: #f8f9fa;
+                border-radius: 8px;
+                margin-left: 1rem;
+                margin-right: 1rem;
+                margin-bottom: 0.5rem;
             }
 
             .navbar-nav .dropdown-toggle::after {
                 float: right;
                 margin-top: 8px;
+                transition: transform 0.2s ease;
             }
+
+            .navbar-nav .dropdown.show .dropdown-toggle::after {
+                transform: rotate(180deg);
+            }
+
+            .navbar-nav .dropdown-item {
+                padding: 0.75rem 1.5rem;
+                border-radius: 6px;
+                margin: 0.25rem 0.5rem;
+                transition: all 0.2s ease;
+            }
+
+            .navbar-nav .dropdown-item:hover {
+                background-color: var(--primary-color, #ffbc3b);
+                color: white;
+                transform: translateX(8px);
+            }
+
+            /* Prevent dropdown from closing when clicking inside */
+            .navbar-nav .dropdown-menu {
+                pointer-events: auto;
+            }
+
+            /* Add smooth animation for dropdown */
+            .navbar-nav .dropdown-menu {
+                transition: all 0.3s ease;
+                opacity: 0;
+                max-height: 0;
+                overflow: hidden;
+            }
+
+            .navbar-nav .dropdown.show .dropdown-menu {
+                opacity: 1;
+                max-height: 300px;
+            }
+        }
+
+        /* Ensure dropdowns work properly on all devices */
+        .dropdown-menu.show {
+            display: block !important;
+        }
+
+        /* Fix for touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .dropdown-toggle {
+                min-height: 44px;
+                /* Minimum touch target size */
+            }
+
+            .dropdown-item {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        /* Additional mobile dropdown fixes */
+        @media (max-width: 991.98px) {
+
+            /* Ensure dropdown menus are visible when open */
+            .navbar-nav .dropdown.show .dropdown-menu {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                max-height: 300px !important;
+                transform: none !important;
+            }
+
+            /* Prevent dropdown from being hidden by overflow */
+            .navbar-collapse {
+                overflow: visible !important;
+            }
+
+            /* Ensure proper z-index for dropdowns */
+            .navbar-nav .dropdown-menu {
+                z-index: 1001;
+                position: relative !important;
+                transform: none !important;
+                left: auto !important;
+                right: auto !important;
+                top: auto !important;
+                bottom: auto !important;
+            }
+
+            /* Smooth transitions for dropdown items */
+            .navbar-nav .dropdown-item {
+                opacity: 0;
+                transform: translateX(-10px);
+                transition: all 0.3s ease;
+            }
+
+            .navbar-nav .dropdown.show .dropdown-item {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            /* Stagger animation for dropdown items */
+            .navbar-nav .dropdown.show .dropdown-item:nth-child(1) {
+                transition-delay: 0.1s;
+            }
+
+            .navbar-nav .dropdown.show .dropdown-item:nth-child(2) {
+                transition-delay: 0.15s;
+            }
+
+            .navbar-nav .dropdown.show .dropdown-item:nth-child(3) {
+                transition-delay: 0.2s;
+            }
+
+            .navbar-nav .dropdown.show .dropdown-item:nth-child(4) {
+                transition-delay: 0.25s;
+            }
+
+            .navbar-nav .dropdown.show .dropdown-item:nth-child(5) {
+                transition-delay: 0.3s;
+            }
+        }
+
+        /* Global dropdown fixes */
+        .dropdown-menu {
+            pointer-events: auto !important;
+        }
+
+        .dropdown-menu.show {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        /* Prevent any CSS from hiding dropdowns */
+        .dropdown-menu[style*="display: none"] {
+            display: block !important;
+        }
+
+        .dropdown-menu[style*="visibility: hidden"] {
+            visibility: visible !important;
         }
     </style>
 
     <script>
-        // Fix for mobile dropdown menu not closing navbar
+        // Enhanced Bootstrap 5 dropdown handling for mobile
         document.addEventListener('DOMContentLoaded', function() {
-            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-            const navbarCollapse = document.querySelector('.navbar-collapse');
+            console.log('Header script loaded - initializing dropdowns...');
 
-            dropdownToggles.forEach(toggle => {
-                toggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    // Toggle the dropdown
-                    const dropdownMenu = this.nextElementSibling;
-                    dropdownMenu.classList.toggle('show');
-
-                    // Add active class to parent
-                    this.parentElement.classList.toggle('active');
+            // Wait for Bootstrap to be fully loaded
+            if (typeof bootstrap !== 'undefined') {
+                console.log('Bootstrap detected, initializing dropdowns...');
+                // Initialize Bootstrap dropdowns properly
+                const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+                const dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+                    return new bootstrap.Dropdown(dropdownToggleEl, {
+                        autoClose: true,
+                        boundary: 'viewport'
+                    });
                 });
-            });
+                console.log('Bootstrap dropdowns initialized:', dropdownList.length);
+            } else {
+                console.log('Bootstrap not detected, using custom dropdown handling...');
+            }
 
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.dropdown')) {
-                    dropdownToggles.forEach(toggle => {
-                        const dropdownMenu = toggle.nextElementSibling;
-                        dropdownMenu.classList.remove('show');
-                        toggle.parentElement.classList.remove('active');
+            // Enhanced mobile dropdown behavior
+            if (window.innerWidth <= 991.98) {
+                console.log('Mobile view detected, setting up custom dropdown handling...');
+                const mobileDropdowns = document.querySelectorAll('.navbar-nav .dropdown');
+                console.log('Found mobile dropdowns:', mobileDropdowns.length);
+
+                mobileDropdowns.forEach((dropdown, index) => {
+                    const toggle = dropdown.querySelector('.dropdown-toggle');
+                    const menu = dropdown.querySelector('.dropdown-menu');
+
+                    console.log(`Setting up dropdown ${index + 1}:`, {
+                        toggle: !!toggle,
+                        menu: !!menu
+                    });
+
+                    if (toggle && menu) {
+                        // Remove any existing Bootstrap event listeners
+                        if (toggle._mobileDropdownHandler) {
+                            toggle.removeEventListener('click', toggle._mobileDropdownHandler);
+                        }
+
+                        // Create new handler
+                        toggle._mobileDropdownHandler = function(e) {
+                            console.log('Dropdown toggle clicked:', e.target.textContent);
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            // Close other open dropdowns
+                            mobileDropdowns.forEach(otherDropdown => {
+                                if (otherDropdown !== dropdown && otherDropdown.classList.contains('show')) {
+                                    console.log('Closing other dropdown');
+                                    otherDropdown.classList.remove('show');
+                                    const otherMenu = otherDropdown.querySelector('.dropdown-menu');
+                                    if (otherMenu) {
+                                        otherMenu.classList.remove('show');
+                                        otherMenu.style.display = 'none';
+                                        otherMenu.style.visibility = 'hidden';
+                                        otherMenu.style.opacity = '0';
+                                    }
+                                }
+                            });
+
+                            // Toggle current dropdown
+                            const isOpen = dropdown.classList.contains('show');
+                            console.log('Dropdown state:', isOpen ? 'open' : 'closed');
+
+                            if (isOpen) {
+                                dropdown.classList.remove('show');
+                                menu.classList.remove('show');
+                                menu.style.display = 'none';
+                                menu.style.visibility = 'hidden';
+                                menu.style.opacity = '0';
+                                console.log('Dropdown closed');
+                            } else {
+                                dropdown.classList.add('show');
+                                menu.classList.add('show');
+                                menu.style.display = 'block';
+                                menu.style.visibility = 'visible';
+                                menu.style.opacity = '1';
+                                console.log('Dropdown opened');
+                            }
+                        };
+
+                        // Add event listener
+                        toggle.addEventListener('click', toggle._mobileDropdownHandler);
+                        console.log('Event listener added to dropdown toggle');
+
+                        // Prevent menu from closing when clicking inside
+                        menu.addEventListener('click', function(e) {
+                            console.log('Menu clicked, preventing propagation');
+                            e.stopPropagation();
+                        });
+
+                        // Prevent menu from closing when clicking on dropdown items
+                        const dropdownItems = menu.querySelectorAll('.dropdown-item');
+                        dropdownItems.forEach((item, itemIndex) => {
+                            item.addEventListener('click', function(e) {
+                                console.log(`Dropdown item ${itemIndex + 1} clicked:`, item.textContent);
+                                e.stopPropagation();
+                                // Close dropdown after item click
+                                setTimeout(() => {
+                                    dropdown.classList.remove('show');
+                                    menu.classList.remove('show');
+                                    menu.style.display = 'none';
+                                    menu.style.visibility = 'hidden';
+                                    menu.style.opacity = '0';
+                                    console.log('Dropdown closed after item selection');
+                                }, 100);
+                            });
+                        });
+                    }
+                });
+
+                // Close dropdowns when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.navbar-nav .dropdown')) {
+                        console.log('Click outside dropdowns detected, closing all...');
+                        mobileDropdowns.forEach(dropdown => {
+                            dropdown.classList.remove('show');
+                            const menu = dropdown.querySelector('.dropdown-menu');
+                            if (menu) {
+                                menu.classList.remove('show');
+                                menu.style.display = 'none';
+                                menu.style.visibility = 'hidden';
+                                menu.style.opacity = '0';
+                            }
+                        });
+                    }
+                });
+
+                // Close dropdowns when navbar collapses
+                const navbarCollapse = document.querySelector('.navbar-collapse');
+                if (navbarCollapse) {
+                    navbarCollapse.addEventListener('hidden.bs.collapse', function() {
+                        console.log('Navbar collapsed, closing dropdowns...');
+                        mobileDropdowns.forEach(dropdown => {
+                            dropdown.classList.remove('show');
+                            const menu = dropdown.querySelector('.dropdown-menu');
+                            if (menu) {
+                                menu.classList.remove('show');
+                                menu.style.display = 'none';
+                                menu.style.visibility = 'hidden';
+                                menu.style.opacity = '0';
+                            }
+                        });
                     });
                 }
-            });
+
+                // Handle window resize
+                let resizeTimer;
+                window.addEventListener('resize', function() {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(function() {
+                        if (window.innerWidth > 991.98) {
+                            console.log('Switched to desktop view, resetting dropdowns...');
+                            // Reset to desktop behavior
+                            mobileDropdowns.forEach(dropdown => {
+                                dropdown.classList.remove('show');
+                                const menu = dropdown.querySelector('.dropdown-menu');
+                                if (menu) {
+                                    menu.classList.remove('show');
+                                    menu.style.display = '';
+                                    menu.style.visibility = '';
+                                    menu.style.opacity = '';
+                                }
+                            });
+                        }
+                    }, 250);
+                });
+            }
+
+            // Prevent any global click handlers from interfering
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.dropdown-menu')) {
+                    console.log('Preventing global click handler interference');
+                    e.stopPropagation();
+                }
+            }, true);
+
+            console.log('Dropdown initialization complete');
         });
     </script>

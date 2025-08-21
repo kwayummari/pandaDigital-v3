@@ -665,7 +665,7 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                 }, 5000);
             }
 
-                        // Check profile completion when page loads
+            // Check profile completion when page loads
             document.addEventListener('DOMContentLoaded', function() {
                 checkProfileCompletion();
             });
@@ -674,54 +674,54 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
             function checkProfileCompletion() {
                 // Fetch fresh user data from database
                 fetch('<?= app_url("api/get-user-profile.php") ?>', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const user = data.user;
-                        console.log('Fetched fresh user data:', user);
-                        
-                        // Check what fields are missing and show appropriate form
-                        const missingFields = [];
-                        if (!user.first_name || user.first_name === '' || user.first_name === 'null') missingFields.push('first_name');
-                        if (!user.last_name || user.last_name === '' || user.last_name === 'null') missingFields.push('last_name');
-                        if (!user.phone || user.phone === 'null' || user.phone === '' || user.phone === "'null'") missingFields.push('phone');
-                        if (!user.region || user.region === 'null' || user.region === '' || user.region === "'null'") missingFields.push('region');
-                        if (!user.gender || user.gender === 'null' || user.gender === '' || user.gender === "'null'") missingFields.push('gender');
-                        if (!user.date_of_birth || user.date_of_birth === 'null' || user.date_of_birth === '' || user.date_of_birth === "'null'") missingFields.push('date_of_birth');
-                        
-                        console.log('Missing fields:', missingFields);
-                        
-                        if (missingFields.length > 0) {
-                            console.log('Showing profile completion modal');
-                            // Show profile completion modal
-                            const profileModal = new bootstrap.Modal(document.getElementById('profileCompletionModal'));
-                            profileModal.show();
-                            
-                            // Show only the fields that are missing
-                            showMissingFields(missingFields);
-                            
-                            // Pre-fill existing data if available
-                            if (user.first_name && user.first_name !== '' && user.first_name !== 'null') document.getElementById('profileFirstName').value = user.first_name;
-                            if (user.last_name && user.last_name !== '' && user.last_name !== 'null') document.getElementById('profileLastName').value = user.last_name;
-                            if (user.phone && user.phone !== 'null' && user.phone !== '' && user.phone !== "'null'") document.getElementById('profilePhone').value = user.phone;
-                            if (user.region && user.region !== 'null' && user.region !== '' && user.region !== "'null'") document.getElementById('profileRegion').value = user.region;
-                            if (user.gender && user.gender !== 'null' && user.gender !== '' && user.gender !== "'null'") document.getElementById('profileGender').value = user.gender;
-                            if (user.date_of_birth && user.date_of_birth !== 'null' && user.date_of_birth !== '' && user.date_of_birth !== "'null'") document.getElementById('profileDateOfBirth').value = user.date_of_birth;
-                        } else {
-                            console.log('Profile is complete, no modal needed');
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
                         }
-                    } else {
-                        console.error('Failed to fetch user data:', data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching user data:', error);
-                });
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const user = data.user;
+                            console.log('Fetched fresh user data:', user);
+
+                            // Check what fields are missing and show appropriate form
+                            const missingFields = [];
+                            if (!user.first_name || user.first_name === '' || user.first_name === 'null') missingFields.push('first_name');
+                            if (!user.last_name || user.last_name === '' || user.last_name === 'null') missingFields.push('last_name');
+                            if (!user.phone || user.phone === 'null' || user.phone === '' || user.phone === "'null'") missingFields.push('phone');
+                            if (!user.region || user.region === 'null' || user.region === '' || user.region === "'null'") missingFields.push('region');
+                            if (!user.gender || user.gender === 'null' || user.gender === '' || user.gender === "'null'") missingFields.push('gender');
+                            if (!user.date_of_birth || user.date_of_birth === 'null' || user.date_of_birth === '' || user.date_of_birth === "'null'") missingFields.push('date_of_birth');
+
+                            console.log('Missing fields:', missingFields);
+
+                            if (missingFields.length > 0) {
+                                console.log('Showing profile completion modal');
+                                // Show profile completion modal
+                                const profileModal = new bootstrap.Modal(document.getElementById('profileCompletionModal'));
+                                profileModal.show();
+
+                                // Show only the fields that are missing
+                                showMissingFields(missingFields);
+
+                                // Pre-fill existing data if available
+                                if (user.first_name && user.first_name !== '' && user.first_name !== 'null') document.getElementById('profileFirstName').value = user.first_name;
+                                if (user.last_name && user.last_name !== '' && user.last_name !== 'null') document.getElementById('profileLastName').value = user.last_name;
+                                if (user.phone && user.phone !== 'null' && user.phone !== '' && user.phone !== "'null'") document.getElementById('profilePhone').value = user.phone;
+                                if (user.region && user.region !== 'null' && user.region !== '' && user.region !== "'null'") document.getElementById('profileRegion').value = user.region;
+                                if (user.gender && user.gender !== 'null' && user.gender !== '' && user.gender !== "'null'") document.getElementById('profileGender').value = user.gender;
+                                if (user.date_of_birth && user.date_of_birth !== 'null' && user.date_of_birth !== '' && user.date_of_birth !== "'null'") document.getElementById('profileDateOfBirth').value = user.date_of_birth;
+                            } else {
+                                console.log('Profile is complete, no modal needed');
+                            }
+                        } else {
+                            console.error('Failed to fetch user data:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
             }
 
             // Handle profile completion form submission
