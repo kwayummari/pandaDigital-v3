@@ -28,11 +28,11 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                         <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
                         <p class="hero-subtitle">Jisajili. Chagua kozi. Jifunze. Pata cheti. Kutana na fursa. <?= htmlspecialchars($appConfig['name']) ?></p>
                         <div class="hero-buttons">
-                            <a href="<?= app_url('kozi.php') ?>" class="btn btn-primary">
-                                Anza Kozi
+                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registrationModal">
+                                Jisajili
                             </a>
-                            <a href="<?= app_url('fursa.php') ?>" class="btn btn-outline-primary">
-                                Tazama Fursa
+                            <a href="<?= app_url('panda-sms.php') ?>" class="btn btn-outline-primary">
+                                PandaSMS
                             </a>
                         </div>
                     </div>
