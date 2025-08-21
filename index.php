@@ -272,10 +272,6 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
 
         <!-- Success Stories Row -->
         <div class="row mt-5">
-            <div class="col-12 text-center mb-4" data-aos="fade-up">
-                <h3 class="success-stories-title">Success Stories - Matokeo Halisi ya Biashara</h3>
-            </div>
-
             <?php
             // Use the same wanufaika data for success stories
             if (!empty($featuredWanufaika)):
@@ -345,6 +341,108 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
                     </div>
                 </div>
             <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<!-- Jinsi Inavyofanya Kazi Section -->
+<section class="how-it-works-section py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto" data-aos="fade-up">
+                <h2 class="section-title">Jinsi Inavyofanya Kazi</h2>
+                <p class="section-subtitle">Fuata hatua hizi rahisi kuwa mwanufaika wa Panda Digital</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="step-card">
+                    <div class="step-number">
+                        <span>1</span>
+                    </div>
+                    <div class="step-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3 class="step-title">Jisajili</h3>
+                    <p class="step-description">
+                        Jisajili mtandaoni au kwa SMS (tuma neno SAJILI kwenda 0767-680-463).
+                    </p>
+                    <div class="step-actions">
+                        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal">
+                            <i class="fas fa-user-plus me-1"></i>Jisajili Mtandaoni
+                        </a>
+                        <div class="sms-info mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-sms me-1"></i>SMS: SAJILI kwenda 0767-680-463
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="step-card">
+                    <div class="step-number">
+                        <span>2</span>
+                    </div>
+                    <div class="step-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="step-title">Chagua Kozi</h3>
+                    <p class="step-description">
+                        Chagua kozi unayopenda kwa Kiswahili kutoka kwenye orodha yetu ya kozi.
+                    </p>
+                    <div class="step-actions">
+                        <a href="<?= app_url('kozi.php') ?>" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-search me-1"></i>Tazama Kozi
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="step-card">
+                    <div class="step-number">
+                        <span>3</span>
+                    </div>
+                    <div class="step-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3 class="step-title">Jifunze na Upate Cheti</h3>
+                    <p class="step-description">
+                        Jifunze na upate cheti (mtandaoni au nakala ngumu).
+                    </p>
+                    <div class="step-actions">
+                        <a href="<?= app_url('kozi.php') ?>" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-play me-1"></i>Anza Kujifunza
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="step-card">
+                    <div class="step-number">
+                        <span>4</span>
+                    </div>
+                    <div class="step-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="step-title">Ungana na Jumuiya</h3>
+                    <p class="step-description">
+                        Ungana kupitia Panda Chat, tafuta fursa, na jiunge na Ongea Hub.
+                    </p>
+                    <div class="step-actions">
+                        <a href="<?= app_url('panda-chat.php') ?>" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-comments me-1"></i>Panda Chat
+                        </a>
+                        <a href="<?= app_url('ongea-hub.php') ?>" class="btn btn-sm btn-outline-primary mt-1">
+                            <i class="fas fa-shield-alt me-1"></i>Ongea Hub
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -1254,5 +1352,135 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
 
     .impact-badge.info {
         background: var(--secondary-color, #5f4594);
+    }
+
+    /* Jinsi Inavyofanya Kazi Section Styles */
+    .how-it-works-section {
+        background: #f8f9fa;
+        padding: 5rem 0;
+    }
+
+    .step-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .step-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color, #ffbc3b), var(--secondary-color, #5f4594));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .step-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .step-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .step-number {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary-color, #ffbc3b), #e6a800);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: white;
+        box-shadow: 0 5px 15px rgba(255, 188, 59, 0.3);
+    }
+
+    .step-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary-color, #ffbc3b), #e6a800);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+        color: white;
+        box-shadow: 0 5px 15px rgba(255, 188, 59, 0.3);
+    }
+
+    .step-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--secondary-color, #5f4594);
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+
+    .step-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+    }
+
+    .step-actions .btn {
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        margin-right: 0.5rem;
+    }
+
+    .step-actions .btn-sm {
+        padding: 0.5rem 1rem;
+    }
+
+    .step-actions .btn-primary {
+        background: var(--primary-color, #ffbc3b);
+        border-color: var(--primary-color, #ffbc3b);
+        color: #333;
+    }
+
+    .step-actions .btn-primary:hover {
+        background: #e6a800;
+        border-color: #e6a800;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 188, 59, 0.3);
+    }
+
+    .step-actions .btn-outline-primary {
+        border: 2px solid var(--primary-color, #ffbc3b);
+        color: var(--primary-color, #ffbc3b);
+        background: transparent;
+    }
+
+    .step-actions .btn-outline-primary:hover {
+        background: var(--primary-color, #ffbc3b);
+        color: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 188, 59, 0.3);
+    }
+
+    .sms-info {
+        margin-top: 1rem;
+        font-size: 0.85rem;
+        color: #666;
     }
 </style>
