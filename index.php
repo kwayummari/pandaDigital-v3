@@ -364,6 +364,121 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
     </div>
 </section>
 
+<!-- Wataalamu Wetu Section -->
+<section class="experts-section py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto" data-aos="fade-up">
+                <h2 class="section-title">Wataalamu Wetu</h2>
+                <p class="section-subtitle">Wataalamu wa kitaalamu na wenye uzoefu wa kutosha katika sekta ya kidijitali na biashara</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="expert-card">
+                    <div class="expert-image">
+                        <img src="<?= asset('images/experts/kennedy-mmari.jpg') ?>"
+                            alt="Kennedy Mmari"
+                            class="img-fluid rounded-circle"
+                            onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
+                    </div>
+                    <div class="expert-content">
+                        <h3 class="expert-name">Kennedy Mmari</h3>
+                        <p class="expert-title">Mtaalamu wa Kidijitali</p>
+                        <p class="expert-description">
+                            Mtaalamu wa teknolojia na kidijitali na uzoefu wa zaidi ya miaka 10 katika sekta ya IT na biashara za kidijitali.
+                        </p>
+                        <div class="expert-expertise">
+                            <span class="expertise-badge">Teknolojia</span>
+                            <span class="expertise-badge">Kidijitali</span>
+                            <span class="expertise-badge">Biashara</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="expert-card">
+                    <div class="expert-image">
+                        <img src="<?= asset('images/experts/michael-valentine-mallya.jpg') ?>"
+                            alt="Michael Valentine Mallya"
+                            class="img-fluid rounded-circle"
+                            onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
+                    </div>
+                    <div class="expert-content">
+                        <h3 class="expert-name">Michael Valentine Mallya</h3>
+                        <p class="expert-title">Mtaalamu wa Biashara</p>
+                        <p class="expert-description">
+                            Mjasiriamali mwenye uzoefu wa kuanza na kuendesha biashara za kidijitali na mafanikio makubwa katika sekta ya teknolojia.
+                        </p>
+                        <div class="expert-expertise">
+                            <span class="expertise-badge">Mjasiriamali</span>
+                            <span class="expertise-badge">Biashara</span>
+                            <span class="expertise-badge">Ufadhili</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="expert-card">
+                    <div class="expert-image">
+                        <img src="<?= asset('images/experts/getrude-joseph-mligo.jpg') ?>"
+                            alt="Getrude Joseph Mligo"
+                            class="img-fluid rounded-circle"
+                            onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
+                    </div>
+                    <div class="expert-content">
+                        <h3 class="expert-name">Getrude Joseph Mligo</h3>
+                        <p class="expert-title">Mtaalamu wa Elimu</p>
+                        <p class="expert-description">
+                            Mtaalamu wa elimu na mafunzo ya kidijitali na uzoefu wa kutosha katika kujifunza na kufundisha teknolojia.
+                        </p>
+                        <div class="expert-expertise">
+                            <span class="expertise-badge">Elimu</span>
+                            <span class="expertise-badge">Mafunzo</span>
+                            <span class="expertise-badge">Kidijitali</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="expert-card">
+                    <div class="expert-image">
+                        <img src="<?= asset('images/experts/more-experts.jpg') ?>"
+                            alt="Wataalamu Wengine"
+                            class="img-fluid rounded-circle"
+                            onerror="this.src='<?= asset('images/experts/default-expert.jpg') ?>'">
+                    </div>
+                    <div class="expert-content">
+                        <h3 class="expert-name">Jaza na Wengine</h3>
+                        <p class="expert-title">Wataalamu wa Sekta Mbalimbali</p>
+                        <p class="expert-description">
+                            Tuna wataalamu wengine wengi kutoka sekta mbalimbali za kidijitali, biashara, elimu, na teknolojia.
+                        </p>
+                        <div class="expert-expertise">
+                            <span class="expertise-badge">Sekta Mbalimbali</span>
+                            <span class="expertise-badge">Uzoefu</span>
+                            <span class="expertise-badge">Msaada</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View All Experts Button -->
+        <div class="row mt-5">
+            <div class="col-12 text-center" data-aos="fade-up">
+                <a href="<?= app_url('wataalamu.php') ?>" class="btn btn-primary btn-lg">
+                    <i class="fas fa-users me-2"></i>Tazama Wataalamu Wote
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Stats Section -->
 <section id="stats" class="stats-section">
     <div class="container">
@@ -1384,5 +1499,99 @@ $featuredWanufaika = $wanufaikaModel->getLatestWanufaika(6);
         margin-top: 1rem;
         font-size: 0.85rem;
         color: #666;
+    }
+
+    /* Wataalamu Wetu Section Styles */
+    .experts-section {
+        background: #f8f9fa;
+        padding: 5rem 0;
+    }
+
+    .expert-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .expert-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color, #ffbc3b), var(--secondary-color, #5f4594));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .expert-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .expert-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .expert-image {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .expert-image img {
+        width: 120px;
+        height: 120px;
+        border: 3px solid var(--primary-color, #ffbc3b);
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 5px 15px rgba(255, 188, 59, 0.3);
+    }
+
+    .expert-content {
+        text-align: center;
+    }
+
+    .expert-name {
+        color: var(--secondary-color, #5f4594);
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .expert-title {
+        color: #666;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .expert-description {
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .expert-expertise {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .expertise-badge {
+        background: var(--primary-color, #ffbc3b);
+        color: #333;
+        padding: 0.5rem 1.25rem;
+        border-radius: 25px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 </style>
