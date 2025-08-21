@@ -383,7 +383,7 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         right: 0;
         bottom: 0;
         background: url("<?= asset('images/backgrounds/hero-pattern.png') ?>") center/cover;
-        opacity: 0.05;
+        /* opacity: 0.05; */
         z-index: 1;
     }
 
