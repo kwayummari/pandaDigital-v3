@@ -546,6 +546,25 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 position: relative !important;
                 z-index: 1003;
             }
+
+            /* Ensure navbar toggle button works properly */
+            .navbar-toggler {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+            }
+
+            /* Allow navbar to be toggled normally */
+            .navbar-collapse {
+                transition: all 0.35s ease !important;
+            }
+
+            .navbar-collapse:not(.show) {
+                display: none !important;
+            }
+
+            .navbar-collapse.show {
+                display: block !important;
+            }
         }
     </style>
 
@@ -731,13 +750,16 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 // Prevent navbar toggle button from closing navbar when dropdowns are open
                 const navbarToggler = document.querySelector('.navbar-toggler');
                 if (navbarToggler) {
+                    console.log('Navbar toggler found:', navbarToggler);
+
                     navbarToggler.addEventListener('click', function(e) {
+                        console.log('Navbar toggler clicked');
                         const hasOpenDropdowns = Array.from(mobileDropdowns).some(dropdown =>
                             dropdown.classList.contains('show')
                         );
 
                         if (hasOpenDropdowns) {
-                            console.log('Preventing navbar toggle - closing dropdowns first');
+                            console.log('Closing dropdowns before navbar toggle');
                             // Close all dropdowns before allowing navbar toggle
                             mobileDropdowns.forEach(dropdown => {
                                 dropdown.classList.remove('show');
@@ -751,6 +773,8 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                             });
                         }
                     });
+                } else {
+                    console.log('Navbar toggler not found');
                 }
 
                 // Handle window resize
@@ -784,14 +808,15 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 }
             }, true);
 
-            // Global handler to prevent navbar from closing when dropdowns are active
+            // Only prevent specific navbar interactions when dropdowns are active
             document.addEventListener('click', function(e) {
                 const hasOpenDropdowns = Array.from(mobileDropdowns || []).some(dropdown =>
                     dropdown.classList.contains('show')
                 );
 
-                if (hasOpenDropdowns && e.target.closest('.navbar-collapse')) {
-                    console.log('Preventing navbar interaction while dropdowns are open');
+                // Only prevent closing events, not opening events
+                if (hasOpenDropdowns && e.target.closest('.navbar-collapse') && !e.target.closest('.navbar-toggler')) {
+                    console.log('Preventing navbar closing while dropdowns are open');
                     e.stopPropagation();
                 }
             }, true);
@@ -811,28 +836,20 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
 
                     return originalHide.call(this);
                 };
+
+                // Also prevent show events from being blocked
+                const originalShow = bootstrap.Collapse.prototype.show;
+                bootstrap.Collapse.prototype.show = function() {
+                    // Always allow showing the navbar
+                    return originalShow.call(this);
+                };
             }
 
             // Additional protection against navbar closing
             if (window.innerWidth <= 991.98) {
-                // Override Bootstrap's collapse behavior for navbar
+                // Add protection against navbar closing when dropdowns are open
                 const navbarCollapse = document.querySelector('.navbar-collapse');
                 if (navbarCollapse) {
-                    // Remove any existing Bootstrap collapse instance
-                    if (navbarCollapse._bsCollapse) {
-                        navbarCollapse._bsCollapse.dispose();
-                    }
-
-                    // Create custom collapse behavior that respects dropdowns
-                    navbarCollapse.addEventListener('click', function(e) {
-                        // If clicking on dropdown toggle, prevent navbar from closing
-                        if (e.target.closest('.dropdown-toggle')) {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            return false;
-                        }
-                    });
-
                     // Prevent any programmatic navbar closing when dropdowns are open
                     const originalRemoveClass = navbarCollapse.classList.remove;
                     navbarCollapse.classList.remove = function(...classes) {
@@ -847,6 +864,14 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
 
                         return originalRemoveClass.apply(this, classes);
                     };
+
+                    // Add click protection for dropdown toggles
+                    navbarCollapse.addEventListener('click', function(e) {
+                        // If clicking on dropdown toggle, prevent event bubbling
+                        if (e.target.closest('.dropdown-toggle')) {
+                            e.stopPropagation();
+                        }
+                    });
                 }
             }
 
