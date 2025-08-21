@@ -23,10 +23,10 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
                 <div class="col-lg-10 text-center" data-aos="fade-up">
                     <div class="hero-content">
                         <div class="hero-badge">
-                            Jukwaa la Kwanza la Kidijitali kwa Wasichana
+                            Pata fursa, ujuzi wa kidijitali, anzisha biashara, na jijengee uhuru wa kiuchumi kupitia Panda Digital.
                         </div>
                         <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
-                        <p class="hero-subtitle">Jifunze ujuzi wa kidijitali, uwe na biashara yako, na uweze kujitegemea kiuchumi kupitia <?= htmlspecialchars($appConfig['name']) ?></p>
+                        <p class="hero-subtitle">Jisajili. Chagua kozi. Jifunze. Pata cheti. Kutana na fursa. <?= htmlspecialchars($appConfig['name']) ?></p>
                         <div class="hero-buttons">
                             <a href="<?= app_url('kozi.php') ?>" class="btn btn-primary">
                                 Anza Kozi
@@ -373,6 +373,18 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         background: linear-gradient(135deg, var(--secondary-color, #5f4594) 0%, var(--secondary-dark, #4a3675) 100%);
         overflow: hidden;
         padding: 4rem 0;
+    }
+
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("<?= asset('images/backgrounds/hero-pattern.png') ?>") center/cover;
+        opacity: 0.05;
+        z-index: 1;
     }
 
     .hero-container {
