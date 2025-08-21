@@ -346,6 +346,8 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 margin-left: 1rem;
                 margin-right: 1rem;
                 margin-bottom: 0.5rem;
+                z-index: 9999 !important;
+                position: relative !important;
             }
 
             .navbar-nav .dropdown-toggle::after {
@@ -387,6 +389,115 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
             .navbar-nav .dropdown.show .dropdown-menu {
                 opacity: 1;
                 max-height: 300px;
+            }
+
+            /* Ensure dropdowns are visible and properly positioned */
+            .navbar-nav .dropdown.show {
+                position: relative;
+                z-index: 10000;
+                margin-bottom: 1rem;
+            }
+
+            .navbar-nav .dropdown.show .dropdown-menu {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                max-height: 500px !important;
+                overflow: visible !important;
+                position: relative !important;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                transform: none !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+                border: 1px solid #e9ecef !important;
+                background-color: white !important;
+                z-index: 10001 !important;
+            }
+
+            /* Ensure proper spacing between dropdown items */
+            .navbar-nav .dropdown.show .dropdown-item {
+                display: block !important;
+                width: calc(100% - 1rem) !important;
+                margin: 0.25rem 0.5rem !important;
+                padding: 0.75rem 1rem !important;
+                border-radius: 6px !important;
+                background-color: transparent !important;
+                color: #333 !important;
+                text-decoration: none !important;
+                transition: all 0.2s ease !important;
+            }
+
+            .navbar-nav .dropdown.show .dropdown-item:hover {
+                background-color: var(--primary-color, #ffbc3b) !important;
+                color: white !important;
+                transform: translateX(8px) !important;
+            }
+
+            /* Ensure navbar has proper overflow handling */
+            .navbar-collapse.show {
+                overflow-y: auto !important;
+                max-height: 100vh !important;
+                padding-bottom: 2rem !important;
+            }
+
+            /* Fix for dropdown positioning in mobile navbar */
+            .navbar-nav .dropdown {
+                position: relative !important;
+                z-index: 10000 !important;
+            }
+
+            /* Additional dropdown visibility fixes */
+            .navbar-nav .dropdown.show .dropdown-menu {
+                background: white !important;
+                border: 2px solid var(--primary-color, #ffbc3b) !important;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+                margin: 0.5rem 1rem !important;
+                padding: 0.5rem 0 !important;
+                border-radius: 12px !important;
+                position: relative !important;
+                z-index: 10001 !important;
+                min-height: 50px !important;
+            }
+
+            /* Ensure dropdown items are clearly visible */
+            .navbar-nav .dropdown.show .dropdown-item {
+                background: white !important;
+                color: #333 !important;
+                font-weight: 500 !important;
+                border-bottom: 1px solid #f0f0f0 !important;
+                margin: 0.25rem 0.75rem !important;
+                padding: 0.75rem 1rem !important;
+                border-radius: 8px !important;
+                transition: all 0.2s ease !important;
+                position: relative !important;
+                z-index: 10002 !important;
+            }
+
+            .navbar-nav .dropdown.show .dropdown-item:last-child {
+                border-bottom: none !important;
+            }
+
+            .navbar-nav .dropdown.show .dropdown-item:hover {
+                background: var(--primary-color, #ffbc3b) !important;
+                color: white !important;
+                transform: translateX(8px) !important;
+                box-shadow: 0 4px 12px rgba(255, 188, 59, 0.3) !important;
+            }
+
+            /* Ensure navbar doesn't hide dropdowns */
+            .navbar-collapse.show {
+                overflow-y: auto !important;
+                max-height: 100vh !important;
+                padding-bottom: 2rem !important;
+            }
+
+            /* Fix for any potential clipping issues */
+            .navbar-nav .dropdown.show {
+                overflow: visible !important;
+                clip: auto !important;
+                clip-path: none !important;
             }
         }
 
@@ -614,6 +725,8 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                                         otherMenu.style.display = 'none';
                                         otherMenu.style.visibility = 'hidden';
                                         otherMenu.style.opacity = '0';
+                                        otherMenu.style.maxHeight = '0';
+                                        otherMenu.style.overflow = 'hidden';
                                     }
                                 }
                             });
@@ -628,6 +741,8 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                                 menu.style.display = 'none';
                                 menu.style.visibility = 'hidden';
                                 menu.style.opacity = '0';
+                                menu.style.maxHeight = '0';
+                                menu.style.overflow = 'hidden';
                                 console.log('Dropdown closed');
                             } else {
                                 dropdown.classList.add('show');
@@ -635,6 +750,15 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                                 menu.style.display = 'block';
                                 menu.style.visibility = 'visible';
                                 menu.style.opacity = '1';
+                                menu.style.maxHeight = '500px';
+                                menu.style.overflow = 'visible';
+                                menu.style.zIndex = '10001';
+                                menu.style.position = 'relative';
+                                menu.style.top = 'auto';
+                                menu.style.left = 'auto';
+                                menu.style.right = 'auto';
+                                menu.style.bottom = 'auto';
+                                menu.style.transform = 'none';
                                 console.log('Dropdown opened');
 
                                 // Ensure navbar stays open
