@@ -19,52 +19,21 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
 <section class="hero-section">
     <div class="hero-container">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6" data-aos="fade-right">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center" data-aos="fade-up">
                     <div class="hero-content">
                         <div class="hero-badge">
-                            <i class="fas fa-star me-2"></i>Jukwaa la Kwanza la Kidijitali kwa Wasichana
+                            Jukwaa la Kwanza la Kidijitali kwa Wasichana
                         </div>
-                        <h1 class="hero-title">
-                            Pata fursa, ujuzi wa kidijitali, anzisha biashara, na jijengee uhuru wa kiuchumi kupitia Panda Digital.
-                        </h1>
-                        <p class="hero-subtitle">
-                            Jisajili. Chagua kozi. Jifunze. Pata cheti. Kutana na fursa.
-                        </p>
+                        <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
+                        <p class="hero-subtitle">Jifunze ujuzi wa kidijitali, uwe na biashara yako, na uweze kujitegemea kiuchumi kupitia <?= htmlspecialchars($appConfig['name']) ?></p>
                         <div class="hero-buttons">
-                            <a href="<?= app_url('signup.php') ?>" class="btn btn-primary btn-lg me-3 mb-2">
-                                <i class="fas fa-user-plus me-2"></i>Jisajili Sasa
+                            <a href="<?= app_url('kozi.php') ?>" class="btn btn-primary">
+                                Anza Kozi
                             </a>
-                            <a href="<?= app_url('panda-sms.php') ?>" class="btn btn-outline-primary btn-lg mb-2">
-                                <i class="fas fa-sms me-2"></i>PandaSMS
+                            <a href="<?= app_url('fursa.php') ?>" class="btn btn-outline-primary">
+                                Tazama Fursa
                             </a>
-                        </div>
-                        <div class="hero-features">
-                            <div class="hero-feature">
-                                <i class="fas fa-check-circle text-success me-2"></i>
-                                <span>Masomo ya kidijitali kwa Kiswahili</span>
-                            </div>
-                            <div class="hero-feature">
-                                <i class="fas fa-check-circle text-success me-2"></i>
-                                <span>Kozi za bure na za kulipia</span>
-                            </div>
-                            <div class="hero-feature">
-                                <i class="fas fa-check-circle text-success me-2"></i>
-                                <span>Msaada kupitia Panda Chat</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <div class="hero-image">
-                        <img src="<?= asset('images/hero/young-women-entrepreneurs.jpg') ?>"
-                            alt="Young women entrepreneurs learning and working"
-                            class="img-fluid rounded-3 shadow-lg">
-                        <div class="hero-image-overlay">
-                            <div class="overlay-content">
-                                <h4>Wanawake Vijana Wajasiriamali</h4>
-                                <p>Jifunze na uendeleze biashara yako</p>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,101 +41,9 @@ $latestOpportunities = $fursaModel->getLatestOpportunities(6);
         </div>
     </div>
     <div class="hero-scroll-indicator">
-        <a href="#tunachokupa" class="scroll-down">
+        <a href="#stats" class="scroll-down">
             <i class="fas fa-chevron-down"></i>
         </a>
-    </div>
-</section>
-
-<!-- Tunachokupa Section -->
-<section id="tunachokupa" class="features-section py-5">
-    <div class="container">
-        <div class="row text-center mb-5">
-            <div class="col-lg-8 mx-auto" data-aos="fade-up">
-                <h2 class="section-title">Tunachokupa</h2>
-                <p class="section-subtitle">Jukwaa kamili la kujifunza, kuendeleza biashara, na kupata msaada wa kitaalamu</p>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <h3 class="feature-title">Masomo ya Kidijitali kwa Kiswahili</h3>
-                    <p class="feature-description">
-                        Masoko mtandaoni, mbinu za biashara hadi uanzishaji biashara ya vipodozi asili.
-                        Kozi zote kwa lugha ya Kiswahili ili uweze kujifunza kwa urahisi.
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <h3 class="feature-title">Kozi za Bure na za Kulipia</h3>
-                    <p class="feature-description">
-                        Zinazopatikana muda wowote, mahali popote – mijini na vijijini.
-                        Jifunze kwa kasi yako mwenyewe na upate cheti cha kusadikika.
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <h3 class="feature-title">Msaada kupitia Panda Chat</h3>
-                    <p class="feature-description">
-                        Uliza maswali na pata ushauri wa kitaalamu kutoka kwa wataalamu wetu.
-                        Panda Chat inakupa msaada wa moja kwa moja na majibu ya haraka.
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-store"></i>
-                    </div>
-                    <h3 class="feature-title">Onesha na Tangaza Biashara</h3>
-                    <p class="feature-description">
-                        Kupitia jukwaa letu, unaweza kutangaza biashara yako na kufikia wateja wengi.
-                        Jukwaa salama na la kusadikika kwa biashara za kidijitali.
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-sms"></i>
-                    </div>
-                    <h3 class="feature-title">Jifunze kwa SMS</h3>
-                    <p class="feature-description">
-                        Bila intaneti au smartphone. PandaSMS inakupa fursa ya kujifunza
-                        kupitia ujumbe wa SMS, hata kwenye simu za kawaida.
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="600">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Ongea Hub</h3>
-                    <p class="feature-description">
-                        Mahali salama pa kuripoti unyanyasaji wa kijinsia na rushwa ya ngono.
-                        Tunakupa msaada na usaidizi wa kisheria na kijamii.
-                    </p>
-                </div>
-            </div>
-        </div>
     </div>
 </section>
 
