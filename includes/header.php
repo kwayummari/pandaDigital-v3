@@ -195,6 +195,11 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 <span class="navbar-toggler-icon"></span>
             </button>
 
+            <!-- Custom Mobile Nav Toggle -->
+            <button class="mobile-nav-toggle d-lg-none" type="button" id="mobileNavToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -249,6 +254,75 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
             </div>
         </div>
     </nav>
+
+    <!-- Custom Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-content">
+            <div class="mobile-nav-header">
+                <div class="mobile-nav-brand"><?= htmlspecialchars($appConfig['name']) ?></div>
+                <button class="mobile-nav-close" id="mobileNavClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <ul class="mobile-nav-menu">
+                <li class="mobile-nav-item">
+                    <a href="<?= app_url() ?>" class="mobile-nav-link active">
+                        <i class="fas fa-home me-2"></i>NYUMBANI
+                    </a>
+                </li>
+
+                <li class="mobile-nav-item">
+                    <a href="<?= app_url('kozi.php') ?>" class="mobile-nav-link">
+                        <i class="fas fa-graduation-cap me-2"></i>KOZI ZOTE
+                    </a>
+                </li>
+
+                <li class="mobile-nav-item">
+                    <a href="<?= app_url('fursa.php') ?>" class="mobile-nav-link">
+                        <i class="fas fa-briefcase me-2"></i>FURSA
+                    </a>
+                </li>
+
+                <li class="mobile-nav-item mobile-dropdown" id="sokoDropdown">
+                    <button class="mobile-dropdown-toggle" type="button">
+                        <span><i class="fas fa-store me-2"></i>SOKO</span>
+                    </button>
+                    <div class="mobile-dropdown-menu">
+                        <a href="<?= app_url('soko.php') ?>" class="mobile-dropdown-item">SOKO</a>
+                        <a href="<?= app_url('biashara.php') ?>" class="mobile-dropdown-item">TANGAZA BIASHARA</a>
+                        <a href="<?= app_url('panda-market.php') ?>" class="mobile-dropdown-item">PANDA MARKET</a>
+                    </div>
+                </li>
+
+                <li class="mobile-nav-item mobile-dropdown" id="habariDropdown">
+                    <button class="mobile-dropdown-toggle" type="button">
+                        <span><i class="fas fa-newspaper me-2"></i>HABARI</span>
+                    </button>
+                    <div class="mobile-dropdown-menu">
+                        <a href="<?= app_url('wanufaika.php') ?>" class="mobile-dropdown-item">WANUFAIKA</a>
+                        <a href="<?= app_url('habari.php') ?>" class="mobile-dropdown-item">BLOG</a>
+                    </div>
+                </li>
+
+                <li class="mobile-nav-item">
+                    <a href="<?= app_url('uliza-swali.php') ?>" class="mobile-nav-link">
+                        <i class="fas fa-comments me-2"></i>ONGEA
+                    </a>
+                </li>
+
+                <li class="mobile-nav-item mobile-dropdown" id="pandaChatDropdown">
+                    <button class="mobile-dropdown-toggle" type="button">
+                        <span><i class="fas fa-headset me-2"></i>PANDA CHAT</span>
+                    </button>
+                    <div class="mobile-dropdown-menu">
+                        <a href="<?= app_url('uliza-swali.php') ?>" class="mobile-dropdown-item">Uliza swali kwa mtaalamu</a>
+                        <a href="<?= app_url('fomu.php') ?>" class="mobile-dropdown-item">Fomu ya kuwa mtaalamu</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
 
     <style>
         /* User Profile Menu Styles */
@@ -332,606 +406,344 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
             }
         }
 
-        /* Enhanced mobile dropdown menu styles */
+        /* Custom Mobile Navigation - Completely Remade */
         @media (max-width: 991.98px) {
-            .navbar-nav .dropdown-menu {
-                position: static !important;
-                float: none;
+
+            /* Hide Bootstrap navbar on mobile */
+            .navbar-collapse {
+                display: none !important;
+            }
+
+            /* Custom mobile navigation */
+            .mobile-nav {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
                 width: 100%;
-                margin-top: 0;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 9999;
+                overflow-y: auto;
+            }
+
+            .mobile-nav.show {
+                display: block;
+            }
+
+            .mobile-nav-content {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                max-width: 350px;
+                height: 100vh;
+                background: white;
+                padding: 2rem 1rem;
+                overflow-y: auto;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .mobile-nav.show .mobile-nav-content {
+                transform: translateX(0);
+            }
+
+            .mobile-nav-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+                padding-bottom: 1rem;
+                border-bottom: 2px solid var(--primary-color, #ffbc3b);
+            }
+
+            .mobile-nav-brand {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--primary-color, #ffbc3b);
+            }
+
+            .mobile-nav-close {
+                background: none;
                 border: none;
-                box-shadow: none;
-                background-color: #f8f9fa;
-                border-radius: 8px;
-                margin-left: 1rem;
-                margin-right: 1rem;
-                margin-bottom: 0.5rem;
-                z-index: 9999 !important;
-                position: relative !important;
-            }
-
-            .navbar-nav .dropdown-toggle::after {
-                float: right;
-                margin-top: 8px;
-                transition: transform 0.2s ease;
-            }
-
-            .navbar-nav .dropdown.show .dropdown-toggle::after {
-                transform: rotate(180deg);
-            }
-
-            .navbar-nav .dropdown-item {
-                padding: 0.75rem 1.5rem;
-                border-radius: 6px;
-                margin: 0.25rem 0.5rem;
+                font-size: 2rem;
+                color: #666;
+                cursor: pointer;
+                padding: 0;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
                 transition: all 0.2s ease;
             }
 
-            .navbar-nav .dropdown-item:hover {
-                background-color: var(--primary-color, #ffbc3b);
+            .mobile-nav-close:hover {
+                background: #f0f0f0;
+                color: #333;
+            }
+
+            .mobile-nav-menu {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .mobile-nav-item {
+                margin-bottom: 0.5rem;
+            }
+
+            .mobile-nav-link {
+                display: block;
+                padding: 1rem;
+                color: #333;
+                text-decoration: none;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-weight: 500;
+            }
+
+            .mobile-nav-link:hover {
+                background: var(--primary-color, #ffbc3b);
                 color: white;
                 transform: translateX(8px);
             }
 
-            /* Prevent dropdown from closing when clicking inside */
-            .navbar-nav .dropdown-menu {
-                pointer-events: auto;
+            .mobile-nav-link.active {
+                background: var(--primary-color, #ffbc3b);
+                color: white;
             }
 
-            /* Add smooth animation for dropdown */
-            .navbar-nav .dropdown-menu {
-                transition: all 0.3s ease;
-                opacity: 0;
+            /* Mobile dropdown styles */
+            .mobile-dropdown {
+                margin-bottom: 0.5rem;
+            }
+
+            .mobile-dropdown-toggle {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                padding: 1rem;
+                background: none;
+                border: none;
+                color: #333;
+                text-align: left;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-weight: 500;
+                cursor: pointer;
+            }
+
+            .mobile-dropdown-toggle:hover {
+                background: #f8f9fa;
+                color: var(--primary-color, #ffbc3b);
+            }
+
+            .mobile-dropdown-toggle.active {
+                background: var(--primary-color, #ffbc3b);
+                color: white;
+            }
+
+            .mobile-dropdown-toggle::after {
+                content: '▼';
+                font-size: 0.8rem;
+                transition: transform 0.2s ease;
+            }
+
+            .mobile-dropdown-toggle.active::after {
+                transform: rotate(180deg);
+            }
+
+            .mobile-dropdown-menu {
                 max-height: 0;
                 overflow: hidden;
+                transition: max-height 0.3s ease;
+                background: #f8f9fa;
+                border-radius: 8px;
+                margin: 0.5rem 0;
             }
 
-            .navbar-nav .dropdown.show .dropdown-menu {
-                opacity: 1;
+            .mobile-dropdown.show .mobile-dropdown-menu {
                 max-height: 300px;
             }
 
-            /* Ensure dropdowns are visible and properly positioned */
-            .navbar-nav .dropdown.show {
-                position: relative;
-                z-index: 10000;
-                margin-bottom: 1rem;
+            .mobile-dropdown-item {
+                display: block;
+                padding: 0.75rem 1.5rem;
+                color: #555;
+                text-decoration: none;
+                border-radius: 6px;
+                margin: 0.25rem 0.5rem;
+                transition: all 0.2s ease;
+                font-weight: 400;
             }
 
-            .navbar-nav .dropdown.show .dropdown-menu {
+            .mobile-dropdown-item:hover {
+                background: var(--primary-color, #ffbc3b);
+                color: white;
+                transform: translateX(8px);
+            }
+
+            /* Mobile nav toggle button */
+            .mobile-nav-toggle {
                 display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                max-height: 500px !important;
-                overflow: visible !important;
-                position: relative !important;
-                top: auto !important;
-                left: auto !important;
-                right: auto !important;
-                bottom: auto !important;
-                transform: none !important;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-                border: 1px solid #e9ecef !important;
-                background-color: white !important;
-                z-index: 10001 !important;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: #333;
+                cursor: pointer;
+                padding: 0.5rem;
+                border-radius: 4px;
+                transition: all 0.2s ease;
             }
 
-            /* Ensure proper spacing between dropdown items */
-            .navbar-nav .dropdown.show .dropdown-item {
-                display: block !important;
-                width: calc(100% - 1rem) !important;
-                margin: 0.25rem 0.5rem !important;
-                padding: 0.75rem 1rem !important;
-                border-radius: 6px !important;
-                background-color: transparent !important;
-                color: #333 !important;
-                text-decoration: none !important;
-                transition: all 0.2s ease !important;
-            }
-
-            .navbar-nav .dropdown.show .dropdown-item:hover {
-                background-color: var(--primary-color, #ffbc3b) !important;
-                color: white !important;
-                transform: translateX(8px) !important;
-            }
-
-            /* Ensure navbar has proper overflow handling */
-            .navbar-collapse.show {
-                overflow-y: auto !important;
-                max-height: 100vh !important;
-                padding-bottom: 2rem !important;
-            }
-
-            /* Fix for dropdown positioning in mobile navbar */
-            .navbar-nav .dropdown {
-                position: relative !important;
-                z-index: 10000 !important;
-            }
-
-            /* Additional dropdown visibility fixes */
-            .navbar-nav .dropdown.show .dropdown-menu {
-                background: white !important;
-                border: 2px solid var(--primary-color, #ffbc3b) !important;
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
-                margin: 0.5rem 1rem !important;
-                padding: 0.5rem 0 !important;
-                border-radius: 12px !important;
-                position: relative !important;
-                z-index: 10001 !important;
-                min-height: 50px !important;
-            }
-
-            /* Ensure dropdown items are clearly visible */
-            .navbar-nav .dropdown.show .dropdown-item {
-                background: white !important;
-                color: #333 !important;
-                font-weight: 500 !important;
-                border-bottom: 1px solid #f0f0f0 !important;
-                margin: 0.25rem 0.75rem !important;
-                padding: 0.75rem 1rem !important;
-                border-radius: 8px !important;
-                transition: all 0.2s ease !important;
-                position: relative !important;
-                z-index: 10002 !important;
-            }
-
-            .navbar-nav .dropdown.show .dropdown-item:last-child {
-                border-bottom: none !important;
-            }
-
-            .navbar-nav .dropdown.show .dropdown-item:hover {
-                background: var(--primary-color, #ffbc3b) !important;
-                color: white !important;
-                transform: translateX(8px) !important;
-                box-shadow: 0 4px 12px rgba(255, 188, 59, 0.3) !important;
-            }
-
-            /* Ensure navbar doesn't hide dropdowns */
-            .navbar-collapse.show {
-                overflow-y: auto !important;
-                max-height: 100vh !important;
-                padding-bottom: 2rem !important;
-            }
-
-            /* Fix for any potential clipping issues */
-            .navbar-nav .dropdown.show {
-                overflow: visible !important;
-                clip: auto !important;
-                clip-path: none !important;
+            .mobile-nav-toggle:hover {
+                background: #f0f0f0;
+                color: var(--primary-color, #ffbc3b);
             }
         }
 
-        /* Ensure dropdowns work properly on all devices */
-        .dropdown-menu.show {
-            display: block !important;
-        }
-
-        /* Fix for touch devices */
-        @media (hover: none) and (pointer: coarse) {
-            .dropdown-toggle {
-                min-height: 44px;
-                /* Minimum touch target size */
+        /* Hide mobile nav toggle on desktop */
+        @media (min-width: 992px) {
+            .mobile-nav-toggle {
+                display: none !important;
             }
-
-            .dropdown-item {
-                min-height: 44px;
-                display: flex;
-                align-items: center;
-            }
-        }
-
-        /* Additional mobile dropdown fixes */
-        @media (max-width: 991.98px) {
-
-            /* Ensure dropdown menus are visible when open */
-            .navbar-nav .dropdown.show .dropdown-menu {
-                display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                max-height: 300px !important;
-                transform: none !important;
-            }
-
-            /* Prevent dropdown from being hidden by overflow */
-            .navbar-collapse {
-                overflow: visible !important;
-            }
-
-            /* Keep navbar open when dropdowns are active */
-            .navbar-collapse.show {
-                overflow: visible !important;
-            }
-
-            /* Ensure proper z-index for dropdowns */
-            .navbar-nav .dropdown-menu {
-                z-index: 1001;
-                position: relative !important;
-                transform: none !important;
-                left: auto !important;
-                right: auto !important;
-                top: auto !important;
-                bottom: auto !important;
-            }
-
-            /* Smooth transitions for dropdown items */
-            .navbar-nav .dropdown-item {
-                opacity: 0;
-                transform: translateX(-10px);
-                transition: all 0.3s ease;
-            }
-
-            .navbar-nav .dropdown.show .dropdown-item {
-                opacity: 1;
-                transform: translateX(0);
-            }
-
-            /* Stagger animation for dropdown items */
-            .navbar-nav .dropdown.show .dropdown-item:nth-child(1) {
-                transition-delay: 0.1s;
-            }
-
-            .navbar-nav .dropdown.show .dropdown-item:nth-child(2) {
-                transition-delay: 0.15s;
-            }
-
-            .navbar-nav .dropdown.show .dropdown-item:nth-child(3) {
-                transition-delay: 0.2s;
-            }
-
-            .navbar-nav .dropdown.show .dropdown-item:nth-child(4) {
-                transition-delay: 0.25s;
-            }
-
-            .navbar-nav .dropdown.show .dropdown-item:nth-child(5) {
-                transition-delay: 0.3s;
-            }
-
-            /* Prevent navbar from closing when dropdowns are open */
-            .navbar-nav .dropdown.show~.navbar-nav,
-            .navbar-nav .dropdown.show+.navbar-nav {
-                display: block !important;
-            }
-
-            /* Ensure navbar stays visible when dropdowns are active */
-            .navbar-collapse.show .navbar-nav .dropdown.show {
-                position: relative;
-                z-index: 1002;
-            }
-        }
-
-        /* Global dropdown fixes */
-        .dropdown-menu {
-            pointer-events: auto !important;
-        }
-
-        .dropdown-menu.show {
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-
-        /* Prevent any CSS from hiding dropdowns */
-        .dropdown-menu[style*="display: none"] {
-            display: block !important;
-        }
-
-        .dropdown-menu[style*="visibility: hidden"] {
-            visibility: visible !important;
-        }
-
-        /* Prevent navbar from closing when dropdowns are active */
-        @media (max-width: 991.98px) {
-            .navbar-collapse.show {
-                display: block !important;
-                overflow: visible !important;
-                height: auto !important;
-                max-height: none !important;
-            }
-
-            /* Ensure navbar stays open when dropdowns are active */
-            .navbar-collapse.show .navbar-nav .dropdown.show {
-                position: relative;
-                z-index: 1002;
-            }
-
-            /* Basic dropdown protection without interfering with navbar toggle */
-
-            /* Ensure dropdowns don't cause navbar to collapse */
-            .navbar-nav .dropdown.show {
-                position: relative;
-                z-index: 1002;
-            }
-
-            .navbar-nav .dropdown.show .dropdown-menu {
-                position: relative !important;
-                z-index: 1003;
-            }
-
-            /* Ensure navbar toggle button works properly */
-            .navbar-toggler {
-                pointer-events: auto !important;
-                cursor: pointer !important;
-            }
-
-            /* Basic navbar functionality - let Bootstrap handle the rest */
         }
     </style>
 
     <script>
-        // Enhanced Bootstrap 5 dropdown handling for mobile
+        // Simple Mobile Navigation System - Completely Remade
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Header script loaded - initializing dropdowns...');
+            console.log('Mobile navigation system initializing...');
 
-            // Wait for Bootstrap to be fully loaded
-            if (typeof bootstrap !== 'undefined') {
-                console.log('Bootstrap detected, initializing dropdowns...');
-                // Initialize Bootstrap dropdowns properly
-                const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
-                const dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
-                    return new bootstrap.Dropdown(dropdownToggleEl, {
-                        autoClose: true,
-                        boundary: 'viewport'
-                    });
-                });
-                console.log('Bootstrap dropdowns initialized:', dropdownList.length);
-            } else {
-                console.log('Bootstrap not detected, using custom dropdown handling...');
-            }
+            // Get mobile navigation elements
+            const mobileNav = document.getElementById('mobileNav');
+            const mobileNavToggle = document.getElementById('mobileNavToggle');
+            const mobileNavClose = document.getElementById('mobileNavClose');
+            const mobileDropdowns = document.querySelectorAll('.mobile-dropdown');
 
-            // Enhanced mobile dropdown behavior
-            if (window.innerWidth <= 991.98) {
-                console.log('Mobile view detected, setting up custom dropdown handling...');
-                const mobileDropdowns = document.querySelectorAll('.navbar-nav .dropdown');
-                console.log('Found mobile dropdowns:', mobileDropdowns.length);
-
-                mobileDropdowns.forEach((dropdown, index) => {
-                    const toggle = dropdown.querySelector('.dropdown-toggle');
-                    const menu = dropdown.querySelector('.dropdown-menu');
-
-                    console.log(`Setting up dropdown ${index + 1}:`, {
-                        toggle: !!toggle,
-                        menu: !!menu
-                    });
-
-                    if (toggle && menu) {
-                        // Remove any existing Bootstrap event listeners
-                        if (toggle._mobileDropdownHandler) {
-                            toggle.removeEventListener('click', toggle._mobileDropdownHandler);
-                        }
-
-                        // Create new handler
-                        toggle._mobileDropdownHandler = function(e) {
-                            console.log('Dropdown toggle clicked:', e.target.textContent);
-                            e.preventDefault();
-                            e.stopPropagation();
-
-                            // Prevent navbar from closing
-                            const navbarCollapse = document.querySelector('.navbar-collapse');
-                            if (navbarCollapse && navbarCollapse.classList.contains('show')) {
-                                // Keep navbar open
-                                navbarCollapse.classList.add('show');
-                                navbarCollapse.style.display = 'block';
-                                navbarCollapse.style.overflow = 'visible';
-                            }
-
-                            // Close other open dropdowns
-                            mobileDropdowns.forEach(otherDropdown => {
-                                if (otherDropdown !== dropdown && otherDropdown.classList.contains('show')) {
-                                    console.log('Closing other dropdown');
-                                    otherDropdown.classList.remove('show');
-                                    const otherMenu = otherDropdown.querySelector('.dropdown-menu');
-                                    if (otherMenu) {
-                                        otherMenu.classList.remove('show');
-                                        otherMenu.style.display = 'none';
-                                        otherMenu.style.visibility = 'hidden';
-                                        otherMenu.style.opacity = '0';
-                                        otherMenu.style.maxHeight = '0';
-                                        otherMenu.style.overflow = 'hidden';
-                                    }
-                                }
-                            });
-
-                            // Toggle current dropdown
-                            const isOpen = dropdown.classList.contains('show');
-                            console.log('Dropdown state:', isOpen ? 'open' : 'closed');
-
-                            if (isOpen) {
-                                dropdown.classList.remove('show');
-                                menu.classList.remove('show');
-                                menu.style.display = 'none';
-                                menu.style.visibility = 'hidden';
-                                menu.style.opacity = '0';
-                                menu.style.maxHeight = '0';
-                                menu.style.overflow = 'hidden';
-                                console.log('Dropdown closed');
-                            } else {
-                                dropdown.classList.add('show');
-                                menu.classList.add('show');
-                                menu.style.display = 'block';
-                                menu.style.visibility = 'visible';
-                                menu.style.opacity = '1';
-                                menu.style.maxHeight = '500px';
-                                menu.style.overflow = 'visible';
-                                menu.style.zIndex = '10001';
-                                menu.style.position = 'relative';
-                                menu.style.top = 'auto';
-                                menu.style.left = 'auto';
-                                menu.style.right = 'auto';
-                                menu.style.bottom = 'auto';
-                                menu.style.transform = 'none';
-                                console.log('Dropdown opened');
-
-                                // Ensure navbar stays open
-                                if (navbarCollapse) {
-                                    navbarCollapse.classList.add('show');
-                                    navbarCollapse.style.display = 'block';
-                                    navbarCollapse.style.overflow = 'visible';
-                                }
-                            }
-                        };
-
-                        // Add event listener
-                        toggle.addEventListener('click', toggle._mobileDropdownHandler);
-                        console.log('Event listener added to dropdown toggle');
-
-                        // Prevent menu from closing when clicking inside
-                        menu.addEventListener('click', function(e) {
-                            console.log('Menu clicked, preventing propagation');
-                            e.stopPropagation();
-                        });
-
-                        // Prevent menu from closing when clicking on dropdown items
-                        const dropdownItems = menu.querySelectorAll('.dropdown-item');
-                        dropdownItems.forEach((item, itemIndex) => {
-                            item.addEventListener('click', function(e) {
-                                console.log(`Dropdown item ${itemIndex + 1} clicked:`, item.textContent);
-                                e.stopPropagation();
-                                // Close dropdown after item click
-                                setTimeout(() => {
-                                    dropdown.classList.remove('show');
-                                    menu.classList.remove('show');
-                                    menu.style.display = 'none';
-                                    menu.style.visibility = 'hidden';
-                                    menu.style.opacity = '0';
-                                    console.log('Dropdown closed after item selection');
-                                }, 100);
-                            });
-                        });
-                    }
-                });
-
-                // Close dropdowns when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!e.target.closest('.navbar-nav .dropdown')) {
-                        console.log('Click outside dropdowns detected, closing all...');
-                        mobileDropdowns.forEach(dropdown => {
-                            dropdown.classList.remove('show');
-                            const menu = dropdown.querySelector('.dropdown-menu');
-                            if (menu) {
-                                menu.classList.remove('show');
-                                menu.style.display = 'none';
-                                menu.style.visibility = 'hidden';
-                                menu.style.opacity = '0';
-                            }
-                        });
-                    }
-                });
-
-                // Close dropdowns when navbar collapses
-                const navbarCollapse = document.querySelector('.navbar-collapse');
-                if (navbarCollapse) {
-                    // Prevent navbar from closing when dropdowns are open
-                    navbarCollapse.addEventListener('hide.bs.collapse', function(e) {
-                        const hasOpenDropdowns = Array.from(mobileDropdowns).some(dropdown =>
-                            dropdown.classList.contains('show')
-                        );
-
-                        if (hasOpenDropdowns) {
-                            console.log('Preventing navbar collapse - dropdowns are open');
-                            e.preventDefault();
-                            e.stopPropagation();
-                            return false;
-                        }
-                    });
-
-                    navbarCollapse.addEventListener('hidden.bs.collapse', function() {
-                        console.log('Navbar collapsed, closing dropdowns...');
-                        mobileDropdowns.forEach(dropdown => {
-                            dropdown.classList.remove('show');
-                            const menu = dropdown.querySelector('.dropdown-menu');
-                            if (menu) {
-                                menu.classList.remove('show');
-                                menu.style.display = 'none';
-                                menu.style.visibility = 'hidden';
-                                menu.style.opacity = '0';
-                            }
-                        });
-                    });
-                }
-
-                // Prevent navbar toggle button from closing navbar when dropdowns are open
-                const navbarToggler = document.querySelector('.navbar-toggler');
-                if (navbarToggler) {
-                    console.log('Navbar toggler found:', navbarToggler);
-
-                    navbarToggler.addEventListener('click', function(e) {
-                        console.log('Navbar toggler clicked');
-                        const hasOpenDropdowns = Array.from(mobileDropdowns).some(dropdown =>
-                            dropdown.classList.contains('show')
-                        );
-
-                        if (hasOpenDropdowns) {
-                            console.log('Closing dropdowns before navbar toggle');
-                            // Close all dropdowns before allowing navbar toggle
-                            mobileDropdowns.forEach(dropdown => {
-                                dropdown.classList.remove('show');
-                                const menu = dropdown.querySelector('.dropdown-menu');
-                                if (menu) {
-                                    menu.classList.remove('show');
-                                    menu.style.display = 'none';
-                                    menu.style.visibility = 'hidden';
-                                    menu.style.opacity = '0';
-                                }
-                            });
-                        }
-                    });
-                } else {
-                    console.log('Navbar toggler not found');
-                }
-
-                // Handle window resize
-                let resizeTimer;
-                window.addEventListener('resize', function() {
-                    clearTimeout(resizeTimer);
-                    resizeTimer = setTimeout(function() {
-                        if (window.innerWidth > 991.98) {
-                            console.log('Switched to desktop view, resetting dropdowns...');
-                            // Reset to desktop behavior
-                            mobileDropdowns.forEach(dropdown => {
-                                dropdown.classList.remove('show');
-                                const menu = dropdown.querySelector('.dropdown-menu');
-                                if (menu) {
-                                    menu.classList.remove('show');
-                                    menu.style.display = '';
-                                    menu.style.visibility = '';
-                                    menu.style.opacity = '';
-                                }
-                            });
-                        }
-                    }, 250);
+            // Mobile navigation toggle
+            if (mobileNavToggle) {
+                mobileNavToggle.addEventListener('click', function() {
+                    console.log('Mobile nav toggle clicked');
+                    mobileNav.classList.add('show');
+                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
                 });
             }
 
-            // Prevent any global click handlers from interfering
-            document.addEventListener('click', function(e) {
-                if (e.target.closest('.dropdown-menu')) {
-                    console.log('Preventing global click handler interference');
-                    e.stopPropagation();
-                }
-            }, true);
+            // Mobile navigation close
+            if (mobileNavClose) {
+                mobileNavClose.addEventListener('click', function() {
+                    console.log('Mobile nav close clicked');
+                    mobileNav.classList.remove('show');
+                    document.body.style.overflow = ''; // Restore scrolling
 
-            // Simple solution: Only prevent dropdown clicks from closing navbar
-            if (window.innerWidth <= 991.98) {
-                // Add a simple event listener to prevent dropdown clicks from bubbling up
-                document.addEventListener('click', function(e) {
-                    // If clicking on a dropdown toggle, prevent it from affecting navbar
-                    if (e.target.closest('.dropdown-toggle')) {
+                    // Close all dropdowns when closing nav
+                    mobileDropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('show');
+                    });
+                });
+            }
+
+            // Close mobile nav when clicking outside
+            mobileNav.addEventListener('click', function(e) {
+                if (e.target === mobileNav) {
+                    console.log('Clicked outside mobile nav content');
+                    mobileNav.classList.remove('show');
+                    document.body.style.overflow = '';
+
+                    // Close all dropdowns
+                    mobileDropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('show');
+                    });
+                }
+            });
+
+            // Handle mobile dropdowns
+            mobileDropdowns.forEach(dropdown => {
+                const toggle = dropdown.querySelector('.mobile-dropdown-toggle');
+                const menu = dropdown.querySelector('.mobile-dropdown-menu');
+
+                if (toggle && menu) {
+                    toggle.addEventListener('click', function(e) {
+                        e.preventDefault();
                         e.stopPropagation();
-                    }
-                }, true);
 
-                // Add basic debugging for navbar toggle
-                const navbarToggler = document.querySelector('.navbar-toggler');
-                if (navbarToggler) {
-                    console.log('Navbar toggler found and working');
-                    navbarToggler.addEventListener('click', function() {
-                        console.log('Navbar toggle clicked - should open/close normally');
+                        console.log('Mobile dropdown toggle clicked:', toggle.textContent.trim());
+
+                        // Close other dropdowns
+                        mobileDropdowns.forEach(otherDropdown => {
+                            if (otherDropdown !== dropdown) {
+                                otherDropdown.classList.remove('show');
+                            }
+                        });
+
+                        // Toggle current dropdown
+                        dropdown.classList.toggle('show');
+
+                        if (dropdown.classList.contains('show')) {
+                            console.log('Mobile dropdown opened');
+                        } else {
+                            console.log('Mobile dropdown closed');
+                        }
                     });
-                } else {
-                    console.log('Navbar toggler not found - check HTML structure');
                 }
-            }
+            });
 
-            console.log('Dropdown initialization complete');
+            // Handle dropdown item clicks
+            const mobileDropdownItems = document.querySelectorAll('.mobile-dropdown-item');
+            mobileDropdownItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    console.log('Mobile dropdown item clicked:', item.textContent.trim());
+
+                    // Close mobile nav after item click
+                    setTimeout(() => {
+                        mobileNav.classList.remove('show');
+                        document.body.style.overflow = '';
+
+                        // Close all dropdowns
+                        mobileDropdowns.forEach(dropdown => {
+                            dropdown.classList.remove('show');
+                        });
+                    }, 100);
+                });
+            });
+
+            // Close mobile nav on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileNav.classList.contains('show')) {
+                    console.log('Escape key pressed, closing mobile nav');
+                    mobileNav.classList.remove('show');
+                    document.body.style.overflow = '';
+
+                    // Close all dropdowns
+                    mobileDropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('show');
+                    });
+                }
+            });
+
+            // Handle window resize
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    if (window.innerWidth > 991.98) {
+                        console.log('Switched to desktop view, closing mobile nav');
+                        mobileNav.classList.remove('show');
+                        document.body.style.overflow = '';
+
+                        // Close all dropdowns
+                        mobileDropdowns.forEach(dropdown => {
+                            dropdown.classList.remove('show');
+                        });
+                    }
+                }, 250);
+            });
+
+            console.log('Mobile navigation system initialized successfully');
         });
     </script>
