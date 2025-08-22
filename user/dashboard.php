@@ -144,6 +144,42 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                 max-width: 100% !important;
                 margin: 5px 0 !important;
             }
+
+            /* Fix Kozi Zako section layout on mobile */
+            .course-list-item {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                padding: 15px !important;
+            }
+
+            .course-thumbnail {
+                margin-bottom: 10px !important;
+                margin-right: 0 !important;
+            }
+
+            .course-info {
+                margin-bottom: 10px !important;
+                width: 100% !important;
+            }
+
+            .course-info h6 {
+                max-width: 100% !important;
+                margin-bottom: 5px !important;
+            }
+
+            .course-info p {
+                margin-bottom: 10px !important;
+            }
+
+            .course-action {
+                width: 100% !important;
+                text-align: center !important;
+            }
+
+            .course-action .btn {
+                width: 100% !important;
+                margin-top: 5px !important;
+            }
         }
 
         @media (max-width: 576px) {
@@ -168,6 +204,24 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
 
             .action-btn {
                 margin: 2px 0 !important;
+            }
+
+            /* Additional mobile fixes for Kozi Zako section */
+            .course-list-item {
+                padding: 10px !important;
+            }
+
+            .course-thumbnail {
+                margin-bottom: 8px !important;
+            }
+
+            .course-info {
+                margin-bottom: 8px !important;
+            }
+
+            .course-action .btn {
+                padding: 8px 16px !important;
+                font-size: 14px !important;
             }
         }
     </style>
