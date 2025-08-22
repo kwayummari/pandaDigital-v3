@@ -1,9 +1,9 @@
 /* Modern Panda Digital V3 Styles - Minimalistic Design */
 
 :root {
-  --primary-color: #FFCB3B;
-  --primary-dark: #FFCB3B;
-  --primary-light: #FFCB3B;
+  --primary-color: #ffcb3b;
+  --primary-dark: #ffcb3b;
+  --primary-light: #ffcb3b;
   --secondary-color: #5f4594;
   --secondary-dark: #4a3675;
   --secondary-light: #7a5bb8;
@@ -531,6 +531,8 @@
 @media (max-width: 991.98px) {
   .sidebar {
     transform: translateX(-100%);
+    position: fixed;
+    z-index: 1000;
   }
 
   .sidebar.collapsed {
@@ -538,17 +540,148 @@
   }
 
   .main-content {
-    margin-left: 0;
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 15px !important;
   }
 
   .dashboard-container.sidebar-collapsed .main-content {
-    margin-left: 0;
+    margin-left: 0 !important;
+  }
+
+  /* Fix container margins on mobile */
+  .container-fluid {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+  /* Fix card margins on mobile */
+  .card {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Fix form margins on mobile */
+  .form-control,
+  .form-select {
+    margin-bottom: 15px !important;
+  }
+
+  /* Fix page header margins on mobile */
+  .page-header {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 15px !important;
+  }
+}
+
+/* Additional mobile fixes for smaller screens */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 10px !important;
+  }
+
+  .container-fluid {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .page-header {
+    padding: 10px !important;
+  }
+
+  /* Fix category grid on mobile */
+  .category-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Fix priority badges on mobile */
+  .priority-badge {
+    display: block !important;
+    margin-bottom: 0.5rem !important;
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .main-content {
+    padding: 5px !important;
+  }
+
+  .container-fluid {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  .page-header {
+    padding: 5px !important;
+  }
+
+  /* Fix form spacing on very small screens */
+  .mb-4 {
+    margin-bottom: 1rem !important;
+  }
+
+  .card-body {
+    padding: 1rem !important;
   }
 }
 
 @media (min-width: 992px) {
   .sidebar-toggle {
     display: none;
+  }
+}
+
+/* User Dashboard Specific Mobile Fixes */
+@media (max-width: 991.98px) {
+  /* Fix dashboard container on mobile */
+  .dashboard-container {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Fix sidebar positioning on mobile */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    z-index: 1000;
+    background: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Fix main content positioning on mobile */
+  .main-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Fix form layouts on mobile */
+  .feedback-card,
+  .stats-card,
+  .course-card {
+    margin: 10px 0 !important;
+    border-radius: 10px !important;
+  }
+
+  /* Fix input groups on mobile */
+  .input-group {
+    margin-bottom: 15px !important;
+  }
+
+  /* Fix button groups on mobile */
+  .btn-group {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .btn-group .btn {
+    margin-bottom: 5px !important;
+    border-radius: 5px !important;
   }
 }
 

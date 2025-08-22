@@ -117,6 +117,68 @@ try {
             color: var(--secondary-color);
         }
 
+        /* Mobile-specific fixes for feedback form */
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+
+            .col-md-9.ms-sm-auto.col-lg-10.px-md-4.py-4 {
+                padding: 15px !important;
+                margin: 0 !important;
+            }
+
+            .feedback-card {
+                margin: 0 !important;
+                border-radius: 10px !important;
+            }
+
+            .card-body {
+                padding: 1rem !important;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.5rem !important;
+            }
+
+            .priority-badge {
+                display: block !important;
+                margin: 0.5rem 0 !important;
+                text-align: center !important;
+            }
+
+            .form-control,
+            .form-select {
+                margin-bottom: 15px !important;
+            }
+
+            .page-header {
+                padding: 15px !important;
+                margin: 0 0 20px 0 !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container-fluid {
+                padding-left: 5px !important;
+                padding-right: 5px !important;
+            }
+
+            .col-md-9.ms-sm-auto.col-lg-10.px-md-4.py-4 {
+                padding: 10px !important;
+            }
+
+            .card-body {
+                padding: 0.75rem !important;
+            }
+
+            .page-header {
+                padding: 10px !important;
+            }
+        }
+
         .priority-badge:hover {
             border-color: var(--primary-color);
         }
