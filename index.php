@@ -486,6 +486,12 @@ $featuredExperts = array_slice($expertModel->getAllExperts(), 0, 4);
 <!-- Stats Section -->
 <section id="stats" class="stats-section">
     <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto" data-aos="fade-up">
+                <h2 class="section-title">Matokeo Katika Namba</h2>
+                <!-- <p class="section-subtitle">Wataalamu wa kitaalamu na wenye uzoefu wa kutosha katika sekta ya kidijitali na biashara</p> -->
+            </div>
+        </div>
         <div class="row">
             <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="stat-card">
