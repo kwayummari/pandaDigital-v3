@@ -591,7 +591,7 @@ $featuredExperts = array_slice($expertModel->getAllExperts(), 0, 4);
                 <p class="cta-subtitle">Jiunge na #PandaUwezavyo campaign.</p>
             </div>
             <div class="col-lg-4 text-lg-end" data-aos="fade-left">
-                <a href="<?= app_url('signup.php') ?>" class="btn btn-light btn-lg">
+                <a href="#" class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#signupModal">
                     <i class="fas fa-rocket me-2"></i>Anza Sasa
                 </a>
             </div>
