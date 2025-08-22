@@ -21,19 +21,16 @@ try {
         error_log("Debug: First course data: " . json_encode($allCourses[0]));
     }
 
-    // Filter only published courses and format for dropdown
+    // Format courses for dropdown (no status filtering needed - getAllCourses gets active courses)
     $courses = [];
     foreach ($allCourses as $course) {
-        error_log("Debug: Course status: " . ($course['status'] ?? 'undefined'));
-        if (isset($course['status']) && $course['status'] === 'published') {
-            $courses[] = [
-                'id' => $course['id'],
-                'title' => $course['name'] ?? $course['title'] ?? 'Untitled Course'
-            ];
-        }
+        $courses[] = [
+            'id' => $course['id'],
+            'title' => $course['name'] // Course model uses 'name' field
+        ];
     }
 
-    error_log("Debug: Published courses found: " . count($courses));
+    error_log("Debug: Courses formatted for dropdown: " . count($courses));
 
     // Sort courses alphabetically by title
     usort($courses, function ($a, $b) {
