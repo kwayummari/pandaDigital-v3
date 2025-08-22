@@ -1,32 +1,46 @@
 <?php
 require_once __DIR__ . "/../config/init.php";
 require_once __DIR__ . "/../middleware/AuthMiddleware.php";
+require_once __DIR__ . "/../models/Course.php";
 
 $auth = new AuthMiddleware();
 $auth->requireRole('user');
 
 $currentUser = $auth->getCurrentUser();
 
-// Get available courses for the user
+// Get available courses for the user using Course model
 try {
-    require_once __DIR__ . "/../config/database.php";
-    $database = new Database();
-    $conn = $database->getConnection();
+    $courseModel = new Course();
 
-    if (!$conn) {
-        throw new Exception("Database connection failed");
+    // Get all courses first
+    $allCourses = $courseModel->getAllCourses();
+
+    // Debug: Log what we got
+    error_log("Debug: Total courses fetched: " . count($allCourses));
+    if (!empty($allCourses)) {
+        error_log("Debug: First course data: " . json_encode($allCourses[0]));
     }
 
-    // Get user's courses
-    $courseQuery = "SELECT DISTINCT c.id, c.title FROM course c 
-                    INNER JOIN video v ON c.id = v.course_id 
-                    WHERE c.status = '1' 
-                    ORDER BY c.title ASC";
-    $courseStmt = $conn->prepare($courseQuery);
-    $courseStmt->execute();
-    $courses = $courseStmt->fetchAll(PDO::FETCH_ASSOC);
+    // Filter only published courses and format for dropdown
+    $courses = [];
+    foreach ($allCourses as $course) {
+        error_log("Debug: Course status: " . ($course['status'] ?? 'undefined'));
+        if (isset($course['status']) && $course['status'] === 'published') {
+            $courses[] = [
+                'id' => $course['id'],
+                'title' => $course['name'] ?? $course['title'] ?? 'Untitled Course'
+            ];
+        }
+    }
+
+    error_log("Debug: Published courses found: " . count($courses));
+
+    // Sort courses alphabetically by title
+    usort($courses, function ($a, $b) {
+        return strcmp($a['title'], $b['title']);
+    });
 } catch (Exception $e) {
-    error_log("Database error: " . $e->getMessage());
+    error_log("Error fetching courses: " . $e->getMessage());
     $courses = [];
 }
 ?>
@@ -262,12 +276,19 @@ try {
                                 </label>
                                 <select class="form-select" id="courseId" name="courseId">
                                     <option value="">Chagua kozi...</option>
-                                    <?php foreach ($courses as $course): ?>
-                                        <option value="<?php echo $course['id']; ?>">
-                                            <?php echo htmlspecialchars($course['title']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
+                                    <?php if (!empty($courses)): ?>
+                                        <?php foreach ($courses as $course): ?>
+                                            <option value="<?php echo $course['id']; ?>">
+                                                <?php echo htmlspecialchars($course['title']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <option value="" disabled>Hakuna kozi zilizopatikana</option>
+                                    <?php endif; ?>
                                 </select>
+                                <?php if (empty($courses)): ?>
+                                    <small class="text-muted">Kozi zote zimefungwa au hazijapangwa bado</small>
+                                <?php endif; ?>
                             </div>
 
                             <!-- Subject -->
