@@ -88,17 +88,6 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
             padding: 0.25rem 0.5rem;
         }
     </style>
-
-
-    cursor: pointer;
-    padding: 5px;
-    }
-
-
-
-
-
-    </style>
 </head>
 
 <body>
