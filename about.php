@@ -15,12 +15,24 @@ include 'includes/header.php';
 ?>
 
 <!-- Page Header -->
-<section class="page-header bg-primary text-white py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-4 fw-bold mb-3">Kuhusu Sisi</h1>
-                <p class="lead mb-0">Jifunze zaidi kuhusu Panda Digital na jinsi tunavyowasaidia wasichana kunufaika uchumi wa kidigitali</p>
+<section class="page-header" style="background-image: url('<?= asset('images/banner/new-banner2.jpg') ?>'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+    <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6);"></div>
+    <div class="container" style="position: relative; z-index: 2;">
+        <div class="row align-items-center">
+            <div class="col-lg-8" data-aos="fade-right">
+                <h1 class="page-title">Kuhusu Sisi</h1>
+                <p class="page-subtitle">Jifunze zaidi kuhusu Panda Digital na jinsi tunavyowasaidia wasichana kunufaika uchumi wa kidigitali</p>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="<?= app_url() ?>">Nyumbani</a></li>
+                        <li class="breadcrumb-item active">Kuhusu Sisi</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="col-lg-4 text-center" data-aos="fade-left">
+                <div class="header-icon">
+                    <i class="fas fa-info-circle fa-4x text-white"></i>
+                </div>
             </div>
         </div>
     </div>
