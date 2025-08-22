@@ -332,7 +332,7 @@ if ($course['courseIsPaidStatusId'] != 1) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showStatus('Malipo yamepokelewa! Inakaguliwa...', 'success');
+                        showStatus('Umepokea ussd ibukizi weka nenosiri lako na uthibitishe...', 'success');
                         startPaymentCheck();
                     } else {
                         showStatus(data.message || 'Kulikuwa na tatizo, jaribu tena', 'error');
@@ -428,4 +428,3 @@ if ($course['courseIsPaidStatusId'] != 1) {
 </body>
 
 </html>
-
