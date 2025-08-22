@@ -15,7 +15,7 @@ include 'includes/header.php';
 ?>
 
 <!-- Page Header -->
-<section class="page-header" style="background-image: url('<?= asset('images/banner/new-banner2.jpg') ?>'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; min-height: 500px; padding: 120px 0;">
+<section class="page-header" style="background-image: url('<?= asset('images/banner/new-banner2.jpg') ?>'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; min-height: 400px; padding: 120px 0;">
     <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6);"></div>
     <div class="container" style="position: relative; z-index: 2;">
         <div class="row align-items-center">
