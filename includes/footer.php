@@ -270,7 +270,7 @@
 
                 <form id="profileCompletionForm">
                     <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
-                    
+
                     <div id="first_nameGroup" class="row">
                         <div class="col-md-6 mb-3">
                             <label for="profileFirstName" class="form-label">Jina la Kwanza *</label>
@@ -281,12 +281,12 @@
                             <input type="text" class="form-control" id="profileLastName" name="last_name">
                         </div>
                     </div>
-                    
+
                     <div id="phoneGroup" class="mb-3">
                         <label for="profilePhone" class="form-label">Namba ya Simu *</label>
                         <input type="tel" class="form-control" id="profilePhone" name="phone" placeholder="Mfano: 0712345678">
                     </div>
-                    
+
                     <div id="regionGroup" class="mb-3">
                         <label for="profileRegion" class="form-label">Mkoa *</label>
                         <select class="form-select" id="profileRegion" name="region">
@@ -326,7 +326,7 @@
                             <option value="Zanzibar West">Zanzibar West</option>
                         </select>
                     </div>
-                    
+
                     <div id="genderGroup" class="mb-3">
                         <label for="profileGender" class="form-label">Jinsia *</label>
                         <select class="form-select" id="profileGender" name="gender">
@@ -335,7 +335,7 @@
                             <option value="Mwanaume">Mwanaume</option>
                         </select>
                     </div>
-                    
+
                     <div id="dateOfBirthGroup" class="mb-3">
                         <label for="profileDateOfBirth" class="form-label">Tarehe ya Kuzaliwa *</label>
                         <input type="date" class="form-control" id="profileDateOfBirth" name="date_of_birth">
@@ -404,9 +404,9 @@
         // Only check if user is logged in
         <?php if ($isLoggedIn && $currentUser): ?>
             const user = <?= json_encode($currentUser) ?>;
-            
+
             console.log('Checking profile completion for user:', user);
-            
+
             // Check what fields are missing and show appropriate form
             const missingFields = [];
             if (!user.first_name || user.first_name === '') missingFields.push('first_name');
@@ -415,18 +415,18 @@
             if (!user.region || user.region === 'null' || user.region === '') missingFields.push('region');
             if (!user.gender || user.gender === 'null' || user.gender === '') missingFields.push('gender');
             if (!user.date_of_birth || user.date_of_birth === 'null' || user.date_of_birth === '') missingFields.push('date_of_birth');
-            
+
             console.log('Missing fields:', missingFields);
-            
+
             if (missingFields.length > 0) {
                 console.log('Showing profile completion modal');
                 // Show profile completion modal
                 const profileModal = new bootstrap.Modal(document.getElementById('profileCompletionModal'));
                 profileModal.show();
-                
+
                 // Show only the fields that are missing
                 showMissingFields(missingFields);
-                
+
                 // Pre-fill existing data if available
                 if (user.first_name && user.first_name !== '') document.getElementById('profileFirstName').value = user.first_name;
                 if (user.last_name && user.last_name !== '') document.getElementById('profileLastName').value = user.last_name;
@@ -564,7 +564,7 @@
     // Function to show/hide profile fields based on what's missing
     function showMissingFields(missingFields) {
         const allFields = ['first_name', 'last_name', 'phone', 'region', 'gender', 'date_of_birth'];
-        
+
         allFields.forEach(field => {
             const fieldGroup = document.getElementById(field + 'Group');
             if (fieldGroup) {
@@ -602,6 +602,133 @@
                 alert.remove();
             }
         }, 5000);
+    }
+
+    // Automatic Language Detection and Translation Prompt
+    (function() {
+        // Check if user has already made a language choice
+        if (localStorage.getItem('languageChoice')) {
+            return;
+        }
+
+        // Detect user's preferred language
+        const userLanguage = navigator.language || navigator.userLanguage;
+        const isEnglish = userLanguage.startsWith('en');
+        const isSwahili = userLanguage.startsWith('sw');
+
+        // If user's language is English and page is in Swahili, show translation prompt
+        if (isEnglish && !isSwahili) {
+            // Wait for page to fully load
+            setTimeout(() => {
+                showTranslationPrompt();
+            }, 2000);
+        }
+    })();
+
+    function showTranslationPrompt() {
+        // Create translation prompt modal
+        const promptHtml = `
+            <div id="translationPrompt" class="modal fade" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title">
+                                <i class="fas fa-language me-2"></i>
+                                Would you like to translate this page to English?
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-3">
+                                We detected that you might prefer English. This page is currently in Swahili.
+                            </p>
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="https://flagcdn.com/w20/tz.png" alt="Tanzania" class="me-2">
+                                <span>Swahili (Current)</span>
+                                <i class="fas fa-arrow-right mx-3 text-muted"></i>
+                                <img src="https://flagcdn.com/w20/gb.png" alt="English" class="me-2">
+                                <span>English</span>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i>No, keep Swahili
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="translateToEnglish()">
+                                <i class="fas fa-language me-2"></i>Yes, translate to English
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', promptHtml);
+
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('translationPrompt'));
+        modal.show();
+
+        // Store user choice
+        document.getElementById('translationPrompt').addEventListener('hidden.bs.modal', function() {
+            localStorage.setItem('languageChoice', 'swahili');
+        });
+    }
+
+    function translateToEnglish() {
+        // Store user choice
+        localStorage.setItem('languageChoice', 'english');
+
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('translationPrompt'));
+        modal.hide();
+
+        // Show loading message
+        showAlert('info', 'Translating page to English... Please wait.');
+
+        // Initialize Google Translate
+        if (typeof google !== 'undefined' && google.translate) {
+            google.translate.TranslateElement({
+                pageLanguage: 'sw',
+                includedLanguages: 'en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+
+            // Trigger translation
+            setTimeout(() => {
+                const translateElement = document.querySelector('.goog-te-combo');
+                if (translateElement) {
+                    translateElement.value = 'en';
+                    translateElement.dispatchEvent(new Event('change'));
+                }
+            }, 1000);
+        } else {
+            // Load Google Translate if not already loaded
+            const script = document.createElement('script');
+            script.src = '//translate.google.com/translate_a/element.js?cb=initTranslate';
+            document.head.appendChild(script);
+        }
+    }
+
+    // Initialize Google Translate when script loads
+    function initTranslate() {
+        google.translate.TranslateElement({
+            pageLanguage: 'sw',
+            includedLanguages: 'en',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
+        }, 'google_translate_element');
+
+        // Trigger translation
+        setTimeout(() => {
+            const translateElement = document.querySelector('.goog-te-combo');
+            if (translateElement) {
+                translateElement.value = 'en';
+                translateElement.dispatchEvent(new Event('change'));
+            }
+        }, 1000);
     }
 </script>
 </body>

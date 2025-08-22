@@ -35,19 +35,6 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    <!-- Google Translate -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'sw',
-                includedLanguages: 'en,sw',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
     <!-- Google Analytics -->
     <?php if (env('GOOGLE_ANALYTICS_ID')): ?>
         <script async src="https://www.googletagmanager.com/gtag/js?id=<?= env('GOOGLE_ANALYTICS_ID') ?>"></script>
@@ -121,13 +108,10 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                             <?php endif; ?>
 
                             <?php if ($socialConfig['instagram']): ?>
-                                <a href="<?= htmlspecialchars($socialConfig['instagram']) ?>" target="_blank" class="text-white me-2">
+                                <a href="<?= htmlspecialchars($socialConfig['instagram']) ?>" target="_blank" class="text-white">
                                     <i class="fab fa-instagram"></i>
                                 </a>
                             <?php endif; ?>
-
-                            <!-- Google Translate Widget -->
-                            <div id="google_translate_element" class="d-inline-block"></div>
                         </div>
                     </div>
                 </div>
@@ -352,50 +336,6 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
     </div>
 
     <style>
-        /* Google Translate Widget Styles */
-        #google_translate_element {
-            margin-left: 10px;
-        }
-
-        #google_translate_element .goog-te-gadget {
-            font-size: 0;
-        }
-
-        #google_translate_element .goog-te-gadget .goog-te-combo {
-            padding: 4px 8px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        #google_translate_element .goog-te-gadget .goog-te-combo:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        #google_translate_element .goog-te-gadget .goog-te-combo option {
-            background: #333;
-            color: white;
-            padding: 8px;
-        }
-
-        #google_translate_element .goog-te-banner-frame {
-            display: none !important;
-        }
-
-        .goog-te-banner-frame.skiptranslate {
-            display: none !important;
-        }
-
-        body {
-            top: 0px !important;
-        }
-
         /* User Profile Menu Styles */
         .user-profile-menu .dropdown-menu {
             min-width: 280px;
