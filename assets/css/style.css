@@ -197,6 +197,64 @@
   padding: 30px;
 }
 
+/* Dashboard specific styles */
+.welcome-section {
+  margin-bottom: 2rem;
+}
+
+.quick-actions {
+  margin-bottom: 2rem;
+}
+
+.action-btn {
+  display: block;
+  padding: 20px;
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--secondary-color);
+  transition: all 0.3s ease;
+  text-align: center;
+  height: 100%;
+}
+
+.action-btn:hover {
+  border-color: var(--primary-color);
+  background: rgba(255, 188, 59, 0.05);
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+.stats-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-2px);
+}
+
+.progress-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-dark) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
 /* Statistics Cards - ONLY TOP BORDERS, NO FILLED BACKGROUNDS */
 .stats-card {
   background: white !important;
@@ -682,6 +740,127 @@
   .btn-group .btn {
     margin-bottom: 5px !important;
     border-radius: 5px !important;
+  }
+
+  /* Fix dashboard grid layout on mobile */
+  .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .col-md-3,
+  .col-md-6,
+  .col-lg-8,
+  .col-lg-4 {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  /* Fix stats cards on mobile */
+  .stats-card {
+    margin-bottom: 15px !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Fix action buttons on mobile */
+  .action-btn {
+    min-width: 0 !important;
+    padding: 15px 10px !important;
+  }
+
+  /* Fix progress section on mobile */
+  .progress-circle {
+    max-width: 150px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Fix content wrapper on mobile */
+  .content-wrapper {
+    padding: 15px !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Fix welcome section on mobile */
+  .welcome-section {
+    padding: 15px 0 !important;
+  }
+
+  /* Fix quick actions on mobile */
+  .quick-actions {
+    padding: 15px 0 !important;
+  }
+
+  /* Fix cards on mobile */
+  .card {
+    margin-bottom: 15px !important;
+    min-width: 0 !important;
+  }
+
+  .card-body {
+    padding: 15px !important;
+  }
+}
+
+/* Additional mobile fixes for smaller screens */
+@media (max-width: 768px) {
+  /* Force single column layout on mobile */
+  .col-md-3 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  .col-md-6 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  .col-lg-8,
+  .col-lg-4 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Fix action buttons layout */
+  .quick-actions .row {
+    margin: 0 !important;
+  }
+
+  .quick-actions .col-md-3 {
+    padding: 0 5px !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* Fix stats cards spacing */
+  .stats-card {
+    margin: 5px 0 !important;
+  }
+
+  /* Fix content wrapper */
+  .content-wrapper {
+    padding: 10px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .content-wrapper {
+    padding: 5px !important;
+  }
+
+  .col-md-3,
+  .col-md-6,
+  .col-lg-8,
+  .col-lg-4 {
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+
+  .stats-card {
+    margin: 2px 0 !important;
+  }
+
+  .card-body {
+    padding: 10px !important;
   }
 }
 
