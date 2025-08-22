@@ -181,7 +181,7 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                     <button class="sidebar-toggle d-lg-none" id="topSidebarToggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h4 class="page-title mb-0">Dashboard</h4>
+                    <!-- <h4 class="page-title mb-0">Dashboard</h4> -->
                 </div>
                 <div class="nav-right">
                     <div class="user-dropdown">
