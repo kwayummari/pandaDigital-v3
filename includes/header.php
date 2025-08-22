@@ -208,6 +208,11 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="<?= app_url('about.php') ?>">
+                            KUHUSU SISI
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="<?= app_url('kozi.php') ?>">
                             KOZI ZOTE
                         </a>
@@ -241,11 +246,6 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                             ONGEA
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= app_url('about.php') ?>">
-                            KUHUSU SISI
-                        </a>
-                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             PANDA CHAT
@@ -274,6 +274,12 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 <li class="mobile-nav-item">
                     <a href="<?= app_url() ?>" class="mobile-nav-link active">
                         <i class="fas fa-home me-2"></i>NYUMBANI
+                    </a>
+                </li>
+
+                <li class="mobile-nav-item">
+                    <a href="<?= app_url('about.php') ?>" class="mobile-nav-link">
+                        <i class="fas fa-info-circle me-2"></i>KUHUSU SISI
                     </a>
                 </li>
 
@@ -313,12 +319,6 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 <li class="mobile-nav-item">
                     <a href="<?= app_url('uliza-swali.php') ?>" class="mobile-nav-link">
                         <i class="fas fa-comments me-2"></i>ONGEA
-                    </a>
-                </li>
-
-                <li class="mobile-nav-item">
-                    <a href="<?= app_url('about.php') ?>" class="mobile-nav-link">
-                        <i class="fas fa-info-circle me-2"></i>KUHUSU SISI
                     </a>
                 </li>
 
