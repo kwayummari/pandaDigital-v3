@@ -122,7 +122,7 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                 width: 100% !important;
                 max-width: 100% !important;
                 flex: 0 0 100% !important;
-                padding: 5px !important;
+                padding: 15px !important;
                 margin: 0 !important;
             }
 
@@ -148,14 +148,14 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
 
         @media (max-width: 576px) {
             .content-wrapper {
-                padding: 5px !important;
+                padding: 10px !important;
             }
 
             .col-md-3,
             .col-md-6,
             .col-lg-8,
             .col-lg-4 {
-                padding: 2px !important;
+                padding: 10px !important;
             }
 
             .card {
