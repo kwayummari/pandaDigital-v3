@@ -54,8 +54,8 @@ include 'includes/header.php';
     <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6);"></div>
     <div class="container" style="position: relative; z-index: 2;">
         <div class="row align-items-center">
-            <div class="col-lg-8" data-aos="fade-right">
-                <h1 class="page-title">Kozi Zote</h1>
+            <div class="col-lg-12" data-aos="fade-right">
+                <h1 class="page-title" style="color: #fff;">Kozi Zote</h1>
                 <p class="page-subtitle">Jifunze ujuzi wa kidijitali na biashara ya mtandaoni kutoka kwa wataalamu wenye uzoefu</p>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
@@ -64,11 +64,11 @@ include 'includes/header.php';
                     </ol>
                 </nav>
             </div>
-            <div class="col-lg-4 text-center" data-aos="fade-left">
+            <!-- <div class="col-lg-4 text-center" data-aos="fade-left">
                 <div class="header-icon">
                     <i class="fas fa-graduation-cap fa-4x text-white"></i>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </section>

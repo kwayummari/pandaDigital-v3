@@ -76,8 +76,8 @@ include 'includes/header.php';
     <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6);"></div>
     <div class="container" style="position: relative; z-index: 2;">
         <div class="row align-items-center">
-            <div class="col-lg-8" data-aos="fade-right">
-                <h1 class="page-title">Ongea Hub</h1>
+            <div class="col-lg-12" data-aos="fade-right">
+                <h1 class="page-title" style="color: #fff;">Ongea Hub</h1>
                 <p class="page-subtitle">Karibu kwenye jukwaa la Ongea Hub, sehemu ambapo msichana unapata nafasi ya kuripoti tukio la rushwa ya ngono na kuunganishwa na msaada</p>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
@@ -86,11 +86,11 @@ include 'includes/header.php';
                     </ol>
                 </nav>
             </div>
-            <div class="col-lg-4 text-center" data-aos="fade-left">
+            <!-- <div class="col-lg-4 text-center" data-aos="fade-left">
                 <div class="header-icon">
                     <div class="chat-icon text-white" style="font-size: 4rem; font-weight: bold;"></div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </section>

@@ -16,7 +16,7 @@ include 'includes/header.php';
             <div class="col-md-8">
                 <ul class="list-inline custom-breadcrumb mb-2">
                     <li class="list-inline-item">
-                        <a class="h2 text-primary font-secondary" href="index.php">Nyumbani</a>
+                        <a class="h2 text-primary font-secondary" style="color: #fff;" href="index.php">Nyumbani</a>
                     </li>
                     <span class="ti-angle-double-right" style="color: #ffffff;"></span>
                     <li class="list-inline-item text-white h3 font-secondary">Soko</li>
