@@ -808,17 +808,20 @@
   .col-md-3 {
     flex: 0 0 100% !important;
     max-width: 100% !important;
+    width: 100% !important;
   }
 
   .col-md-6 {
     flex: 0 0 100% !important;
     max-width: 100% !important;
+    width: 100% !important;
   }
 
   .col-lg-8,
   .col-lg-4 {
     flex: 0 0 100% !important;
     max-width: 100% !important;
+    width: 100% !important;
   }
 
   /* Fix action buttons layout */
@@ -839,6 +842,32 @@
   /* Fix content wrapper */
   .content-wrapper {
     padding: 10px !important;
+  }
+
+  /* Force all dashboard elements to fit mobile */
+  .dashboard-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Fix any remaining horizontal issues */
+  .row {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .col-6 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
   }
 }
 
@@ -861,6 +890,78 @@
 
   .card-body {
     padding: 10px !important;
+  }
+
+  /* Ultra-aggressive mobile fixes */
+  * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
+  .dashboard-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .content-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    padding: 5px !important;
+  }
+
+  .row {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .col-md-3,
+  .col-md-6,
+  .col-lg-8,
+  .col-lg-4,
+  .col-6 {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    padding: 2px !important;
+    margin: 0 !important;
+  }
+
+  .card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 2px 0 !important;
+    overflow: hidden !important;
+  }
+
+  .stats-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 2px 0 !important;
+  }
+
+  .action-btn {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 2px 0 !important;
   }
 }
 
@@ -935,6 +1036,9 @@ body {
   color: var(--dark-color);
   background-color: #ffffff;
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Smooth scrolling */

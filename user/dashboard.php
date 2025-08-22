@@ -87,6 +87,89 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
             font-size: 0.8rem;
             padding: 0.25rem 0.5rem;
         }
+
+        /* Mobile-specific dashboard fixes */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+
+            .main-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+
+            .content-wrapper {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+                padding: 10px !important;
+            }
+
+            .row {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+
+            .col-md-3,
+            .col-md-6,
+            .col-lg-8,
+            .col-lg-4 {
+                width: 100% !important;
+                max-width: 100% !important;
+                flex: 0 0 100% !important;
+                padding: 5px !important;
+                margin: 0 !important;
+            }
+
+            .card {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 5px 0 !important;
+                overflow: hidden !important;
+            }
+
+            .stats-card {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 5px 0 !important;
+            }
+
+            .action-btn {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 5px 0 !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .content-wrapper {
+                padding: 5px !important;
+            }
+
+            .col-md-3,
+            .col-md-6,
+            .col-lg-8,
+            .col-lg-4 {
+                padding: 2px !important;
+            }
+
+            .card {
+                margin: 2px 0 !important;
+            }
+
+            .stats-card {
+                margin: 2px 0 !important;
+            }
+
+            .action-btn {
+                margin: 2px 0 !important;
+            }
+        }
     </style>
 </head>
 
