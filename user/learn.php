@@ -372,6 +372,16 @@ if (isset($_POST['submit_answers'])) {
             font-weight: 600;
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .answer-option .badge {
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+
         /* Progress sidebar styling */
         .progress-info {
             margin-bottom: 20px;
@@ -604,7 +614,7 @@ if (isset($_POST['submit_answers'])) {
                                         </div>
                                     <?php endif; ?>
 
-                                    <form method="post" id="quizForm" class="quiz-form" action="">
+                                    <form method="post" id="quizForm" class="quiz-form" action="<?php echo $hasAnswered ? '#' : ''; ?>">
                                         <input type="hidden" name="video_id" value="<?php echo $videoId; ?>">
                                         <input type="hidden" name="course_id" value="<?php echo $courseId; ?>">
 
@@ -637,29 +647,51 @@ if (isset($_POST['submit_answers'])) {
                                                 </div>
                                                 <div class="answers-container">
                                                     <?php if (!empty($answers)): ?>
-                                                        <?php foreach ($answers as $answer): ?>
+                                                        <?php if ($hasAnswered && !$showResults): ?>
+                                                            <!-- Show only the user's selected answer when they've already answered -->
                                                             <?php
-                                                            $answerId = $answer['id'];
-                                                            $answerText = htmlspecialchars($answer['name']);
-                                                            $isCorrect = $answer['status'] == 'true';
-                                                            $isSelected = ($userAnswerId == $answerId);
-                                                            ?>
-                                                            <div class="answer-option <?php echo $showResults && $isSelected ? ($isCorrect ? 'correct-answer' : 'wrong-answer') : ''; ?>">
-                                                                <label class="answer-label">
-                                                                    <input type="radio"
-                                                                        name="ans_id[<?php echo $index; ?>]"
-                                                                        value="<?php echo $answerId; ?>"
-                                                                        <?php echo $isSelected ? 'checked' : ''; ?>
-                                                                        <?php echo $showResults ? 'disabled' : 'required'; ?>>
-                                                                    <span class="answer-text"><?php echo $answerText; ?></span>
-                                                                    <?php if ($showResults && $isCorrect): ?>
-                                                                        <i class="fas fa-check-circle text-success ms-2"></i>
-                                                                    <?php elseif ($showResults && $isSelected && !$isCorrect): ?>
-                                                                        <i class="fas fa-times-circle text-danger ms-2"></i>
-                                                                    <?php endif; ?>
-                                                                </label>
-                                                            </div>
-                                                        <?php endforeach; ?>
+                                                            $userAnswer = null;
+                                                            foreach ($answers as $answer) {
+                                                                if ($answer['id'] == $userAnswerId) {
+                                                                    $userAnswer = $answer;
+                                                                    break;
+                                                                }
+                                                            }
+                                                            if ($userAnswer): ?>
+                                                                <div class="answer-option">
+                                                                    <label class="answer-label">
+                                                                        <input type="radio" checked disabled>
+                                                                        <span class="answer-text"><?php echo htmlspecialchars($userAnswer['name']); ?></span>
+                                                                        <span class="badge bg-info ms-2">Jibu lako</span>
+                                                                    </label>
+                                                                </div>
+                                                            <?php endif; ?>
+                                                        <?php else: ?>
+                                                            <!-- Show all answer options for new attempts or when showing results -->
+                                                            <?php foreach ($answers as $answer): ?>
+                                                                <?php
+                                                                $answerId = $answer['id'];
+                                                                $answerText = htmlspecialchars($answer['name']);
+                                                                $isCorrect = $answer['status'] == 'true';
+                                                                $isSelected = ($userAnswerId == $answerId);
+                                                                ?>
+                                                                <div class="answer-option <?php echo $showResults && $isSelected ? ($isCorrect ? 'correct-answer' : 'wrong-answer') : ''; ?>">
+                                                                    <label class="answer-label">
+                                                                        <input type="radio"
+                                                                            name="ans_id[<?php echo $index; ?>]"
+                                                                            value="<?php echo $answerId; ?>"
+                                                                            <?php echo $isSelected ? 'checked' : ''; ?>
+                                                                            <?php echo $showResults ? 'disabled' : 'required'; ?>>
+                                                                        <span class="answer-text"><?php echo $answerText; ?></span>
+                                                                        <?php if ($showResults && $isCorrect): ?>
+                                                                            <i class="fas fa-check-circle text-success ms-2"></i>
+                                                                        <?php elseif ($showResults && $isSelected && !$isCorrect): ?>
+                                                                            <i class="fas fa-times-circle text-danger ms-2"></i>
+                                                                        <?php endif; ?>
+                                                                    </label>
+                                                                </div>
+                                                            <?php endforeach; ?>
+                                                        <?php endif; ?>
                                                     <?php else: ?>
                                                         <div class="alert alert-warning">
                                                             Hakuna majibu yaliyopatikana kwa swali hili.
@@ -682,8 +714,8 @@ if (isset($_POST['submit_answers'])) {
                                                     <i class="fas fa-check-circle"></i>
                                                     Umekwisha jibu maswali haya. Unaweza kurudia kama unataka kuboresha matokeo yako.
                                                 </div>
-                                                <button type="submit" name="submit_answers" class="btn btn-warning btn-lg">
-                                                    <i class="fas fa-redo"></i> Rudia Majaribio
+                                                <button type="submit" name="submit_answers" class="btn btn-warning btn-lg" disabled>
+                                                    <i class="fas fa-redo"></i> Rudia Majaribio (Imekamilika)
                                                 </button>
                                             </div>
                                         <?php else: ?>
@@ -878,7 +910,17 @@ if (isset($_POST['submit_answers'])) {
                 });
             }
 
-
+            // Prevent form submission if user has already answered
+            const quizForm = document.getElementById('quizForm');
+            if (quizForm) {
+                const submitButton = quizForm.querySelector('button[type="submit"]');
+                if (submitButton && submitButton.disabled) {
+                    quizForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        alert('Umekwisha jibu maswali haya. Haiwezi kurudia tena.');
+                    });
+                }
+            }
         });
     </script>
 </body>
