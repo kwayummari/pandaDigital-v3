@@ -18,77 +18,7 @@ try {
     error_log("Database connection failed: " . $e->getMessage());
 }
 
-// Handle quiz submission - EXACTLY like old system
-if (isset($_POST['submit_answers'])) {
-    // Debug: Log what we received
-    error_log("Quiz submission received!");
-    error_log("POST data: " . print_r($_POST, true));
-    
-    $questionIds = $_POST['qn_id'] ?? [];
-    $answerIds = $_POST['ans_id'] ?? [];
-
-    if (!isset($currentUser['id']) || empty($currentUser['id'])) {
-        $quizError = "❌ ERROR: User ID is not set!";
-    } else if (empty($questionIds) || empty($answerIds)) {
-        $quizError = "Tafadhali jibu maswali yote.";
-    } else {
-        try {
-            $conn = $quizModel->getConnection();
-
-            // Start transaction - EXACTLY like old system
-            $conn->beginTransaction();
-
-            // Delete existing answers for these questions - EXACTLY like old system
-            if (!empty($questionIds)) {
-                $placeholders = str_repeat('?,', count($questionIds) - 1) . '?';
-                $deleteQuery = "DELETE FROM algorithm WHERE user_id = ? AND qn_id IN ($placeholders)";
-                $stmt = $conn->prepare($deleteQuery);
-
-                if (!$stmt) {
-                    throw new Exception("Prepare delete failed");
-                }
-
-                $params = array_merge([$currentUser['id']], $questionIds);
-                $stmt->execute($params);
-                $deletedRows = $stmt->rowCount();
-                error_log("🗑️ Deleted $deletedRows existing answers");
-            }
-
-            // Insert new answers - EXACTLY like old system
-            $insertQuery = "INSERT INTO algorithm (qn_id, ans_id, user_id, date_created) VALUES (?, ?, ?, NOW())";
-            $stmt = $conn->prepare($insertQuery);
-
-            if (!$stmt) {
-                throw new Exception("Prepare insert failed");
-            }
-
-            $insertCount = 0;
-            foreach ($questionIds as $index => $questionId) {
-                if (isset($answerIds[$index]) && !empty($answerIds[$index])) {
-                    $stmt->execute([$questionId, $answerIds[$index], $currentUser['id']]);
-                    $insertCount++;
-                }
-            }
-
-
-            // Commit transaction
-            $conn->commit();
-            error_log("✅ Inserted $insertCount new answers");
-
-            // Set success message and refresh to show results
-            $quizSuccess = "Hongera! Umekamilisha somo hili. Unaweza kuendelea na somo linalofuata.";
-
-            // Refresh the page to show results
-            header('Location: ' . app_url('user/learn.php') . '?course_id=' . $courseId . '&video_id=' . $videoId . '&show_results=1');
-            exit();
-        } catch (Exception $e) {
-            // Rollback transaction
-            $conn->rollBack();
-            error_log("Error submitting quiz answers: " . $e->getMessage());
-            $quizError = 'Kulikuwa na tatizo la kuhifadhi majibu yako.';
-        }
-    }
-}
+// Quiz submission will be handled after URL parameters are retrieved
 
 // Set page title for navigation
 $page_title = 'Jifunze Kozi';
@@ -108,14 +38,20 @@ if (!$courseId) {
 
 // Get course information
 $course = $courseModel->getCourseById($courseId, $currentUser['id']);
+error_log("Course data: courseId=$courseId, course=" . print_r($course, true));
+
 if (!$course) {
+    error_log("Course not found, redirecting to courses.php");
     header('Location: ' . app_url('user/courses.php') . '?error=course_not_found');
     exit();
 }
 
 // Check if user is enrolled
-$isEnrolled = $courseModel->isUserEnrolled($currentUser['id'], $courseId);
-if (!$isEnrolled) {
+$enrollmentData = $courseModel->isUserEnrolled($currentUser['id'], $courseId);
+error_log("Enrollment check: userId=" . $currentUser['id'] . ", courseId=$courseId, enrollmentData=" . print_r($enrollmentData, true));
+
+if (!$enrollmentData) {
+    error_log("User not enrolled, redirecting to courses.php");
     header('Location: ' . app_url('user/courses.php') . '?error=not_enrolled');
     exit();
 }
@@ -234,6 +170,76 @@ if (!isset($userProgress['percentage'])) {
 // Debug: Check user progress
 error_log("User progress: " . print_r($userProgress, true));
 
+// Handle quiz submission - EXACTLY like old system
+if (isset($_POST['submit_answers'])) {
+    // Debug: Log what we received
+    error_log("Quiz submission received!");
+    error_log("POST data: " . print_r($_POST, true));
+
+    $questionIds = $_POST['qn_id'] ?? [];
+    $answerIds = $_POST['ans_id'] ?? [];
+
+    if (!isset($currentUser['id']) || empty($currentUser['id'])) {
+        $quizError = "❌ ERROR: User ID is not set!";
+    } else if (empty($questionIds) || empty($answerIds)) {
+        $quizError = "Tafadhali jibu maswali yote.";
+    } else {
+        try {
+            $conn = $quizModel->getConnection();
+
+            // Start transaction - EXACTLY like old system
+            $conn->beginTransaction();
+
+            // Delete existing answers for these questions - EXACTLY like old system
+            if (!empty($questionIds)) {
+                $placeholders = str_repeat('?,', count($questionIds) - 1) . '?';
+                $deleteQuery = "DELETE FROM algorithm WHERE user_id = ? AND qn_id IN ($placeholders)";
+                $stmt = $conn->prepare($deleteQuery);
+
+                if (!$stmt) {
+                    throw new Exception("Prepare delete failed");
+                }
+
+                $params = array_merge([$currentUser['id']], $questionIds);
+                $stmt->execute($params);
+                $deletedRows = $stmt->rowCount();
+                error_log("🗑️ Deleted $deletedRows existing answers");
+            }
+
+            // Insert new answers - EXACTLY like old system
+            $insertQuery = "INSERT INTO algorithm (qn_id, ans_id, user_id, date_created) VALUES (?, ?, ?, NOW())";
+            $stmt = $conn->prepare($insertQuery);
+
+            if (!$stmt) {
+                throw new Exception("Prepare insert failed");
+            }
+
+            $insertCount = 0;
+            foreach ($questionIds as $index => $questionId) {
+                if (isset($answerIds[$index]) && !empty($answerIds[$index])) {
+                    $stmt->execute([$questionId, $answerIds[$index], $currentUser['id']]);
+                    $insertCount++;
+                }
+            }
+
+            // Commit transaction
+            $conn->commit();
+            error_log("✅ Inserted $insertCount new answers");
+
+            // Set success message and refresh to show results
+            $quizSuccess = "Hongera! Umekamilisha somo hili. Unaweza kuendelea na somo linalofuata.";
+
+            // Refresh the page to show results
+            header('Location: ' . app_url('user/learn.php') . '?course_id=' . $courseId . '&video_id=' . $videoId . '&show_results=1');
+            exit();
+        } catch (Exception $e) {
+            // Rollback transaction
+            $conn->rollBack();
+            error_log("Error submitting quiz answers: " . $e->getMessage());
+            $quizError = 'Kulikuwa na tatizo la kuhifadhi majibu yako.';
+        }
+    }
+}
 
 ?>
 
@@ -601,11 +607,6 @@ error_log("User progress: " . print_r($userProgress, true));
                                     <form method="post" id="quizForm" class="quiz-form" action="">
                                         <input type="hidden" name="video_id" value="<?php echo $videoId; ?>">
                                         <input type="hidden" name="course_id" value="<?php echo $courseId; ?>">
-                                        
-                                        <!-- Debug: Show form values -->
-                                        <div class="alert alert-info small">
-                                            <strong>Debug:</strong> Video ID: <?php echo $videoId; ?>, Course ID: <?php echo $courseId; ?>
-                                        </div>
 
                                         <?php foreach ($questions as $index => $question): ?>
                                             <?php
@@ -669,15 +670,20 @@ error_log("User progress: " . print_r($userProgress, true));
                                             </div>
                                         <?php endforeach; ?>
 
-                                        <?php if (!$showResults): ?>
+                                        <?php if (!$showResults && !$hasAnswered): ?>
                                             <div class="text-center mt-4">
-                                                <!-- Debug: Test form submission -->
-                                                <div class="alert alert-warning small mb-3">
-                                                    <strong>Test:</strong> Click the button below to submit the quiz
-                                                </div>
-                                                
                                                 <button type="submit" name="submit_answers" class="btn btn-primary btn-lg">
                                                     <i class="fas fa-check"></i> Tuma Majibu
+                                                </button>
+                                            </div>
+                                        <?php elseif ($hasAnswered): ?>
+                                            <div class="text-center mt-4">
+                                                <div class="alert alert-success">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    Umekwisha jibu maswali haya. Unaweza kurudia kama unataka kuboresha matokeo yako.
+                                                </div>
+                                                <button type="submit" name="submit_answers" class="btn btn-warning btn-lg">
+                                                    <i class="fas fa-redo"></i> Rudia Majaribio
                                                 </button>
                                             </div>
                                         <?php else: ?>
@@ -754,9 +760,20 @@ error_log("User progress: " . print_r($userProgress, true));
                                                         </button>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <a href="<?php echo app_url('user/learn.php'); ?>?course_id=<?php echo $courseId; ?>&video_id=<?php echo $videoId + 1; ?>" class="btn btn-success btn-lg w-100">
-                                                            <i class="fas fa-arrow-right"></i> Somo Linalofuata
-                                                        </a>
+                                                        <?php
+                                                        // Find the next lesson
+                                                        $currentIndex = array_search($videoId, array_column($courseVideos, 'id'));
+                                                        $hasNext = $currentIndex !== false && $currentIndex < count($courseVideos) - 1;
+                                                        ?>
+                                                        <?php if ($hasNext): ?>
+                                                            <a href="<?php echo app_url('user/learn.php'); ?>?course_id=<?php echo $courseId; ?>&video_id=<?php echo $courseVideos[$currentIndex + 1]['id']; ?>" class="btn btn-success btn-lg w-100">
+                                                                <i class="fas fa-arrow-right"></i> Somo Linalofuata
+                                                            </a>
+                                                        <?php else: ?>
+                                                            <a href="<?php echo app_url('user/courses.php'); ?>" class="btn btn-success btn-lg w-100">
+                                                                <i class="fas fa-home"></i> Rudi kwenye Kozi
+                                                            </a>
+                                                        <?php endif; ?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -771,17 +788,7 @@ error_log("User progress: " . print_r($userProgress, true));
                             Hakuna maswali ya majaribio kwa somo hili. Unaweza kuendelea na somo linalofuata.
                         </div>
 
-                        <!-- Debug Information -->
-                        <?php if (isset($_GET['debug'])): ?>
-                            <div class="alert alert-warning">
-                                <strong>Debug Info:</strong><br>
-                                Video ID: <?php echo $videoId; ?><br>
-                                Course ID: <?php echo $courseId; ?><br>
-                                Questions Count: <?php echo count($questions); ?><br>
-                                Questions Data:
-                                <pre><?php echo print_r($questions, true); ?></pre>
-                            </div>
-                        <?php endif; ?>
+
                     <?php endif; ?>
                 </div>
 
@@ -870,18 +877,8 @@ error_log("User progress: " . print_r($userProgress, true));
                     mainContent.classList.toggle('expanded');
                 });
             }
-            
-            // Debug: Check if quiz form exists and add submission logging
-            const quizForm = document.getElementById('quizForm');
-            if (quizForm) {
-                console.log('Quiz form found:', quizForm);
-                quizForm.addEventListener('submit', function(e) {
-                    console.log('Form submitted!');
-                    console.log('Form data:', new FormData(this));
-                });
-            } else {
-                console.log('Quiz form not found!');
-            }
+
+
         });
     </script>
 </body>
