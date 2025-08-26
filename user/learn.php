@@ -10,6 +10,14 @@ $currentUser = $auth->getCurrentUser();
 $courseModel = new Course();
 $quizModel = new Quiz();
 
+// Test database connection
+try {
+    $conn = $quizModel->getConnection();
+    error_log("Database connection successful");
+} catch (Exception $e) {
+    error_log("Database connection failed: " . $e->getMessage());
+}
+
 // Handle quiz submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_answers'])) {
     try {
@@ -60,6 +68,10 @@ $page_title = 'Jifunze Kozi';
 // Get course ID and video ID from URL
 $courseId = $_GET['course_id'] ?? null;
 $videoId = $_GET['video_id'] ?? null;
+
+// Debug: Log the received parameters
+error_log("Received course_id: " . $courseId);
+error_log("Received video_id: " . $videoId);
 
 if (!$courseId) {
     header('Location: ' . app_url('user/courses.php') . '?error=invalid_course');
@@ -120,6 +132,41 @@ $questions = $quizModel->getQuestionsByVideo($videoId);
 
 // Debug: Check what questions we got
 error_log("Questions for video $videoId: " . print_r($questions, true));
+error_log("Questions count: " . count($questions));
+
+// Also check if the video ID exists in the questions table
+if (empty($questions)) {
+    error_log("No questions found for video $videoId. Checking if video exists in questions table...");
+
+    // Let's check what's in the questions table for this video
+    try {
+        $conn = $quizModel->getConnection();
+        $stmt = $conn->prepare("SELECT COUNT(*) as count FROM questions WHERE video_id = ?");
+        $stmt->execute([$videoId]);
+        $result = $stmt->fetch();
+        error_log("Total questions in database for video $videoId: " . $result['count']);
+
+        // Also check what video IDs exist
+        $stmt = $conn->prepare("SELECT DISTINCT video_id FROM questions LIMIT 10");
+        $stmt->execute();
+        $videoIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        error_log("Available video IDs in questions table: " . implode(', ', $videoIds));
+
+        // Check total questions in the table
+        $stmt = $conn->prepare("SELECT COUNT(*) as total FROM questions");
+        $stmt->execute();
+        $totalResult = $stmt->fetch();
+        error_log("Total questions in entire questions table: " . $totalResult['total']);
+
+        // Check table structure
+        $stmt = $conn->prepare("DESCRIBE questions");
+        $stmt->execute();
+        $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        error_log("Questions table columns: " . implode(', ', $columns));
+    } catch (Exception $e) {
+        error_log("Error checking questions table: " . $e->getMessage());
+    }
+}
 
 // Check if user has completed this video
 $videoCompleted = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
@@ -475,15 +522,15 @@ $hasAnswered = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
                                                     <span class="required-badge">*</span>
                                                 </div>
                                                 <div class="question-text">
-                                                    <?php echo nl2br(htmlspecialchars($question['question'])); ?>
+                                                    <?php echo nl2br(htmlspecialchars($question['name'])); ?>
                                                 </div>
                                                 <div class="answers-container">
                                                     <?php if (!empty($answers)): ?>
                                                         <?php foreach ($answers as $answer): ?>
                                                             <?php
                                                             $answerId = $answer['id'];
-                                                            $answerText = htmlspecialchars($answer['answer_text']);
-                                                            $isCorrect = $answer['is_correct'] == 'true';
+                                                            $answerText = htmlspecialchars($answer['name']);
+                                                            $isCorrect = $answer['status'] == 'true';
                                                             $isSelected = ($userAnswerId == $answerId);
                                                             ?>
                                                             <div class="answer-option <?php echo $hasAnswered && $isSelected ? ($isCorrect ? 'correct-answer' : 'wrong-answer') : ''; ?>">
@@ -534,6 +581,18 @@ $hasAnswered = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
                             <i class="fas fa-info-circle"></i>
                             Hakuna maswali ya majaribio kwa somo hili. Unaweza kuendelea na somo linalofuata.
                         </div>
+
+                        <!-- Debug Information -->
+                        <?php if (isset($_GET['debug'])): ?>
+                            <div class="alert alert-warning">
+                                <strong>Debug Info:</strong><br>
+                                Video ID: <?php echo $videoId; ?><br>
+                                Course ID: <?php echo $courseId; ?><br>
+                                Questions Count: <?php echo count($questions); ?><br>
+                                Questions Data:
+                                <pre><?php echo print_r($questions, true); ?></pre>
+                            </div>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
 

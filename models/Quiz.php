@@ -11,6 +11,14 @@ class Quiz
     }
 
     /**
+     * Get database connection
+     */
+    public function getConnection()
+    {
+        return $this->db->getConnection();
+    }
+
+    /**
      * Submit quiz answers for a video
      */
     public function submitQuizAnswers($userId, $videoId, $answers)
@@ -326,9 +334,7 @@ class Quiz
             $stmt = $conn->prepare("
                 SELECT 
                     q.id,
-                    q.name as question,
-                    q.options,
-                    q.correct_answer,
+                    q.name,
                     q.video_id
                 FROM questions q
                 WHERE q.video_id = ?
@@ -354,8 +360,8 @@ class Quiz
             $stmt = $conn->prepare("
                 SELECT 
                     id,
-                    name as answer_text,
-                    status as is_correct
+                    name,
+                    status
                 FROM answers 
                 WHERE qn_id = ?
                 ORDER BY id ASC
