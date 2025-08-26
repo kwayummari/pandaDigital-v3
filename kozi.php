@@ -116,7 +116,7 @@ include 'includes/header.php';
                                     <small class="text-muted">
                                         <i class="fas fa-calendar me-1"></i><?= $courseModel->formatDate($course['date_created']) ?>
                                     </small>
-                                    <a href="course-details.php?id=<?= $course['id'] ?>" class="btn btn-outline-primary btn-sm">
+                                    <a href="#" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#signupModal">
                                         <i class="fas fa-graduation-cap me-1"></i>Jisajili Sasa
                                     </a>
                                 </div>
