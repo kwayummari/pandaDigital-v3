@@ -191,6 +191,14 @@
                 <div class="text-center mt-3">
                     <a href="<?= app_url('forgot-password.php') ?>" class="text-muted">Umesahau nywila?</a>
                 </div>
+                
+                <!-- Switch to Signup -->
+                <div class="text-center mt-2">
+                    <small class="modal-switch-text">Huna akaunti? </small>
+                    <button type="button" class="btn btn-link btn-sm p-0 ms-1 modal-switch-btn" onclick="switchToSignup()">
+                        Jisajili hapa
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -249,6 +257,14 @@
                         </span>
                     </button>
                 </form>
+                
+                <!-- Switch to Login -->
+                <div class="text-center mt-3">
+                    <small class="modal-switch-text">Una akaunti tayari? </small>
+                    <button type="button" class="btn btn-link btn-sm p-0 ms-1 modal-switch-btn" onclick="switchToLogin()">
+                        Ingia hapa
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -380,6 +396,31 @@
         easing: 'ease-in-out',
         once: true
     });
+
+    // Modal switching functions
+    function switchToLogin() {
+        // Hide signup modal
+        const signupModal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
+        if (signupModal) {
+            signupModal.hide();
+        }
+        
+        // Show login modal
+        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        loginModal.show();
+    }
+
+    function switchToSignup() {
+        // Hide login modal
+        const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+        if (loginModal) {
+            loginModal.hide();
+        }
+        
+        // Show signup modal
+        const signupModal = new bootstrap.Modal(document.getElementById('signupModal'));
+        signupModal.show();
+    }
 
     // Initialize Bootstrap tooltips and popovers
     document.addEventListener('DOMContentLoaded', function() {
@@ -730,6 +771,28 @@
             }
         }, 1000);
     }
+
+    // Add CSS for modal switch buttons
+    const style = document.createElement('style');
+    style.textContent = `
+        .modal-switch-btn {
+            color: var(--primary-color, #ffbc3b) !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .modal-switch-btn:hover {
+            color: var(--primary-color-dark, #e6a800) !important;
+            text-decoration: underline !important;
+        }
+        
+        .modal-switch-text {
+            color: #6c757d !important;
+            font-size: 14px !important;
+        }
+    `;
+    document.head.appendChild(style);
 </script>
 </body>
 
