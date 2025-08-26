@@ -71,6 +71,109 @@ if ($isEnrolled) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?php echo app_url('assets/css/style.css'); ?>?v=8">
+
+    <style>
+        /* Lesson items styling */
+        .lesson-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .lesson-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .lesson-number {
+            background: var(--primary-color);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .lesson-content {
+            flex-grow: 1;
+        }
+
+        .lesson-title {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .lesson-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .lesson-type {
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .lesson-status.completed {
+            background: #d4edda;
+            color: #155724;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .lesson-action {
+            margin-left: 15px;
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .lesson-item {
+                padding: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .lesson-number {
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+
+            .lesson-content {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .lesson-meta {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .lesson-action {
+                margin-left: 0;
+                margin-top: 10px;
+                align-self: center;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -114,9 +217,9 @@ if ($isEnrolled) {
                                     Pakua Vyeti
                                 </button>
                             <?php endif; ?>
-                            <a href="<?php echo app_url('user/learn.php'); ?>?course_id=<?php echo $courseId; ?>&video_id=1" class="btn btn-primary">
+                            <button class="btn btn-primary" onclick="scrollToLessons()">
                                 Endelea Kusoma
-                            </a>
+                            </button>
                         <?php else: ?>
                             <?php if ($course['courseIsPaidStatusId'] == 1): ?>
                                 <button type="button" class="btn btn-primary text-white" style="color: white !important;" onclick="openPaymentModal(<?php echo $courseId; ?>, '<?php echo htmlspecialchars($course['name']); ?>', <?php echo $course['price']; ?>)">
@@ -231,12 +334,12 @@ if ($isEnrolled) {
                     </div>
 
                     <!-- Course Lessons -->
-                    <div class="content-card">
+                    <div class="content-card" id="lessons-section">
                         <h3 class="card-title">Mipango ya Masomo</h3>
                         <div class="lessons-list">
                             <?php if (!empty($courseLessons)): ?>
                                 <?php foreach ($courseLessons as $index => $lesson): ?>
-                                    <div class="lesson-item">
+                                    <div class="lesson-item" onclick="viewLesson(<?php echo $courseId; ?>, <?php echo $lesson['id']; ?>)" style="cursor: pointer;">
                                         <div class="lesson-number"><?php echo $index + 1; ?></div>
                                         <div class="lesson-content">
                                             <h5 class="lesson-title"><?php echo htmlspecialchars($lesson['description']); ?></h5>
@@ -246,6 +349,9 @@ if ($isEnrolled) {
                                                     <span class="lesson-status completed">✓ Imekamilika</span>
                                                 <?php endif; ?>
                                             </div>
+                                        </div>
+                                        <div class="lesson-action">
+                                            <i class="fas fa-play-circle text-primary"></i>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -385,6 +491,21 @@ if ($isEnrolled) {
                 // For now, we'll redirect to a simple enrollment process
                 window.location.href = '<?php echo app_url("user/enroll.php"); ?>?course_id=' + courseId;
             }
+        }
+
+        function scrollToLessons() {
+            const lessonsSection = document.getElementById('lessons-section');
+            if (lessonsSection) {
+                lessonsSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
+        function viewLesson(courseId, lessonId) {
+            // Redirect to lesson viewing page similar to old pandadigitalV2 structure
+            window.location.href = '<?php echo app_url("user/learn.php"); ?>?course_id=' + courseId + '&video_id=' + lessonId;
         }
 
         function downloadCertificate(courseId) {
