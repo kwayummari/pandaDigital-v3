@@ -16,17 +16,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_answers'])) {
         $videoId = $_POST['video_id'] ?? null;
         $courseId = $_POST['course_id'] ?? null;
         $answers = $_POST['answers'] ?? [];
-        
-        if ($videoId && $courseId && !empty($answers)) {
-            // Submit quiz answers
-            $result = $quizModel->submitQuizAnswers($currentUser['id'], $videoId, $answers);
-            
-            if ($result) {
-                // Redirect to show results
-                header('Location: ' . app_url('user/learn.php') . '?course_id=' . $courseId . '&video_id=' . $videoId . '&message=quiz_completed');
-                exit();
+
+        if ($videoId && $courseId) {
+            // Get question IDs and answer IDs from form
+            $questionIds = $_POST['qn_id'] ?? [];
+            $answerIds = $_POST['ans_id'] ?? [];
+
+            if (empty($questionIds) || empty($answerIds)) {
+                $quizError = "Tafadhali jibu maswali yote.";
             } else {
-                $quizError = 'Kulikuwa na tatizo la kuhifadhi majibu yako.';
+                // Convert form data to the format expected by submitQuizAnswers
+                $answers = [];
+                foreach ($questionIds as $index => $questionId) {
+                    if (isset($answerIds[$index]) && !empty($answerIds[$index])) {
+                        $answers[$questionId] = $answerIds[$index];
+                    }
+                }
+
+                if (!empty($answers)) {
+                    // Submit quiz answers
+                    $result = $quizModel->submitQuizAnswers($currentUser['id'], $videoId, $answers);
+
+                    if ($result) {
+                        // Redirect to show results
+                        header('Location: ' . app_url('user/learn.php') . '?course_id=' . $courseId . '&video_id=' . $videoId . '&message=quiz_completed');
+                        exit();
+                    } else {
+                        $quizError = 'Kulikuwa na tatizo la kuhifadhi majibu yako.';
+                    }
+                } else {
+                    $quizError = "Tafadhali jibu maswali yote.";
+                }
             }
         }
     } catch (Exception $e) {
@@ -137,7 +157,7 @@ $hasAnswered = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?php echo app_url('assets/css/style.css'); ?>?v=9">
-    
+
     <style>
         /* Quiz Section Styling */
         .quiz-section .card {
@@ -219,6 +239,16 @@ $hasAnswered = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
             background: #f8f9ff;
         }
 
+        .answer-option.correct-answer {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .answer-option.wrong-answer {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
         .answer-label {
             display: flex;
             align-items: center;
@@ -242,6 +272,46 @@ $hasAnswered = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
             padding: 12px 30px;
             font-size: 16px;
             font-weight: 600;
+        }
+
+        /* Progress sidebar styling */
+        .progress-info {
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-item i {
+            font-size: 20px;
+            width: 24px;
+        }
+
+        .stat-item div {
+            flex-grow: 1;
+        }
+
+        .stat-item strong {
+            display: block;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .stat-item small {
+            color: #6c757d;
+            font-size: 12px;
         }
 
         /* Mobile responsive */
@@ -389,6 +459,16 @@ $hasAnswered = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
                                         <input type="hidden" name="course_id" value="<?php echo $courseId; ?>">
 
                                         <?php foreach ($questions as $index => $question): ?>
+                                            <?php
+                                            // Get answers for this question
+                                            $answers = $quizModel->getAnswersByQuestion($question['id']);
+
+                                            // Get user's previous answer if exists
+                                            $userAnswerId = null;
+                                            if ($hasAnswered) {
+                                                $userAnswerId = $quizModel->getUserAnswerForQuestion($currentUser['id'], $question['id']);
+                                            }
+                                            ?>
                                             <div class="question-card mb-4">
                                                 <div class="question-header">
                                                     <span class="question-number">Swali <?php echo $index + 1; ?></span>
@@ -398,25 +478,37 @@ $hasAnswered = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
                                                     <?php echo nl2br(htmlspecialchars($question['question'])); ?>
                                                 </div>
                                                 <div class="answers-container">
-                                                    <?php
-                                                    $options = json_decode($question['options'], true);
-                                                    if (is_array($options)):
-                                                        foreach ($options as $optionIndex => $option):
-                                                    ?>
-                                                        <div class="answer-option">
-                                                            <label class="answer-label">
-                                                                <input type="radio"
-                                                                    name="answers[<?php echo $question['id']; ?>]"
-                                                                    value="<?php echo $optionIndex; ?>"
-                                                                    <?php echo $hasAnswered ? 'disabled' : 'required'; ?>>
-                                                                <span class="answer-text"><?php echo htmlspecialchars($option); ?></span>
-                                                            </label>
+                                                    <?php if (!empty($answers)): ?>
+                                                        <?php foreach ($answers as $answer): ?>
+                                                            <?php
+                                                            $answerId = $answer['id'];
+                                                            $answerText = htmlspecialchars($answer['answer_text']);
+                                                            $isCorrect = $answer['is_correct'] == 'true';
+                                                            $isSelected = ($userAnswerId == $answerId);
+                                                            ?>
+                                                            <div class="answer-option <?php echo $hasAnswered && $isSelected ? ($isCorrect ? 'correct-answer' : 'wrong-answer') : ''; ?>">
+                                                                <label class="answer-label">
+                                                                    <input type="radio"
+                                                                        name="ans_id[<?php echo $index; ?>]"
+                                                                        value="<?php echo $answerId; ?>"
+                                                                        <?php echo $isSelected ? 'checked' : ''; ?>
+                                                                        <?php echo $hasAnswered ? 'disabled' : 'required'; ?>>
+                                                                    <span class="answer-text"><?php echo $answerText; ?></span>
+                                                                    <?php if ($hasAnswered && $isCorrect): ?>
+                                                                        <i class="fas fa-check-circle text-success ms-2"></i>
+                                                                    <?php elseif ($hasAnswered && $isSelected && !$isCorrect): ?>
+                                                                        <i class="fas fa-times-circle text-danger ms-2"></i>
+                                                                    <?php endif; ?>
+                                                                </label>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
+                                                        <div class="alert alert-warning">
+                                                            Hakuna majibu yaliyopatikana kwa swali hili.
                                                         </div>
-                                                    <?php
-                                                        endforeach;
-                                                    endif;
-                                                    ?>
+                                                    <?php endif; ?>
                                                 </div>
+                                                <input type="hidden" name="qn_id[]" value="<?php echo $question['id']; ?>">
                                             </div>
                                         <?php endforeach; ?>
 
@@ -424,6 +516,12 @@ $hasAnswered = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
                                             <div class="text-center mt-4">
                                                 <button type="submit" name="submit_answers" class="btn btn-primary btn-lg">
                                                     <i class="fas fa-check"></i> Tuma Majibu
+                                                </button>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="text-center mt-4">
+                                                <button type="submit" name="submit_answers" class="btn btn-warning btn-lg">
+                                                    <i class="fas fa-redo"></i> Rudia Majaribio
                                                 </button>
                                             </div>
                                         <?php endif; ?>
@@ -441,6 +539,46 @@ $hasAnswered = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
 
                 <!-- Course Navigation -->
                 <div class="col-md-4">
+                    <!-- Progress Card -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6><i class="fas fa-chart-line"></i> Maendeleo Yangu</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress-info mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span>Maswali yaliyojibiwa:</span>
+                                    <strong><?php echo $userProgress['completed']; ?>/<?php echo $userProgress['total']; ?></strong>
+                                </div>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar bg-success" style="width: <?php echo $userProgress['percentage']; ?>%"></div>
+                                </div>
+                                <small class="text-muted">
+                                    <?php echo round($userProgress['percentage']); ?>% yamekamilika
+                                </small>
+                            </div>
+
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <i class="fas fa-video text-primary"></i>
+                                    <div>
+                                        <strong>Somo hili</strong>
+                                        <small><?php echo count($questions); ?> maswali</small>
+                                    </div>
+                                </div>
+                                <?php if ($hasAnswered): ?>
+                                    <div class="stat-item">
+                                        <i class="fas fa-check-circle text-success"></i>
+                                        <div>
+                                            <strong>Umekamilisha</strong>
+                                            <small>Somo hili</small>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="course-navigation">
                         <h5 class="mb-3">Masomo</h5>
                         <div class="lessons-list">

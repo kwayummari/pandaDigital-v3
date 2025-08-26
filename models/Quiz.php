@@ -344,6 +344,56 @@ class Quiz
     }
 
     /**
+     * Get answers for a specific question
+     */
+    public function getAnswersByQuestion($questionId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT 
+                    id,
+                    name as answer_text,
+                    status as is_correct
+                FROM answers 
+                WHERE qn_id = ?
+                ORDER BY id ASC
+            ");
+
+            $stmt->execute([$questionId]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error getting answers by question: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get user's answer for a specific question
+     */
+    public function getUserAnswerForQuestion($userId, $questionId)
+    {
+        try {
+            $conn = $this->db->getConnection();
+
+            $stmt = $conn->prepare("
+                SELECT ans_id 
+                FROM algorithm 
+                WHERE qn_id = ? AND user_id = ?
+            ");
+
+            $stmt->execute([$questionId, $userId]);
+            $result = $stmt->fetch();
+
+            return $result ? $result['ans_id'] : null;
+        } catch (PDOException $e) {
+            error_log("Error getting user answer: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Calculate grade based on score percentage
      */
     private function calculateGrade($scorePercentage)
