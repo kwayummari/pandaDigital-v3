@@ -191,7 +191,7 @@
                 <div class="text-center mt-3">
                     <a href="<?= app_url('forgot-password.php') ?>" class="text-muted">Umesahau nywila?</a>
                 </div>
-                
+
                 <!-- Switch to Signup -->
                 <div class="text-center mt-2">
                     <small class="modal-switch-text">Huna akaunti? </small>
@@ -257,7 +257,7 @@
                         </span>
                     </button>
                 </form>
-                
+
                 <!-- Switch to Login -->
                 <div class="text-center mt-3">
                     <small class="modal-switch-text">Una akaunti tayari? </small>
@@ -404,7 +404,7 @@
         if (signupModal) {
             signupModal.hide();
         }
-        
+
         // Show login modal
         const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
         loginModal.show();
@@ -416,7 +416,7 @@
         if (loginModal) {
             loginModal.hide();
         }
-        
+
         // Show signup modal
         const signupModal = new bootstrap.Modal(document.getElementById('signupModal'));
         signupModal.show();
