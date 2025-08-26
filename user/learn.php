@@ -30,7 +30,7 @@ if (isset($_POST['submit_answers'])) {
     } else {
         try {
             $conn = $quizModel->getConnection();
-            
+
             // Start transaction - EXACTLY like old system
             $conn->beginTransaction();
 
@@ -71,10 +71,12 @@ if (isset($_POST['submit_answers'])) {
             $conn->commit();
             error_log("✅ Inserted $insertCount new answers");
 
-            // Redirect to show results - EXACTLY like old system
-            header('Location: ' . app_url('user/learn.php') . '?course_id=' . $courseId . '&video_id=' . $videoId . '&message=quiz_completed');
-            exit();
+            // Set success message and refresh to show results
+            $quizSuccess = "Hongera! Umekamilisha somo hili. Unaweza kuendelea na somo linalofuata.";
 
+            // Refresh the page to show results
+            header('Location: ' . app_url('user/learn.php') . '?course_id=' . $courseId . '&video_id=' . $videoId . '&show_results=1');
+            exit();
         } catch (Exception $e) {
             // Rollback transaction
             $conn->rollBack();
@@ -118,7 +120,7 @@ if (!$isEnrolled) {
 if ($course['courseIsPaidStatusId'] == 1) {
     try {
         $conn = $quizModel->getConnection();
-        
+
         // Check payment status - EXACTLY like old system
         $accessQuery = "SELECT e.*, ct.status as payment_status, c.courseIsPaidStatusId 
                         FROM enrolled e 
@@ -128,7 +130,7 @@ if ($course['courseIsPaidStatusId'] == 1) {
         $stmt = $conn->prepare($accessQuery);
         $stmt->execute([$courseId, $currentUser['id']]);
         $accessResult = $stmt->fetch();
-        
+
         if (!$accessResult || $accessResult['payment_status'] != '1') {
             error_log("Payment required: userId=" . $currentUser['id'] . ", courseId=$courseId");
             header('Location: ' . app_url('user/course-overview.php') . '?id=' . $courseId . '&error=payment_required');
@@ -400,6 +402,28 @@ error_log("User progress: " . print_r($userProgress, true));
             font-size: 12px;
         }
 
+        /* Quiz Results Summary Styling */
+        .quiz-results-summary {
+            border: 2px solid #e9ecef;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+
+        .result-stat {
+            padding: 15px;
+        }
+
+        .result-stat h3 {
+            margin: 0;
+            font-weight: bold;
+            font-size: 2rem;
+        }
+
+        .result-stat small {
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
         /* Mobile responsive */
         @media (max-width: 768px) {
             .quiz-section .card-header {
@@ -453,6 +477,13 @@ error_log("User progress: " . print_r($userProgress, true));
                 </div>
             <?php endif; ?>
 
+            <?php if (isset($_GET['show_results']) && $_GET['show_results'] == '1'): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Hongera!</strong> Umekamilisha somo hili kwa mafanikio. Unaweza kuendelea na somo linalofuata.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
             <!-- Debug Information (remove in production) -->
             <?php if (isset($_GET['debug'])): ?>
                 <div class="alert alert-warning">
@@ -482,6 +513,29 @@ error_log("User progress: " . print_r($userProgress, true));
                                 </div>
                             </div>
                             <small class="text-muted"><?php echo $userProgress['completed']; ?> kati ya <?php echo $userProgress['total']; ?> masomo yamekamilika</small>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="navigation-buttons mt-3">
+                            <?php
+                            $currentIndex = array_search($videoId, array_column($courseVideos, 'id'));
+                            $hasPrevious = $currentIndex > 0;
+                            $hasNext = $currentIndex < count($courseVideos) - 1;
+                            ?>
+
+                            <?php if ($hasPrevious): ?>
+                                <a href="<?php echo app_url('user/learn.php'); ?>?course_id=<?php echo $courseId; ?>&video_id=<?php echo $courseVideos[$currentIndex - 1]['id']; ?>"
+                                    class="btn btn-outline-primary btn-sm w-100 mb-2">
+                                    <i class="fas fa-arrow-left"></i> Somo la Nyuma
+                                </a>
+                            <?php endif; ?>
+
+                            <?php if ($hasNext): ?>
+                                <a href="<?php echo app_url('user/learn.php'); ?>?course_id=<?php echo $courseId; ?>&video_id=<?php echo $courseVideos[$currentIndex + 1]['id']; ?>"
+                                    class="btn btn-outline-success btn-sm w-100">
+                                    <i class="fas fa-arrow-right"></i> Somo Linalofuata
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -554,6 +608,14 @@ error_log("User progress: " . print_r($userProgress, true));
                                             if ($hasAnswered) {
                                                 $userAnswerId = $quizModel->getUserAnswerForQuestion($currentUser['id'], $question['id']);
                                             }
+
+                                            // Check if we should show results
+                                            $showResults = isset($_GET['show_results']) && $_GET['show_results'] == '1';
+
+                                            // If showing results, we need to get the user's answers
+                                            if ($showResults) {
+                                                $userAnswerId = $quizModel->getUserAnswerForQuestion($currentUser['id'], $question['id']);
+                                            }
                                             ?>
                                             <div class="question-card mb-4">
                                                 <div class="question-header">
@@ -572,17 +634,17 @@ error_log("User progress: " . print_r($userProgress, true));
                                                             $isCorrect = $answer['status'] == 'true';
                                                             $isSelected = ($userAnswerId == $answerId);
                                                             ?>
-                                                            <div class="answer-option <?php echo $hasAnswered && $isSelected ? ($isCorrect ? 'correct-answer' : 'wrong-answer') : ''; ?>">
+                                                            <div class="answer-option <?php echo $showResults && $isSelected ? ($isCorrect ? 'correct-answer' : 'wrong-answer') : ''; ?>">
                                                                 <label class="answer-label">
                                                                     <input type="radio"
                                                                         name="ans_id[<?php echo $index; ?>]"
                                                                         value="<?php echo $answerId; ?>"
                                                                         <?php echo $isSelected ? 'checked' : ''; ?>
-                                                                        <?php echo $hasAnswered ? 'disabled' : 'required'; ?>>
+                                                                        <?php echo $showResults ? 'disabled' : 'required'; ?>>
                                                                     <span class="answer-text"><?php echo $answerText; ?></span>
-                                                                    <?php if ($hasAnswered && $isCorrect): ?>
+                                                                    <?php if ($showResults && $isCorrect): ?>
                                                                         <i class="fas fa-check-circle text-success ms-2"></i>
-                                                                    <?php elseif ($hasAnswered && $isSelected && !$isCorrect): ?>
+                                                                    <?php elseif ($showResults && $isSelected && !$isCorrect): ?>
                                                                         <i class="fas fa-times-circle text-danger ms-2"></i>
                                                                     <?php endif; ?>
                                                                 </label>
@@ -598,17 +660,91 @@ error_log("User progress: " . print_r($userProgress, true));
                                             </div>
                                         <?php endforeach; ?>
 
-                                        <?php if (!$hasAnswered): ?>
+                                        <?php if (!$showResults): ?>
                                             <div class="text-center mt-4">
                                                 <button type="submit" name="submit_answers" class="btn btn-primary btn-lg">
                                                     <i class="fas fa-check"></i> Tuma Majibu
                                                 </button>
                                             </div>
                                         <?php else: ?>
+                                            <!-- Quiz Results Summary -->
+                                            <div class="quiz-results-summary mb-4 p-4 bg-light rounded">
+                                                <h5 class="text-center mb-3">
+                                                    <i class="fas fa-trophy text-warning"></i>
+                                                    Matokeo Yako
+                                                </h5>
+                                                <?php
+                                                // Calculate user's score
+                                                $totalQuestions = count($questions);
+                                                $correctAnswers = 0;
+
+                                                foreach ($questions as $question) {
+                                                    $userAnswerId = $quizModel->getUserAnswerForQuestion($currentUser['id'], $question['id']);
+                                                    if ($userAnswerId) {
+                                                        // Check if answer is correct
+                                                        $answers = $quizModel->getAnswersByQuestion($question['id']);
+                                                        foreach ($answers as $answer) {
+                                                            if ($answer['id'] == $userAnswerId && $answer['status'] == 'true') {
+                                                                $correctAnswers++;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                $scorePercentage = $totalQuestions > 0 ? round(($correctAnswers / $totalQuestions) * 100) : 0;
+                                                ?>
+                                                <div class="row text-center">
+                                                    <div class="col-md-4">
+                                                        <div class="result-stat">
+                                                            <h3 class="text-primary"><?php echo $correctAnswers; ?></h3>
+                                                            <small>Majibu Sahihi</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="result-stat">
+                                                            <h3 class="text-success"><?php echo $totalQuestions; ?></h3>
+                                                            <small>Maswali Yote</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="result-stat">
+                                                            <h3 class="text-info"><?php echo $scorePercentage; ?>%</h3>
+                                                            <small>Asilimia</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="text-center mt-3">
+                                                    <?php if ($scorePercentage >= 80): ?>
+                                                        <span class="badge bg-success fs-6">
+                                                            <i class="fas fa-star"></i> Umejifunza vizuri!
+                                                        </span>
+                                                    <?php elseif ($scorePercentage >= 60): ?>
+                                                        <span class="badge bg-warning fs-6">
+                                                            <i class="fas fa-thumbs-up"></i> Umejifunza!
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-info fs-6">
+                                                            <i class="fas fa-lightbulb"></i> Jaribu tena!
+                                                        </span>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+
                                             <div class="text-center mt-4">
-                                                <button type="submit" name="submit_answers" class="btn btn-warning btn-lg">
-                                                    <i class="fas fa-redo"></i> Rudia Majaribio
-                                                </button>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <button type="submit" name="submit_answers" class="btn btn-warning btn-lg w-100">
+                                                            <i class="fas fa-redo"></i> Rudia Majaribio
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <a href="<?php echo app_url('user/learn.php'); ?>?course_id=<?php echo $courseId; ?>&video_id=<?php echo $videoId + 1; ?>" class="btn btn-success btn-lg w-100">
+                                                            <i class="fas fa-arrow-right"></i> Somo Linalofuata
+                                                        </a>
+                                                    </div>
+                                                </div>
                                             </div>
                                         <?php endif; ?>
                                     </form>
