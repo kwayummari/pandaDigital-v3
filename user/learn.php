@@ -20,6 +20,10 @@ try {
 
 // Handle quiz submission - EXACTLY like old system
 if (isset($_POST['submit_answers'])) {
+    // Debug: Log what we received
+    error_log("Quiz submission received!");
+    error_log("POST data: " . print_r($_POST, true));
+    
     $questionIds = $_POST['qn_id'] ?? [];
     $answerIds = $_POST['ans_id'] ?? [];
 
@@ -594,9 +598,14 @@ error_log("User progress: " . print_r($userProgress, true));
                                         </div>
                                     <?php endif; ?>
 
-                                    <form method="post" id="quizForm" class="quiz-form">
+                                    <form method="post" id="quizForm" class="quiz-form" action="">
                                         <input type="hidden" name="video_id" value="<?php echo $videoId; ?>">
                                         <input type="hidden" name="course_id" value="<?php echo $courseId; ?>">
+                                        
+                                        <!-- Debug: Show form values -->
+                                        <div class="alert alert-info small">
+                                            <strong>Debug:</strong> Video ID: <?php echo $videoId; ?>, Course ID: <?php echo $courseId; ?>
+                                        </div>
 
                                         <?php foreach ($questions as $index => $question): ?>
                                             <?php
@@ -662,6 +671,11 @@ error_log("User progress: " . print_r($userProgress, true));
 
                                         <?php if (!$showResults): ?>
                                             <div class="text-center mt-4">
+                                                <!-- Debug: Test form submission -->
+                                                <div class="alert alert-warning small mb-3">
+                                                    <strong>Test:</strong> Click the button below to submit the quiz
+                                                </div>
+                                                
                                                 <button type="submit" name="submit_answers" class="btn btn-primary btn-lg">
                                                     <i class="fas fa-check"></i> Tuma Majibu
                                                 </button>
@@ -844,38 +858,6 @@ error_log("User progress: " . print_r($userProgress, true));
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Quiz submission
-        document.getElementById('quizForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const videoId = document.getElementById('videoId').value;
-            const courseId = document.getElementById('courseId').value;
-            const formData = new FormData(this);
-
-            // Add video and course IDs
-            formData.append('videoId', videoId);
-            formData.append('courseId', courseId);
-
-            // Submit quiz
-            fetch('<?php echo app_url('user/submit-quiz.php'); ?>', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Hongera! Umekamilisha somo hili.');
-                        location.reload(); // Reload to show completion status
-                    } else {
-                        alert('Kulikuwa na tatizo: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Kulikuwa na tatizo, jaribu tena');
-                });
-        });
-
         // Sidebar toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
             const sidebarToggle = document.querySelector('.sidebar-toggle');
@@ -887,6 +869,18 @@ error_log("User progress: " . print_r($userProgress, true));
                     sidebar.classList.toggle('collapsed');
                     mainContent.classList.toggle('expanded');
                 });
+            }
+            
+            // Debug: Check if quiz form exists and add submission logging
+            const quizForm = document.getElementById('quizForm');
+            if (quizForm) {
+                console.log('Quiz form found:', quizForm);
+                quizForm.addEventListener('submit', function(e) {
+                    console.log('Form submitted!');
+                    console.log('Form data:', new FormData(this));
+                });
+            } else {
+                console.log('Quiz form not found!');
             }
         });
     </script>
