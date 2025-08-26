@@ -18,47 +18,69 @@ try {
     error_log("Database connection failed: " . $e->getMessage());
 }
 
-// Handle quiz submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_answers'])) {
-    try {
-        $videoId = $_POST['video_id'] ?? null;
-        $courseId = $_POST['course_id'] ?? null;
-        $answers = $_POST['answers'] ?? [];
+// Handle quiz submission - EXACTLY like old system
+if (isset($_POST['submit_answers'])) {
+    $questionIds = $_POST['qn_id'] ?? [];
+    $answerIds = $_POST['ans_id'] ?? [];
 
-        if ($videoId && $courseId) {
-            // Get question IDs and answer IDs from form
-            $questionIds = $_POST['qn_id'] ?? [];
-            $answerIds = $_POST['ans_id'] ?? [];
+    if (!isset($currentUser['id']) || empty($currentUser['id'])) {
+        $quizError = "❌ ERROR: User ID is not set!";
+    } else if (empty($questionIds) || empty($answerIds)) {
+        $quizError = "Tafadhali jibu maswali yote.";
+    } else {
+        try {
+            $conn = $quizModel->getConnection();
+            
+            // Start transaction - EXACTLY like old system
+            $conn->beginTransaction();
 
-            if (empty($questionIds) || empty($answerIds)) {
-                $quizError = "Tafadhali jibu maswali yote.";
-            } else {
-                // Convert form data to the format expected by submitQuizAnswers
-                $answers = [];
-                foreach ($questionIds as $index => $questionId) {
-                    if (isset($answerIds[$index]) && !empty($answerIds[$index])) {
-                        $answers[$questionId] = $answerIds[$index];
-                    }
+            // Delete existing answers for these questions - EXACTLY like old system
+            if (!empty($questionIds)) {
+                $placeholders = str_repeat('?,', count($questionIds) - 1) . '?';
+                $deleteQuery = "DELETE FROM algorithm WHERE user_id = ? AND qn_id IN ($placeholders)";
+                $stmt = $conn->prepare($deleteQuery);
+
+                if (!$stmt) {
+                    throw new Exception("Prepare delete failed");
                 }
 
-                if (!empty($answers)) {
-                    // Submit quiz answers
-                    $result = $quizModel->submitQuizAnswers($currentUser['id'], $videoId, $answers);
+                $params = array_merge([$currentUser['id']], $questionIds);
+                $stmt->execute($params);
+                $deletedRows = $stmt->rowCount();
+                error_log("🗑️ Deleted $deletedRows existing answers");
+            }
 
-                    if ($result) {
-                        // Redirect to show results
-                        header('Location: ' . app_url('user/learn.php') . '?course_id=' . $courseId . '&video_id=' . $videoId . '&message=quiz_completed');
-                        exit();
-                    } else {
-                        $quizError = 'Kulikuwa na tatizo la kuhifadhi majibu yako.';
-                    }
-                } else {
-                    $quizError = "Tafadhali jibu maswali yote.";
+            // Insert new answers - EXACTLY like old system
+            $insertQuery = "INSERT INTO algorithm (qn_id, ans_id, user_id, date_created) VALUES (?, ?, ?, NOW())";
+            $stmt = $conn->prepare($insertQuery);
+
+            if (!$stmt) {
+                throw new Exception("Prepare insert failed");
+            }
+
+            $insertCount = 0;
+            foreach ($questionIds as $index => $questionId) {
+                if (isset($answerIds[$index]) && !empty($answerIds[$index])) {
+                    $stmt->execute([$questionId, $answerIds[$index], $currentUser['id']]);
+                    $insertCount++;
                 }
             }
+
+
+            // Commit transaction
+            $conn->commit();
+            error_log("✅ Inserted $insertCount new answers");
+
+            // Redirect to show results - EXACTLY like old system
+            header('Location: ' . app_url('user/learn.php') . '?course_id=' . $courseId . '&video_id=' . $videoId . '&message=quiz_completed');
+            exit();
+
+        } catch (Exception $e) {
+            // Rollback transaction
+            $conn->rollBack();
+            error_log("Error submitting quiz answers: " . $e->getMessage());
+            $quizError = 'Kulikuwa na tatizo la kuhifadhi majibu yako.';
         }
-    } catch (Exception $e) {
-        $quizError = 'Kulikuwa na tatizo la kuhifadhi majibu yako.';
     }
 }
 
@@ -92,10 +114,28 @@ if (!$isEnrolled) {
     exit();
 }
 
-// Check if course is paid and user has access
+// Check if course is paid and user has access - EXACTLY like old system
 if ($course['courseIsPaidStatusId'] == 1) {
-    $hasPaidAccess = $courseModel->hasPaidCourseAccess($currentUser['id'], $courseId);
-    if (!$hasPaidAccess) {
+    try {
+        $conn = $quizModel->getConnection();
+        
+        // Check payment status - EXACTLY like old system
+        $accessQuery = "SELECT e.*, ct.status as payment_status, c.courseIsPaidStatusId 
+                        FROM enrolled e 
+                        JOIN course c ON c.id = e.course_id
+                        LEFT JOIN courseTransactions ct ON ct.courseId = c.id AND ct.studentId = e.user_id
+                        WHERE e.course_id = ? AND e.user_id = ?";
+        $stmt = $conn->prepare($accessQuery);
+        $stmt->execute([$courseId, $currentUser['id']]);
+        $accessResult = $stmt->fetch();
+        
+        if (!$accessResult || $accessResult['payment_status'] != '1') {
+            error_log("Payment required: userId=" . $currentUser['id'] . ", courseId=$courseId");
+            header('Location: ' . app_url('user/course-overview.php') . '?id=' . $courseId . '&error=payment_required');
+            exit();
+        }
+    } catch (Exception $e) {
+        error_log("Error checking payment status: " . $e->getMessage());
         header('Location: ' . app_url('user/course-overview.php') . '?id=' . $courseId . '&error=payment_required');
         exit();
     }
@@ -127,45 +167,45 @@ if (!$currentVideo) {
     exit();
 }
 
-// Get questions for this video
-$questions = $quizModel->getQuestionsByVideo($videoId);
+// Get questions for this video - EXACTLY like old system
+try {
+    $conn = $quizModel->getConnection();
 
-// Debug: Check what questions we got
-error_log("Questions for video $videoId: " . print_r($questions, true));
-error_log("Questions count: " . count($questions));
-
-// Also check if the video ID exists in the questions table
-if (empty($questions)) {
-    error_log("No questions found for video $videoId. Checking if video exists in questions table...");
-
-    // Let's check what's in the questions table for this video
-    try {
-        $conn = $quizModel->getConnection();
-        $stmt = $conn->prepare("SELECT COUNT(*) as count FROM questions WHERE video_id = ?");
-        $stmt->execute([$videoId]);
-        $result = $stmt->fetch();
-        error_log("Total questions in database for video $videoId: " . $result['count']);
-
-        // Also check what video IDs exist
-        $stmt = $conn->prepare("SELECT DISTINCT video_id FROM questions LIMIT 10");
-        $stmt->execute();
-        $videoIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        error_log("Available video IDs in questions table: " . implode(', ', $videoIds));
-
-        // Check total questions in the table
-        $stmt = $conn->prepare("SELECT COUNT(*) as total FROM questions");
-        $stmt->execute();
-        $totalResult = $stmt->fetch();
-        error_log("Total questions in entire questions table: " . $totalResult['total']);
-
-        // Check table structure
-        $stmt = $conn->prepare("DESCRIBE questions");
-        $stmt->execute();
-        $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        error_log("Questions table columns: " . implode(', ', $columns));
-    } catch (Exception $e) {
-        error_log("Error checking questions table: " . $e->getMessage());
+    // Get questions for this video
+    $questionsQuery = "SELECT * FROM questions WHERE video_id = ? ORDER BY id ASC";
+    $stmt = $conn->prepare($questionsQuery);
+    if (!$stmt) {
+        error_log("Prepare failed for questions query");
+        die("Database error");
     }
+
+    $stmt->execute([$videoId]);
+    $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    error_log("Found " . count($questions) . " questions for video $videoId");
+
+    // Check if user has already answered questions for this video
+    $answeredQuery = "SELECT DISTINCT qn_id FROM algorithm WHERE user_id = ? AND qn_id IN (SELECT id FROM questions WHERE video_id = ?)";
+    $stmt = $conn->prepare($answeredQuery);
+    if (!$stmt) {
+        error_log("Prepare failed for answered query");
+        die("Database error");
+    }
+
+    $stmt->execute([$currentUser['id'], $videoId]);
+    $answeredResult = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $answeredQuestions = [];
+    foreach ($answeredResult as $row) {
+        $answeredQuestions[] = $row['qn_id'];
+    }
+
+
+    $hasAnswered = !empty($answeredQuestions);
+    error_log("User has answered: " . ($hasAnswered ? 'YES' : 'NO') . " (" . count($answeredQuestions) . " questions)");
+} catch (Exception $e) {
+    error_log("Error getting questions: " . $e->getMessage());
+    $questions = [];
+    $hasAnswered = false;
 }
 
 // Check if user has completed this video
@@ -188,8 +228,7 @@ if (!isset($userProgress['percentage'])) {
 // Debug: Check user progress
 error_log("User progress: " . print_r($userProgress, true));
 
-// Check if user has already answered questions for this video
-$hasAnswered = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
+
 ?>
 
 <!DOCTYPE html>
@@ -214,7 +253,7 @@ $hasAnswered = $quizModel->hasCompletedQuiz($currentUser['id'], $videoId);
         }
 
         .quiz-section .card-header {
-            background: linear-gradient(135deg, var(--primary-color), #667eea);
+            background: var(--primary-color);
             color: white;
             border-radius: 12px 12px 0 0 !important;
             border: none;
