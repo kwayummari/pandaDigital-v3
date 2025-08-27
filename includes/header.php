@@ -350,6 +350,87 @@ function isCurrentPage($pagePath)
     </div>
 
     <style>
+        /* Force desktop navbar active state styling */
+        .navbar.navbar-expand-lg .navbar-nav .nav-item .nav-link.active,
+        .navbar.navbar-expand-lg .navbar-nav .nav-item .nav-link.active:hover,
+        .navbar.navbar-expand-lg .navbar-nav .nav-item .nav-link.active:focus,
+        .navbar.navbar-expand-lg .navbar-nav .nav-item .dropdown-toggle.active,
+        .navbar.navbar-expand-lg .navbar-nav .nav-item .dropdown-toggle.active:hover,
+        .navbar.navbar-expand-lg .navbar-nav .nav-item .dropdown-toggle.active:focus {
+            background: #5f4594 !important;
+            background-color: #5f4594 !important;
+            color: #ffbc3b !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: 0 2px 8px rgba(95, 69, 148, 0.3) !important;
+        }
+
+        /* Additional desktop navbar overrides */
+        .navbar.navbar-expand-lg .navbar-nav .nav-item .nav-link.active,
+        .navbar.navbar-expand-lg .navbar-nav .nav-item .nav-link.active:hover,
+        .navbar.navbar-expand-lg .navbar-nav .nav-item .nav-link.active:focus {
+            background: #5f4594 !important;
+            background-color: #5f4594 !important;
+            color: #ffbc3b !important;
+        }
+
+        /* Target the specific navbar structure */
+        .navbar.navbar-expand-lg.navbar-light.sticky-top .navbar-nav .nav-item .nav-link.active {
+            background: #5f4594 !important;
+            background-color: #5f4594 !important;
+            color: #ffbc3b !important;
+        }
+
+        /* Target navbar-collapse specifically */
+        .navbar-collapse .navbar-nav .nav-item .nav-link.active {
+            background: #5f4594 !important;
+            background-color: #5f4594 !important;
+            color: #ffbc3b !important;
+        }
+
+        /* Force override for any remaining conflicts */
+        .navbar-nav .nav-item .nav-link.active,
+        .navbar-nav .nav-item .nav-link.active:hover,
+        .navbar-nav .nav-item .nav-link.active:focus {
+            background: #5f4594 !important;
+            background-color: #5f4594 !important;
+            color: #ffbc3b !important;
+        }
+
+        /* Ensure active state persists */
+        .navbar-nav .nav-item .nav-link[class*="active"] {
+            background: #5f4594 !important;
+            background-color: #5f4594 !important;
+            color: #ffbc3b !important;
+        }
+
+        /* Additional specificity for dropdown toggles */
+        .navbar-nav .nav-item .dropdown-toggle.active,
+        .navbar-nav .nav-item .dropdown-toggle.active:hover,
+        .navbar-nav .nav-item .dropdown-toggle.active:focus {
+            background: #5f4594 !important;
+            background-color: #5f4594 !important;
+            color: #ffbc3b !important;
+        }
+
+        /* Maximum specificity override */
+        html body .navbar.navbar-expand-lg.navbar-light.sticky-top .navbar-collapse .navbar-nav .nav-item .nav-link.active {
+            background: #5f4594 !important;
+            background-color: #5f4594 !important;
+            color: #ffbc3b !important;
+        }
+
+        /* Force override for any remaining conflicts */
+        .navbar-nav .nav-item .nav-link.active,
+        .navbar-nav .nav-item .nav-link.active:hover,
+        .navbar-nav .nav-item .nav-link.active:focus,
+        .navbar-nav .nav-item .nav-link.active:visited,
+        .navbar-nav .nav-item .nav-link.active:active {
+            background: #5f4594 !important;
+            background-color: #5f4594 !important;
+            color: #ffbc3b !important;
+        }
+
         /* User Profile Menu Styles */
         .user-profile-menu .dropdown-menu {
             min-width: 280px;
