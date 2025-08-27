@@ -112,18 +112,17 @@ include '../includes/header.php';
                                 </div>
                                 <?php if ($product['isOffered'] == 1): ?>
                                     <?php
-                                    $originalPrice = $product['amount'];
-                                    $discount = $product['offer'];
+                                    $originalPrice = (float)$product['amount'];
+                                    $discount = (float)$product['offer'];
                                     $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
                                     ?>
-                                    <div class="price mb-2">
-                                        <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo number_format($originalPrice, 0); ?></del>
-                                        <div class="text-primary fw-bold">Tsh.<?php echo number_format($discountedPrice, 0); ?></div>
-                                    </div>
+                                    <span class="price">
+                                        <del>Tsh.<?php echo number_format($originalPrice, 2); ?>/=</del>
+                                        <br>
+                                        Tsh.<?php echo number_format($discountedPrice, 2); ?>/=
+                                    </span>
                                 <?php else: ?>
-                                    <div class="price mb-2">
-                                        <span class="text-primary fw-bold">Tsh.<?php echo number_format($product['amount'], 0); ?></span>
-                                    </div>
+                                    <span class="price">Tsh.<?php echo $product['amount']; ?>/=</span>
                                 <?php endif; ?>
                                 <div class="product-actions">
                                     <div class="d-flex gap-2">
@@ -216,6 +215,10 @@ include '../includes/header.php';
     .breadcrumb-item a {
         color: #fff;
         text-decoration: none;
+    }
+
+    .price del {
+        color: red;
     }
 
     .breadcrumb-item.active {
