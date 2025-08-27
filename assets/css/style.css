@@ -1241,6 +1241,187 @@ html body .navbar .navbar-nav .nav-item .nav-link.active {
   color: #ffbc3b !important;
 }
 
+/* Desktop navbar specific overrides - maximum specificity */
+.navbar .navbar-nav .nav-item .nav-link.active,
+.navbar .navbar-nav .nav-item .nav-link.active:hover,
+.navbar .navbar-nav .nav-item .nav-link.active:focus,
+.navbar .navbar-nav .nav-item .nav-link.active:visited,
+.navbar .navbar-nav .nav-item .nav-link.active:active {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  background-image: none !important;
+  color: #ffbc3b !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: 0 2px 8px rgba(95, 69, 148, 0.3) !important;
+}
+
+/* Additional desktop specificity */
+.navbar.navbar-expand-lg .navbar-nav .nav-item .nav-link.active {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+}
+
+/* Force override for any remaining desktop conflicts */
+.navbar.navbar-expand-lg .navbar-nav .nav-item .nav-link.active,
+.navbar.navbar-expand-lg .navbar-nav .nav-item .nav-link.active:hover,
+.navbar.navbar-expand-lg .navbar-nav .nav-item .nav-link.active:focus {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+}
+
+/* Target the specific navbar structure */
+.navbar.sticky-top .navbar-nav .nav-item .nav-link.active,
+.navbar.navbar-light .navbar-nav .nav-item .nav-link.active {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+}
+
+/* Bootstrap override - maximum specificity */
+.navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-nav
+  .nav-item
+  .nav-link.active,
+.navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-nav
+  .nav-item
+  .nav-link.active:hover,
+.navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-nav
+  .nav-item
+  .nav-link.active:focus {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+}
+
+/* Target any possible Bootstrap active states */
+.navbar-nav .nav-item .nav-link.active.show,
+.navbar-nav .nav-item .nav-link.active.collapsed,
+.navbar-nav .nav-item .nav-link.active.expanded {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+}
+
+/* Force background with inline-style level specificity */
+.navbar-nav .nav-item .nav-link.active {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  background-image: none !important;
+  background-clip: border-box !important;
+  background-origin: border-box !important;
+  background-size: auto !important;
+  background-repeat: repeat !important;
+  background-attachment: scroll !important;
+  color: #ffbc3b !important;
+}
+
+/* Additional specificity for the exact navbar structure */
+.navbar.navbar-expand-lg .navbar-nav .nav-item .nav-link.active {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+}
+
+/* Target the exact navbar structure from header.php */
+.navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-nav
+  .nav-item
+  .nav-link.active,
+.navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-nav
+  .nav-item
+  .nav-link.active:hover,
+.navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-nav
+  .nav-item
+  .nav-link.active:focus {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Target the specific collapse structure */
+.navbar-collapse .navbar-nav .nav-item .nav-link.active {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+}
+
+/* Target dropdown-toggle active state specifically */
+.navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-nav
+  .nav-item
+  .dropdown-toggle.active,
+.navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-nav
+  .nav-item
+  .dropdown-toggle.active:hover,
+.navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-nav
+  .nav-item
+  .dropdown-toggle.active:focus {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+}
+
+/* Additional dropdown active state targeting */
+.navbar-nav .nav-item .dropdown-toggle.active,
+.navbar-nav .nav-item .dropdown-toggle.active:hover,
+.navbar-nav .nav-item .dropdown-toggle.active:focus {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+}
+
+/* Maximum specificity override - should definitely work */
+html
+  body
+  .navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-collapse
+  .navbar-nav
+  .nav-item
+  .nav-link.active,
+html
+  body
+  .navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-collapse
+  .navbar-nav
+  .nav-item
+  .nav-link.active:hover,
+html
+  body
+  .navbar.navbar-expand-lg.navbar-light.sticky-top
+  .navbar-collapse
+  .navbar-nav
+  .nav-item
+  .nav-link.active:focus {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: 0 2px 8px rgba(95, 69, 148, 0.3) !important;
+}
+
+/* Force override for any remaining conflicts */
+.navbar-nav .nav-item .nav-link.active,
+.navbar-nav .nav-item .nav-link.active:hover,
+.navbar-nav .nav-item .nav-link.active:focus,
+.navbar-nav .nav-item .nav-link.active:visited,
+.navbar-nav .nav-item .nav-link.active:active {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+}
+
 .navbar-nav .nav-link.active::before {
   width: 60%;
 }
