@@ -171,14 +171,13 @@ include 'includes/header.php';
                                     $discount = (float)$product['offer'];
                                     $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
                                     ?>
-                                    <div class="price mb-2">
-                                        <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo number_format($originalPrice, 0); ?></del>
-                                        <div class="text-primary fw-bold">Tsh.<?php echo number_format($discountedPrice, 0); ?></div>
-                                    </div>
+                                    <span class="price">
+                                        <del>Tsh.<?php echo number_format($originalPrice, 2); ?>/=</del>
+                                        <br>
+                                        Tsh.<?php echo number_format($discountedPrice, 2); ?>/=
+                                    </span>
                                 <?php else: ?>
-                                    <div class="price mb-2">
-                                        <span class="text-primary fw-bold">Tsh.<?php echo number_format((float)$product['amount'], 0); ?></span>
-                                    </div>
+                                    <span class="price">Tsh.<?php echo $product['amount']; ?>/=</span>
                                 <?php endif; ?>
                                 <div class="product-actions">
                                     <div class="d-flex gap-2">
@@ -254,14 +253,13 @@ include 'includes/header.php';
                                     $discount = (float)$product['offer'];
                                     $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
                                     ?>
-                                    <div class="price mb-2">
-                                        <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo number_format($originalPrice, 0); ?></del>
-                                        <div class="text-primary fw-bold">Tsh.<?php echo number_format($discountedPrice, 0); ?></div>
-                                    </div>
+                                    <span class="price">
+                                        <del>Tsh.<?php echo number_format($originalPrice, 2); ?>/=</del>
+                                        <br>
+                                        Tsh.<?php echo number_format($discountedPrice, 2); ?>/=
+                                    </span>
                                 <?php else: ?>
-                                    <div class="price mb-2">
-                                        <span class="text-primary fw-bold">Tsh.<?php echo number_format((float)$product['amount'], 0); ?></span>
-                                    </div>
+                                    <span class="price">Tsh.<?php echo $product['amount']; ?>/=</span>
                                 <?php endif; ?>
                                 <div class="product-actions">
                                     <div class="d-flex gap-2">
@@ -343,14 +341,13 @@ include 'includes/header.php';
                                         $discount = (float)$product['offer'];
                                         $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
                                         ?>
-                                        <div class="price mb-2">
-                                            <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo number_format($originalPrice, 2); ?>/=</del>
-                                            <div class="text-primary fw-bold">Tsh.<?php echo number_format($discountedPrice, 2); ?>/=</div>
-                                        </div>
+                                        <span class="price">
+                                            <del>Tsh.<?php echo number_format($originalPrice, 2); ?>/=</del>
+                                            <br>
+                                            Tsh.<?php echo number_format($discountedPrice, 2); ?>/=
+                                        </span>
                                     <?php else: ?>
-                                        <div class="price mb-2">
-                                            <span class="text-primary fw-bold">Tsh.<?php echo $product['amount']; ?>/=</span>
-                                        </div>
+                                        <span class="price">Tsh.<?php echo $product['amount']; ?>/=</span>
                                     <?php endif; ?>
                                     <div class="product-actions">
                                         <div class="d-flex gap-2">
@@ -506,6 +503,10 @@ include 'includes/header.php';
     .section-subtitle {
         color: #6c757d;
         margin-bottom: 0;
+    }
+
+    .price del {
+        color: red;
     }
 </style>
 
