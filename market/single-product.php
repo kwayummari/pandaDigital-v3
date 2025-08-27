@@ -140,6 +140,33 @@ include '../includes/header.php';
                             </div>
                         <?php endif; ?>
 
+                        <!-- Quantity Selector -->
+                        <div class="quantity-content mb-3">
+                            <div class="row align-items-center">
+                                <div class="col-6">
+                                    <h6>Weka Idadi:</h6>
+                                </div>
+                                <div class="col-6">
+                                    <div class="quantity buttons_added">
+                                        <input type="button" value="-" class="minus btn btn-outline-secondary btn-sm">
+                                        <input type="number" step="1" min="1" max="" name="quantity" value="1" title="Qty" class="input-text qty text form-control" size="4" pattern="" inputmode="" id="quantity">
+                                        <input type="button" value="+" class="plus btn btn-outline-secondary btn-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Price -->
+                        <div class="total mb-3">
+                            <h5>Jumla: 
+                                <?php if ($product['isOffered'] == 1): ?>
+                                    Tsh.<?php echo $discountedPrice; ?>/=
+                                <?php else: ?>
+                                    Tsh.<?php echo $product['amount']; ?>/=
+                                <?php endif; ?>
+                            </h5>
+                        </div>
+
                         <!-- Buy Button -->
                         <div class="buy-button-section mt-3">
                             <button type="button" class="btn btn-success btn-lg w-100" id="purchase-button">
@@ -327,6 +354,61 @@ include '../includes/header.php';
 
 <?php include '../includes/footer.php'; ?>
 
+<!-- Purchase Modal -->
+<div class="modal fade" id="purchaseModal" tabindex="-1" role="dialog" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="purchaseModalLabel">Kamilisha Ununuzi Wako</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="process_order.php">
+                    <div class="mb-3">Kamilisha agizo lako la <?php echo htmlspecialchars($product['name']); ?></div>
+                    <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['id']); ?>">
+                    <input type="hidden" name="currency" value="TZS">
+                    <input type="hidden" name="payment_options" value="mobilemoney">
+                    <input type="hidden" name="redirect_url" value="<?= app_url('market/single-product.php?id=' . $product['id']) ?>">
+                    <input type="hidden" name="customer[email]" value="<?php echo isset($_SESSION['userEmail']) ? $_SESSION['userEmail'] : ''; ?>">
+                    <input type="hidden" name="customer[name]" value="<?php echo isset($_SESSION['userFullName']) ? $_SESSION['userFullName'] : ''; ?>">
+                    <input type="hidden" name="customization[title]" value="My store">
+                    <input type="hidden" name="customization[description]" value="Payment for items in cart">
+                    
+                    <div class="form-group mb-3">
+                        <label for="total_amount">Bei:</label>
+                        <input readonly id="total_amount" name="price" class="form-control" value="<?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>">
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="custom_amount">Weka Idadi:</label>
+                        <input type="number" id="custom_amount" name="quantity" class="form-control" min="1" value="1">
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="mobile_type">Chagua M-Pesa:</label>
+                        <select id="mobile_type" name="mobile_type" class="form-control">
+                            <option value="Tigo">Tigo</option>
+                            <option value="Airtel">Airtel</option>
+                            <option value="Halopesa">Halopesa</option>
+                            <option value="Azampesa">Azampesa</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="phone">Namba ya simu:</label>
+                        <input type="text" id="phone" name="phone" class="form-control" required>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
+                        <button type="submit" class="btn btn-primary">Nunua Bidhaa</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     .product-image-container {
         position: relative;
@@ -418,6 +500,43 @@ include '../includes/header.php';
         padding: 12px 24px;
         font-weight: 600;
     }
+
+    .quantity-content {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
+    .quantity.buttons_added {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .quantity.buttons_added input[type="number"] {
+        width: 60px;
+        text-align: center;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        padding: 5px;
+    }
+
+    .quantity.buttons_added .btn {
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .total h5 {
+        color: #28a745;
+        font-weight: 700;
+        margin: 0;
+    }
 </style>
 
 <script>
@@ -465,10 +584,16 @@ include '../includes/header.php';
     }
 
     function purchaseProduct(productId) {
-        // This would typically redirect to checkout or cart
-        alert('Unakaribishwa kwenye checkout!');
-        // You can redirect to cart or checkout page here
-        // window.location.href = 'cart.php?add=' + productId;
+        // Check if user is logged in
+        <?php if (isset($_SESSION['userId'])) : ?>
+            // Show purchase modal
+            const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
+            purchaseModal.show();
+        <?php else : ?>
+            // Show login modal
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        <?php endif; ?>
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -498,6 +623,38 @@ include '../includes/header.php';
                     });
             } else {
                 alert("Tafadhali chagua ukadiriaji.");
+            }
+        });
+
+        // Quantity change functionality
+        document.getElementById('quantity').addEventListener('change', function() {
+            var quantity = parseInt(this.value);
+            var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
+            var total = unitPrice * quantity;
+            document.getElementById('total_amount').value = total;
+            
+            // Update total display
+            const totalDisplay = document.querySelector('.total h5');
+            if (totalDisplay) {
+                totalDisplay.innerHTML = 'Jumla: Tsh.' + total + '/=';
+            }
+        });
+
+        // Plus button functionality
+        document.querySelector('.plus').addEventListener('click', function() {
+            var quantityInput = document.getElementById('quantity');
+            var currentValue = parseInt(quantityInput.value);
+            quantityInput.value = currentValue + 1;
+            quantityInput.dispatchEvent(new Event('change'));
+        });
+
+        // Minus button functionality
+        document.querySelector('.minus').addEventListener('click', function() {
+            var quantityInput = document.getElementById('quantity');
+            var currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+                quantityInput.dispatchEvent(new Event('change'));
             }
         });
     });
