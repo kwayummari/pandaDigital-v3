@@ -172,11 +172,11 @@ include '../includes/header.php';
 
                         <!-- Buy Button -->
                         <div class="buy-button-section mt-3">
-                            <button type="button" class="btn btn-success btn-lg w-100" id="purchase-button">
+                            <button type="button" class="btn btn-success btn-lg w-100" id="purchase-button" onclick="console.log('Purchase button inline onclick works');">
                                 <i class="fas fa-shopping-cart me-2"></i>Nunua Bidhaa
                             </button>
                             <!-- Test button -->
-                            <button type="button" class="btn btn-warning btn-sm w-100 mt-2" onclick="testFunction()">
+                            <button type="button" class="btn btn-warning btn-sm w-100 mt-2" onclick="alert('Inline test works!'); console.log('Inline onclick works');">
                                 Test Button
                             </button>
                         </div>
@@ -386,10 +386,10 @@ include '../includes/header.php';
                         <input readonly id="total_amount" name="price" class="form-control" value="<?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>">
                     </div>
 
-                                         <div class="form-group mb-3">
-                         <label for="custom_amount">Weka Idadi:</label>
-                         <input type="number" id="custom_amount" name="quantity" class="form-control" min="1" value="1" onchange="updateModalTotal()">
-                     </div>
+                    <div class="form-group mb-3">
+                        <label for="custom_amount">Weka Idadi:</label>
+                        <input type="number" id="custom_amount" name="quantity" class="form-control" min="1" value="1" onchange="updateModalTotal()">
+                    </div>
 
                     <div class="form-group mb-3">
                         <label for="mobile_type">Chagua M-Pesa:</label>
@@ -550,6 +550,8 @@ include '../includes/header.php';
 </style>
 
 <script>
+    console.log('Script loading...');
+
     let selectedRating = 0;
     let selectedProductId = <?php echo $product['id']; ?>;
 
@@ -598,10 +600,18 @@ include '../includes/header.php';
         console.log('Test function called');
     }
 
+    // Make functions globally available
+    window.testFunction = testFunction;
+    window.purchaseProduct = purchaseProduct;
+    window.rateProduct = rateProduct;
+    window.selectStar = selectStar;
+    window.contactSeller = contactSeller;
+    window.addToWishlist = addToWishlist;
+
     function purchaseProduct(productId) {
         console.log('purchaseProduct called with ID:', productId);
         console.log('Session check:', <?php echo json_encode(isset($_SESSION['userId']) || isset($_SESSION['user_id']) || isset($_SESSION['id'])); ?>);
-        
+
         // Check if user is logged in
         <?php if (isset($_SESSION['userId']) || isset($_SESSION['user_id']) || isset($_SESSION['id'])) : ?>
             console.log('User is logged in, showing purchase modal');
@@ -617,84 +627,106 @@ include '../includes/header.php';
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded, checking elements...');
-        
-        // Check if elements exist
-        console.log('Purchase button:', document.getElementById('purchase-button'));
-        console.log('Plus button:', document.querySelector('.plus'));
-        console.log('Minus button:', document.querySelector('.minus'));
-        console.log('Quantity input:', document.getElementById('quantity'));
-        
-        // Handle purchase button click
-        document.getElementById('purchase-button').addEventListener('click', function() {
-            console.log('Purchase button clicked');
-            purchaseProduct(<?php echo $product['id']; ?>);
-        });
+        try {
+            console.log('DOM loaded, checking elements...');
 
-        // Handle rating submission
-        document.getElementById('submitRating').addEventListener('click', function() {
-            if (selectedRating > 0 && selectedProductId > 0) {
-                // Submit rating via AJAX
-                fetch('rate_product.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: 'productId=' + selectedProductId + '&rating=' + selectedRating
-                    })
-                    .then(response => response.text())
-                    .then(data => {
-                        alert("Asante kwa ukadiriaji wako!");
-                        location.reload();
-                    })
-                    .catch(error => {
-                        alert("Kosa katika kutuma ukadiriaji wako. Tafadhali jaribu tena.");
-                    });
+            // Check if elements exist
+            console.log('Purchase button:', document.getElementById('purchase-button'));
+            console.log('Plus button:', document.querySelector('.plus'));
+            console.log('Minus button:', document.querySelector('.minus'));
+            console.log('Quantity input:', document.getElementById('quantity'));
+
+            // Handle purchase button click
+            const purchaseButton = document.getElementById('purchase-button');
+            if (purchaseButton) {
+                console.log('Purchase button found, adding event listener');
+                purchaseButton.addEventListener('click', function() {
+                    console.log('Purchase button clicked');
+                    purchaseProduct(<?php echo $product['id']; ?>);
+                });
             } else {
-                alert("Tafadhali chagua ukadiriaji.");
+                console.error('Purchase button not found!');
             }
-        });
 
-        // Quantity change functionality
-        document.getElementById('quantity').addEventListener('change', function() {
-            var quantity = parseInt(this.value);
-            var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
-            var total = unitPrice * quantity;
-            document.getElementById('total_amount').value = total;
+            // Handle rating submission
+            document.getElementById('submitRating').addEventListener('click', function() {
+                if (selectedRating > 0 && selectedProductId > 0) {
+                    // Submit rating via AJAX
+                    fetch('rate_product.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: 'productId=' + selectedProductId + '&rating=' + selectedRating
+                        })
+                        .then(response => response.text())
+                        .then(data => {
+                            alert("Asante kwa ukadiriaji wako!");
+                            location.reload();
+                        })
+                        .catch(error => {
+                            alert("Kosa katika kutuma ukadiriaji wako. Tafadhali jaribu tena.");
+                        });
+                } else {
+                    alert("Tafadhali chagua ukadiriaji.");
+                }
+            });
 
-            // Update total display
-            const totalDisplay = document.querySelector('.total h5');
-            if (totalDisplay) {
-                totalDisplay.innerHTML = 'Jumla: Tsh.' + total + '/=';
+            // Quantity change functionality
+            document.getElementById('quantity').addEventListener('change', function() {
+                var quantity = parseInt(this.value);
+                var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
+                var total = unitPrice * quantity;
+                document.getElementById('total_amount').value = total;
+
+                // Update total display
+                const totalDisplay = document.querySelector('.total h5');
+                if (totalDisplay) {
+                    totalDisplay.innerHTML = 'Jumla: Tsh.' + total + '/=';
+                }
+            });
+
+            // Plus button functionality
+            const plusButton = document.querySelector('.plus');
+            if (plusButton) {
+                console.log('Plus button found, adding event listener');
+                plusButton.addEventListener('click', function() {
+                    console.log('Plus button clicked');
+                    var quantityInput = document.getElementById('quantity');
+                    var currentValue = parseInt(quantityInput.value);
+                    quantityInput.value = currentValue + 1;
+                    quantityInput.dispatchEvent(new Event('change'));
+                });
+            } else {
+                console.error('Plus button not found!');
             }
-        });
 
-        // Plus button functionality
-        document.querySelector('.plus').addEventListener('click', function() {
-            console.log('Plus button clicked');
-            var quantityInput = document.getElementById('quantity');
-            var currentValue = parseInt(quantityInput.value);
-            quantityInput.value = currentValue + 1;
-            quantityInput.dispatchEvent(new Event('change'));
-        });
-
-        // Minus button functionality
-        document.querySelector('.minus').addEventListener('click', function() {
-            console.log('Minus button clicked');
-            var quantityInput = document.getElementById('quantity');
-            var currentValue = parseInt(quantityInput.value);
-            if (currentValue > 1) {
-                quantityInput.value = currentValue - 1;
-                quantityInput.dispatchEvent(new Event('change'));
+            // Minus button functionality
+            const minusButton = document.querySelector('.minus');
+            if (minusButton) {
+                console.log('Minus button found, adding event listener');
+                minusButton.addEventListener('click', function() {
+                    console.log('Minus button clicked');
+                    var quantityInput = document.getElementById('quantity');
+                    var currentValue = parseInt(quantityInput.value);
+                    if (currentValue > 1) {
+                        quantityInput.value = currentValue - 1;
+                        quantityInput.dispatchEvent(new Event('change'));
+                    }
+                });
+            } else {
+                console.error('Minus button not found!');
             }
-        });
 
-        // Function to update modal total when quantity changes
-        window.updateModalTotal = function() {
-            var modalQuantity = parseInt(document.getElementById('custom_amount').value);
-            var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
-            var total = unitPrice * modalQuantity;
-            document.getElementById('total_amount').value = total;
-        };
+            // Function to update modal total when quantity changes
+            window.updateModalTotal = function() {
+                var modalQuantity = parseInt(document.getElementById('custom_amount').value);
+                var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
+                var total = unitPrice * modalQuantity;
+                document.getElementById('total_amount').value = total;
+            };
+        } catch (error) {
+            console.error('Error in DOMContentLoaded:', error);
+        }
     });
 </script>
