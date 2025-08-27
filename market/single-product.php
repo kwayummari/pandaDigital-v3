@@ -102,7 +102,7 @@ include '../includes/header.php';
                     <div class="product-rating mb-3">
                         <div class="stars d-inline-block me-2">
                             <?php
-                            $avgRating = $product['avg_rating'];
+                            $avgRating = (float)$product['avg_rating'];
                             for ($i = 0; $i < 5; $i++):
                                 $starColor = ($i < round($avgRating)) ? '#FFD700' : '#D3D3D3';
                             ?>
@@ -121,22 +121,22 @@ include '../includes/header.php';
                     <div class="product-price mb-4">
                         <?php if ($product['isOffered'] == 1): ?>
                             <?php
-                            $originalPrice = $product['amount'];
-                            $discount = $product['offer'];
+                            $originalPrice = (float)$product['amount'];
+                            $discount = (float)$product['offer'];
                             $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
                             ?>
                             <div class="original-price text-muted text-decoration-line-through">
-                                Tsh.<?php echo number_format($originalPrice, 0); ?>
+                                Tsh.<?php echo is_numeric($originalPrice) ? number_format($originalPrice, 0) : 'Bei haipatikani'; ?>
                             </div>
                             <div class="current-price text-primary fw-bold fs-3">
-                                Tsh.<?php echo number_format($discountedPrice, 0); ?>
+                                Tsh.<?php echo is_numeric($discountedPrice) ? number_format($discountedPrice, 0) : 'Bei haipatikani'; ?>
                             </div>
                             <div class="discount-badge bg-danger text-white px-2 py-1 rounded d-inline-block">
                                 -<?php echo $discount; ?>%
                             </div>
                         <?php else: ?>
                             <div class="current-price text-primary fw-bold fs-3">
-                                Tsh.<?php echo number_format($product['amount'], 0); ?>
+                                Tsh.<?php echo is_numeric((float)$product['amount']) ? number_format((float)$product['amount'], 0) : 'Bei haipatikani'; ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -160,10 +160,10 @@ include '../includes/header.php';
                             <?php endif; ?>
                             <li><strong>Bei:</strong>
                                 <?php if ($product['isOffered'] == 1): ?>
-                                    <span class="text-decoration-line-through text-muted">Tsh.<?php echo number_format($originalPrice, 0); ?></span>
-                                    <span class="text-primary fw-bold">Tsh.<?php echo number_format($discountedPrice, 0); ?></span>
+                                    <span class="text-decoration-line-through text-muted">Tsh.<?php echo is_numeric($originalPrice) ? number_format($originalPrice, 0) : 'Bei haipatikani'; ?></span>
+                                    <span class="text-primary fw-bold">Tsh.<?php echo is_numeric($discountedPrice) ? number_format($discountedPrice, 0) : 'Bei haipatikani'; ?></span>
                                 <?php else: ?>
-                                    <span class="text-primary fw-bold">Tsh.<?php echo number_format($product['amount'], 0); ?></span>
+                                    <span class="text-primary fw-bold">Tsh.<?php echo is_numeric((float)$product['amount']) ? number_format((float)$product['amount'], 0) : 'Bei haipatikani'; ?></span>
                                 <?php endif; ?>
                             </li>
                         </ul>
@@ -223,7 +223,7 @@ include '../includes/header.php';
                                 </a>
                                 <div class="rating mb-2">
                                     <?php
-                                    $avgRating = $relatedProduct['avg_rating'];
+                                    $avgRating = (float)$relatedProduct['avg_rating'];
                                     for ($i = 0; $i < 5; $i++):
                                         $starColor = ($i < round($avgRating)) ? '#FFD700' : '#D3D3D3';
                                     ?>
@@ -232,17 +232,17 @@ include '../includes/header.php';
                                 </div>
                                 <?php if ($relatedProduct['isOffered'] == 1): ?>
                                     <?php
-                                    $originalPrice = $relatedProduct['amount'];
-                                    $discount = $relatedProduct['offer'];
+                                    $originalPrice = (float)$relatedProduct['amount'];
+                                    $discount = (float)$relatedProduct['offer'];
                                     $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
                                     ?>
                                     <div class="price mb-2">
-                                        <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo number_format($originalPrice, 0); ?></del>
-                                        <div class="text-primary fw-bold">Tsh.<?php echo number_format($discountedPrice, 0); ?></div>
+                                        <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo is_numeric($originalPrice) ? number_format($originalPrice, 0) : 'Bei haipatikani'; ?></del>
+                                        <div class="text-primary fw-bold">Tsh.<?php echo is_numeric($discountedPrice) ? number_format($discountedPrice, 0) : 'Bei haipatikani'; ?></div>
                                     </div>
                                 <?php else: ?>
                                     <div class="price mb-2">
-                                        <span class="text-primary fw-bold">Tsh.<?php echo number_format($relatedProduct['amount'], 0); ?></span>
+                                        <span class="text-primary fw-bold">Tsh.<?php echo is_numeric((float)$relatedProduct['amount']) ? number_format((float)$relatedProduct['amount'], 0) : 'Bei haipatikani'; ?></span>
                                     </div>
                                 <?php endif; ?>
                                 <div class="product-actions">
