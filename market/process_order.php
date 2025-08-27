@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $stmt->execute([$buyersId, $productId, $total_amount, $phone, $reference_no, $mobile_type, $quantity]);
-        
+
         if (!$stmt->rowCount()) {
             throw new Exception("Error inserting sales record");
         }
@@ -80,13 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Update reference number
         $updateQuery = "UPDATE sales SET reference_no = ? WHERE id = ?";
         $updateStmt = $conn->prepare($updateQuery);
-        
+
         if (!$updateStmt) {
             throw new Exception("Error preparing update statement: " . $conn->errorInfo()[2]);
         }
 
         $updateStmt->execute([$responseData['transactionId'], $lastInsertedId]);
-        
+
         if (!$updateStmt->rowCount()) {
             throw new Exception("Error updating transaction ID");
         }
@@ -96,7 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $message = "You will receive a confirmation USSD on your phone number ($phone). Enter your password and confirm payment.";
         echo "<script>alert('$message'); window.location.href='single-product.php?id=$productId';</script>";
-
     } catch (Exception $e) {
         if (isset($conn)) {
             $conn->rollBack();
@@ -112,9 +111,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "Invalid request method.";
 }
 
-function generateNewToken($config) {
+function generateNewToken($config)
+{
     $authUrl = 'https://authenticator.azampay.co.tz/AppRegistration/GenerateToken';
-    
+
     $authData = [
         'clientId' => $config['AZAMPAY_CLIENT_ID'],
         'clientSecret' => $config['AZAMPAY_CLIENT_SECRET'],
@@ -145,9 +145,10 @@ function generateNewToken($config) {
     return $authResponseData['data']['accessToken'];
 }
 
-function processPayment($paymentData, $token, $clientId) {
+function processPayment($paymentData, $token, $clientId)
+{
     $checkoutUrl = "https://checkout.azampay.co.tz/azampay/mno/checkout";
-    
+
     $headers = [
         "Content-Type: application/json",
         "Authorization: Bearer " . $token,
@@ -172,4 +173,3 @@ function processPayment($paymentData, $token, $clientId) {
 
     return $response;
 }
-?>

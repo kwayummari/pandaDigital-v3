@@ -158,7 +158,7 @@ include '../includes/header.php';
 
                         <!-- Total Price -->
                         <div class="total mb-3">
-                            <h5>Jumla: 
+                            <h5>Jumla:
                                 <?php if ($product['isOffered'] == 1): ?>
                                     Tsh.<?php echo $discountedPrice; ?>/=
                                 <?php else: ?>
@@ -373,17 +373,17 @@ include '../includes/header.php';
                     <input type="hidden" name="customer[name]" value="<?php echo isset($_SESSION['userFullName']) ? $_SESSION['userFullName'] : ''; ?>">
                     <input type="hidden" name="customization[title]" value="My store">
                     <input type="hidden" name="customization[description]" value="Payment for items in cart">
-                    
+
                     <div class="form-group mb-3">
                         <label for="total_amount">Bei:</label>
                         <input readonly id="total_amount" name="price" class="form-control" value="<?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>">
                     </div>
-                    
+
                     <div class="form-group mb-3">
                         <label for="custom_amount">Weka Idadi:</label>
                         <input type="number" id="custom_amount" name="quantity" class="form-control" min="1" value="1">
                     </div>
-                    
+
                     <div class="form-group mb-3">
                         <label for="mobile_type">Chagua M-Pesa:</label>
                         <select id="mobile_type" name="mobile_type" class="form-control">
@@ -393,12 +393,12 @@ include '../includes/header.php';
                             <option value="Azampesa">Azampesa</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group mb-3">
                         <label for="phone">Namba ya simu:</label>
                         <input type="text" id="phone" name="phone" class="form-control" required>
                     </div>
-                    
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
                         <button type="submit" class="btn btn-primary">Nunua Bidhaa</button>
@@ -632,7 +632,7 @@ include '../includes/header.php';
             var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
             var total = unitPrice * quantity;
             document.getElementById('total_amount').value = total;
-            
+
             // Update total display
             const totalDisplay = document.querySelector('.total h5');
             if (totalDisplay) {
