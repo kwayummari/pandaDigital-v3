@@ -25,21 +25,24 @@ if (empty($featuredCourses)) {
             'name' => 'Ujuzi wa Msingi wa Kompyuta',
             'description' => 'Jifunze ujuzi wa msingi wa kompyuta na jinsi ya kutumia programu muhimu za ofisi.',
             'photo' => 'images/courses/basic-computer.jpg',
-            'date_created' => '2024-01-15'
+            'date_created' => '2024-01-15',
+            'total_lessons' => 12
         ],
         [
             'id' => 2,
             'name' => 'Biashara ya Instagram',
             'description' => 'Jifunze jinsi ya kuanza na kuendeleza biashara kwa kutumia Instagram.',
             'photo' => 'images/courses/instagram-business.jpg',
-            'date_created' => '2024-01-20'
+            'date_created' => '2024-01-20',
+            'total_lessons' => 8
         ],
         [
             'id' => 3,
             'name' => 'Ufanyaji wa Video',
             'description' => 'Jifunze jinsi ya kutengeneza video za kujifunza na za biashara.',
             'photo' => 'images/courses/video-making.jpg',
-            'date_created' => '2024-01-25'
+            'date_created' => '2024-01-25',
+            'total_lessons' => 15
         ]
     ];
 }
@@ -102,7 +105,7 @@ include 'includes/header.php';
                             <div class="card-body p-4">
                                 <div class="mb-2">
                                     <span class="badge bg-primary me-2">Kozi</span>
-                                    <span class="badge bg-secondary"><?= $courseModel->formatDate($course['date_created']) ?></span>
+                                    <span class="badge bg-secondary"><?= isset($course['total_lessons']) ? $course['total_lessons'] . ' Masomo' : '0 Masomo' ?></span>
                                 </div>
                                 <h5 class="card-title mb-3" style="font-size: 1.25rem; font-weight: 600; color: #1e293b;">
                                     <?= htmlspecialchars($course['name']) ?>
@@ -114,7 +117,7 @@ include 'includes/header.php';
                             <div class="card-footer bg-transparent border-0 p-4">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <small class="text-muted">
-                                        <i class="fas fa-calendar me-1"></i><?= $courseModel->formatDate($course['date_created']) ?>
+                                        <i class="fas fa-book me-1"></i><?= isset($course['total_lessons']) ? $course['total_lessons'] . ' Masomo' : '0 Masomo' ?>
                                     </small>
                                     <a href="#" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#signupModal">
                                         <i class="fas fa-graduation-cap me-1"></i>Jisajili Sasa

@@ -1011,7 +1011,7 @@ class Course
         try {
             $conn = $this->db->getConnection();
 
-            // Simplified query without complex joins that might not exist
+            // Query with video count (lessons count)
             $stmt = $conn->prepare("
                 SELECT 
                     c.id, 
@@ -1024,8 +1024,11 @@ class Course
                     c.estimated_duration,
                     c.date_created,
                     c.total_enrollments,
-                    c.average_rating
+                    c.average_rating,
+                    COUNT(v.id) as total_lessons
                 FROM course c
+                LEFT JOIN video v ON v.course_id = c.id
+                GROUP BY c.id
                 ORDER BY c.id DESC
                 LIMIT ?
             ");
