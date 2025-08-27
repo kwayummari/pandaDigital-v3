@@ -103,7 +103,7 @@ include '../includes/header.php';
                                 </a>
                                 <div class="rating mb-2">
                                     <?php
-                                    $avgRating = $product['avg_rating'];
+                                    $avgRating = (float)$product['avg_rating'];
                                     for ($i = 0; $i < 5; $i++):
                                         $starColor = ($i < round($avgRating)) ? '#FFD700' : '#D3D3D3';
                                     ?>
@@ -115,11 +115,20 @@ include '../includes/header.php';
                                     $originalPrice = (float)$product['amount'];
                                     $discount = (float)$product['offer'];
                                     $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
+
+                                    // Debug logging
+                                    error_log("Product ID: " . $product['id'] . ", Amount: " . $product['amount'] . ", Original Price: " . $originalPrice . ", Discount: " . $discount . ", Discounted Price: " . $discountedPrice);
                                     ?>
                                     <span class="price">
-                                        <del>Tsh.<?php echo number_format($originalPrice, 2); ?>/=</del>
-                                        <br>
-                                        Tsh.<?php echo number_format($discountedPrice, 2); ?>/=
+                                        <?php
+                                        if (is_numeric($originalPrice) && is_numeric($discountedPrice)):
+                                        ?>
+                                            <del>Tsh.<?php echo number_format($originalPrice, 2); ?>/=</del>
+                                            <br>
+                                            Tsh.<?php echo number_format($discountedPrice, 2); ?>/=
+                                        <?php else: ?>
+                                            <span class="text-danger">Bei haipatikani</span>
+                                        <?php endif; ?>
                                     </span>
                                 <?php else: ?>
                                     <span class="price">Tsh.<?php echo $product['amount']; ?>/=</span>
