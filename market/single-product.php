@@ -139,7 +139,7 @@ include '../includes/header.php';
                                 Tsh.<?php echo $product['amount']; ?>/=
                             </div>
                         <?php endif; ?>
-                        
+
                         <!-- Buy Button -->
                         <div class="buy-button-section mt-3">
                             <button type="button" class="btn btn-success btn-lg w-100" id="purchase-button">
