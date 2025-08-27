@@ -159,4 +159,21 @@ class Log
             return false;
         }
     }
+
+    /**
+     * Get total count of logs
+     */
+    public function getTotalCount()
+    {
+        try {
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM logs");
+            $stmt->execute();
+            $result = $stmt->fetch();
+            return $result['total'] ?? 0;
+        } catch (PDOException $e) {
+            error_log("Error counting logs: " . $e->getMessage());
+            return 0;
+        }
+    }
 }

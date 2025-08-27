@@ -84,6 +84,14 @@ class OngeaHub
     }
 
     /**
+     * Get total count (alias for getTotalReportsCount)
+     */
+    public function getTotalCount()
+    {
+        return $this->getTotalReportsCount();
+    }
+
+    /**
      * Get report by ID
      */
     public function getReportById($id)

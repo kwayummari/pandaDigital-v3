@@ -63,11 +63,11 @@ $totalVideos = $courseModel->getTotalVideos();
 $totalQuestions = $expertQuestionModel->getTotalQuestions();
 
 // Get other statistics from correct tables
-$totalOngeaHub = 0; // Will implement when method is available
+$totalOngeaHub = $ongeaHubModel->getTotalCount();
 $totalWanufaika = $wanufaikaModel->getTotalCount();
 $totalFursa = $fursaModel->getTotalFursa();
 $totalNewsletter = 0; // Will implement when method is available
-$totalLogs = 0; // Will implement when method is available
+$totalLogs = $logModel->getTotalCount();
 
 // Get recent activities
 $recentBlogs = $blogModel->getRecentBlogs(5);

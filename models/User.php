@@ -347,7 +347,7 @@ class User
         }
     }
 
-    /**
+        /**
      * Check if email exists
      */
     public function emailExists($email, $excludeUserId = null)
@@ -355,17 +355,146 @@ class User
         try {
             $sql = "SELECT id FROM users WHERE email = ?";
             $params = [$email];
-
+            
             if ($excludeUserId) {
                 $sql .= " AND id != ?";
                 $params[] = $excludeUserId;
             }
-
+            
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetch() !== false;
         } catch (Exception $e) {
             error_log('Email exists check error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get total number of users
+     */
+    public function getTotalUsers()
+    {
+        try {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) as total FROM users");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'] ?? 0;
+        } catch (Exception $e) {
+            error_log('Get total users error: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get user statistics by role
+     */
+    public function getUserStatsByRole()
+    {
+        try {
+            $stmt = $this->pdo->prepare("SELECT role, COUNT(*) as count FROM users GROUP BY role");
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            $stats = [];
+            foreach ($results as $row) {
+                $stats[$row['role']] = $row['count'];
+            }
+            
+            // Ensure all roles are present
+            $stats['admin'] = $stats['admin'] ?? 0;
+            $stats['user'] = $stats['user'] ?? 0;
+            $stats['expert'] = $stats['expert'] ?? 0;
+            
+            return $stats;
+        } catch (Exception $e) {
+            error_log('Get user stats by role error: ' . $e->getMessage());
+            return ['admin' => 0, 'user' => 0, 'expert' => 0];
+        }
+    }
+
+    /**
+     * Get users by role
+     */
+    public function getUsersByRole($role, $limit = null, $offset = 0)
+    {
+        try {
+            $sql = "SELECT * FROM users WHERE role = ? ORDER BY id DESC";
+            if ($limit) {
+                $sql .= " LIMIT ? OFFSET ?";
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute([$role, $limit, $offset]);
+            } else {
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute([$role]);
+            }
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Get users by role error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get recent users
+     */
+    public function getRecentUsers($limit = 10)
+    {
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM users ORDER BY id DESC LIMIT ?");
+            $stmt->execute([$limit]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Get recent users error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Search users
+     */
+    public function searchUsers($searchTerm, $limit = 20)
+    {
+        try {
+            $searchTerm = '%' . $searchTerm . '%';
+            $stmt = $this->pdo->prepare("
+                SELECT * FROM users 
+                WHERE first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR phone LIKE ?
+                ORDER BY id DESC LIMIT ?
+            ");
+            $stmt->execute([$searchTerm, $searchTerm, $searchTerm, $searchTerm, $limit]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Search users error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Update user role
+     */
+    public function updateUserRole($userId, $newRole)
+    {
+        try {
+            $stmt = $this->pdo->prepare("UPDATE users SET role = ? WHERE id = ?");
+            return $stmt->execute([$newRole, $userId]);
+        } catch (Exception $e) {
+            error_log('Update user role error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Delete user
+     */
+    public function deleteUser($userId)
+    {
+        try {
+            $stmt = $this->pdo->prepare("DELETE FROM users WHERE id = ?");
+            return $stmt->execute([$userId]);
+        } catch (Exception $e) {
+            error_log('Delete user error: ' . $e->getMessage());
             return false;
         }
     }
