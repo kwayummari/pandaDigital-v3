@@ -2,6 +2,9 @@
 require_once '../config/init.php';
 require_once '../config/database.php';
 
+// Debug session variables
+error_log("Session variables: " . print_r($_SESSION, true));
+
 // Initialize database connection
 $database = new Database();
 $conn = $database->getConnection();
@@ -171,6 +174,10 @@ include '../includes/header.php';
                         <div class="buy-button-section mt-3">
                             <button type="button" class="btn btn-success btn-lg w-100" id="purchase-button">
                                 <i class="fas fa-shopping-cart me-2"></i>Nunua Bidhaa
+                            </button>
+                            <!-- Test button -->
+                            <button type="button" class="btn btn-warning btn-sm w-100 mt-2" onclick="testFunction()">
+                                Test Button
                             </button>
                         </div>
                     </div>
@@ -369,8 +376,8 @@ include '../includes/header.php';
                     <input type="hidden" name="currency" value="TZS">
                     <input type="hidden" name="payment_options" value="mobilemoney">
                     <input type="hidden" name="redirect_url" value="<?= app_url('market/single-product.php?id=' . $product['id']) ?>">
-                    <input type="hidden" name="customer[email]" value="<?php echo isset($_SESSION['userEmail']) ? $_SESSION['userEmail'] : ''; ?>">
-                    <input type="hidden" name="customer[name]" value="<?php echo isset($_SESSION['userFullName']) ? $_SESSION['userFullName'] : ''; ?>">
+                    <input type="hidden" name="customer[email]" value="<?php echo isset($_SESSION['userEmail']) ? $_SESSION['userEmail'] : (isset($_SESSION['email']) ? $_SESSION['email'] : ''); ?>">
+                    <input type="hidden" name="customer[name]" value="<?php echo isset($_SESSION['userFullName']) ? $_SESSION['userFullName'] : (isset($_SESSION['fullName']) ? $_SESSION['fullName'] : ''); ?>">
                     <input type="hidden" name="customization[title]" value="My store">
                     <input type="hidden" name="customization[description]" value="Payment for items in cart">
 
@@ -379,10 +386,10 @@ include '../includes/header.php';
                         <input readonly id="total_amount" name="price" class="form-control" value="<?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>">
                     </div>
 
-                    <div class="form-group mb-3">
-                        <label for="custom_amount">Weka Idadi:</label>
-                        <input type="number" id="custom_amount" name="quantity" class="form-control" min="1" value="1">
-                    </div>
+                                         <div class="form-group mb-3">
+                         <label for="custom_amount">Weka Idadi:</label>
+                         <input type="number" id="custom_amount" name="quantity" class="form-control" min="1" value="1" onchange="updateModalTotal()">
+                     </div>
 
                     <div class="form-group mb-3">
                         <label for="mobile_type">Chagua M-Pesa:</label>
@@ -530,6 +537,9 @@ include '../includes/header.php';
         align-items: center;
         justify-content: center;
         font-weight: bold;
+        cursor: pointer;
+        z-index: 10;
+        position: relative;
     }
 
     .total h5 {
@@ -583,13 +593,23 @@ include '../includes/header.php';
         alert('Bidhaa imewekwa kwenye wishlist yako!');
     }
 
+    function testFunction() {
+        alert('Test button works!');
+        console.log('Test function called');
+    }
+
     function purchaseProduct(productId) {
+        console.log('purchaseProduct called with ID:', productId);
+        console.log('Session check:', <?php echo json_encode(isset($_SESSION['userId']) || isset($_SESSION['user_id']) || isset($_SESSION['id'])); ?>);
+        
         // Check if user is logged in
-        <?php if (isset($_SESSION['userId'])) : ?>
+        <?php if (isset($_SESSION['userId']) || isset($_SESSION['user_id']) || isset($_SESSION['id'])) : ?>
+            console.log('User is logged in, showing purchase modal');
             // Show purchase modal
             const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
             purchaseModal.show();
         <?php else : ?>
+            console.log('User is not logged in, showing login modal');
             // Show login modal
             const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
             loginModal.show();
@@ -597,8 +617,17 @@ include '../includes/header.php';
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, checking elements...');
+        
+        // Check if elements exist
+        console.log('Purchase button:', document.getElementById('purchase-button'));
+        console.log('Plus button:', document.querySelector('.plus'));
+        console.log('Minus button:', document.querySelector('.minus'));
+        console.log('Quantity input:', document.getElementById('quantity'));
+        
         // Handle purchase button click
         document.getElementById('purchase-button').addEventListener('click', function() {
+            console.log('Purchase button clicked');
             purchaseProduct(<?php echo $product['id']; ?>);
         });
 
@@ -642,6 +671,7 @@ include '../includes/header.php';
 
         // Plus button functionality
         document.querySelector('.plus').addEventListener('click', function() {
+            console.log('Plus button clicked');
             var quantityInput = document.getElementById('quantity');
             var currentValue = parseInt(quantityInput.value);
             quantityInput.value = currentValue + 1;
@@ -650,6 +680,7 @@ include '../includes/header.php';
 
         // Minus button functionality
         document.querySelector('.minus').addEventListener('click', function() {
+            console.log('Minus button clicked');
             var quantityInput = document.getElementById('quantity');
             var currentValue = parseInt(quantityInput.value);
             if (currentValue > 1) {
@@ -657,5 +688,13 @@ include '../includes/header.php';
                 quantityInput.dispatchEvent(new Event('change'));
             }
         });
+
+        // Function to update modal total when quantity changes
+        window.updateModalTotal = function() {
+            var modalQuantity = parseInt(document.getElementById('custom_amount').value);
+            var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
+            var total = unitPrice * modalQuantity;
+            document.getElementById('total_amount').value = total;
+        };
     });
 </script>

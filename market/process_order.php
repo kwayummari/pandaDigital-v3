@@ -8,7 +8,7 @@ $config = require 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $buyersId = $_SESSION['userId'];
+        $buyersId = $_SESSION['userId'] ?? $_SESSION['user_id'] ?? $_SESSION['id'] ?? null;
         $productId = $_POST['product_id'];
         $quantity = (int)$_POST['quantity'];
         $price = (float)preg_replace('/[^0-9.]/', '', $_POST['price']);
