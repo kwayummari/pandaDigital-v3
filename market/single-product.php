@@ -555,6 +555,7 @@ include '../includes/header.php';
     let selectedRating = 0;
     let selectedProductId = <?php echo $product['id']; ?>;
 
+    // Define all functions immediately (before DOMContentLoaded)
     function rateProduct(productId) {
         selectedProductId = productId;
         selectedRating = 0;
@@ -634,17 +635,6 @@ include '../includes/header.php';
         }
     }
 
-    // Make functions globally available
-    window.testFunction = testFunction;
-    window.purchaseProduct = purchaseProduct;
-    window.rateProduct = rateProduct;
-    window.selectStar = selectStar;
-    window.contactSeller = contactSeller;
-    window.addToWishlist = addToWishlist;
-    window.increaseQuantity = increaseQuantity;
-    window.decreaseQuantity = decreaseQuantity;
-    window.updateTotal = updateTotal;
-
     function purchaseProduct(productId) {
         console.log('=== PURCHASE PRODUCT FUNCTION CALLED ===');
         console.log('Product ID:', productId);
@@ -665,6 +655,26 @@ include '../includes/header.php';
             loginModal.show();
         <?php endif; ?>
     }
+
+    // Function to update modal total when quantity changes
+    function updateModalTotal() {
+        var modalQuantity = parseInt(document.getElementById('custom_amount').value);
+        var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
+        var total = unitPrice * modalQuantity;
+        document.getElementById('total_amount').value = total;
+    }
+
+    // Make functions globally available immediately
+    window.testFunction = testFunction;
+    window.purchaseProduct = purchaseProduct;
+    window.rateProduct = rateProduct;
+    window.selectStar = selectStar;
+    window.contactSeller = contactSeller;
+    window.addToWishlist = addToWishlist;
+    window.increaseQuantity = increaseQuantity;
+    window.decreaseQuantity = decreaseQuantity;
+    window.updateTotal = updateTotal;
+    window.updateModalTotal = updateModalTotal;
 
     document.addEventListener('DOMContentLoaded', function() {
         try {
