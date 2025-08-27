@@ -119,25 +119,24 @@ include '../includes/header.php';
 
                     <!-- Price -->
                     <div class="product-price mb-4">
-                        <?php
-                        // Define price variables at the top for use throughout the page
-                        $originalPrice = (float)$product['amount'];
-                        $discount = (float)$product['offer'];
-                        $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
-                        ?>
                         <?php if ($product['isOffered'] == 1): ?>
+                            <?php
+                            $originalPrice = (float)$product['amount'];
+                            $discount = (float)$product['offer'];
+                            $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
+                            ?>
                             <div class="original-price text-muted text-decoration-line-through">
-                                Tsh.<?php echo number_format($originalPrice, 0); ?>
+                                Tsh.<?php echo $originalPrice; ?>/=
                             </div>
                             <div class="current-price text-primary fw-bold fs-3">
-                                Tsh.<?php echo number_format($discountedPrice, 0); ?>
+                                Tsh.<?php echo $discountedPrice; ?>/=
                             </div>
                             <div class="discount-badge bg-danger text-white px-2 py-1 rounded d-inline-block">
                                 -<?php echo $discount; ?>%
                             </div>
                         <?php else: ?>
                             <div class="current-price text-primary fw-bold fs-3">
-                                Tsh.<?php echo number_format($originalPrice, 0); ?>
+                                Tsh.<?php echo $product['amount']; ?>/=
                             </div>
                         <?php endif; ?>
                     </div>
@@ -161,10 +160,10 @@ include '../includes/header.php';
                             <?php endif; ?>
                             <li><strong>Bei:</strong>
                                 <?php if ($product['isOffered'] == 1): ?>
-                                    <span class="text-decoration-line-through text-muted">Tsh.<?php echo number_format($originalPrice, 0); ?></span>
-                                    <span class="text-primary fw-bold">Tsh.<?php echo number_format($discountedPrice, 0); ?></span>
+                                    <span class="text-decoration-line-through text-muted">Tsh.<?php echo $originalPrice; ?>/=</span>
+                                    <span class="text-primary fw-bold">Tsh.<?php echo $discountedPrice; ?>/=</span>
                                 <?php else: ?>
-                                    <span class="text-primary fw-bold">Tsh.<?php echo number_format($originalPrice, 0); ?></span>
+                                    <span class="text-primary fw-bold">Tsh.<?php echo $product['amount']; ?>/=</span>
                                 <?php endif; ?>
                             </li>
                         </ul>
@@ -238,12 +237,12 @@ include '../includes/header.php';
                                     $relatedDiscountedPrice = $relatedOriginalPrice - ($relatedOriginalPrice * ($relatedDiscount / 100));
                                     ?>
                                     <div class="price mb-2">
-                                        <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo number_format($relatedOriginalPrice, 0); ?></del>
-                                        <div class="text-primary fw-bold">Tsh.<?php echo number_format($relatedDiscountedPrice, 0); ?></div>
+                                        <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo $relatedOriginalPrice; ?>/=</del>
+                                        <div class="text-primary fw-bold">Tsh.<?php echo $relatedDiscountedPrice; ?>/=</div>
                                     </div>
                                 <?php else: ?>
                                     <div class="price mb-2">
-                                        <span class="text-primary fw-bold">Tsh.<?php echo number_format((float)$relatedProduct['amount'], 0); ?></span>
+                                        <span class="text-primary fw-bold">Tsh.<?php echo $relatedProduct['amount']; ?>/=</span>
                                     </div>
                                 <?php endif; ?>
                                 <div class="product-actions">
