@@ -7,10 +7,27 @@ require_once __DIR__ . "/../config/database.php";
 class User
 {
     private $pdo;
-
-    public function __construct($pdo)
+ 
+    public function __construct($pdo = null)
     {
-        $this->pdo = $pdo;
+        if ($pdo === null) {
+            // Try to get PDO from global scope or create a new connection
+            global $pdo;
+            if (isset($pdo)) {
+                $this->pdo = $pdo;
+            } else {
+                // Try to include database configuration
+                if (file_exists(__DIR__ . '/../config/database.php')) {
+                    require_once __DIR__ . '/../config/database.php';
+                    $database = new Database();
+                    $this->pdo = $database->getConnection();
+                } else {
+                    throw new Exception('PDO connection not available and cannot be created');
+                }
+            }
+        } else {
+            $this->pdo = $pdo;
+        }
     }
 
     /**

@@ -5,23 +5,36 @@
  * Include this file in pages where profile completion is required
  */
 
-// Initialize User model if not already done
-if (!isset($userModel)) {
-    require_once __DIR__ . '/../models/User.php';
-    $userModel = new User($pdo);
-}
-
-// Get current user ID from session
+// Only initialize User model if we have a PDO connection and user is logged in
 $currentUserId = $_SESSION['userId'] ?? null;
+$userModel = null;
+$profileStatus = null;
+$fieldLabels = null;
+$regions = null;
+$genderOptions = null;
 
-if ($currentUserId) {
-    $profileStatus = $userModel->getProfileCompletionStatus($currentUserId);
-    $fieldLabels = $userModel->getFieldLabels();
-    $regions = $userModel->getRegions();
-    $genderOptions = $userModel->getGenderOptions();
+if ($currentUserId && isset($pdo)) {
+    try {
+        if (!isset($userModel)) {
+            require_once __DIR__ . '/../models/User.php';
+            $userModel = new User($pdo);
+        }
+        
+        $profileStatus = $userModel->getProfileCompletionStatus($currentUserId);
+        $fieldLabels = $userModel->getFieldLabels();
+        $regions = $userModel->getRegions();
+        $genderOptions = $userModel->getGenderOptions();
+    } catch (Exception $e) {
+        // Silently fail - don't break the page
+        error_log('Profile completion modal error: ' . $e->getMessage());
+    }
 }
+
+// Only show modal if we have all required data
+$canShowModal = $currentUserId && $userModel && $profileStatus && $fieldLabels && $regions && $genderOptions;
 ?>
 
+<?php if ($canShowModal): ?>
 <!-- Profile Completion Modal -->
 <div class="modal fade" id="profileCompletionModal" tabindex="-1" aria-labelledby="profileCompletionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -174,6 +187,7 @@ if ($currentUserId) {
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <!-- JavaScript for Profile Completion Modal -->
 <script>
@@ -234,7 +248,13 @@ if ($currentUserId) {
 
         // Function to show profile completion modal with specific action message
         window.showProfileCompletionModal = function(action, actionName) {
-            const modal = new bootstrap.Modal(document.getElementById('profileCompletionModal'));
+            const modalElement = document.getElementById('profileCompletionModal');
+            if (!modalElement) {
+                console.log('Profile completion modal not found');
+                return;
+            }
+            
+            const modal = new bootstrap.Modal(modalElement);
 
             // Set action-specific message
             const actionMessages = {
@@ -246,10 +266,12 @@ if ($currentUserId) {
             };
 
             if (actionMessages[action]) {
-                actionMessageText.textContent = actionMessages[action];
-                actionRequiredMessage.style.display = 'block';
-            } else {
-                actionRequiredMessage.style.display = 'none';
+                const actionMessageText = document.getElementById('actionMessageText');
+                const actionRequiredMessage = document.getElementById('actionRequiredMessage');
+                if (actionMessageText && actionRequiredMessage) {
+                    actionMessageText.textContent = actionMessages[action];
+                    actionRequiredMessage.style.display = 'block';
+                }
             }
 
             modal.show();
@@ -257,6 +279,13 @@ if ($currentUserId) {
 
         // Function to check if profile completion is required for an action
         window.checkProfileCompletion = function(action, actionName) {
+            // Check if modal exists
+            const modalElement = document.getElementById('profileCompletionModal');
+            if (!modalElement) {
+                console.log('Profile completion modal not available');
+                return true; // Allow action to proceed
+            }
+            
             // This will be implemented to check with the server
             // For now, we'll show the modal directly
             showProfileCompletionModal(action, actionName);
