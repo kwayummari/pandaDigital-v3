@@ -1146,9 +1146,99 @@ html {
 
 .navbar-nav .nav-link.active {
   color: #ffbc3b !important;
-  background: #5f4594;
+  background: #5f4594 !important;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(95, 69, 148, 0.3);
+}
+
+/* Override any Bootstrap or conflicting styles */
+.navbar-nav .nav-item .nav-link.active,
+.navbar-nav .nav-item .nav-link.active:hover,
+.navbar-nav .nav-item .nav-link.active:focus {
+  color: #ffbc3b !important;
+  background: #5f4594 !important;
+  border-color: #5f4594 !important;
+}
+
+/* Force override with maximum specificity */
+body .navbar .navbar-nav .nav-item .nav-link.active,
+body .navbar .navbar-nav .nav-item .nav-link.active:hover,
+body .navbar .navbar-nav .nav-item .nav-link.active:focus,
+body .navbar .navbar-nav .nav-item .nav-link.active:visited {
+  color: #ffbc3b !important;
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  border-color: #5f4594 !important;
+}
+
+/* Additional specificity for Bootstrap overrides */
+html body .navbar .navbar-nav .nav-item .nav-link.active {
+  color: #ffbc3b !important;
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+}
+
+/* Ensure active state is always visible */
+.navbar-nav .nav-link[class*="active"] {
+  color: #ffbc3b !important;
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+}
+
+/* Force background color override */
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link.active:hover,
+.navbar-nav .nav-link.active:focus,
+.navbar-nav .nav-link.active:visited {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  background-image: none !important;
+  background-clip: border-box !important;
+}
+
+/* Ensure navbar background doesn't interfere */
+.navbar {
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.navbar-nav .nav-link {
+  background: transparent !important;
+}
+
+.navbar-nav .nav-link.active {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+}
+
+/* Additional override for any remaining conflicts */
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-item .nav-link.active,
+.navbar .nav-item .nav-link.active {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+}
+
+/* Final override for maximum compatibility */
+.navbar-nav .nav-item .nav-link.active,
+.navbar-nav .nav-item .nav-link.active:hover,
+.navbar-nav .nav-item .nav-link.active:focus,
+.navbar-nav .nav-item .nav-link.active:visited,
+.navbar-nav .nav-item .nav-link.active:active {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Dropdown toggle active state */
+.navbar-nav .nav-item .dropdown-toggle.active,
+.navbar-nav .nav-item .dropdown-toggle.active:hover,
+.navbar-nav .nav-item .dropdown-toggle.active:focus {
+  background: #5f4594 !important;
+  background-color: #5f4594 !important;
+  color: #ffbc3b !important;
 }
 
 .navbar-nav .nav-link.active::before {

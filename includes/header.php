@@ -537,8 +537,8 @@ function isCurrentPage($pagePath)
             }
 
             .mobile-nav-link.active {
-                background: #5F4594;
-                color: #FFBC3B;
+                background: #5f4594 !important;
+                color: #ffbc3b !important;
                 font-weight: 600;
                 box-shadow: 0 2px 8px rgba(95, 69, 148, 0.3);
             }
@@ -570,8 +570,8 @@ function isCurrentPage($pagePath)
             }
 
             .mobile-dropdown-toggle.active {
-                background: #5F4594;
-                color: #FFBC3B;
+                background: #5f4594 !important;
+                color: #ffbc3b !important;
                 font-weight: 600;
                 box-shadow: 0 2px 8px rgba(95, 69, 148, 0.3);
             }
