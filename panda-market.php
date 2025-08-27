@@ -340,12 +340,12 @@ include 'includes/header.php';
                                         $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
                                         ?>
                                         <div class="price mb-2">
-                                            <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo number_format($originalPrice, 0); ?></del>
-                                            <div class="text-primary fw-bold">Tsh.<?php echo number_format($discountedPrice, 0); ?></div>
+                                            <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo number_format($originalPrice, 2); ?>/=</del>
+                                            <div class="text-primary fw-bold">Tsh.<?php echo number_format($discountedPrice, 2); ?>/=</div>
                                         </div>
                                     <?php else: ?>
                                         <div class="price mb-2">
-                                            <span class="text-primary fw-bold">Tsh.<?php echo number_format((float)$product['amount'], 0); ?></span>
+                                            <span class="text-primary fw-bold">Tsh.<?php echo $product['amount']; ?>/=</span>
                                         </div>
                                     <?php endif; ?>
                                     <div class="product-actions">
