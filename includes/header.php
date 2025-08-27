@@ -9,15 +9,16 @@ $isLoggedIn = $authService->isLoggedIn();
 $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
 
 // Function to determine current page and set active navigation
-function isCurrentPage($pagePath) {
+function isCurrentPage($pagePath)
+{
     $currentScript = $_SERVER['SCRIPT_NAME'] ?? '';
     $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
-    
+
     // Check if current path matches the page path
     if ($pagePath === '/' || $pagePath === '') {
         return $currentPath === '/' || $currentPath === '/index.php' || $currentPath === '/panda/index.php' || $currentPath === '/panda/pandadigitalV3/index.php';
     }
-    
+
     return strpos($currentPath, $pagePath) !== false;
 }
 ?>

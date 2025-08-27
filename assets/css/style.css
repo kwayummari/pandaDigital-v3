@@ -1145,8 +1145,8 @@ html {
 }
 
 .navbar-nav .nav-link.active {
-  color: #FFBC3B !important;
-  background: #5F4594;
+  color: #ffbc3b !important;
+  background: #5f4594;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(95, 69, 148, 0.3);
 }
