@@ -139,6 +139,13 @@ include '../includes/header.php';
                                 Tsh.<?php echo $product['amount']; ?>/=
                             </div>
                         <?php endif; ?>
+                        
+                        <!-- Buy Button -->
+                        <div class="buy-button-section mt-3">
+                            <button type="button" class="btn btn-success btn-lg w-100" id="purchase-button">
+                                <i class="fas fa-shopping-cart me-2"></i>Nunua Bidhaa
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Description -->
@@ -457,7 +464,19 @@ include '../includes/header.php';
         alert('Bidhaa imewekwa kwenye wishlist yako!');
     }
 
+    function purchaseProduct(productId) {
+        // This would typically redirect to checkout or cart
+        alert('Unakaribishwa kwenye checkout!');
+        // You can redirect to cart or checkout page here
+        // window.location.href = 'cart.php?add=' + productId;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        // Handle purchase button click
+        document.getElementById('purchase-button').addEventListener('click', function() {
+            purchaseProduct(<?php echo $product['id']; ?>);
+        });
+
         // Handle rating submission
         document.getElementById('submitRating').addEventListener('click', function() {
             if (selectedRating > 0 && selectedProductId > 0) {
