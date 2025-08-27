@@ -41,6 +41,42 @@ class User
     }
 
     /**
+     * Authenticate user with email and password
+     */
+    public function authenticateUser($email, $password)
+    {
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ? AND status = '1'");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($user && password_verify($password, $user['password'])) {
+                return $user;
+            }
+            
+            return false;
+        } catch (Exception $e) {
+            error_log('Authentication error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get user by email
+     */
+    public function getUserByEmail($email)
+    {
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ? AND status = '1'");
+            $stmt->execute([$email]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Get user by email error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Get user profile completion status
      */
     public function getProfileCompletionStatus($userId)
@@ -253,5 +289,118 @@ class User
             'female' => 'Mwanamke',
             'other' => 'Nyingine'
         ];
+    }
+
+    /**
+     * Create new user
+     */
+    public function createUser($userData)
+    {
+        try {
+            $requiredFields = ['email', 'password', 'first_name', 'last_name'];
+            foreach ($requiredFields as $field) {
+                if (empty($userData[$field])) {
+                    throw new Exception("Field $field is required");
+                }
+            }
+
+            // Hash password
+            $userData['password'] = password_hash($userData['password'], PASSWORD_DEFAULT);
+            
+            // Set default values
+            $userData['status'] = $userData['status'] ?? '1';
+            $userData['role'] = $userData['role'] ?? 'user';
+            $userData['created_at'] = date('Y-m-d H:i:s');
+
+            $fields = implode(', ', array_keys($userData));
+            $placeholders = ':' . implode(', :', array_keys($userData));
+            
+            $sql = "INSERT INTO users ($fields) VALUES ($placeholders)";
+            $stmt = $this->pdo->prepare($sql);
+            
+            if ($stmt->execute($userData)) {
+                return $this->pdo->lastInsertId();
+            }
+            
+            return false;
+        } catch (Exception $e) {
+            error_log('Create user error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update user password
+     */
+    public function updatePassword($userId, $newPassword)
+    {
+        try {
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            $stmt = $this->pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+            return $stmt->execute([$hashedPassword, $userId]);
+        } catch (Exception $e) {
+            error_log('Update password error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Check if email exists
+     */
+    public function emailExists($email, $excludeUserId = null)
+    {
+        try {
+            $sql = "SELECT id FROM users WHERE email = ?";
+            $params = [$email];
+            
+            if ($excludeUserId) {
+                $sql .= " AND id != ?";
+                $params[] = $excludeUserId;
+            }
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetch() !== false;
+        } catch (Exception $e) {
+            error_log('Email exists check error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Request expert role for user
+     */
+    public function requestExpertRole($userId, $bio)
+    {
+        try {
+            // First check if user exists
+            $user = $this->getUserById($userId);
+            if (!$user) {
+                return false;
+            }
+
+            // Check if expert request already exists
+            $stmt = $this->pdo->prepare("SELECT id FROM expert_requests WHERE user_id = ? AND status IN ('pending', 'approved')");
+            $stmt->execute([$userId]);
+            if ($stmt->fetch()) {
+                return false; // Request already exists
+            }
+
+            // Create expert request
+            $stmt = $this->pdo->prepare("INSERT INTO expert_requests (user_id, bio, status, created_at) VALUES (?, ?, 'pending', ?)");
+            $result = $stmt->execute([$userId, $bio, date('Y-m-d H:i:s')]);
+
+            if ($result) {
+                // Update user role to pending_expert
+                $stmt = $this->pdo->prepare("UPDATE users SET role = 'pending_expert' WHERE id = ?");
+                $stmt->execute([$userId]);
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            error_log('Request expert role error: ' . $e->getMessage());
+            return false;
+        }
     }
 }

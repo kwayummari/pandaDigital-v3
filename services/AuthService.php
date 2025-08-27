@@ -9,8 +9,21 @@ class AuthService
 
     public function __construct()
     {
-        $this->userModel = new User();
-        $this->logModel = new Log();
+        // Get PDO connection
+        global $pdo;
+        if (!isset($pdo)) {
+            // Try to create database connection
+            if (file_exists(__DIR__ . '/../config/database.php')) {
+                require_once __DIR__ . '/../config/database.php';
+                $database = new Database();
+                $pdo = $database->getConnection();
+            } else {
+                throw new Exception('Database configuration not found');
+            }
+        }
+        
+        $this->userModel = new User($pdo);
+        $this->logModel = new Log($pdo);
     }
 
     /**
