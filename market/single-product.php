@@ -57,6 +57,135 @@ $pageTitle = $product['name'] . ' - Panda Market';
 include '../includes/header.php';
 ?>
 
+<!-- JavaScript Functions - Load First -->
+<script>
+    console.log('Script loading...');
+
+    let selectedRating = 0;
+    let selectedProductId = <?php echo $product['id']; ?>;
+
+    // Define all functions immediately (before DOMContentLoaded)
+    function rateProduct(productId) {
+        selectedProductId = productId;
+        selectedRating = 0;
+
+        // Reset stars
+        document.querySelectorAll('.star').forEach(star => {
+            star.classList.remove('filled');
+            star.style.color = '#D3D3D3';
+        });
+
+        // Show modal
+        const ratingModal = new bootstrap.Modal(document.getElementById('ratingModal'));
+        ratingModal.show();
+    }
+
+    function selectStar(rating) {
+        selectedRating = rating;
+
+        // Update star colors
+        document.querySelectorAll('.star').forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add('filled');
+                star.style.color = '#FFD700';
+            } else {
+                star.classList.remove('filled');
+                star.style.color = '#D3D3D3';
+            }
+        });
+    }
+
+    function contactSeller(productId) {
+        const contactModal = new bootstrap.Modal(document.getElementById('contactSellerModal'));
+        contactModal.show();
+    }
+
+    function addToWishlist(productId) {
+        // This would typically save to user's wishlist
+        alert('Bidhaa imewekwa kwenye wishlist yako!');
+    }
+
+    function testFunction() {
+        alert('Test button works!');
+        console.log('Test function called');
+    }
+
+    // Simple quantity functions that work immediately
+    function increaseQuantity() {
+        var quantityInput = document.getElementById('quantity');
+        var currentValue = parseInt(quantityInput.value);
+        quantityInput.value = currentValue + 1;
+        updateTotal();
+    }
+
+    function decreaseQuantity() {
+        var quantityInput = document.getElementById('quantity');
+        var currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+            updateTotal();
+        }
+    }
+
+    function updateTotal() {
+        var quantity = parseInt(document.getElementById('quantity').value);
+        var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
+        var total = unitPrice * quantity;
+
+        // Update total display
+        const totalDisplay = document.querySelector('.total h5');
+        if (totalDisplay) {
+            totalDisplay.innerHTML = 'Jumla: Tsh.' + total + '/=';
+        }
+
+        // Update modal total if it exists
+        if (document.getElementById('total_amount')) {
+            document.getElementById('total_amount').value = total;
+        }
+    }
+
+    function purchaseProduct(productId) {
+        console.log('=== PURCHASE PRODUCT FUNCTION CALLED ===');
+        console.log('Product ID:', productId);
+        console.log('Session check:', <?php echo json_encode(isset($_SESSION['userId']) || isset($_SESSION['user_id']) || isset($_SESSION['id'])); ?>);
+        console.log('Bootstrap available:', typeof bootstrap !== 'undefined');
+        console.log('Purchase modal element:', document.getElementById('purchaseModal'));
+
+        // Check if user is logged in
+        <?php if (isset($_SESSION['userId']) || isset($_SESSION['user_id']) || isset($_SESSION['id'])) : ?>
+            console.log('User is logged in, showing purchase modal');
+            // Show purchase modal
+            const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
+            purchaseModal.show();
+        <?php else : ?>
+            console.log('User is not logged in, showing login modal');
+            // Show login modal
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        <?php endif; ?>
+    }
+
+    // Function to update modal total when quantity changes
+    function updateModalTotal() {
+        var modalQuantity = parseInt(document.getElementById('custom_amount').value);
+        var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
+        var total = unitPrice * modalQuantity;
+        document.getElementById('total_amount').value = total;
+    }
+
+    // Make functions globally available immediately
+    window.testFunction = testFunction;
+    window.purchaseProduct = purchaseProduct;
+    window.rateProduct = rateProduct;
+    window.selectStar = selectStar;
+    window.contactSeller = contactSeller;
+    window.addToWishlist = addToWishlist;
+    window.increaseQuantity = increaseQuantity;
+    window.decreaseQuantity = decreaseQuantity;
+    window.updateTotal = updateTotal;
+    window.updateModalTotal = updateModalTotal;
+</script>
+
 <!-- Page Header -->
 <section class="page-header" style="background-image: url('<?= asset('images/banner/new-banner2.jpg') ?>'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; min-height: 400px; padding: 120px 0;">
     <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6);"></div>
@@ -548,235 +677,3 @@ include '../includes/header.php';
         margin: 0;
     }
 </style>
-
-<script>
-    console.log('Script loading...');
-
-    let selectedRating = 0;
-    let selectedProductId = <?php echo $product['id']; ?>;
-
-    // Define all functions immediately (before DOMContentLoaded)
-    function rateProduct(productId) {
-        selectedProductId = productId;
-        selectedRating = 0;
-
-        // Reset stars
-        document.querySelectorAll('.star').forEach(star => {
-            star.classList.remove('filled');
-            star.style.color = '#D3D3D3';
-        });
-
-        // Show modal
-        const ratingModal = new bootstrap.Modal(document.getElementById('ratingModal'));
-        ratingModal.show();
-    }
-
-    function selectStar(rating) {
-        selectedRating = rating;
-
-        // Update star colors
-        document.querySelectorAll('.star').forEach((star, index) => {
-            if (index < rating) {
-                star.classList.add('filled');
-                star.style.color = '#FFD700';
-            } else {
-                star.classList.remove('filled');
-                star.style.color = '#D3D3D3';
-            }
-        });
-    }
-
-    function contactSeller(productId) {
-        const contactModal = new bootstrap.Modal(document.getElementById('contactSellerModal'));
-        contactModal.show();
-    }
-
-    function addToWishlist(productId) {
-        // This would typically save to user's wishlist
-        alert('Bidhaa imewekwa kwenye wishlist yako!');
-    }
-
-    function testFunction() {
-        alert('Test button works!');
-        console.log('Test function called');
-    }
-
-    // Simple quantity functions that work immediately
-    function increaseQuantity() {
-        var quantityInput = document.getElementById('quantity');
-        var currentValue = parseInt(quantityInput.value);
-        quantityInput.value = currentValue + 1;
-        updateTotal();
-    }
-
-    function decreaseQuantity() {
-        var quantityInput = document.getElementById('quantity');
-        var currentValue = parseInt(quantityInput.value);
-        if (currentValue > 1) {
-            quantityInput.value = currentValue - 1;
-            updateTotal();
-        }
-    }
-
-    function updateTotal() {
-        var quantity = parseInt(document.getElementById('quantity').value);
-        var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
-        var total = unitPrice * quantity;
-
-        // Update total display
-        const totalDisplay = document.querySelector('.total h5');
-        if (totalDisplay) {
-            totalDisplay.innerHTML = 'Jumla: Tsh.' + total + '/=';
-        }
-
-        // Update modal total if it exists
-        if (document.getElementById('total_amount')) {
-            document.getElementById('total_amount').value = total;
-        }
-    }
-
-    function purchaseProduct(productId) {
-        console.log('=== PURCHASE PRODUCT FUNCTION CALLED ===');
-        console.log('Product ID:', productId);
-        console.log('Session check:', <?php echo json_encode(isset($_SESSION['userId']) || isset($_SESSION['user_id']) || isset($_SESSION['id'])); ?>);
-        console.log('Bootstrap available:', typeof bootstrap !== 'undefined');
-        console.log('Purchase modal element:', document.getElementById('purchaseModal'));
-
-        // Check if user is logged in
-        <?php if (isset($_SESSION['userId']) || isset($_SESSION['user_id']) || isset($_SESSION['id'])) : ?>
-            console.log('User is logged in, showing purchase modal');
-            // Show purchase modal
-            const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
-            purchaseModal.show();
-        <?php else : ?>
-            console.log('User is not logged in, showing login modal');
-            // Show login modal
-            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-            loginModal.show();
-        <?php endif; ?>
-    }
-
-    // Function to update modal total when quantity changes
-    function updateModalTotal() {
-        var modalQuantity = parseInt(document.getElementById('custom_amount').value);
-        var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
-        var total = unitPrice * modalQuantity;
-        document.getElementById('total_amount').value = total;
-    }
-
-    // Make functions globally available immediately
-    window.testFunction = testFunction;
-    window.purchaseProduct = purchaseProduct;
-    window.rateProduct = rateProduct;
-    window.selectStar = selectStar;
-    window.contactSeller = contactSeller;
-    window.addToWishlist = addToWishlist;
-    window.increaseQuantity = increaseQuantity;
-    window.decreaseQuantity = decreaseQuantity;
-    window.updateTotal = updateTotal;
-    window.updateModalTotal = updateModalTotal;
-
-    document.addEventListener('DOMContentLoaded', function() {
-        try {
-            console.log('DOM loaded, checking elements...');
-
-            // Check if elements exist
-            console.log('Purchase button:', document.getElementById('purchase-button'));
-            console.log('Plus button:', document.querySelector('.plus'));
-            console.log('Minus button:', document.querySelector('.minus'));
-            console.log('Quantity input:', document.getElementById('quantity'));
-
-            // Handle purchase button click
-            const purchaseButton = document.getElementById('purchase-button');
-            if (purchaseButton) {
-                console.log('Purchase button found, adding event listener');
-                purchaseButton.addEventListener('click', function() {
-                    console.log('Purchase button clicked');
-                    purchaseProduct(<?php echo $product['id']; ?>);
-                });
-            } else {
-                console.error('Purchase button not found!');
-            }
-
-            // Handle rating submission
-            document.getElementById('submitRating').addEventListener('click', function() {
-                if (selectedRating > 0 && selectedProductId > 0) {
-                    // Submit rating via AJAX
-                    fetch('rate_product.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: 'productId=' + selectedProductId + '&rating=' + selectedRating
-                        })
-                        .then(response => response.text())
-                        .then(data => {
-                            alert("Asante kwa ukadiriaji wako!");
-                            location.reload();
-                        })
-                        .catch(error => {
-                            alert("Kosa katika kutuma ukadiriaji wako. Tafadhali jaribu tena.");
-                        });
-                } else {
-                    alert("Tafadhali chagua ukadiriaji.");
-                }
-            });
-
-            // Quantity change functionality
-            document.getElementById('quantity').addEventListener('change', function() {
-                var quantity = parseInt(this.value);
-                var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
-                var total = unitPrice * quantity;
-                document.getElementById('total_amount').value = total;
-
-                // Update total display
-                const totalDisplay = document.querySelector('.total h5');
-                if (totalDisplay) {
-                    totalDisplay.innerHTML = 'Jumla: Tsh.' + total + '/=';
-                }
-            });
-
-            // Plus button functionality
-            const plusButton = document.querySelector('.plus');
-            if (plusButton) {
-                console.log('Plus button found, adding event listener');
-                plusButton.addEventListener('click', function() {
-                    console.log('Plus button clicked');
-                    var quantityInput = document.getElementById('quantity');
-                    var currentValue = parseInt(quantityInput.value);
-                    quantityInput.value = currentValue + 1;
-                    quantityInput.dispatchEvent(new Event('change'));
-                });
-            } else {
-                console.error('Plus button not found!');
-            }
-
-            // Minus button functionality
-            const minusButton = document.querySelector('.minus');
-            if (minusButton) {
-                console.log('Minus button found, adding event listener');
-                minusButton.addEventListener('click', function() {
-                    console.log('Minus button clicked');
-                    var quantityInput = document.getElementById('quantity');
-                    var currentValue = parseInt(quantityInput.value);
-                    if (currentValue > 1) {
-                        quantityInput.value = currentValue - 1;
-                        quantityInput.dispatchEvent(new Event('change'));
-                    }
-                });
-            } else {
-                console.error('Minus button not found!');
-            }
-
-            // Function to update modal total when quantity changes
-            window.updateModalTotal = function() {
-                var modalQuantity = parseInt(document.getElementById('custom_amount').value);
-                var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
-                var total = unitPrice * modalQuantity;
-                document.getElementById('total_amount').value = total;
-            };
-        } catch (error) {
-            console.error('Error in DOMContentLoaded:', error);
-        }
-    });
-</script>
