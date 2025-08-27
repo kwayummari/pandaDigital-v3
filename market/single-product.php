@@ -57,6 +57,8 @@ $pageTitle = $product['name'] . ' - Panda Market';
 include '../includes/header.php';
 ?>
 
+
+
 <!-- JavaScript Functions - Load First -->
 <script>
     console.log('Script loading...');
@@ -306,10 +308,7 @@ include '../includes/header.php';
                             <button type="button" class="btn btn-success btn-lg w-100" id="purchase-button" onclick="purchaseProduct(<?php echo $product['id']; ?>);">
                                 <i class="fas fa-shopping-cart me-2"></i>Nunua Bidhaa
                             </button>
-                            <!-- Test button -->
-                            <button type="button" class="btn btn-warning btn-sm w-100 mt-2" onclick="alert('Inline test works!'); console.log('Inline onclick works');">
-                                Test Button
-                            </button>
+
                         </div>
                     </div>
 
