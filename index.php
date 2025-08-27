@@ -27,7 +27,7 @@ $featuredExperts = array_slice($expertModel->getAllExperts(), 0, 4);
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center" data-aos="fade-up">
                     <div class="hero-content">
-                        <div class="hero-badge">
+                        <div class="hero-badge" style="text-transform: capitalize;">
                             Pata fursa, ujuzi wa kidijitali, anzisha biashara, <br> na jijengee uhuru wa kiuchumi kupitia Panda Digital.
                         </div>
                         <h1 class="hero-title">Kuwa Mjasiriamali wa Kidijitali</h1>
