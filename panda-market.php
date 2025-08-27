@@ -100,24 +100,20 @@ include 'includes/header.php';
 <section class="categories-banner py-5 bg-light">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12">
-                <div class="d-flex flex-row overflow-auto">
-                    <?php foreach ($categories as $category): ?>
-                        <a href="market/productsByCategories.php?categoryId=<?php echo $category['id']; ?>" class="text-decoration-none">
-                            <div class="align-items-center text-center p-3 me-3 border rounded shadow-sm bg-white" style="min-width: 150px;">
-                                <div class="thumb mb-2">
-                                    <img src="market/assets/images/<?php echo htmlspecialchars($category['image']); ?>" alt="<?php echo htmlspecialchars($category['name']); ?>"
-                                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
-                                </div>
-                                <h6 style="font-weight: 600; margin: 0; color: #333; font-size: 14px;"><?php echo htmlspecialchars($category['name']); ?></h6>
-                                <div class="mt-2">
-                                    <small class="text-primary">Gundua Zaidi</small>
-                                </div>
+            <?php foreach ($categories as $category): ?>
+                <div class="col-6 col-md-2 mb-3">
+                    <a href="market/productsByCategories.php?categoryId=<?php echo $category['id']; ?>" class="text-decoration-none">
+                        <div class="category-card text-center p-3 bg-white rounded shadow-sm" style="transition: all 0.3s ease;">
+                            <div class="category-icon mb-2">
+                                <i class="fas fa-box fa-2x text-primary"></i>
                             </div>
-                        </a>
-                    <?php endforeach; ?>
+                            <h6 class="category-name mb-0" style="color: #333; font-size: 14px;">
+                                <?php echo htmlspecialchars($category['name']); ?>
+                            </h6>
+                        </div>
+                    </a>
                 </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
@@ -128,8 +124,8 @@ include 'includes/header.php';
         <div class="row">
             <div class="col-lg-6">
                 <div class="section-heading">
-                    <h2 class="section-title">Bidhaa Zinazouzwa Zaidi</h2>
-                    <p class="section-subtitle">Gundua bidhaa ambazo zimeuzwa zaidi.</p>
+                    <h2 class="section-title">Bidhaa Zilizopewa Tathmini Zaidi</h2>
+                    <p class="section-subtitle">Gundua bidhaa ambazo zimepata tathmini bora kutoka kwa wateja.</p>
                 </div>
             </div>
         </div>
@@ -158,7 +154,7 @@ include 'includes/header.php';
                                 </a>
                                 <div class="rating mb-2">
                                     <?php
-                                    $avgRating = $product['avg_rating'];
+                                    $avgRating = (float)$product['avg_rating'];
                                     for ($i = 0; $i < 5; $i++):
                                         $starColor = ($i < round($avgRating)) ? '#FFD700' : '#D3D3D3';
                                     ?>
@@ -167,8 +163,8 @@ include 'includes/header.php';
                                 </div>
                                 <?php if ($product['isOffered'] == 1): ?>
                                     <?php
-                                    $originalPrice = $product['amount'];
-                                    $discount = $product['offer'];
+                                    $originalPrice = (float)$product['amount'];
+                                    $discount = (float)$product['offer'];
                                     $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
                                     ?>
                                     <div class="price mb-2">
@@ -177,7 +173,7 @@ include 'includes/header.php';
                                     </div>
                                 <?php else: ?>
                                     <div class="price mb-2">
-                                        <span class="text-primary fw-bold">Tsh.<?php echo number_format($product['amount'], 0); ?></span>
+                                        <span class="text-primary fw-bold">Tsh.<?php echo number_format((float)$product['amount'], 0); ?></span>
                                     </div>
                                 <?php endif; ?>
                                 <div class="product-actions">
@@ -241,7 +237,7 @@ include 'includes/header.php';
                                 </a>
                                 <div class="rating mb-2">
                                     <?php
-                                    $avgRating = $product['avg_rating'];
+                                    $avgRating = (float)$product['avg_rating'];
                                     for ($i = 0; $i < 5; $i++):
                                         $starColor = ($i < round($avgRating)) ? '#FFD700' : '#D3D3D3';
                                     ?>
@@ -250,8 +246,8 @@ include 'includes/header.php';
                                 </div>
                                 <?php if ($product['isOffered'] == 1): ?>
                                     <?php
-                                    $originalPrice = $product['amount'];
-                                    $discount = $product['offer'];
+                                    $originalPrice = (float)$product['amount'];
+                                    $discount = (float)$product['offer'];
                                     $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
                                     ?>
                                     <div class="price mb-2">
@@ -260,7 +256,7 @@ include 'includes/header.php';
                                     </div>
                                 <?php else: ?>
                                     <div class="price mb-2">
-                                        <span class="text-primary fw-bold">Tsh.<?php echo number_format($product['amount'], 0); ?></span>
+                                        <span class="text-primary fw-bold">Tsh.<?php echo number_format((float)$product['amount'], 0); ?></span>
                                     </div>
                                 <?php endif; ?>
                                 <div class="product-actions">
@@ -289,20 +285,25 @@ include 'includes/header.php';
 </section>
 
 <!-- Products by Categories -->
-<?php foreach ($allProducts as $categoryProducts): ?>
+<?php foreach ($allProducts as $categoryData): ?>
     <section class="products-by-category py-5">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="section-heading">
-                        <h2 class="section-title"><?php echo htmlspecialchars($categoryProducts['category']['name']); ?> Karibuni</h2>
-                        <p class="section-subtitle"><?php echo $categoryProducts['category']['description']; ?></p>
+                        <h2 class="section-title"><?php echo htmlspecialchars($categoryData['category']['name']); ?></h2>
+                        <p class="section-subtitle">Gundua bidhaa bora za <?php echo htmlspecialchars($categoryData['category']['name']); ?>.</p>
                     </div>
+                </div>
+                <div class="col-lg-6 text-end">
+                    <a href="market/productsByCategories.php?categoryId=<?php echo $categoryData['category']['id']; ?>" class="btn btn-outline-primary">
+                        Tazama Zote <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
                 </div>
             </div>
             <div class="row">
-                <?php if (!empty($categoryProducts['products'])): ?>
-                    <?php foreach ($categoryProducts['products'] as $product): ?>
+                <?php if (!empty($categoryData['products'])): ?>
+                    <?php foreach ($categoryData['products'] as $product): ?>
                         <div class="col-6 col-md-2 mb-4">
                             <div class="card h-100 product-card" style="border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
                                 <div class="thumb position-relative">
@@ -325,7 +326,7 @@ include 'includes/header.php';
                                     </a>
                                     <div class="rating mb-2">
                                         <?php
-                                        $avgRating = $product['avg_rating'];
+                                        $avgRating = (float)$product['avg_rating'];
                                         for ($i = 0; $i < 5; $i++):
                                             $starColor = ($i < round($avgRating)) ? '#FFD700' : '#D3D3D3';
                                         ?>
@@ -334,8 +335,8 @@ include 'includes/header.php';
                                     </div>
                                     <?php if ($product['isOffered'] == 1): ?>
                                         <?php
-                                        $originalPrice = $product['amount'];
-                                        $discount = $product['offer'];
+                                        $originalPrice = (float)$product['amount'];
+                                        $discount = (float)$product['offer'];
                                         $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
                                         ?>
                                         <div class="price mb-2">
@@ -344,7 +345,7 @@ include 'includes/header.php';
                                         </div>
                                     <?php else: ?>
                                         <div class="price mb-2">
-                                            <span class="text-primary fw-bold">Tsh.<?php echo number_format($product['amount'], 0); ?></span>
+                                            <span class="text-primary fw-bold">Tsh.<?php echo number_format((float)$product['amount'], 0); ?></span>
                                         </div>
                                     <?php endif; ?>
                                     <div class="product-actions">
@@ -365,7 +366,7 @@ include 'includes/header.php';
                     <?php endforeach; ?>
                 <?php else: ?>
                     <div class="col-12 text-center">
-                        <p class="text-muted">Hakuna bidhaa zilizopatikana kwa kategoria hii.</p>
+                        <p class="text-muted">Hakuna bidhaa zilizopatikana kwenye kategoria hii.</p>
                     </div>
                 <?php endif; ?>
             </div>
@@ -374,27 +375,36 @@ include 'includes/header.php';
 <?php endforeach; ?>
 
 <!-- Rating Modal -->
-<div class="modal fade" id="ratingModal" tabindex="-1" role="dialog" aria-labelledby="ratingModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ratingModalLabel">Kadiria bidhaa hii</h5>
+                <h5 class="modal-title" id="ratingModalLabel">Piga Tathmini</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="text-center">
-                    <div class="stars mb-3" id="modalStars">
-                        <?php for ($i = 1; $i <= 5; $i++) : ?>
-                            <i class="fas fa-star star" style="font-size: 40px; color: #D3D3D3; cursor: pointer; margin: 0 10px;"
-                                data-rating="<?php echo $i; ?>" onclick="selectStar(<?php echo $i; ?>)"></i>
-                        <?php endfor; ?>
+                <form id="ratingForm">
+                    <input type="hidden" id="productId" name="productId">
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Tathmini Yako</label>
+                        <div class="rating-input">
+                            <input type="radio" name="rating" value="1" id="star1">
+                            <label for="star1"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="2" id="star2">
+                            <label for="star2"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="3" id="star3">
+                            <label for="star3"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="4" id="star4">
+                            <label for="star4"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="rating" value="5" id="star5">
+                            <label for="star5"><i class="fas fa-star"></i></label>
+                        </div>
                     </div>
-                    <p class="text-muted">Chagua ukadiriaji wako</p>
-                </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
-                <button type="button" class="btn btn-primary" id="submitRating">Wasilisha Ukadiriaji</button>
+                <button type="button" class="btn btn-primary" onclick="submitRating()">Wasilisha</button>
             </div>
         </div>
     </div>
@@ -403,6 +413,11 @@ include 'includes/header.php';
 <?php include 'includes/footer.php'; ?>
 
 <style>
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
     .product-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -412,118 +427,85 @@ include 'includes/header.php';
         position: absolute;
         top: 10px;
         right: 10px;
-        background: #dc3545;
+        background-color: #dc3545;
         color: white;
         padding: 4px 8px;
-        border-radius: 20px;
-        font-weight: bold;
+        border-radius: 4px;
         font-size: 12px;
+        font-weight: bold;
     }
 
-    .star.filled {
-        color: #FFD700 !important;
+    .rating-input {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
     }
 
-    .section-heading {
-        margin-bottom: 2rem;
+    .rating-input input {
+        display: none;
     }
 
-    .section-title {
-        color: #333;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
+    .rating-input label {
+        cursor: pointer;
+        font-size: 24px;
+        color: #ddd;
+        margin: 0 2px;
     }
 
-    .section-subtitle {
-        color: #6c757d;
-        margin-bottom: 0;
+    .rating-input input:checked~label,
+    .rating-input label:hover,
+    .rating-input label:hover~label {
+        color: #FFD700;
     }
 
-    .categories-banner {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    .breadcrumb-item a {
+        color: #fff;
+        text-decoration: none;
     }
 
-    .categories-banner .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .overflow-auto::-webkit-scrollbar {
-        height: 6px;
-    }
-
-    .overflow-auto::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 3px;
-    }
-
-    .overflow-auto::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 3px;
-    }
-
-    .overflow-auto::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
+    .breadcrumb-item.active {
+        color: #ffc107;
     }
 </style>
 
 <script>
-    let selectedRating = 0;
-    let selectedProductId = 0;
-
     function rateProduct(productId) {
-        selectedProductId = productId;
-        selectedRating = 0;
-
-        // Reset stars
-        document.querySelectorAll('.star').forEach(star => {
-            star.classList.remove('filled');
-            star.style.color = '#D3D3D3';
-        });
-
-        // Show modal
-        const ratingModal = new bootstrap.Modal(document.getElementById('ratingModal'));
-        ratingModal.show();
+        document.getElementById('productId').value = productId;
+        new bootstrap.Modal(document.getElementById('ratingModal')).show();
     }
 
-    function selectStar(rating) {
-        selectedRating = rating;
+    function submitRating() {
+        const productId = document.getElementById('productId').value;
+        const rating = document.querySelector('input[name="rating"]:checked')?.value;
 
-        // Update star colors
-        document.querySelectorAll('.star').forEach((star, index) => {
-            if (index < rating) {
-                star.classList.add('filled');
-                star.style.color = '#FFD700';
-            } else {
-                star.classList.remove('filled');
-                star.style.color = '#D3D3D3';
-            }
-        });
+        if (!rating) {
+            alert('Tafadhali chagua tathmini');
+            return;
+        }
+
+        // Submit rating via AJAX
+        fetch('market/rate_product.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `product_id=${productId}&rating=${rating}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Asante kwa tathmini yako!');
+                    location.reload();
+                } else {
+                    alert('Kosa: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Kosa la mfumo. Tafadhali jaribu tena.');
+                console.error('Error:', error);
+            });
+
+        // Close modal
+        bootstrap.Modal.getInstance(document.getElementById('ratingModal')).hide();
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handle rating submission
-        document.getElementById('submitRating').addEventListener('click', function() {
-            if (selectedRating > 0 && selectedProductId > 0) {
-                // Submit rating via AJAX
-                fetch('market/rate_product.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: 'productId=' + selectedProductId + '&rating=' + selectedRating
-                    })
-                    .then(response => response.text())
-                    .then(data => {
-                        alert("Asante kwa ukadiriaji wako!");
-                        location.reload();
-                    })
-                    .catch(error => {
-                        alert("Kosa katika kutuma ukadiriaji wako. Tafadhali jaribu tena.");
-                    });
-            } else {
-                alert("Tafadhali chagua ukadiriaji.");
-            }
-        });
-    });
 </script>
