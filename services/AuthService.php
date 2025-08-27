@@ -23,7 +23,7 @@ class AuthService
         }
         
         $this->userModel = new User($pdo);
-        $this->logModel = new Log($pdo);
+        $this->logModel = new Log();
     }
 
     /**

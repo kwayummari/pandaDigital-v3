@@ -59,6 +59,16 @@ if (!headers_sent()) {
 // Load database configuration
 require_once __DIR__ . '/database.php';
 
+// Initialize database connection and make it globally available
+global $pdo;
+try {
+    $database = new Database();
+    $pdo = $database->getConnection();
+} catch (Exception $e) {
+    error_log('Failed to initialize database connection: ' . $e->getMessage());
+    $pdo = null;
+}
+
 // Helper functions
 if (!function_exists('env')) {
     /**

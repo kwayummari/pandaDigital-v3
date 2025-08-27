@@ -5,8 +5,9 @@ class Log
 {
     private $db;
 
-    public function __construct()
+    public function __construct($pdo = null)
     {
+        // The Log model uses Database class internally, so we don't need to pass PDO
         $this->db = new Database();
     }
 
