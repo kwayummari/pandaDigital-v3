@@ -119,24 +119,25 @@ include '../includes/header.php';
 
                     <!-- Price -->
                     <div class="product-price mb-4">
+                        <?php
+                        // Define price variables at the top for use throughout the page
+                        $originalPrice = (float)$product['amount'];
+                        $discount = (float)$product['offer'];
+                        $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
+                        ?>
                         <?php if ($product['isOffered'] == 1): ?>
-                            <?php
-                            $originalPrice = (float)$product['amount'];
-                            $discount = (float)$product['offer'];
-                            $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
-                            ?>
                             <div class="original-price text-muted text-decoration-line-through">
-                                Tsh.<?php echo is_numeric($originalPrice) ? number_format($originalPrice, 0) : 'Bei haipatikani'; ?>
+                                Tsh.<?php echo number_format($originalPrice, 0); ?>
                             </div>
                             <div class="current-price text-primary fw-bold fs-3">
-                                Tsh.<?php echo is_numeric($discountedPrice) ? number_format($discountedPrice, 0) : 'Bei haipatikani'; ?>
+                                Tsh.<?php echo number_format($discountedPrice, 0); ?>
                             </div>
                             <div class="discount-badge bg-danger text-white px-2 py-1 rounded d-inline-block">
                                 -<?php echo $discount; ?>%
                             </div>
                         <?php else: ?>
                             <div class="current-price text-primary fw-bold fs-3">
-                                Tsh.<?php echo is_numeric((float)$product['amount']) ? number_format((float)$product['amount'], 0) : 'Bei haipatikani'; ?>
+                                Tsh.<?php echo number_format($originalPrice, 0); ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -160,10 +161,10 @@ include '../includes/header.php';
                             <?php endif; ?>
                             <li><strong>Bei:</strong>
                                 <?php if ($product['isOffered'] == 1): ?>
-                                    <span class="text-decoration-line-through text-muted">Tsh.<?php echo is_numeric($originalPrice) ? number_format($originalPrice, 0) : 'Bei haipatikani'; ?></span>
-                                    <span class="text-primary fw-bold">Tsh.<?php echo is_numeric($discountedPrice) ? number_format($discountedPrice, 0) : 'Bei haipatikani'; ?></span>
+                                    <span class="text-decoration-line-through text-muted">Tsh.<?php echo number_format($originalPrice, 0); ?></span>
+                                    <span class="text-primary fw-bold">Tsh.<?php echo number_format($discountedPrice, 0); ?></span>
                                 <?php else: ?>
-                                    <span class="text-primary fw-bold">Tsh.<?php echo is_numeric((float)$product['amount']) ? number_format((float)$product['amount'], 0) : 'Bei haipatikani'; ?></span>
+                                    <span class="text-primary fw-bold">Tsh.<?php echo number_format($originalPrice, 0); ?></span>
                                 <?php endif; ?>
                             </li>
                         </ul>
@@ -232,17 +233,17 @@ include '../includes/header.php';
                                 </div>
                                 <?php if ($relatedProduct['isOffered'] == 1): ?>
                                     <?php
-                                    $originalPrice = (float)$relatedProduct['amount'];
-                                    $discount = (float)$relatedProduct['offer'];
-                                    $discountedPrice = $originalPrice - ($originalPrice * ($discount / 100));
+                                    $relatedOriginalPrice = (float)$relatedProduct['amount'];
+                                    $relatedDiscount = (float)$relatedProduct['offer'];
+                                    $relatedDiscountedPrice = $relatedOriginalPrice - ($relatedOriginalPrice * ($relatedDiscount / 100));
                                     ?>
                                     <div class="price mb-2">
-                                        <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo is_numeric($originalPrice) ? number_format($originalPrice, 0) : 'Bei haipatikani'; ?></del>
-                                        <div class="text-primary fw-bold">Tsh.<?php echo is_numeric($discountedPrice) ? number_format($discountedPrice, 0) : 'Bei haipatikani'; ?></div>
+                                        <del class="text-muted" style="font-size: 12px;">Tsh.<?php echo number_format($relatedOriginalPrice, 0); ?></del>
+                                        <div class="text-primary fw-bold">Tsh.<?php echo number_format($relatedDiscountedPrice, 0); ?></div>
                                     </div>
                                 <?php else: ?>
                                     <div class="price mb-2">
-                                        <span class="text-primary fw-bold">Tsh.<?php echo is_numeric((float)$relatedProduct['amount']) ? number_format((float)$relatedProduct['amount'], 0) : 'Bei haipatikani'; ?></span>
+                                        <span class="text-primary fw-bold">Tsh.<?php echo number_format((float)$relatedProduct['amount'], 0); ?></span>
                                     </div>
                                 <?php endif; ?>
                                 <div class="product-actions">
