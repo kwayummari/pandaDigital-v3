@@ -151,9 +151,9 @@ include '../includes/header.php';
                                 </div>
                                 <div class="col-6">
                                     <div class="quantity buttons_added">
-                                        <input type="button" value="-" class="minus btn btn-outline-secondary btn-sm">
-                                        <input type="number" step="1" min="1" max="" name="quantity" value="1" title="Qty" class="input-text qty text form-control" size="4" pattern="" inputmode="" id="quantity">
-                                        <input type="button" value="+" class="plus btn btn-outline-secondary btn-sm">
+                                        <input type="button" value="-" class="minus btn btn-outline-secondary btn-sm" onclick="decreaseQuantity();">
+                                        <input type="number" step="1" min="1" max="" name="quantity" value="1" title="Qty" class="input-text qty text form-control" size="4" pattern="" inputmode="" id="quantity" onchange="updateTotal();">
+                                        <input type="button" value="+" class="plus btn btn-outline-secondary btn-sm" onclick="increaseQuantity();">
                                     </div>
                                 </div>
                             </div>
@@ -172,7 +172,7 @@ include '../includes/header.php';
 
                         <!-- Buy Button -->
                         <div class="buy-button-section mt-3">
-                            <button type="button" class="btn btn-success btn-lg w-100" id="purchase-button" onclick="console.log('Purchase button inline onclick works');">
+                            <button type="button" class="btn btn-success btn-lg w-100" id="purchase-button" onclick="purchaseProduct(<?php echo $product['id']; ?>);">
                                 <i class="fas fa-shopping-cart me-2"></i>Nunua Bidhaa
                             </button>
                             <!-- Test button -->
@@ -600,6 +600,40 @@ include '../includes/header.php';
         console.log('Test function called');
     }
 
+    // Simple quantity functions that work immediately
+    function increaseQuantity() {
+        var quantityInput = document.getElementById('quantity');
+        var currentValue = parseInt(quantityInput.value);
+        quantityInput.value = currentValue + 1;
+        updateTotal();
+    }
+
+    function decreaseQuantity() {
+        var quantityInput = document.getElementById('quantity');
+        var currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+            updateTotal();
+        }
+    }
+
+    function updateTotal() {
+        var quantity = parseInt(document.getElementById('quantity').value);
+        var unitPrice = <?php echo $product['isOffered'] == 1 ? $discountedPrice : $product['amount']; ?>;
+        var total = unitPrice * quantity;
+
+        // Update total display
+        const totalDisplay = document.querySelector('.total h5');
+        if (totalDisplay) {
+            totalDisplay.innerHTML = 'Jumla: Tsh.' + total + '/=';
+        }
+
+        // Update modal total if it exists
+        if (document.getElementById('total_amount')) {
+            document.getElementById('total_amount').value = total;
+        }
+    }
+
     // Make functions globally available
     window.testFunction = testFunction;
     window.purchaseProduct = purchaseProduct;
@@ -607,10 +641,16 @@ include '../includes/header.php';
     window.selectStar = selectStar;
     window.contactSeller = contactSeller;
     window.addToWishlist = addToWishlist;
+    window.increaseQuantity = increaseQuantity;
+    window.decreaseQuantity = decreaseQuantity;
+    window.updateTotal = updateTotal;
 
     function purchaseProduct(productId) {
-        console.log('purchaseProduct called with ID:', productId);
+        console.log('=== PURCHASE PRODUCT FUNCTION CALLED ===');
+        console.log('Product ID:', productId);
         console.log('Session check:', <?php echo json_encode(isset($_SESSION['userId']) || isset($_SESSION['user_id']) || isset($_SESSION['id'])); ?>);
+        console.log('Bootstrap available:', typeof bootstrap !== 'undefined');
+        console.log('Purchase modal element:', document.getElementById('purchaseModal'));
 
         // Check if user is logged in
         <?php if (isset($_SESSION['userId']) || isset($_SESSION['user_id']) || isset($_SESSION['id'])) : ?>
