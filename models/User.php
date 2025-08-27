@@ -7,7 +7,7 @@ require_once __DIR__ . "/../config/database.php";
 class User
 {
     private $pdo;
- 
+
     public function __construct($pdo = null)
     {
         if ($pdo === null) {
@@ -46,14 +46,16 @@ class User
     public function authenticateUser($email, $password)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ? AND status = '1'");
+            // Use the same query as the old working system - no status field check
+            $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ?");
             $stmt->execute([$email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($user && password_verify($password, $user['password'])) {
+
+            // Use 'pass' field like the old system, not 'password'
+            if ($user && password_verify($password, $user['pass'])) {
                 return $user;
             }
-            
+
             return false;
         } catch (Exception $e) {
             error_log('Authentication error: ' . $e->getMessage());
@@ -67,7 +69,8 @@ class User
     public function getUserByEmail($email)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ? AND status = '1'");
+            // Use the same query as the old working system - no status field check
+            $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ?");
             $stmt->execute([$email]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
@@ -306,7 +309,7 @@ class User
 
             // Hash password
             $userData['password'] = password_hash($userData['password'], PASSWORD_DEFAULT);
-            
+
             // Set default values
             $userData['status'] = $userData['status'] ?? '1';
             $userData['role'] = $userData['role'] ?? 'user';
@@ -314,14 +317,14 @@ class User
 
             $fields = implode(', ', array_keys($userData));
             $placeholders = ':' . implode(', :', array_keys($userData));
-            
+
             $sql = "INSERT INTO users ($fields) VALUES ($placeholders)";
             $stmt = $this->pdo->prepare($sql);
-            
+
             if ($stmt->execute($userData)) {
                 return $this->pdo->lastInsertId();
             }
-            
+
             return false;
         } catch (Exception $e) {
             error_log('Create user error: ' . $e->getMessage());
@@ -352,12 +355,12 @@ class User
         try {
             $sql = "SELECT id FROM users WHERE email = ?";
             $params = [$email];
-            
+
             if ($excludeUserId) {
                 $sql .= " AND id != ?";
                 $params[] = $excludeUserId;
             }
-            
+
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetch() !== false;

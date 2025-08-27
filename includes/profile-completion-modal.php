@@ -222,7 +222,7 @@ $canShowModal = $currentUserId && $userModel && $profileStatus && $fieldLabels &
 
                             // Close modal
                             const modalElement = document.getElementById('profileCompletionModal');
-                            if (modalElement && typeof bootstrap !== 'undefined') {
+                            if (modalElement) {
                                 const modal = bootstrap.Modal.getInstance(modalElement);
                                 if (modal) {
                                     modal.hide();
@@ -253,13 +253,6 @@ $canShowModal = $currentUserId && $userModel && $profileStatus && $fieldLabels &
         window.showProfileCompletionModal = function(action, actionName) {
             const modalElement = document.getElementById('profileCompletionModal');
             if (!modalElement) {
-                console.log('Profile completion modal not found');
-                return;
-            }
-
-            // Check if Bootstrap is available
-            if (typeof bootstrap === 'undefined') {
-                console.log('Bootstrap not available');
                 return;
             }
 
@@ -291,13 +284,6 @@ $canShowModal = $currentUserId && $userModel && $profileStatus && $fieldLabels &
             // Check if modal exists
             const modalElement = document.getElementById('profileCompletionModal');
             if (!modalElement) {
-                console.log('Profile completion modal not available');
-                return true; // Allow action to proceed
-            }
-
-            // Check if Bootstrap is available
-            if (typeof bootstrap === 'undefined') {
-                console.log('Bootstrap not available');
                 return true; // Allow action to proceed
             }
 
@@ -313,7 +299,6 @@ $canShowModal = $currentUserId && $userModel && $profileStatus && $fieldLabels &
         const alertContainer = document.getElementById('alertContainer') || createAlertContainer();
 
         if (!alertContainer) {
-            console.log('Alert container not available');
             return;
         }
 
@@ -343,7 +328,6 @@ $canShowModal = $currentUserId && $userModel && $profileStatus && $fieldLabels &
             document.body.appendChild(container);
             return container;
         } catch (error) {
-            console.error('Error creating alert container:', error);
             return null;
         }
     }
