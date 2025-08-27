@@ -100,20 +100,24 @@ include 'includes/header.php';
 <section class="categories-banner py-5 bg-light">
     <div class="container-fluid">
         <div class="row">
-            <?php foreach ($categories as $category): ?>
-                <div class="col-6 col-md-2 mb-3">
-                    <a href="market/productsByCategories.php?categoryId=<?php echo $category['id']; ?>" class="text-decoration-none">
-                        <div class="category-card text-center p-3 bg-white rounded shadow-sm" style="transition: all 0.3s ease;">
-                            <div class="category-icon mb-2">
-                                <i class="fas fa-box fa-2x text-primary"></i>
+            <div class="col-12">
+                <div class="d-flex flex-row overflow-auto">
+                    <?php foreach ($categories as $category): ?>
+                        <a href="market/productsByCategories.php?categoryId=<?php echo $category['id']; ?>" class="text-decoration-none">
+                            <div class="align-items-center text-center p-3 me-3 border rounded shadow-sm bg-white" style="min-width: 150px;">
+                                <div class="thumb mb-2">
+                                    <img src="market/assets/images/<?php echo htmlspecialchars($category['image']); ?>" alt="<?php echo htmlspecialchars($category['name']); ?>"
+                                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                </div>
+                                <h6 style="font-weight: 600; margin: 0; color: #333; font-size: 14px;"><?php echo htmlspecialchars($category['name']); ?></h6>
+                                <div class="mt-2">
+                                    <small class="text-primary">Gundua Zaidi</small>
+                                </div>
                             </div>
-                            <h6 class="category-name mb-0" style="color: #333; font-size: 14px;">
-                                <?php echo htmlspecialchars($category['name']); ?>
-                            </h6>
-                        </div>
-                    </a>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
-            <?php endforeach; ?>
+            </div>
         </div>
     </div>
 </section>
@@ -413,9 +417,31 @@ include 'includes/header.php';
 <?php include 'includes/footer.php'; ?>
 
 <style>
-    .category-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    .categories-banner {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .categories-banner .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .overflow-auto::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .overflow-auto::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .overflow-auto::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    .overflow-auto::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
     }
 
     .product-card:hover {
@@ -465,6 +491,21 @@ include 'includes/header.php';
 
     .breadcrumb-item.active {
         color: #ffc107;
+    }
+
+    .section-heading {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+        color: #6c757d;
+        margin-bottom: 0;
     }
 </style>
 
