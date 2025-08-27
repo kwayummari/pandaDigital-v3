@@ -7,6 +7,19 @@ require_once __DIR__ . '/../services/GoogleOAuthService.php';
 $authService = new AuthService();
 $isLoggedIn = $authService->isLoggedIn();
 $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
+
+// Function to determine current page and set active navigation
+function isCurrentPage($pagePath) {
+    $currentScript = $_SERVER['SCRIPT_NAME'] ?? '';
+    $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    
+    // Check if current path matches the page path
+    if ($pagePath === '/' || $pagePath === '') {
+        return $currentPath === '/' || $currentPath === '/index.php' || $currentPath === '/panda/index.php' || $currentPath === '/panda/pandadigitalV3/index.php';
+    }
+    
+    return strpos($currentPath, $pagePath) !== false;
+}
 ?>
 <!DOCTYPE html>
 <html lang="sw">
@@ -203,27 +216,27 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="<?= app_url() ?>">
+                        <a class="nav-link <?= isCurrentPage('/') ? 'active' : '' ?>" href="<?= app_url() ?>">
                             NYUMBANI
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= app_url('about.php') ?>">
+                        <a class="nav-link <?= isCurrentPage('about.php') ? 'active' : '' ?>" href="<?= app_url('about.php') ?>">
                             KUHUSU SISI
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= app_url('kozi.php') ?>">
+                        <a class="nav-link <?= isCurrentPage('kozi.php') ? 'active' : '' ?>" href="<?= app_url('kozi.php') ?>">
                             KOZI ZOTE
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= app_url('fursa.php') ?>">
+                        <a class="nav-link <?= isCurrentPage('fursa.php') ? 'active' : '' ?>" href="<?= app_url('fursa.php') ?>">
                             FURSA
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle <?= isCurrentPage('soko.php') || isCurrentPage('biashara.php') || isCurrentPage('panda-market.php') ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
                             SOKO
                         </a>
                         <ul class="dropdown-menu">
@@ -233,7 +246,7 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle <?= isCurrentPage('wanufaika.php') || isCurrentPage('habari.php') ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
                             HABARI
                         </a>
                         <ul class="dropdown-menu">
@@ -242,12 +255,12 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= app_url('uliza-swali.php') ?>">
+                        <a class="nav-link <?= isCurrentPage('uliza-swali.php') ? 'active' : '' ?>" href="<?= app_url('uliza-swali.php') ?>">
                             ONGEA
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle <?= isCurrentPage('uliza-swali.php') || isCurrentPage('fomu.php') ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
                             PANDA CHAT
                         </a>
                         <ul class="dropdown-menu">
@@ -272,31 +285,31 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
 
             <ul class="mobile-nav-menu">
                 <li class="mobile-nav-item">
-                    <a href="<?= app_url() ?>" class="mobile-nav-link active">
+                    <a href="<?= app_url() ?>" class="mobile-nav-link <?= isCurrentPage('/') ? 'active' : '' ?>">
                         <i class="fas fa-home me-2"></i>NYUMBANI
                     </a>
                 </li>
 
                 <li class="mobile-nav-item">
-                    <a href="<?= app_url('about.php') ?>" class="mobile-nav-link">
+                    <a href="<?= app_url('about.php') ?>" class="mobile-nav-link <?= isCurrentPage('about.php') ? 'active' : '' ?>">
                         <i class="fas fa-info-circle me-2"></i>KUHUSU SISI
                     </a>
                 </li>
 
                 <li class="mobile-nav-item">
-                    <a href="<?= app_url('kozi.php') ?>" class="mobile-nav-link">
+                    <a href="<?= app_url('kozi.php') ?>" class="mobile-nav-link <?= isCurrentPage('kozi.php') ? 'active' : '' ?>">
                         <i class="fas fa-graduation-cap me-2"></i>KOZI ZOTE
                     </a>
                 </li>
 
                 <li class="mobile-nav-item">
-                    <a href="<?= app_url('fursa.php') ?>" class="mobile-nav-link">
+                    <a href="<?= app_url('fursa.php') ?>" class="mobile-nav-link <?= isCurrentPage('fursa.php') ? 'active' : '' ?>">
                         <i class="fas fa-briefcase me-2"></i>FURSA
                     </a>
                 </li>
 
                 <li class="mobile-nav-item mobile-dropdown" id="sokoDropdown">
-                    <button class="mobile-dropdown-toggle" type="button">
+                    <button class="mobile-dropdown-toggle <?= isCurrentPage('soko.php') || isCurrentPage('biashara.php') || isCurrentPage('panda-market.php') ? 'active' : '' ?>" type="button">
                         <span><i class="fas fa-store me-2"></i>SOKO</span>
                     </button>
                     <div class="mobile-dropdown-menu">
@@ -307,7 +320,7 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 </li>
 
                 <li class="mobile-nav-item mobile-dropdown" id="habariDropdown">
-                    <button class="mobile-dropdown-toggle" type="button">
+                    <button class="mobile-dropdown-toggle <?= isCurrentPage('wanufaika.php') || isCurrentPage('habari.php') ? 'active' : '' ?>" type="button">
                         <span><i class="fas fa-newspaper me-2"></i>HABARI</span>
                     </button>
                     <div class="mobile-dropdown-menu">
@@ -317,13 +330,13 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
                 </li>
 
                 <li class="mobile-nav-item">
-                    <a href="<?= app_url('uliza-swali.php') ?>" class="mobile-nav-link">
+                    <a href="<?= app_url('uliza-swali.php') ?>" class="mobile-nav-link <?= isCurrentPage('uliza-swali.php') ? 'active' : '' ?>">
                         <i class="fas fa-comments me-2"></i>ONGEA
                     </a>
                 </li>
 
                 <li class="mobile-nav-item mobile-dropdown" id="pandaChatDropdown">
-                    <button class="mobile-dropdown-toggle" type="button">
+                    <button class="mobile-dropdown-toggle <?= isCurrentPage('uliza-swali.php') || isCurrentPage('fomu.php') ? 'active' : '' ?>" type="button">
                         <span><i class="fas fa-headset me-2"></i>PANDA CHAT</span>
                     </button>
                     <div class="mobile-dropdown-menu">
@@ -523,8 +536,10 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
             }
 
             .mobile-nav-link.active {
-                background: var(--primary-color, #ffbc3b);
-                color: white;
+                background: #5F4594;
+                color: #FFBC3B;
+                font-weight: 600;
+                box-shadow: 0 2px 8px rgba(95, 69, 148, 0.3);
             }
 
             /* Mobile dropdown styles */
@@ -554,8 +569,10 @@ $currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
             }
 
             .mobile-dropdown-toggle.active {
-                background: var(--primary-color, #ffbc3b);
-                color: white;
+                background: #5F4594;
+                color: #FFBC3B;
+                font-weight: 600;
+                box-shadow: 0 2px 8px rgba(95, 69, 148, 0.3);
             }
 
             .mobile-dropdown-toggle::after {
