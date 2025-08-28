@@ -5,7 +5,6 @@ require_once 'models/Fursa.php';
 require_once 'models/Wanufaika.php';
 require_once 'models/Expert.php';
 require_once 'models/User.php';
-require_once 'includes/profile-check.php';
 
 // Initialize models
 $blogModel = new Blog();
@@ -321,7 +320,7 @@ $featuredExperts = array_slice($expertModel->getAllExperts(), 0, 4);
                         Chagua kozi unayopenda kwa Kiswahili kutoka kwenye orodha yetu ya kozi.
                     </p>
                     <div class="step-actions">
-                        <a href="<?= app_url('kozi.php') ?>" class="btn btn-sm btn-outline-primary">
+                        <a href="<?= app_url('kozi.php') ?>" class="btn btn-sm btn-outline-primary" onclick="return checkProfileCompletion('study')">
                             <i class="fas fa-search me-1"></i>Tazama Kozi
                         </a>
                     </div>
