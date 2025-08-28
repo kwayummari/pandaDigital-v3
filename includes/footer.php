@@ -483,9 +483,23 @@
         <?php endif; ?>
     }
 
-    // Call profile completion check when page loads
+    // Call profile completion check when page loads (only on specific pages)
     document.addEventListener('DOMContentLoaded', function() {
-        checkProfileCompletion();
+        // Only show profile completion modal on specific pages where it's needed
+        const currentPath = window.location.pathname;
+        const profileCompletionPages = [
+            '/user/certificates.php',
+            '/user/business.php',
+            '/user/ask-questions.php',
+            '/user/course-overview.php'
+        ];
+
+        // Check if current page is one of the profile completion pages
+        const shouldCheckProfile = profileCompletionPages.some(page => currentPath.includes(page));
+
+        if (shouldCheckProfile) {
+            checkProfileCompletion();
+        }
     });
 
     // Handle signup form submission
