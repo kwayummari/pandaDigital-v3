@@ -5,12 +5,14 @@ $page_title = 'Test URLs';
 
 <!DOCTYPE html>
 <html lang="sw">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test URLs - Panda Digital</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="container mt-5">
         <div class="row">
@@ -23,33 +25,33 @@ $page_title = 'Test URLs';
                         <h5>Test these URLs (they should work without .php extension):</h5>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">
-                                <a href="index" class="btn btn-primary btn-sm">index</a> 
+                                <a href="index" class="btn btn-primary btn-sm">index</a>
                                 <span class="text-muted">(should load index.php)</span>
                             </li>
                             <li class="list-group-item">
-                                <a href="about" class="btn btn-primary btn-sm">about</a> 
+                                <a href="about" class="btn btn-primary btn-sm">about</a>
                                 <span class="text-muted">(should load about.php)</span>
                             </li>
                             <li class="list-group-item">
-                                <a href="kozi" class="btn btn-primary btn-sm">kozi</a> 
+                                <a href="kozi" class="btn btn-primary btn-sm">kozi</a>
                                 <span class="text-muted">(should load kozi.php)</span>
                             </li>
                             <li class="list-group-item">
-                                <a href="fursa" class="btn btn-primary btn-sm">fursa</a> 
+                                <a href="fursa" class="btn btn-primary btn-sm">fursa</a>
                                 <span class="text-muted">(should load fursa.php)</span>
                             </li>
                             <li class="list-group-item">
-                                <a href="habari" class="btn btn-primary btn-sm">habari</a> 
+                                <a href="habari" class="btn btn-primary btn-sm">habari</a>
                                 <span class="text-muted">(should load habari.php)</span>
                             </li>
                             <li class="list-group-item">
-                                <a href="contact" class="btn btn-primary btn-sm">contact</a> 
+                                <a href="contact" class="btn btn-primary btn-sm">contact</a>
                                 <span class="text-muted">(should load contact.php)</span>
                             </li>
                         </ul>
-                        
+
                         <hr>
-                        
+
                         <h5>Test Right-Click Disabling:</h5>
                         <div class="alert alert-info">
                             <strong>Try to:</strong>
@@ -62,9 +64,9 @@ $page_title = 'Test URLs';
                             </ul>
                             <p class="mb-0 mt-2"><strong>All of these should be blocked and show a warning message!</strong></p>
                         </div>
-                        
+
                         <hr>
-                        
+
                         <h5>Current URL Information:</h5>
                         <div class="row">
                             <div class="col-md-6">
@@ -90,4 +92,5 @@ $page_title = 'Test URLs';
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
