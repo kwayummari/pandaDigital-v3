@@ -49,7 +49,7 @@ $completionDate = date('Y-m-d');
 $completionPercentage = round($userProgress['completion_percentage']);
 
 // Set page title for navigation
-$page_title = 'Pakua Vyeti';
+$page_title = '';
 ?>
 
 <!DOCTYPE html>

@@ -302,6 +302,11 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
                 <h3 class="mb-1"><?= number_format($trackingStats['total_visits'] ?? 0) ?></h3>
                 <p class="mb-0">Total Page Visits</p>
                 <small class="text-muted"><?= number_format($trackingStats['unique_users'] ?? 0) ?> unique users</small>
+                <div class="mt-2">
+                    <a href="user-tracking.php" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-chart-line me-1"></i>View Details
+                    </a>
+                </div>
             </div>
         </div>
     </div>

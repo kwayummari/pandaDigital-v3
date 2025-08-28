@@ -329,12 +329,12 @@ include 'includes/admin_header.php';
                             </thead>
                             <tbody>
                                 <?php foreach ($pageStats as $page): ?>
-                                <tr>
-                                    <td><?= ucfirst(str_replace('_', ' ', $page['page_type'])) ?></td>
-                                    <td><?= number_format($page['total_visits']) ?></td>
-                                    <td><?= number_format($page['unique_users']) ?></td>
-                                    <td><?= number_format($page['avg_visits_per_user'] ?? 0, 1) ?></td>
-                                </tr>
+                                    <tr>
+                                        <td><?= ucfirst(str_replace('_', ' ', $page['page_type'])) ?></td>
+                                        <td><?= number_format($page['total_visits']) ?></td>
+                                        <td><?= number_format($page['unique_users']) ?></td>
+                                        <td><?= number_format($page['avg_visits_per_user'] ?? 0, 1) ?></td>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -363,18 +363,18 @@ include 'includes/admin_header.php';
                             </thead>
                             <tbody>
                                 <?php foreach ($activeUsers as $user): ?>
-                                <tr>
-                                    <td>
-                                        <div>
-                                            <strong><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></strong>
-                                            <br><small class="text-muted"><?= htmlspecialchars($user['email']) ?></small>
-                                        </div>
-                                    </td>
-                                    <td><span class="badge bg-<?= $user['role'] === 'admin' ? 'danger' : ($user['role'] === 'expert' ? 'warning' : 'primary') ?>"><?= ucfirst($user['role']) ?></span></td>
-                                    <td><?= number_format($user['total_visits']) ?></td>
-                                    <td><?= number_format($user['pages_visited']) ?></td>
-                                    <td><?= date('M j, Y H:i', strtotime($user['last_visit'])) ?></td>
-                                </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></strong>
+                                                <br><small class="text-muted"><?= htmlspecialchars($user['email']) ?></small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-<?= $user['role'] === 'admin' ? 'danger' : ($user['role'] === 'expert' ? 'warning' : 'primary') ?>"><?= ucfirst($user['role']) ?></span></td>
+                                        <td><?= number_format($user['total_visits']) ?></td>
+                                        <td><?= number_format($user['pages_visited']) ?></td>
+                                        <td><?= date('M j, Y H:i', strtotime($user['last_visit'])) ?></td>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -408,31 +408,31 @@ include 'includes/admin_header.php';
                             </thead>
                             <tbody>
                                 <?php foreach ($recentActivity as $activity): ?>
-                                <tr>
-                                    <td>
-                                        <div>
-                                            <strong><?= htmlspecialchars($activity['first_name'] . ' ' . $activity['last_name']) ?></strong>
-                                            <br><small class="text-muted"><?= htmlspecialchars($activity['email']) ?></small>
-                                            <br><span class="badge bg-<?= $activity['role'] === 'admin' ? 'danger' : ($activity['role'] === 'expert' ? 'warning' : 'primary') ?>"><?= ucfirst($activity['role']) ?></span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-info"><?= ucfirst(str_replace('_', ' ', $activity['page_type'])) ?></span>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-<?= $activity['action_type'] === 'download_click' ? 'success' : 'secondary' ?>">
-                                            <?= ucfirst(str_replace('_', ' ', $activity['action_type'])) ?>
-                                        </span>
-                                    </td>
-                                    <td><?= $activity['course_id'] ?: '-' ?></td>
-                                    <td><?= date('M j, Y H:i', strtotime($activity['visit_date'])) ?></td>
-                                    <td><code><?= htmlspecialchars($activity['ip_address']) ?></code></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-info" onclick="showActivityDetails(<?= htmlspecialchars(json_encode($activity)) ?>)">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong><?= htmlspecialchars($activity['first_name'] . ' ' . $activity['last_name']) ?></strong>
+                                                <br><small class="text-muted"><?= htmlspecialchars($activity['email']) ?></small>
+                                                <br><span class="badge bg-<?= $activity['role'] === 'admin' ? 'danger' : ($activity['role'] === 'expert' ? 'warning' : 'primary') ?>"><?= ucfirst($activity['role']) ?></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info"><?= ucfirst(str_replace('_', ' ', $activity['page_type'])) ?></span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-<?= $activity['action_type'] === 'download_click' ? 'success' : 'secondary' ?>">
+                                                <?= ucfirst(str_replace('_', ' ', $activity['action_type'])) ?>
+                                            </span>
+                                        </td>
+                                        <td><?= $activity['course_id'] ?: '-' ?></td>
+                                        <td><?= date('M j, Y H:i', strtotime($activity['visit_date'])) ?></td>
+                                        <td><code><?= htmlspecialchars($activity['ip_address']) ?></code></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-info" onclick="showActivityDetails(<?= htmlspecialchars(json_encode($activity)) ?>)">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -514,7 +514,9 @@ include 'includes/admin_header.php';
     new Chart(pageTypeCtx, {
         type: 'doughnut',
         data: {
-            labels: <?= json_encode(array_map(function($page) { return ucfirst(str_replace('_', ' ', $page['page_type'])); }, $pageStats)) ?>,
+            labels: <?= json_encode(array_map(function ($page) {
+                        return ucfirst(str_replace('_', ' ', $page['page_type']));
+                    }, $pageStats)) ?>,
             datasets: [{
                 data: <?= json_encode(array_column($pageStats, 'total_visits')) ?>,
                 backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'],
@@ -536,7 +538,7 @@ include 'includes/admin_header.php';
     function showActivityDetails(activity) {
         const modal = new bootstrap.Modal(document.getElementById('activityDetailsModal'));
         const content = document.getElementById('activityDetailsContent');
-        
+
         content.innerHTML = `
             <div class="row">
                 <div class="col-md-6">
@@ -567,15 +569,22 @@ include 'includes/admin_header.php';
                 </div>
             </div>
         `;
-        
+
         modal.show();
     }
 
     // Export data function
     function exportData() {
         const currentUrl = new URL(window.location);
-        currentUrl.searchParams.set('export', '1');
-        window.location.href = currentUrl.toString();
+        const exportUrl = new URL('export-tracking.php', window.location.origin + window.location.pathname.replace('user-tracking.php', ''));
+
+        // Add current filters to export URL
+        exportUrl.searchParams.set('start_date', document.getElementById('start_date').value);
+        exportUrl.searchParams.set('end_date', document.getElementById('end_date').value);
+        exportUrl.searchParams.set('page_type', document.getElementById('page_type').value);
+        exportUrl.searchParams.set('user_id', document.getElementById('user_id').value);
+
+        window.location.href = exportUrl.toString();
     }
 
     // Refresh data function
