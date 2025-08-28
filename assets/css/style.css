@@ -4090,6 +4090,7 @@ html
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
+  max-width: 100%;
 }
 
 /* Certificate Background Pattern */
@@ -4371,19 +4372,20 @@ html
     height: auto !important;
     min-height: 500px;
     padding: 1.5rem;
+    margin: 0;
   }
 
   .certificate-title h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .student-name {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
 
   .course-name {
-    font-size: 1.4rem;
-    padding: 1rem;
+    font-size: 1.2rem;
+    padding: 0.8rem;
   }
 
   .detail-row {
@@ -4391,9 +4393,14 @@ html
     gap: 1rem;
   }
 
+  .detail-item {
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
   .logo-circle {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
   }
 
   .watermark-logo {
@@ -4401,9 +4408,77 @@ html
     height: 80%;
   }
 
+  .certificate-preview {
+    padding: 1rem;
+  }
+
+  .content-card {
+    padding: 1rem;
+  }
+
+  /* Course summary on mobile */
+  .course-summary .col-4 {
+    margin-bottom: 1rem;
+  }
+
+  .summary-item {
+    padding: 1rem 0.5rem;
+  }
+
+  .summary-number {
+    font-size: 1.5rem;
+  }
+
+  .summary-label {
+    font-size: 0.9rem;
+  }
+
+  /* Download actions on mobile */
+  .download-actions .btn {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
   /* Course images on mobile */
   .dashboard-container .course-image {
     height: 250px;
+  }
+}
+
+@media (max-width: 576px) {
+  .certificate-container {
+    padding: 1rem;
+    min-height: 400px;
+  }
+
+  .certificate-title h2 {
+    font-size: 1.5rem;
+  }
+
+  .student-name {
+    font-size: 1.2rem;
+  }
+
+  .course-name {
+    font-size: 1.1rem;
+    padding: 0.6rem;
+  }
+
+  .logo-circle {
+    width: 100px;
+    height: 100px;
+  }
+
+  .summary-item {
+    padding: 0.8rem 0.3rem;
+  }
+
+  .summary-number {
+    font-size: 1.3rem;
+  }
+
+  .summary-label {
+    font-size: 0.8rem;
   }
 }
 

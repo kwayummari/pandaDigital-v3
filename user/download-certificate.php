@@ -78,7 +78,7 @@ $page_title = '';
 
             <div class="container-fluid">
                 <div class="row justify-content-center">
-                    <div class="col-md-8 col-lg-6">
+                    <div class="col-12 col-md-10 col-lg-8">
                         <div class="content-card">
                             <div class="text-center mb-4">
                                 <h2 class="card-title">Hongera! Umeimaliza Kozi</h2>
