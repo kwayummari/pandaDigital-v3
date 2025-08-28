@@ -10,6 +10,21 @@ $currentUser = $auth->getCurrentUser();
 $courseModel = new Course();
 $quizModel = new Quiz();
 
+// Track page visit
+if (isset($_SESSION['user_id']) && isset($_GET['id'])) {
+    $trackQuery = "INSERT INTO user_page_tracking (user_id, page_type, page_url, course_id, session_id, ip_address, user_agent) 
+                    VALUES (?, 'course_overview', ?, ?, ?, ?, ?)";
+    $trackStmt = $pdo->prepare($trackQuery);
+    $trackStmt->execute([
+        $_SESSION['user_id'],
+        $_SERVER['REQUEST_URI'],
+        $_GET['id'],
+        session_id(),
+        $_SERVER['REMOTE_ADDR'] ?? '',
+        $_SERVER['HTTP_USER_AGENT'] ?? ''
+    ]);
+}
+
 // Set page title for navigation
 $page_title = 'Maelezo ya Kozi';
 

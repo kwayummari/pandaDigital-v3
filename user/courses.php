@@ -9,6 +9,20 @@ $auth->requireRole('user');
 $currentUser = $auth->getCurrentUser();
 $courseModel = new Course();
 
+// Track page visit
+if (isset($_SESSION['user_id'])) {
+    $trackQuery = "INSERT INTO user_page_tracking (user_id, page_type, page_url, session_id, ip_address, user_agent) 
+                    VALUES (?, 'courses', ?, ?, ?, ?)";
+    $trackStmt = $pdo->prepare($trackQuery);
+    $trackStmt->execute([
+        $_SESSION['user_id'],
+        $_SERVER['REQUEST_URI'],
+        session_id(),
+        $_SERVER['REMOTE_ADDR'] ?? '',
+        $_SERVER['HTTP_USER_AGENT'] ?? ''
+    ]);
+}
+
 // Get all courses with enrollment status
 $courses = $courseModel->getAllCourses($currentUser['id']);
 

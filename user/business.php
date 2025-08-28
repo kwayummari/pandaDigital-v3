@@ -9,6 +9,20 @@ $auth->requireRole('user');
 $currentUser = $auth->getCurrentUser();
 $businessModel = new Business();
 
+// Track page visit
+if (isset($_SESSION['user_id'])) {
+    $trackQuery = "INSERT INTO user_page_tracking (user_id, page_type, page_url, session_id, ip_address, user_agent) 
+                    VALUES (?, 'business', ?, ?, ?, ?)";
+    $trackStmt = $pdo->prepare($trackQuery);
+    $trackStmt->execute([
+        $_SESSION['user_id'],
+        $_SERVER['REQUEST_URI'],
+        session_id(),
+        $_SERVER['REMOTE_ADDR'] ?? '',
+        $_SERVER['HTTP_USER_AGENT'] ?? ''
+    ]);
+}
+
 // Get user's businesses
 $userBusinesses = $businessModel->getBusinessesByUserId($currentUser['id']);
 

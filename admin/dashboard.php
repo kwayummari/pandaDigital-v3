@@ -288,6 +288,24 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
         </div>
     </div>
 
+    <!-- User Tracking Statistics -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <?php
+                // Get tracking statistics
+                $trackingStatsQuery = "SELECT COUNT(*) as total_visits, COUNT(DISTINCT user_id) as unique_users FROM user_page_tracking";
+                $trackingStatsStmt = $pdo->prepare($trackingStatsQuery);
+                $trackingStatsStmt->execute();
+                $trackingStats = $trackingStatsStmt->fetch();
+                ?>
+                <h3 class="mb-1"><?= number_format($trackingStats['total_visits'] ?? 0) ?></h3>
+                <p class="mb-0">Total Page Visits</p>
+                <small class="text-muted"><?= number_format($trackingStats['unique_users'] ?? 0) ?> unique users</small>
+            </div>
+        </div>
+    </div>
+
 
 
     <!-- Message Balance Card -->
@@ -494,6 +512,27 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
                         <p class="text-muted">Wanafunzi bado hawajaanza kufanya mitihani</p>
                     </div>
                 <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Tracking Dashboard Link -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        User Tracking Analytics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Track user behavior and page visits across the platform</p>
+                    <a href="user-tracking.php" class="btn btn-primary">
+                        <i class="fas fa-analytics me-2"></i>
+                        View Detailed Analytics
+                    </a>
+                </div>
             </div>
         </div>
     </div>

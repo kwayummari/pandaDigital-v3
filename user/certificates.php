@@ -11,6 +11,20 @@ $currentUser = $auth->getCurrentUser();
 $courseModel = new Course();
 $quizModel = new Quiz();
 
+// Track page visit
+if (isset($_SESSION['user_id'])) {
+    $trackQuery = "INSERT INTO user_page_tracking (user_id, page_type, page_url, session_id, ip_address, user_agent) 
+                    VALUES (?, 'certificates', ?, ?, ?, ?)";
+    $trackStmt = $pdo->prepare($trackQuery);
+    $trackStmt->execute([
+        $_SESSION['user_id'],
+        $_SERVER['REQUEST_URI'],
+        session_id(),
+        $_SERVER['REMOTE_ADDR'] ?? '',
+        $_SERVER['HTTP_USER_AGENT'] ?? ''
+    ]);
+}
+
 // Get user's enrolled courses with progress
 $enrolledCourses = $courseModel->getUserEnrolledCourses($currentUser['id']);
 
@@ -397,7 +411,9 @@ function calculateGrade($score)
 
                                         <div class="text-center">
                                             <?php if ($certificate['status'] == 'issued'): ?>
-                                                <a href="<?= app_url('user/download-certificate.php?course_id=' . $certificate['id']) ?>" class="btn download-btn">
+                                                <a href="<?= app_url('user/download-certificate.php?course_id=' . $certificate['id']) ?>" 
+                                                   class="btn download-btn"
+                                                   onclick="trackCertificateDownload(<?php echo $certificate['id']; ?>, <?php echo $certificate['id']; ?>)">
                                                     Pakua Vyeti
                                                 </a>
                                             <?php elseif ($certificate['status'] == 'pending_score'): ?>
@@ -422,6 +438,23 @@ function calculateGrade($score)
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        // Track certificate download
+        function trackCertificateDownload(certificateId, courseId) {
+            fetch('<?= app_url("user/track_certificate_download.php") ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    certificate_id: certificateId,
+                    course_id: courseId,
+                    action: 'download_certificate'
+                })
+            });
+        }
+    </script>
 
 </body>
 
