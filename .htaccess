@@ -1,0 +1,95 @@
+# Panda Digital V3 .htaccess Configuration
+
+# Enable URL rewriting
+RewriteEngine On
+
+# Remove .php extension from URLs
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Force HTTPS (uncomment if you have SSL)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Disable right-click context menu
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options nosniff
+    Header set X-Frame-Options DENY
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Disable right-click using JavaScript injection
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_URI} \.php$
+    RewriteRule ^(.*)$ $1 [E=INJECT_JS:1]
+</IfModule>
+
+# Custom error pages
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# Prevent access to sensitive files
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|inc|bak)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Prevent access to configuration files
+<FilesMatch "^(config|database|\.env)">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Enable compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
+
+# Cache control for static assets
+<IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>
+
+# Prevent hotlinking
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?pandadigital\.co\.tz [NC]
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?localhost [NC]
+RewriteRule \.(jpg|jpeg|png|gif|css|js)$ - [F]
+
+# Disable directory browsing
+Options -Indexes
+
+# Prevent access to hidden files
+<Files .*>
+    Order Deny,Allow
+    Deny From All
+</Files>
+
+# Allow access to specific file types
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
