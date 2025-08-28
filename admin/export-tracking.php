@@ -43,6 +43,7 @@ $exportQuery = "
         t.page_type,
         t.page_url,
         t.course_id,
+        c.course_name,
         t.video_id,
         t.certificate_id,
         t.action_type,
@@ -52,6 +53,7 @@ $exportQuery = "
         t.visit_date
     FROM user_page_tracking t
     JOIN users u ON t.user_id = u.id
+    LEFT JOIN courses c ON t.course_id = c.id
     $whereClause
     ORDER BY t.visit_date DESC
 ";
@@ -82,6 +84,7 @@ $headers = [
     'Page Type',
     'Page URL',
     'Course ID',
+    'Course Name',
     'Video ID',
     'Certificate ID',
     'Action Type',
@@ -103,6 +106,7 @@ foreach ($trackingData as $row) {
         $row['page_type'] ?? '',
         $row['page_url'] ?? '',
         $row['course_id'] ?? '',
+        $row['course_name'] ?? '',
         $row['video_id'] ?? '',
         $row['certificate_id'] ?? '',
         $row['action_type'] ?? '',
