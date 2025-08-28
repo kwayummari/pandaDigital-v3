@@ -99,6 +99,12 @@
                     <span>Maswali</span>
                 </a>
             </li>
+            <li class="nav-item <?= basename($_SERVER['PHP_SELF']) == 'user-tracking.php' ? 'active' : '' ?>">
+                <a href="<?= app_url('admin/user-tracking.php') ?>" class="nav-link">
+                    <i class="fas fa-chart-line me-2"></i>
+                    <span>User Tracking</span>
+                </a>
+            </li>
         </ul>
     </nav>
 
