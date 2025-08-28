@@ -2,22 +2,11 @@
 require_once __DIR__ . "/../config/init.php";
 require_once __DIR__ . "/../middleware/AuthMiddleware.php";
 require_once __DIR__ . "/../models/Business.php";
-require_once __DIR__ . "/../models/User.php";
-require_once __DIR__ . "/../includes/profile-check.php";
 
 $auth = new AuthMiddleware();
 $auth->requireRole('user');
 
 $currentUser = $auth->getCurrentUser();
-
-// Check profile completion for business access
-$userModel = new User($pdo);
-$profileCompletionStatus = getProfileCompletionStatus($userModel, $currentUser['id']);
-
-// If profile is not complete, require completion before accessing business features
-if (!$hasMinimumProfile($userModel, $currentUser['id'])) {
-    requireProfileCompletion($userModel, $currentUser['id'], 'business');
-}
 $businessModel = new Business();
 
 // Get user's businesses
@@ -627,9 +616,6 @@ $pendingSales = count(array_filter($businessSales, function ($s) {
             }
         });
     </script>
-
-    <!-- Profile Completion Modal -->
-    <?php include __DIR__ . '/../includes/profile-completion-modal.php'; ?>
 
 </body>
 
