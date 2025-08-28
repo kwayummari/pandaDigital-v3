@@ -174,10 +174,10 @@ $featuredExperts = array_slice($expertModel->getAllExperts(), 0, 4);
                                 <?php endif; ?>
                             </div>
                             <div class="testimonial-content">
-                                <div class="testimonial-quote">
+                                <!-- <div class="testimonial-quote"> -->
                                     <i class="fas fa-quote-left"></i>
                                     <p style="color: #000000;">"<?= htmlspecialchars($wanufaikaModel->truncateText($testimonial['description'], 120)) ?>"</p>
-                                </div>
+                                <!-- </div> -->
                                 <div class="testimonial-author">
                                     <div class="author-info">
                                         <h5><?= htmlspecialchars($testimonial['name']) ?></h5>
