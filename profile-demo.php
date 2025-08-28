@@ -6,7 +6,6 @@
  */
 
 require_once __DIR__ . '/config/init.php';
-require_once __DIR__ . '/includes/profile-check.php';
 
 $pageTitle = 'Profile Completion Demo - Panda Digital';
 
@@ -41,7 +40,7 @@ include 'includes/header.php';
                             </h5>
                         </div>
                         <div class="card-body">
-                            <?php displayProfileProgress('lg'); ?>
+                            <p class="text-muted">Profile completion system demo - not active on this page</p>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -168,24 +167,12 @@ include 'includes/header.php';
     function tryAction(action, actionName) {
         console.log('Trying action:', action, actionName);
 
-        // Check profile completion
-        if (typeof checkProfileCompletion === 'function') {
-            if (!checkProfileCompletion(action, actionName)) {
-                console.log('Profile completion required for:', action);
-                return false;
-            }
-        }
-
-        // If profile is complete, show success message
-        showAlert(`Wasifu wako umekamilishwa! Unaweza ${actionName.toLowerCase()}.`, 'success');
+        // Show success message (profile completion not active on this page)
+        showAlert(`Demo action: ${actionName.toLowerCase()}. Profile completion system is not active on this demo page.`, 'info');
     }
 
     function viewProfile() {
-        if (typeof showProfileCompletionModal === 'function') {
-            showProfileCompletionModal('view_profile', 'Kutazama Wasifu');
-        } else {
-            showAlert('Profile completion modal not available', 'warning');
-        }
+        showAlert('Profile view demo - profile completion system not active on this page', 'info');
     }
 
     // Function to show alerts

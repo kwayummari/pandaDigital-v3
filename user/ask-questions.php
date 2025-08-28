@@ -2,12 +2,23 @@
 require_once __DIR__ . "/../config/init.php";
 require_once __DIR__ . "/../middleware/AuthMiddleware.php";
 require_once __DIR__ . "/../models/ExpertQuestion.php";
+require_once __DIR__ . "/../models/User.php";
+require_once __DIR__ . "/../includes/profile-check.php";
 
 // Ensure user is logged in
 $auth = new AuthMiddleware();
 $auth->requireRole('user');
 
 $currentUser = $auth->getCurrentUser();
+
+// Check profile completion for asking questions
+$userModel = new User($pdo);
+$profileCompletionStatus = getProfileCompletionStatus($userModel, $currentUser['id']);
+
+// If profile is not complete, require completion before asking questions
+if (!$hasMinimumProfile($userModel, $currentUser['id'])) {
+    requireProfileCompletion($userModel, $currentUser['id'], 'ask-questions');
+}
 $expertQuestionModel = new ExpertQuestion();
 
 $message = '';
@@ -493,6 +504,10 @@ $userQuestions = $expertQuestionModel->getUserQuestions($currentUser['id']);
             modal.hide();
         }
     </script>
+
+    <!-- Profile Completion Modal -->
+    <?php include __DIR__ . '/../includes/profile-completion-modal.php'; ?>
+
 </body>
 
 </html>

@@ -1,7 +1,6 @@
 <?php
 require_once '../config/init.php';
 require_once '../config/database.php';
-require_once '../includes/profile-check.php';
 
 // Debug session variables
 error_log("Session variables: " . print_r($_SESSION, true));
@@ -99,14 +98,6 @@ include '../includes/header.php';
     }
 
     function contactSeller(productId) {
-        // Check profile completion for contacting seller
-        <?php if (isset($_SESSION['userId'])): ?>
-            if (!checkProfileCompletion('contact_expert', 'Kuwasiliana na Muuzaji')) {
-                console.log('Profile completion required for contacting seller');
-                return false;
-            }
-        <?php endif; ?>
-
         const contactModal = new bootstrap.Modal(document.getElementById('contactSellerModal'));
         contactModal.show();
     }
@@ -164,17 +155,7 @@ include '../includes/header.php';
 
         // Check if user is logged in
         <?php if (isset($_SESSION['userId']) || isset($_SESSION['user_id']) || isset($_SESSION['id'])) : ?>
-            console.log('User is logged in, checking profile completion...');
-
-            // Check profile completion for buying products
-            <?php if (isset($_SESSION['userId'])): ?>
-                if (!checkProfileCompletion('buy_product', 'Kununua Bidhaa')) {
-                    console.log('Profile completion required');
-                    return false;
-                }
-            <?php endif; ?>
-
-            console.log('Profile complete, showing purchase modal');
+            console.log('User is logged in, showing purchase modal');
             // Show purchase modal
             const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
             purchaseModal.show();

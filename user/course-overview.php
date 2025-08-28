@@ -2,11 +2,22 @@
 require_once __DIR__ . "/../middleware/AuthMiddleware.php";
 require_once __DIR__ . "/../models/Course.php";
 require_once __DIR__ . "/../models/Quiz.php";
+require_once __DIR__ . "/../models/User.php";
+require_once __DIR__ . "/../includes/profile-check.php";
 
 $auth = new AuthMiddleware();
 $auth->requireRole('user');
 
 $currentUser = $auth->getCurrentUser();
+
+// Check profile completion for course access
+$userModel = new User($pdo);
+$profileCompletionStatus = getProfileCompletionStatus($userModel, $currentUser['id']);
+
+// If profile is not complete, require completion before accessing course
+if (!$hasMinimumProfile($userModel, $currentUser['id'])) {
+    requireProfileCompletion($userModel, $currentUser['id'], 'course-overview');
+}
 $courseModel = new Course();
 $quizModel = new Quiz();
 
@@ -700,6 +711,10 @@ if ($isEnrolled) {
             document.querySelectorAll('.mobile-provider').forEach(p => p.classList.remove('selected'));
         }
     </script>
+
+    <!-- Profile Completion Modal -->
+    <?php include __DIR__ . '/../includes/profile-completion-modal.php'; ?>
+
 </body>
 
 </html>
