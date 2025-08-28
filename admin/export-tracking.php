@@ -43,7 +43,7 @@ $exportQuery = "
         t.page_type,
         t.page_url,
         t.course_id,
-        c.course_name,
+        c.name as course_name,
         t.video_id,
         t.certificate_id,
         t.action_type,
@@ -53,7 +53,7 @@ $exportQuery = "
         t.visit_date
     FROM user_page_tracking t
     JOIN users u ON t.user_id = u.id
-    LEFT JOIN courses c ON t.course_id = c.id
+    LEFT JOIN course c ON t.course_id = c.id
     $whereClause
     ORDER BY t.visit_date DESC
 ";

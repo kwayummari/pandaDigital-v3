@@ -105,10 +105,10 @@ $recentActivityQuery = "
         u.last_name,
         u.email,
         u.role,
-        c.course_name
+        c.name as course_name
     FROM user_page_tracking t
     JOIN users u ON t.user_id = u.id
-    LEFT JOIN courses c ON t.course_id = c.id
+    LEFT JOIN course c ON t.course_id = c.id
     $whereClause
     ORDER BY t.visit_date DESC
     LIMIT 50
