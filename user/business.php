@@ -252,7 +252,7 @@ $pendingSales = count(array_filter($businessSales, function ($s) {
         <!-- Main Content -->
         <div class="main-content">
             <?php
-            $page_title = 'Biashara';
+            $page_title = '';
             include __DIR__ . '/../includes/user_top_nav.php';
             ?>
 

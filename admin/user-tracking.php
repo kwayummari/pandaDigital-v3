@@ -402,7 +402,7 @@ include 'includes/admin_header.php';
                                     <th>User</th>
                                     <th>Page Type</th>
                                     <th>Action</th>
-                                    <th>Course ID</th>
+                                    <th>Course Name</th>
                                     <th>Date</th>
                                     <th>IP Address</th>
                                     <th>Details</th>
@@ -426,7 +426,7 @@ include 'includes/admin_header.php';
                                                 <?= ucfirst(str_replace('_', ' ', $activity['action_type'])) ?>
                                             </span>
                                         </td>
-                                        <td><?= $activity['course_id'] ?: '-' ?></td>
+                                        <td><?= $activity['course_name'] ? htmlspecialchars($activity['course_name']) : '-' ?></td>
                                         <td><?= date('M j, Y H:i', strtotime($activity['visit_date'])) ?></td>
                                         <td><code><?= htmlspecialchars($activity['ip_address']) ?></code></td>
                                         <td>
@@ -562,7 +562,7 @@ include 'includes/admin_header.php';
                     <h6>Technical Details</h6>
                     <p><strong>IP Address:</strong> ${activity.ip_address}</p>
                     <p><strong>Session ID:</strong> ${activity.session_id || 'N/A'}</p>
-                    <p><strong>Course ID:</strong> ${activity.course_id || 'N/A'}</p>
+                    <p><strong>Course Name:</strong> ${activity.course_name || 'N/A'}</p>
                 </div>
                 <div class="col-md-6">
                     <h6>Page Information</h6>
