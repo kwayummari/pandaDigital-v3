@@ -195,14 +195,14 @@ $page_title = '';
                             <div class="download-actions">
                                 <div class="d-grid gap-2">
                                     <button class="btn btn-success btn-lg" onclick="downloadPDF()">
-                                        Pakua Vyeti (PDF)
+                                        <i class="fas fa-download me-2"></i>Pakua Vyeti (PDF)
                                     </button>
                                     <button class="btn btn-outline-primary" onclick="printCertificate()">
-                                        Chapisha Vyeti
+                                        <i class="fas fa-print me-2"></i>Chapisha Vyeti
                                     </button>
                                     <a href="<?php echo app_url('user/course-overview.php'); ?>?id=<?php echo $courseId; ?>"
                                         class="btn btn-outline-secondary">
-                                        Rudi kwenye Kozi
+                                        <i class="fas fa-arrow-left me-2"></i>Rudi kwenye Kozi
                                     </a>
                                 </div>
                             </div>

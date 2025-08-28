@@ -4072,6 +4072,7 @@ html
   padding: 2rem;
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
+  overflow-x: auto;
 }
 
 .certificate-container {
@@ -4233,11 +4234,24 @@ html
   border: 1px solid var(--border-color);
 }
 
+@media (max-width: 768px) {
+  .completion-details {
+    padding: 1rem;
+  }
+}
+
 .detail-row {
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
   gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .detail-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 .detail-row:last-child {
@@ -4439,6 +4453,10 @@ html
     padding: 0.75rem 1rem;
   }
 
+  .download-actions .btn i {
+    margin-right: 0.5rem;
+  }
+
   /* Course images on mobile */
   .dashboard-container .course-image {
     height: 250px;
@@ -4479,6 +4497,23 @@ html
 
   .summary-label {
     font-size: 0.8rem;
+  }
+
+  .download-actions .btn {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .download-actions .btn i {
+    margin-right: 0.3rem;
+  }
+
+  .content-card {
+    padding: 0.8rem;
+  }
+
+  .certificate-preview {
+    padding: 0.8rem;
   }
 }
 
