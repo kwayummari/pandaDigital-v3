@@ -4,6 +4,8 @@ require_once 'models/Blog.php';
 require_once 'models/Fursa.php';
 require_once 'models/Wanufaika.php';
 require_once 'models/Expert.php';
+require_once 'models/User.php';
+require_once 'includes/profile-check.php';
 
 // Initialize models
 $blogModel = new Blog();
@@ -475,7 +477,7 @@ $featuredExperts = array_slice($expertModel->getAllExperts(), 0, 4);
         <!-- View All Experts Button -->
         <div class="row mt-5">
             <div class="col-12 text-center" data-aos="fade-up">
-                <a href="<?= app_url('wataalamu.php') ?>" class="btn btn-primary btn-lg">
+                <a href="<?= app_url('uliza-swali.php') ?>" class="btn btn-primary btn-lg">
                     <i class="fas fa-users me-2"></i>Tazama Wataalamu Wote
                 </a>
             </div>
