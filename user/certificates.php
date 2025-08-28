@@ -292,7 +292,7 @@ function calculateGrade($score)
         <!-- Main Content -->
         <div class="main-content">
             <?php
-            $page_title = 'Vyeti Vyagu';
+            $page_title = '';
             include __DIR__ . '/../includes/user_top_nav.php';
             ?>
 
