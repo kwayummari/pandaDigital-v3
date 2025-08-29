@@ -4,114 +4,153 @@
  * iOS-compatible version
  */
 
-(function() {
+(function () {
     'use strict';
 
-    // Detect iOS device
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    // Enhanced iOS detection with multiple methods
+    function detectIOS() {
+        // Method 1: User agent check
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        const isIOSUserAgent = /iPad|iPhone|iPod/.test(userAgent);
 
-    // Disable right-click context menu (only on non-iOS devices)
-    if (!isIOS) {
-        document.addEventListener('contextmenu', function(e) {
+        // Method 2: Platform check
+        const isIOSPlatform = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+
+        // Method 3: Touch support and screen size
+        const hasTouchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        const isSmallScreen = window.innerWidth <= 1024;
+        const isIOSByTouch = hasTouchSupport && isSmallScreen && /Mac/.test(navigator.platform);
+
+        // Method 4: CSS support check
+        const isIOSByCSS = CSS.supports('-webkit-touch-callout', 'none');
+
+        // Method 5: Safari specific
+        const isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
+        const isIOSSafari = isSafari && /Mac/.test(navigator.platform) && hasTouchSupport;
+
+        const isIOS = isIOSUserAgent || isIOSPlatform || isIOSByTouch || isIOSByCSS || isIOSSafari;
+
+        // Debug logging
+        console.log('iOS Detection Debug:', {
+            userAgent: userAgent,
+            platform: navigator.platform,
+            maxTouchPoints: navigator.maxTouchPoints,
+            hasTouchSupport: hasTouchSupport,
+            screenWidth: window.innerWidth,
+            isIOSUserAgent: isIOSUserAgent,
+            isIOSPlatform: isIOSPlatform,
+            isIOSByTouch: isIOSByTouch,
+            isIOSByCSS: isIOSByCSS,
+            isIOSSafari: isIOSSafari,
+            finalResult: isIOS
+        });
+
+        return isIOS;
+    }
+
+    const isIOS = detectIOS();
+
+    // If iOS detected, completely disable all protection
+    if (isIOS) {
+        console.log('iOS device detected - Right-click protection DISABLED');
+        return; // Exit early, no protection for iOS
+    }
+
+    console.log('Non-iOS device detected - Right-click protection ENABLED');
+
+    // Disable right-click context menu
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        showRightClickWarning();
+        return false;
+    });
+
+    // Disable keyboard shortcuts
+    document.addEventListener('keydown', function (e) {
+        // Disable F12 key
+        if (e.key === 'F12') {
             e.preventDefault();
             showRightClickWarning();
             return false;
-        });
-    }
+        }
 
-    // Disable keyboard shortcuts (only on non-iOS devices)
-    if (!isIOS) {
-        document.addEventListener('keydown', function(e) {
-            // Disable F12 key
-            if (e.key === 'F12') {
-                e.preventDefault();
-                showRightClickWarning();
-                return false;
-            }
-
-            // Disable Ctrl+Shift+I (Developer Tools)
-            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                e.preventDefault();
-                showRightClickWarning();
-                return false;
-            }
-
-            // Disable Ctrl+Shift+J (Console)
-            if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-                e.preventDefault();
-                showRightClickWarning();
-                return false;
-            }
-
-            // Disable Ctrl+Shift+C (Element Inspector)
-            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-                e.preventDefault();
-                showRightClickWarning();
-                return false;
-            }
-
-            // Disable Ctrl+U (View Source)
-            if (e.ctrlKey && e.key === 'u') {
-                e.preventDefault();
-                showRightClickWarning();
-                return false;
-            }
-
-            // Disable Ctrl+S (Save Page)
-            if (e.ctrlKey && e.key === 's') {
-                e.preventDefault();
-                showRightClickWarning();
-                return false;
-            }
-
-            // Disable Ctrl+P (Print)
-            if (e.ctrlKey && e.key === 'p') {
-                e.preventDefault();
-                showRightClickWarning();
-                return false;
-            }
-
-            // Disable Ctrl+Shift+S (Save As)
-            if (e.ctrlKey && e.shiftKey && e.key === 'S') {
-                e.preventDefault();
-                showRightClickWarning();
-                return false;
-            }
-        });
-    }
-
-    // Disable drag and drop (only on non-iOS devices)
-    if (!isIOS) {
-        document.addEventListener('dragstart', function(e) {
+        // Disable Ctrl+Shift+I (Developer Tools)
+        if (e.ctrlKey && e.shiftKey && e.key === 'I') {
             e.preventDefault();
+            showRightClickWarning();
             return false;
-        });
-    }
+        }
 
-    // Disable copy/cut/paste (only on non-iOS devices)
-    if (!isIOS) {
-        document.addEventListener('copy', function(e) {
+        // Disable Ctrl+Shift+J (Console)
+        if (e.ctrlKey && e.shiftKey && e.key === 'J') {
             e.preventDefault();
             showRightClickWarning();
-        });
+            return false;
+        }
 
-        document.addEventListener('cut', function(e) {
+        // Disable Ctrl+Shift+C (Element Inspector)
+        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
             e.preventDefault();
             showRightClickWarning();
-        });
+            return false;
+        }
 
-        document.addEventListener('paste', function(e) {
+        // Disable Ctrl+U (View Source)
+        if (e.ctrlKey && e.key === 'u') {
             e.preventDefault();
             showRightClickWarning();
-        });
-    }
+            return false;
+        }
+
+        // Disable Ctrl+S (Save Page)
+        if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            showRightClickWarning();
+            return false;
+        }
+
+        // Disable Ctrl+P (Print)
+        if (e.ctrlKey && e.key === 'p') {
+            e.preventDefault();
+            showRightClickWarning();
+            return false;
+        }
+
+        // Disable Ctrl+Shift+S (Save As)
+        if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+            e.preventDefault();
+            showRightClickWarning();
+            return false;
+        }
+    });
+
+    // Disable drag and drop
+    document.addEventListener('dragstart', function (e) {
+        e.preventDefault();
+        return false;
+    });
+
+    // Disable copy/cut/paste
+    document.addEventListener('copy', function (e) {
+        e.preventDefault();
+        showRightClickWarning();
+    });
+
+    document.addEventListener('cut', function (e) {
+        e.preventDefault();
+        showRightClickWarning();
+    });
+
+    document.addEventListener('paste', function (e) {
+        e.preventDefault();
+        showRightClickWarning();
+    });
 
     // Function to show warning message
     function showRightClickWarning() {
         // Create warning element if it doesn't exist
         let warning = document.getElementById('right-click-warning');
-        
+
         if (!warning) {
             warning = document.createElement('div');
             warning.id = 'right-click-warning';
@@ -132,7 +171,7 @@
                 max-width: 300px;
                 animation: warningFadeIn 0.3s ease-in-out;
             `;
-            
+
             // Add CSS animation
             const style = document.createElement('style');
             style.textContent = `
@@ -142,7 +181,7 @@
                 }
             `;
             document.head.appendChild(style);
-            
+
             document.body.appendChild(warning);
         }
 
@@ -159,55 +198,44 @@
         warning.style.display = 'block';
 
         // Hide warning after 3 seconds
-        setTimeout(function() {
+        setTimeout(function () {
             warning.style.display = 'none';
         }, 3000);
     }
 
-    // Additional protection against developer tools (only on non-iOS devices)
-    if (!isIOS) {
-        function detectDevTools() {
-            const threshold = 160;
-            
-            const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-            const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-            
-            if (widthThreshold || heightThreshold) {
-                showRightClickWarning();
-            }
+    // Additional protection against developer tools
+    function detectDevTools() {
+        const threshold = 160;
+
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+
+        if (widthThreshold || heightThreshold) {
+            showRightClickWarning();
         }
-
-        // Check for dev tools periodically
-        setInterval(detectDevTools, 1000);
     }
 
-    // Disable console logging (only on non-iOS devices)
-    if (!isIOS) {
-        console.log = function() {};
-        console.info = function() {};
-        console.warn = function() {};
-        console.error = function() {};
-        console.debug = function() {};
-    }
+    // Check for dev tools periodically
+    setInterval(detectDevTools, 1000);
 
-    // Additional protection for iframes (only on non-iOS devices)
-    if (!isIOS && window.self !== window.top) {
+    // Disable console logging
+    console.log = function () { };
+    console.info = function () { };
+    console.warn = function () { };
+    console.error = function () { };
+    console.debug = function () { };
+
+    // Additional protection for iframes
+    if (window.self !== window.top) {
         window.top.location = window.self.location;
     }
 
-    // Disable viewport manipulation (only on non-iOS devices)
-    if (!isIOS && window.visualViewport) {
+    // Disable viewport manipulation
+    if (window.visualViewport) {
         Object.defineProperty(window.visualViewport, 'height', {
-            get: function() { return window.innerHeight; },
-            set: function() { return false; }
+            get: function () { return window.innerHeight; },
+            set: function () { return false; }
         });
-    }
-
-    // Log status based on device
-    if (isIOS) {
-        console.log('Panda Digital V3 - Right-click protection disabled for iOS device');
-    } else {
-        console.log('Panda Digital V3 - Right-click protection enabled for desktop/Android');
     }
 
 })();
