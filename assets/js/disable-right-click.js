@@ -1,62 +1,49 @@
 /**
  * Panda Digital V3 - Right Click Disabler
  * Disables right-click context menu and keyboard shortcuts
- * iOS-compatible version
+ * Mobile/Touch device compatible version
  */
 
 (function () {
     'use strict';
 
-    // Enhanced iOS detection with multiple methods
-    function detectIOS() {
-        // Method 1: User agent check
+    // Simple detection: disable protection for any touch device or mobile screen
+    function shouldDisableProtection() {
+        // Check if device has touch support
+        const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        // Check if screen is mobile-sized
+        const isMobileSize = window.innerWidth <= 1024 || window.innerHeight <= 768;
+
+        // Check user agent for mobile devices
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        const isIOSUserAgent = /iPad|iPhone|iPod/.test(userAgent);
+        const isMobileUserAgent = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
 
-        // Method 2: Platform check
-        const isIOSPlatform = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
-
-        // Method 3: Touch support and screen size
-        const hasTouchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        const isSmallScreen = window.innerWidth <= 1024;
-        const isIOSByTouch = hasTouchSupport && isSmallScreen && /Mac/.test(navigator.platform);
-
-        // Method 4: CSS support check
-        const isIOSByCSS = CSS.supports('-webkit-touch-callout', 'none');
-
-        // Method 5: Safari specific
-        const isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
-        const isIOSSafari = isSafari && /Mac/.test(navigator.platform) && hasTouchSupport;
-
-        const isIOS = isIOSUserAgent || isIOSPlatform || isIOSByTouch || isIOSByCSS || isIOSSafari;
+        // Disable protection if ANY of these conditions are true
+        const shouldDisable = hasTouch || isMobileSize || isMobileUserAgent;
 
         // Debug logging
-        console.log('iOS Detection Debug:', {
-            userAgent: userAgent,
-            platform: navigator.platform,
-            maxTouchPoints: navigator.maxTouchPoints,
-            hasTouchSupport: hasTouchSupport,
+        console.log('Protection Check:', {
+            hasTouch: hasTouch,
+            isMobileSize: isMobileSize,
+            isMobileUserAgent: isMobileUserAgent,
             screenWidth: window.innerWidth,
-            isIOSUserAgent: isIOSUserAgent,
-            isIOSPlatform: isIOSPlatform,
-            isIOSByTouch: isIOSByTouch,
-            isIOSByCSS: isIOSByCSS,
-            isIOSSafari: isIOSSafari,
-            finalResult: isIOS
+            screenHeight: window.innerHeight,
+            maxTouchPoints: navigator.maxTouchPoints,
+            userAgent: userAgent,
+            shouldDisable: shouldDisable
         });
 
-        return isIOS;
+        return shouldDisable;
     }
 
-    const isIOS = detectIOS();
-
-    // If iOS detected, completely disable all protection
-    if (isIOS) {
-        console.log('iOS device detected - Right-click protection DISABLED');
-        return; // Exit early, no protection for iOS
+    // If we should disable protection, exit immediately
+    if (shouldDisableProtection()) {
+        console.log('Mobile/Touch device detected - Right-click protection DISABLED');
+        return; // Exit early, no protection for mobile/touch devices
     }
 
-    console.log('Non-iOS device detected - Right-click protection ENABLED');
+    console.log('Desktop device detected - Right-click protection ENABLED');
 
     // Disable right-click context menu
     document.addEventListener('contextmenu', function (e) {
