@@ -63,8 +63,7 @@ function isCurrentPage($pagePath)
         </script>
     <?php endif; ?>
 
-    <!-- Right Click Disabler -->
-    <script src="<?= asset('js/disable-right-click.js') ?>"></script>
+
 
     <!-- Facebook Pixel -->
     <?php if (env('FACEBOOK_PIXEL_ID')): ?>
