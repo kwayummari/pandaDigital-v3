@@ -26,13 +26,152 @@ function isCurrentPage($pagePath)
 <html lang="sw">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($appConfig['name']) ?> - Empowering Women in Digital Economy</title>
-    <meta name="description" content="Panda Digital - Platform for women entrepreneurs, digital skills, and business opportunities in Tanzania">
+    <!-- Basic Meta Tags -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="<?= asset('images/logo/favicon.png') ?>">
+    <!-- Security Headers -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://unpkg.com https://www.googletagmanager.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+
+    <style>
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+
+    <!-- Security Scripts -->
+    <script>
+        // Disable right-click except for YouTube embeds
+        document.addEventListener('contextmenu', function(e) {
+            // Allow right-click on YouTube iframes
+            if (e.target.tagName === 'IFRAME' && (e.target.src.includes('youtube.com') || e.target.src.includes('youtube-nocookie.com'))) {
+                return; // Do nothing, allow the right-click
+            }
+            e.preventDefault(); // Disable right-click elsewhere
+        });
+
+        // Disable keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode == 123) {
+                e.preventDefault();
+                return false;
+            }
+
+            if (e.ctrlKey && (
+                    e.shiftKey && (e.keyCode == 73 || e.keyCode == 74) ||
+                    e.keyCode == 85)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Disable devtools via F12
+        document.addEventListener('keypress', function(e) {
+            if (e.keyCode == 123) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        console.clear();
+        console.log = function() {}
+        console.warn = function() {}
+        console.error = function() {}
+    </script>
+
+    <!-- Enhanced SEO Meta Tags -->
+    <title><?= htmlspecialchars($appConfig['name']) ?> - Empowering Women in Digital Economy | Digital Skills & Business Opportunities</title>
+    <meta name="description" content="Panda Digital - Tanzania's premier platform for women entrepreneurs, digital skills development, and business opportunities. Join our community to learn, grow, and succeed in the digital economy." />
+    <meta name="keywords" content="Panda Digital, women entrepreneurs Tanzania, digital skills training, business opportunities Tanzania, women empowerment, digital economy Tanzania, online courses, mentorship, networking, funding opportunities" />
+    <meta name="author" content="Panda Digital" />
+    <meta name="google" content="nositelinkssearchbox" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="coverage" content="Worldwide">
+    <meta name="rating" content="General">
+    <meta name="geo.region" content="TZ">
+    <meta name="geo.placename" content="Tanzania">
+    <meta name="distribution" content="Global">
+    <meta name="target" content="all">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <!-- News-specific tags -->
+    <meta name="news_keywords" content="women entrepreneurship Tanzania, digital skills, business development, women empowerment, digital transformation, Tanzanian women leaders, youth development Tanzania">
+    <meta property="article:publisher" content="https://pandadigital.co.tz">
+    <meta property="article:modified_time" content="<?= date('Y-m-d\TH:i:s+00:00') ?>">
+
+    <!-- Language Alternates -->
+    <link rel="alternate" hreflang="en" href="https://pandadigital.co.tz/" />
+    <link rel="alternate" hreflang="sw" href="https://pandadigital.co.tz/" />
+    <link rel="alternate" hreflang="x-default" href="https://pandadigital.co.tz/" />
+
+    <!-- Enhanced Open Graph Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pandadigital.co.tz/" />
+    <meta property="og:title" content="<?= htmlspecialchars($appConfig['name']) ?> - Empowering Women in Digital Economy" />
+    <meta property="og:description" content="Tanzania's premier platform for women entrepreneurs, digital skills development, and business opportunities. Join our community to learn, grow, and succeed." />
+    <meta property="og:image" content="https://pandadigital.co.tz/<?= asset('images/logo/logo.png') ?>" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="<?= htmlspecialchars($appConfig['name']) ?>" />
+    <meta property="og:locale" content="sw_TZ" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:email" content="info@pandadigital.co.tz">
+    <meta property="og:phone_number" content="+255-000-000-000">
+    <meta property="og:latitude" content="-6.7924">
+    <meta property="og:longitude" content="39.2083">
+    <meta property="og:street-address" content="Dar es Salaam, Tanzania">
+    <meta property="og:locality" content="Dar es Salaam">
+    <meta property="og:region" content="Dar es Salaam">
+    <meta property="og:postal-code" content="00000">
+    <meta property="og:country-name" content="Tanzania">
+
+    <!-- Social Media Enhancement -->
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="<?= htmlspecialchars($appConfig['name']) ?> - Empowering Women in Digital Economy">
+    <meta name="twitter:creator" content="@pandadigital">
+    <meta name="twitter:site" content="@pandadigital">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="<?= htmlspecialchars($appConfig['name']) ?>">
+
+    <!-- Enhanced Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@PandaDigitalTZ" />
+    <meta name="twitter:creator" content="@PandaDigitalTZ" />
+    <meta name="twitter:title" content="<?= htmlspecialchars($appConfig['name']) ?> | Women Digital Empowerment" />
+    <meta name="twitter:description" content="Tanzania's premier platform for women entrepreneurs, digital skills development, and business opportunities. Join our community today!" />
+    <meta name="twitter:image" content="https://pandadigital.co.tz/<?= asset('images/logo/logo.png') ?>" />
+    <meta name="twitter:image:alt" content="<?= htmlspecialchars($appConfig['name']) ?> Platform Banner" />
+
+    <!-- Favicon and Touch Icons -->
+    <link rel="shortcut icon" type="image/x-icon" href="<?= asset('images/logo/favicon.png') ?>" />
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= asset('images/logo/logo.png') ?>" />
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= asset('images/logo/favicon.png') ?>" />
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= asset('images/logo/favicon.png') ?>" />
+
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="<?= htmlspecialchars($appConfig['name']) ?> News" href="https://pandadigital.co.tz/feed.xml" />
+
+    <!-- Canonical and Pagination -->
+    <link rel="canonical" href="https://pandadigital.co.tz/" />
+
+    <!-- Preconnect to External Resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -63,8 +202,6 @@ function isCurrentPage($pagePath)
         </script>
     <?php endif; ?>
 
-
-
     <!-- Facebook Pixel -->
     <?php if (env('FACEBOOK_PIXEL_ID')): ?>
         <script>
@@ -92,6 +229,138 @@ function isCurrentPage($pagePath)
         <noscript><img height="1" width="1" style="display:none"
                 src="https://www.facebook.com/tr?id=<?= env('FACEBOOK_PIXEL_ID') ?>&ev=PageView&noscript=1" /></noscript>
     <?php endif; ?>
+
+    <!-- Enhanced Schema.org Markup -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "<?= htmlspecialchars($appConfig['name']) ?>",
+            "alternateName": "Panda Digital",
+            "description": "Tanzania's premier platform empowering women entrepreneurs through digital skills development and business opportunities",
+            "founded": "2020-01-01",
+            "url": "https://pandadigital.co.tz",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://pandadigital.co.tz/<?= asset('images/logo/logo.png') ?>",
+                "width": "512",
+                "height": "512"
+            },
+            "sameAs": [
+                "https://twitter.com/PandaDigitalTZ",
+                "https://facebook.com/PandaDigitalTZ",
+                "https://linkedin.com/company/panda-digital-tz",
+                "https://instagram.com/pandadigitaltz"
+            ],
+            "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "TZ",
+                "addressLocality": "Dar es Salaam",
+                "addressRegion": "Dar es Salaam"
+            },
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+255-000-000-000",
+                "contactType": "customer service",
+                "email": "info@pandadigital.co.tz",
+                "availableLanguage": ["sw", "en"]
+            },
+            "service": [{
+                    "@type": "Service",
+                    "name": "Digital Skills Training",
+                    "description": "Comprehensive digital skills courses for women entrepreneurs"
+                },
+                {
+                    "@type": "Service",
+                    "name": "Business Mentorship",
+                    "description": "One-on-one mentorship from successful entrepreneurs"
+                },
+                {
+                    "@type": "Service",
+                    "name": "Networking Opportunities",
+                    "description": "Connect with like-minded women entrepreneurs"
+                }
+            ]
+        }
+    </script>
+
+    <!-- Educational Platform Schema -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "EducationalOrganization",
+            "name": "<?= htmlspecialchars($appConfig['name']) ?>",
+            "description": "Empowering women entrepreneurs through digital education and business development",
+            "url": "https://pandadigital.co.tz",
+            "educationalLevel": "Adult Education",
+            "teaches": [
+                "Digital Marketing",
+                "E-commerce",
+                "Social Media Management",
+                "Business Development",
+                "Digital Skills"
+            ],
+            "targetAudience": "Women Entrepreneurs",
+            "location": {
+                "@type": "Place",
+                "name": "Dar es Salaam, Tanzania"
+            }
+        }
+    </script>
+
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [{
+                    "@type": "Question",
+                    "name": "What is Panda Digital?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Panda Digital is Tanzania's premier platform empowering women entrepreneurs through digital skills development, business mentorship, and networking opportunities. We help women succeed in the digital economy."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How can I join Panda Digital?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "You can join Panda Digital by registering on our platform, exploring our digital skills courses, and connecting with our community of women entrepreneurs."
+                    }
+                }
+            ]
+        }
+    </script>
+
+    <!-- Breadcrumb Schema -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [{
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://pandadigital.co.tz"
+            }]
+        }
+    </script>
+
+    <!-- WebSite Schema -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "<?= htmlspecialchars($appConfig['name']) ?>",
+            "url": "https://pandadigital.co.tz",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://pandadigital.co.tz/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        }
+    </script>
 </head>
 
 <body>
