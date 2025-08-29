@@ -809,8 +809,6 @@
     document.head.appendChild(style);
 </script>
 
-<!-- Right Click Disabler -->
-<script src="<?= asset('js/disable-right-click.js') ?>"></script>
 </body>
 
 </html>
