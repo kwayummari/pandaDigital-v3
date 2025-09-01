@@ -177,16 +177,16 @@ if (!empty($searchQuery)) {
                                     </div>
                                 </div>
                                 <div class="expert-info">
-                                    <h4 class="expert-name"><?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?></h4>
+                                    <h4 class="expert-name"><?= htmlspecialchars(($expert['first_name'] ?? '') . ' ' . ($expert['last_name'] ?? '')) ?></h4>
                                     <?php if (!empty($expert['business'])): ?>
-                                        <p class="expert-business"><?= htmlspecialchars($expert['business'] ?? '') ?></p>
+                                        <p class="expert-business"><?= htmlspecialchars($expert['business']) ?></p>
                                     <?php endif; ?>
                                     <?php if (!empty($expert['region'])): ?>
-                                        <p class="expert-region"><?= htmlspecialchars($expert['region'] ?? '') ?></p>
+                                        <p class="expert-region"><?= htmlspecialchars($expert['region']) ?></p>
                                     <?php endif; ?>
                                     <div class="expert-actions">
-                                        <a href="<?= app_url('expert-details.php?id=' . $expert['id']) ?>" class="btn btn-primary btn-sm">
-                                            <span class="me-2"></span>Ongea na <?= htmlspecialchars($expert['first_name']) ?>
+                                        <a href="<?= app_url('expert-details.php?id=' . ($expert['id'] ?? '')) ?>" class="btn btn-primary btn-sm">
+                                            <span class="me-2"></span>Ongea na <?= htmlspecialchars($expert['first_name'] ?? 'Mtaalamu') ?>
                                         </a>
                                     </div>
                                 </div>
