@@ -289,7 +289,40 @@ if (!empty($searchQuery)) {
                 });
             }
 
+            // Debug modal functionality
             console.log('Uliza Swali page JavaScript loaded successfully');
+
+            // Check if Bootstrap is loaded
+            if (typeof bootstrap !== 'undefined') {
+                console.log('Bootstrap is loaded successfully');
+
+                // Check if modals exist
+                const loginModal = document.getElementById('loginModal');
+                const signupModal = document.getElementById('signupModal');
+
+                if (loginModal) {
+                    console.log('Login modal found:', loginModal);
+                } else {
+                    console.log('Login modal NOT found');
+                }
+
+                if (signupModal) {
+                    console.log('Signup modal found:', signupModal);
+                } else {
+                    console.log('Signup modal NOT found');
+                }
+
+                // Check CTA buttons
+                const ctaButtons = document.querySelectorAll('.cta-buttons a');
+                console.log('CTA buttons found:', ctaButtons.length);
+                ctaButtons.forEach((btn, index) => {
+                    console.log(`Button ${index + 1}:`, btn);
+                    console.log(`Button target:`, btn.getAttribute('data-bs-target'));
+                    console.log(`Button toggle:`, btn.getAttribute('data-bs-toggle'));
+                });
+            } else {
+                console.log('Bootstrap is NOT loaded');
+            }
         });
     </script>
 
@@ -513,6 +546,19 @@ if (!empty($searchQuery)) {
         .cta-buttons .btn {
             padding: 0.75rem 2rem;
             font-weight: 600;
+        }
+
+        /* Ensure CTA buttons are clickable */
+        .cta-buttons a {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+
+        .cta-buttons a:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s ease;
         }
 
         /* No results styles */
