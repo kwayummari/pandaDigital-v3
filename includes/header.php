@@ -79,10 +79,11 @@ function isCurrentPage($pagePath)
             }
         });
 
-        console.clear();
-        console.log = function() {}
-        console.warn = function() {}
-        console.error = function() {}
+        // Temporarily enable console for debugging
+        // console.clear();
+        // console.log = function() {}
+        // console.warn = function() {}
+        // console.error = function() {}
     </script>
 
     <!-- Enhanced SEO Meta Tags -->
