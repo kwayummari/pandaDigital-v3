@@ -212,12 +212,54 @@ include 'includes/header.php';
 
 <?php include 'includes/footer.php'; ?>
 
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
     // Initialize AOS
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: true
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof AOS !== 'undefined') {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+        }
+
+        // Debug modal functionality
+        console.log('About page JavaScript loaded successfully');
+
+        // Check if Bootstrap is loaded
+        if (typeof bootstrap !== 'undefined') {
+            console.log('Bootstrap is loaded successfully');
+
+            // Check if modals exist
+            const loginModal = document.getElementById('loginModal');
+            const signupModal = document.getElementById('signupModal');
+
+            if (loginModal) {
+                console.log('Login modal found:', loginModal);
+            } else {
+                console.log('Login modal NOT found');
+            }
+
+            if (signupModal) {
+                console.log('Signup modal found:', signupModal);
+            } else {
+                console.log('Signup modal NOT found');
+            }
+
+            // Check CTA buttons
+            const ctaButtons = document.querySelectorAll('.cta-buttons a');
+            console.log('CTA buttons found:', ctaButtons.length);
+            ctaButtons.forEach((btn, index) => {
+                console.log(`Button ${index + 1}:`, btn);
+                console.log(`Button target:`, btn.getAttribute('data-bs-target'));
+                console.log(`Button toggle:`, btn.getAttribute('data-bs-toggle'));
+            });
+        } else {
+            console.log('Bootstrap is NOT loaded');
+        }
     });
 </script>
 
@@ -290,5 +332,18 @@ include 'includes/header.php';
     .cta-buttons .btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Ensure CTA buttons are clickable */
+    .cta-buttons a {
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        position: relative !important;
+        z-index: 10 !important;
+    }
+
+    .cta-buttons a:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease;
     }
 </style>
