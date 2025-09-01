@@ -44,17 +44,23 @@ function isCurrentPage($pagePath)
             -ms-user-select: none;
             user-select: none;
         }
-        
+
         /* Allow text selection in modals and forms */
-        .modal *, .form-control, input, textarea, select {
+        .modal *,
+        .form-control,
+        input,
+        textarea,
+        select {
             -webkit-user-select: text !important;
             -moz-user-select: text !important;
             -ms-user-select: text !important;
             user-select: text !important;
         }
-        
+
         /* Allow button clicks in modals */
-        .modal button, .modal .btn, [data-bs-toggle="modal"] {
+        .modal button,
+        .modal .btn,
+        [data-bs-toggle="modal"] {
             -webkit-user-select: auto !important;
             -moz-user-select: auto !important;
             -ms-user-select: auto !important;
@@ -70,12 +76,12 @@ function isCurrentPage($pagePath)
             if (e.target.tagName === 'IFRAME' && (e.target.src.includes('youtube.com') || e.target.src.includes('youtube-nocookie.com'))) {
                 return; // Allow right-click on YouTube
             }
-            
+
             // Allow right-click in modals for form interactions
             if (e.target.closest('.modal') || e.target.closest('.form-control') || e.target.closest('input') || e.target.closest('textarea')) {
                 return; // Allow right-click in modals and forms
             }
-            
+
             e.preventDefault(); // Disable right-click elsewhere
         });
 
@@ -85,7 +91,7 @@ function isCurrentPage($pagePath)
             if (e.target.closest('.modal') || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
                 return; // Allow normal typing in forms and modals
             }
-            
+
             if (e.keyCode == 123) { // F12
                 e.preventDefault();
                 return false;
@@ -101,11 +107,11 @@ function isCurrentPage($pagePath)
 
         // Disable devtools via F12 but allow in forms
         document.addEventListener('keypress', function(e) {
-            // Don't block keys when user is typing in forms or modals
-            if (e.target.closest('.modal') || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            // Don't block keys when user is typing in forms, modals, or interacting with CTA buttons  
+            if (e.target.closest('.modal') || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.closest('.cta-buttons') || e.target.hasAttribute('data-bs-toggle')) {
                 return;
             }
-            
+
             if (e.keyCode == 123) {
                 e.preventDefault();
                 return false;
@@ -1117,9 +1123,9 @@ function isCurrentPage($pagePath)
                 const menu = dropdown.querySelector('.mobile-dropdown-menu');
 
                 if (toggle && menu) {
-                toggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
+                    toggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
 
                         console.log('Mobile dropdown toggle clicked:', toggle.textContent.trim());
 

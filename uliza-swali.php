@@ -258,12 +258,12 @@ if (!empty($searchQuery)) {
                     <h3 class="mb-4">Jiunge na Panda Chat Leo</h3>
                     <p class="mb-4">Ufungue fursa nyingi za kuongeza ujuzi wako wa biashara na kupata suluhisho kwa changamoto zako za ujasiriamali.</p>
                     <div class="cta-buttons">
-                        <button type="button" class="btn btn-light btn-lg me-3" data-bs-toggle="modal" data-bs-target="#signupModal">
+                        <a href="#" class="btn btn-light btn-lg me-3" data-bs-toggle="modal" data-bs-target="#signupModal">
                             <i class="fas fa-user-plus me-2"></i>Jisajili Sasa
-                        </button>
-                        <button type="button" class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">
                             <i class="fas fa-sign-in-alt me-2"></i>Ingia
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
