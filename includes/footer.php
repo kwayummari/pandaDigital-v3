@@ -114,7 +114,7 @@
                                     <i class="fas fa-clock"></i>
                                 </div>
                                 <div class="contact-details">
-                                    <span>Jumatano - Ijumaa: 8:00 AM - 6:00 PM</span>
+                                    <span>Jumatatu - Ijumaa: 8:00 AM - 6:00 PM</span>
                                 </div>
                             </div>
                         </div>
