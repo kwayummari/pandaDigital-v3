@@ -571,6 +571,11 @@ function isCurrentPage($pagePath)
                             ONGEA
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= isCurrentPage('ongea-hub.php') ? 'active' : '' ?>" href="<?= app_url('ongea-hub.php') ?>">
+                            ONGEA HUB
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle <?= isCurrentPage('uliza-swali.php') || isCurrentPage('fomu.php') ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
                             PANDA CHAT
