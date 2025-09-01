@@ -178,10 +178,10 @@ if (!empty($searchQuery)) {
                                 </div>
                                 <div class="expert-info">
                                     <h4 class="expert-name"><?= htmlspecialchars(($expert['first_name'] ?? '') . ' ' . ($expert['last_name'] ?? '')) ?></h4>
-                                    <?php if (isset($expert['business']) && $expert['business'] !== null && $expert['business'] !== ''): ?>
+                                    <?php if (isset($expert['business']) && $expert['business'] !== null && $expert['business'] !== '' && $expert['business'] !== 'null'): ?>
                                         <p class="expert-business"><?= htmlspecialchars($expert['business']) ?></p>
                                     <?php endif; ?>
-                                    <?php if (isset($expert['region']) && $expert['region'] !== null && $expert['region'] !== ''): ?>
+                                    <?php if (isset($expert['region']) && $expert['region'] !== null && $expert['region'] !== '' && $expert['region'] !== 'null'): ?>
                                         <p class="expert-region"><?= htmlspecialchars($expert['region']) ?></p>
                                     <?php endif; ?>
                                     <div class="expert-actions">
