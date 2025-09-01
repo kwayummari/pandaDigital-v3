@@ -37,56 +37,86 @@ function isCurrentPage($pagePath)
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
 
     <style>
-        /* Temporarily disable user-select to test modal functionality */
-        /*
+        /* Disable user-select but allow for modal elements */
         body {
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
         }
-        */
+        
+        /* Allow text selection in modals and forms */
+        .modal *, .form-control, input, textarea, select {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+        
+        /* Allow button clicks in modals */
+        .modal button, .modal .btn, [data-bs-toggle="modal"] {
+            -webkit-user-select: auto !important;
+            -moz-user-select: auto !important;
+            -ms-user-select: auto !important;
+            user-select: auto !important;
+        }
     </style>
 
-    <!-- Security Scripts - Temporarily disabled for modal debugging -->
+    <!-- Security Scripts - Modal-friendly version -->
     <script>
-        // Temporarily disable security scripts to test modal functionality
-        /*
-        // Disable right-click except for YouTube embeds
+        // Disable right-click except for YouTube embeds and modal elements
         document.addEventListener('contextmenu', function(e) {
             // Allow right-click on YouTube iframes
             if (e.target.tagName === 'IFRAME' && (e.target.src.includes('youtube.com') || e.target.src.includes('youtube-nocookie.com'))) {
-                return; // Do nothing, allow the right-click
+                return; // Allow right-click on YouTube
             }
+            
+            // Allow right-click in modals for form interactions
+            if (e.target.closest('.modal') || e.target.closest('.form-control') || e.target.closest('input') || e.target.closest('textarea')) {
+                return; // Allow right-click in modals and forms
+            }
+            
             e.preventDefault(); // Disable right-click elsewhere
         });
 
-        // Disable keyboard shortcuts
+        // Disable keyboard shortcuts but allow normal typing in forms
         document.addEventListener('keydown', function(e) {
-            if (e.keyCode == 123) {
+            // Don't block keys when user is typing in forms or modals
+            if (e.target.closest('.modal') || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return; // Allow normal typing in forms and modals
+            }
+            
+            if (e.keyCode == 123) { // F12
                 e.preventDefault();
                 return false;
             }
 
             if (e.ctrlKey && (
-                    e.shiftKey && (e.keyCode == 73 || e.keyCode == 74) ||
-                    e.keyCode == 85)) {
+                    e.shiftKey && (e.keyCode == 73 || e.keyCode == 74) || // Ctrl+Shift+I/J
+                    e.keyCode == 85)) { // Ctrl+U
                 e.preventDefault();
                 return false;
             }
         });
 
-        // Disable devtools via F12
+        // Disable devtools via F12 but allow in forms
         document.addEventListener('keypress', function(e) {
+            // Don't block keys when user is typing in forms or modals
+            if (e.target.closest('.modal') || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return;
+            }
+            
             if (e.keyCode == 123) {
                 e.preventDefault();
                 return false;
             }
         });
-        */
 
-        // Console enabled for debugging
-        console.log('Security scripts temporarily disabled for modal debugging');
+        // Restore console hiding (optional - comment out for debugging)
+        console.clear();
+        console.log = function() {}
+        console.warn = function() {}
+        console.error = function() {}
     </script>
 
     <!-- Enhanced SEO Meta Tags -->
@@ -1087,9 +1117,9 @@ function isCurrentPage($pagePath)
                 const menu = dropdown.querySelector('.mobile-dropdown-menu');
 
                 if (toggle && menu) {
-                    toggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
                         console.log('Mobile dropdown toggle clicked:', toggle.textContent.trim());
 
