@@ -96,7 +96,7 @@ if (!empty($searchQuery)) {
             <div class="row text-center">
                 <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="stat-card">
-                        <h3 class="stat-number text-primary"><?= $expertStats['total'] ?></h3>
+                        <h3 class="stat-number text-primary"><?= $expertStats['total'] ?? 0 ?></h3>
                         <p class="stat-label">Wataalamu Wote</p>
                     </div>
                 </div>
@@ -123,11 +123,11 @@ if (!empty($searchQuery)) {
                     <div class="col-12">
                         <h4 class="text-center mb-4">Wataalamu kwa Mkoa</h4>
                         <div class="row">
-                            <?php foreach (array_slice($expertStats['byRegion'], 0, 3) as $region): ?>
+                            <?php foreach (array_slice($expertStats['byRegion'] ?? [], 0, 3) as $region): ?>
                                 <div class="col-md-4 mb-3" data-aos="fade-up">
                                     <div class="region-stat">
-                                        <h5 class="text-primary"><?= htmlspecialchars($region['region']) ?></h5>
-                                        <p class="text-muted"><?= $region['count'] ?> Wataalamu</p>
+                                        <h5 class="text-primary"><?= htmlspecialchars($region['region'] ?? 'Mkoa') ?></h5>
+                                        <p class="text-muted"><?= $region['count'] ?? 0 ?> Wataalamu</p>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -169,11 +169,11 @@ if (!empty($searchQuery)) {
                         <div class="col-lg-4 col-md-6 mb-5" data-aos="fade-up">
                             <div class="expert-card">
                                 <div class="expert-image-container">
-                                    <img src="<?= $expertModel->getExpertImageUrl($expert['profile_photo']) ?>"
-                                        alt="<?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?>"
+                                    <img src="<?= $expertModel->getExpertImageUrl($expert['profile_photo'] ?? null) ?>"
+                                        alt="<?= htmlspecialchars(($expert['first_name'] ?? '') . ' ' . ($expert['last_name'] ?? '')) ?>"
                                         class="expert-image">
-                                    <div class="expert-status <?= $expert['status'] ?>">
-                                        <?= ucfirst($expert['status']) ?>
+                                    <div class="expert-status <?= $expert['status'] ?? 'free' ?>">
+                                        <?= ucfirst($expert['status'] ?? 'free') ?>
                                     </div>
                                 </div>
                                 <div class="expert-info">
