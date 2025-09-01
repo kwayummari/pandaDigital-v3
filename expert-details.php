@@ -186,9 +186,9 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
     <div class="container mt-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= app_url() ?>" class="text-decoration-none">Nyumbani</a></li>
-                <li class="breadcrumb-item"><a href="<?= app_url('uliza-swali.php') ?>" class="text-decoration-none">Uliza Swali</a></li>
-                <li class="breadcrumb-item active">Maelezo ya Mtaalamu</li>
+                <li class="breadcrumb-item"><a href="<?= app_url() ?>" class="text-decoration-none text-black">Nyumbani</a></li>
+                <li class="breadcrumb-item"><a href="<?= app_url('uliza-swali.php') ?>" class="text-decoration-none text-black">Uliza Swali</a></li>
+                <li class="breadcrumb-item active text-black">Maelezo ya Mtaalamu</li>
             </ol>
         </nav>
     </div>
@@ -199,7 +199,7 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
         <div class="container" style="position: relative; z-index: 2;">
             <div class="row align-items-center">
                 <div class="col-lg-8" data-aos="fade-right">
-                    <h1 class="page-title"><?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?></h1>
+                    <h1 class="page-title" style="color: #ffffff;"><?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?></h1>
                     <p class="page-subtitle"><?= htmlspecialchars($expert['business']) ?> - <?= htmlspecialchars($expert['region']) ?></p>
                     <a href="#" class="btn btn-primary btn-lg">Ongea na <?= htmlspecialchars($expert['first_name']) ?></a>
                 </div>
