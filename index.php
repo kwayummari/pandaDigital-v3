@@ -46,11 +46,11 @@ $featuredExperts = array_slice($expertModel->getAllExperts(), 0, 4);
             </div>
         </div>
     </div>
-    <div class="hero-scroll-indicator">
+    <!-- <div class="hero-scroll-indicator">
         <a href="#stats" class="scroll-down">
             <i class="fas fa-chevron-down"></i>
         </a>
-    </div>
+    </div> -->
 </section>
 
 <!-- Tunachokupa Section -->
