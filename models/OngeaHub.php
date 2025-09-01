@@ -1,233 +1,170 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
 
 class OngeaHub
 {
-    private $db;
+    private $pdo;
 
-    public function __construct()
+    public function __construct($pdo = null)
     {
-        $this->db = new Database();
+        if ($pdo === null) {
+            global $pdo;
+        }
+        $this->pdo = $pdo;
     }
 
     /**
-     * Submit a new report to Ongea Hub
+     * Add a new report to the ongea_hub table
+     * This follows the exact logic from the old code
      */
-    public function submitReport($data)
+    public function addReport($fname, $sname, $phone, $region, $tarehe_ya_tukio, $msaada, $report, $report_date)
     {
         try {
-            $conn = $this->db->getConnection();
+            $sql = "INSERT INTO ongea_hub (fname, sname, phone, region, tarehe_ya_tukio, msaada, report, report_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $this->pdo->prepare($sql);
             
-            $stmt = $conn->prepare("
-                INSERT INTO ongea_hub (fname, sname, phone, region, tarehe_ya_tukio, msaada, report, report_date) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ");
-            
-            $stmt->bindParam(1, $data['fname'], PDO::PARAM_STR);
-            $stmt->bindParam(2, $data['sname'], PDO::PARAM_STR);
-            $stmt->bindParam(3, $data['phone'], PDO::PARAM_STR);
-            $stmt->bindParam(4, $data['region'], PDO::PARAM_STR);
-            $stmt->bindParam(5, $data['tarehe_ya_tukio'], PDO::PARAM_STR);
-            $stmt->bindParam(6, $data['msaada'], PDO::PARAM_STR);
-            $stmt->bindParam(7, $data['report'], PDO::PARAM_STR);
-            $stmt->bindParam(8, $data['report_date'], PDO::PARAM_STR);
-            
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            error_log("Error submitting Ongea Hub report: " . $e->getMessage());
+            $result = $stmt->execute([
+                $fname,
+                $sname,
+                $phone,
+                $region,
+                $tarehe_ya_tukio,
+                $msaada,
+                $report,
+                $report_date
+            ]);
+
+            return $result;
+        } catch (Exception $e) {
+            error_log('Error adding report to OngeaHub: ' . $e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Get total count of reports (for admin dashboard)
+     */
+    public function getTotalCount()
+    {
+        try {
+            $stmt = $this->pdo->query("SELECT COUNT(*) FROM ongea_hub");
+            return $stmt->fetchColumn();
+        } catch (Exception $e) {
+            error_log('Error getting total count from OngeaHub: ' . $e->getMessage());
+            return 0;
         }
     }
 
     /**
      * Get all reports (for admin purposes)
      */
-    public function getAllReports($page = 1, $perPage = 20)
+    public function getAllReports()
     {
         try {
-            $conn = $this->db->getConnection();
-            $offset = ($page - 1) * $perPage;
-
-            $stmt = $conn->prepare("
-                SELECT id, fname, sname, phone, region, tarehe_ya_tukio, msaada, report, report_date 
-                FROM ongea_hub 
-                ORDER BY report_date DESC 
-                LIMIT ? OFFSET ?
-            ");
-            
-            $stmt->bindParam(1, $perPage, PDO::PARAM_INT);
-            $stmt->bindParam(2, $offset, PDO::PARAM_INT);
-            $stmt->execute();
-
-            return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            error_log("Error fetching Ongea Hub reports: " . $e->getMessage());
+            $stmt = $this->pdo->query("SELECT * FROM ongea_hub ORDER BY report_date DESC");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Error getting all reports from OngeaHub: ' . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Get total count of reports
+     * Get reports by date range (for admin purposes)
      */
-    public function getTotalReportsCount()
+    public function getReportsByDateRange($startDate, $endDate)
     {
         try {
-            $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM ongea_hub");
-            $stmt->execute();
-            $result = $stmt->fetch();
-            return $result['total'] ?? 0;
-        } catch (PDOException $e) {
-            error_log("Error counting Ongea Hub reports: " . $e->getMessage());
-            return 0;
+            $sql = "SELECT * FROM ongea_hub WHERE DATE(report_date) BETWEEN ? AND ? ORDER BY report_date DESC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$startDate, $endDate]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Error getting reports by date range from OngeaHub: ' . $e->getMessage());
+            return [];
         }
     }
 
     /**
-     * Get total count (alias for getTotalReportsCount)
-     */
-    public function getTotalCount()
-    {
-        return $this->getTotalReportsCount();
-    }
-
-    /**
-     * Get report by ID
-     */
-    public function getReportById($id)
-    {
-        try {
-            $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("
-                SELECT id, fname, sname, phone, region, tarehe_ya_tukio, msaada, report, report_date 
-                FROM ongea_hub 
-                WHERE id = ?
-            ");
-            
-            $stmt->bindParam(1, $id, PDO::PARAM_INT);
-            $stmt->execute();
-
-            return $stmt->fetch();
-        } catch (PDOException $e) {
-            error_log("Error fetching Ongea Hub report: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Get reports by region
+     * Get reports by region (for admin purposes)
      */
     public function getReportsByRegion($region)
     {
         try {
-            $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("
-                SELECT id, fname, sname, phone, region, tarehe_ya_tukio, msaada, report, report_date 
-                FROM ongea_hub 
-                WHERE region = ? 
-                ORDER BY report_date DESC
-            ");
-            
-            $stmt->bindParam(1, $region, PDO::PARAM_STR);
-            $stmt->execute();
-
-            return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            error_log("Error fetching Ongea Hub reports by region: " . $e->getMessage());
+            $sql = "SELECT * FROM ongea_hub WHERE region = ? ORDER BY report_date DESC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$region]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Error getting reports by region from OngeaHub: ' . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Get reports by type of assistance needed
+     * Get reports by assistance type (for admin purposes)
      */
     public function getReportsByAssistanceType($msaada)
     {
         try {
-            $conn = $this->db->getConnection();
-            $stmt = $conn->prepare("
-                SELECT id, fname, sname, phone, region, tarehe_ya_tukio, msaada, report, report_date 
-                FROM ongea_hub 
-                WHERE msaada = ? 
-                ORDER BY report_date DESC
-            ");
-            
-            $stmt->bindParam(1, $msaada, PDO::PARAM_STR);
-            $stmt->execute();
-
-            return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            error_log("Error fetching Ongea Hub reports by assistance type: " . $e->getMessage());
+            $sql = "SELECT * FROM ongea_hub WHERE msaada = ? ORDER BY report_date DESC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$msaada]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Error getting reports by assistance type from OngeaHub: ' . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Format date for display
+     * Get recent reports (for admin dashboard)
      */
-    public function formatDate($dateString)
+    public function getRecentReports($limit = 10)
     {
         try {
-            $date = new DateTime($dateString);
-            return $date->format('d M Y');
+            $sql = "SELECT * FROM ongea_hub ORDER BY report_date DESC LIMIT ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$limit]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            return $dateString;
+            error_log('Error getting recent reports from OngeaHub: ' . $e->getMessage());
+            return [];
         }
     }
 
     /**
-     * Validate phone number format
+     * Get statistics for admin dashboard
      */
-    public function validatePhone($phone)
+    public function getStatistics()
     {
-        // Remove any non-digit characters
-        $phone = preg_replace('/[^0-9]/', '', $phone);
-        
-        // Check if it's a valid Tanzanian phone number (10 digits starting with 0)
-        if (strlen($phone) === 10 && substr($phone, 0, 1) === '0') {
-            return $phone;
+        try {
+            $stats = [];
+            
+            // Total reports
+            $stmt = $this->pdo->query("SELECT COUNT(*) FROM ongea_hub");
+            $stats['total'] = $stmt->fetchColumn();
+            
+            // Reports by region
+            $stmt = $this->pdo->query("SELECT region, COUNT(*) as count FROM ongea_hub GROUP BY region ORDER BY count DESC");
+            $stats['byRegion'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Reports by assistance type
+            $stmt = $this->pdo->query("SELECT msaada, COUNT(*) as count FROM ongea_hub GROUP BY msaada ORDER BY count DESC");
+            $stats['byAssistanceType'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Reports by month (last 12 months)
+            $stmt = $this->pdo->query("SELECT DATE_FORMAT(report_date, '%Y-%m') as month, COUNT(*) as count FROM ongea_hub WHERE report_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month DESC");
+            $stats['byMonth'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            return $stats;
+        } catch (Exception $e) {
+            error_log('Error getting statistics from OngeaHub: ' . $e->getMessage());
+            return [
+                'total' => 0,
+                'byRegion' => [],
+                'byAssistanceType' => [],
+                'byMonth' => []
+            ];
         }
-        
-        // Check if it's a valid Tanzanian phone number (12 digits starting with 255)
-        if (strlen($phone) === 12 && substr($phone, 0, 3) === '255') {
-            return '0' . substr($phone, 3);
-        }
-        
-        return false;
-    }
-
-    /**
-     * Validate report text length
-     */
-    public function validateReportText($text, $maxWords = 150)
-    {
-        $wordCount = str_word_count(strip_tags($text));
-        return $wordCount <= $maxWords;
-    }
-
-    /**
-     * Get assistance types
-     */
-    public function getAssistanceTypes()
-    {
-        return [
-            'kisheria' => 'Kisheria',
-            'kijamii' => 'Kijamii',
-            'kisaikolojia' => 'Kisaikolojia'
-        ];
-    }
-
-    /**
-     * Get regions
-     */
-    public function getRegions()
-    {
-        return [
-            'Arusha', 'Dar es Salaam', 'Dodoma', 'Geita', 'Iringa', 'Kagera', 'Katavi', 
-            'Kigoma', 'Kilimanjaro', 'Lindi', 'Manyara', 'Mara', 'Mbeya', 'Mjini Magharibi', 
-            'Morogoro', 'Mtwara', 'Mwanza', 'Njombe', 'Pemba Kaskazini', 'Pemba Kusini', 
-            'Pwani', 'Rukwa', 'Ruvuma', 'Shinyanga', 'Simiyu', 'Singida', 'Songwe', 
-            'Tabora', 'Tanga', 'Unguja Kaskazini', 'Unguja Kusini', 'Unguja Mjini Magharibi'
-        ];
     }
 }
