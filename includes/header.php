@@ -37,16 +37,21 @@ function isCurrentPage($pagePath)
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
 
     <style>
+        /* Temporarily disable user-select to test modal functionality */
+        /*
         body {
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
         }
+        */
     </style>
 
-    <!-- Security Scripts -->
+    <!-- Security Scripts - Temporarily disabled for modal debugging -->
     <script>
+        // Temporarily disable security scripts to test modal functionality
+        /*
         // Disable right-click except for YouTube embeds
         document.addEventListener('contextmenu', function(e) {
             // Allow right-click on YouTube iframes
@@ -78,12 +83,10 @@ function isCurrentPage($pagePath)
                 return false;
             }
         });
+        */
 
-        // Temporarily enable console for debugging
-        // console.clear();
-        // console.log = function() {}
-        // console.warn = function() {}
-        // console.error = function() {}
+        // Console enabled for debugging
+        console.log('Security scripts temporarily disabled for modal debugging');
     </script>
 
     <!-- Enhanced SEO Meta Tags -->
