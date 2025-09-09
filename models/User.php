@@ -19,7 +19,7 @@ class User
                 // Try to include database configuration
                 if (file_exists(__DIR__ . '/../config/database.php')) {
                     require_once __DIR__ . '/../config/database.php';
-                    $database = new Database();
+                    $database = Database::getInstance();
                     $this->pdo = $database->getConnection();
                 } else {
                     throw new Exception('PDO connection not available and cannot be created');
@@ -347,7 +347,7 @@ class User
         }
     }
 
-        /**
+    /**
      * Check if email exists
      */
     public function emailExists($email, $excludeUserId = null)
@@ -355,12 +355,12 @@ class User
         try {
             $sql = "SELECT id FROM users WHERE email = ?";
             $params = [$email];
-            
+
             if ($excludeUserId) {
                 $sql .= " AND id != ?";
                 $params[] = $excludeUserId;
             }
-            
+
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetch() !== false;
@@ -395,17 +395,17 @@ class User
             $stmt = $this->pdo->prepare("SELECT role, COUNT(*) as count FROM users GROUP BY role");
             $stmt->execute();
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
             $stats = [];
             foreach ($results as $row) {
                 $stats[$row['role']] = $row['count'];
             }
-            
+
             // Ensure all roles are present
             $stats['admin'] = $stats['admin'] ?? 0;
             $stats['user'] = $stats['user'] ?? 0;
             $stats['expert'] = $stats['expert'] ?? 0;
-            
+
             return $stats;
         } catch (Exception $e) {
             error_log('Get user stats by role error: ' . $e->getMessage());
@@ -428,7 +428,7 @@ class User
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->execute([$role]);
             }
-            
+
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Get users by role error: ' . $e->getMessage());

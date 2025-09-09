@@ -7,14 +7,14 @@ class Video
 
     public function __construct()
     {
-        $this->db = new Database();
+        $this->db = Database::getInstance();
     }
 
     public function getAllVideosForAdmin()
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("
                 SELECT 
                     v.id, v.name, v.description, v.course_id,
@@ -23,7 +23,7 @@ class Video
                 LEFT JOIN course c ON v.course_id = c.id
                 ORDER BY v.id DESC
             ");
-            
+
             $stmt->execute();
             return $stmt->fetchAll();
         } catch (PDOException $e) {
@@ -36,17 +36,17 @@ class Video
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             // Get total videos
             $stmt = $conn->prepare("SELECT COUNT(*) as total_videos FROM video");
             $stmt->execute();
             $totalVideos = $stmt->fetch()['total_videos'];
-            
+
             // Get total courses
             $stmt = $conn->prepare("SELECT COUNT(*) as total_courses FROM course");
             $stmt->execute();
             $totalCourses = $stmt->fetch()['total_courses'];
-            
+
             // Get videos this month
             $stmt = $conn->prepare("
                 SELECT COUNT(*) as this_month 
@@ -56,7 +56,7 @@ class Video
             ");
             $stmt->execute();
             $thisMonth = $stmt->fetch()['this_month'];
-            
+
             // Get videos last month
             $stmt = $conn->prepare("
                 SELECT COUNT(*) as last_month 
@@ -66,7 +66,7 @@ class Video
             ");
             $stmt->execute();
             $lastMonth = $stmt->fetch()['last_month'];
-            
+
             return [
                 'total_videos' => $totalVideos,
                 'total_courses' => $totalCourses,
@@ -88,7 +88,7 @@ class Video
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("
                 SELECT 
                     v.id, v.name, v.description, v.course_id,
@@ -97,7 +97,7 @@ class Video
                 LEFT JOIN course c ON v.course_id = c.id
                 WHERE v.id = ?
             ");
-            
+
             $stmt->execute([$id]);
             return $stmt->fetch();
         } catch (PDOException $e) {
@@ -110,12 +110,12 @@ class Video
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("
                 INSERT INTO video (name, description, course_id, date_created) 
                 VALUES (?, ?, ?, NOW())
             ");
-            
+
             return $stmt->execute([$name, $description, $courseId]);
         } catch (PDOException $e) {
             error_log("Error adding video: " . $e->getMessage());
@@ -127,13 +127,13 @@ class Video
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("
                 UPDATE video 
                 SET name = ?, description = ?, course_id = ?
                 WHERE id = ?
             ");
-            
+
             return $stmt->execute([$name, $description, $courseId, $id]);
         } catch (PDOException $e) {
             error_log("Error updating video: " . $e->getMessage());
@@ -145,9 +145,9 @@ class Video
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("DELETE FROM video WHERE id = ?");
-            
+
             return $stmt->execute([$id]);
         } catch (PDOException $e) {
             error_log("Error deleting video: " . $e->getMessage());
@@ -159,7 +159,7 @@ class Video
     {
         try {
             $conn = $this->db->getConnection();
-            
+
             $stmt = $conn->prepare("SELECT id, name FROM course ORDER BY name");
             $stmt->execute();
             return $stmt->fetchAll();

@@ -7,7 +7,7 @@ class Download
 
     public function __construct()
     {
-        $this->db = new Database();
+        $this->db = Database::getInstance();
     }
 
     public function getAllDownloadsForAdmin($startDate = null, $endDate = null, $page = 1, $perPage = 20)

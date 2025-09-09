@@ -7,7 +7,7 @@ class Opportunity
 
     public function __construct()
     {
-        $this->db = new Database();
+        $this->db = Database::getInstance();
     }
 
     public function getAllOpportunitiesForAdmin($page = 1, $perPage = 20)

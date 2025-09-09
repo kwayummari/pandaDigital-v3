@@ -7,7 +7,7 @@ class ExpertQuestion
 
     public function __construct()
     {
-        $this->db = new Database();
+        $this->db = Database::getInstance();
     }
 
     /**
@@ -326,7 +326,7 @@ class ExpertQuestion
     {
         try {
             $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
-            
+
             $stmt = $db->prepare("
                 SELECT 
                     eq.*,
@@ -340,9 +340,8 @@ class ExpertQuestion
                 ORDER BY eq.created_at DESC
             ");
             $stmt->execute([$expertId]);
-            
+
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
         } catch (Exception $e) {
             error_log("Error getting pending questions by expert: " . $e->getMessage());
             return [];
@@ -356,7 +355,7 @@ class ExpertQuestion
     {
         try {
             $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
-            
+
             $stmt = $db->prepare("
                 SELECT 
                     eq.*,
@@ -370,9 +369,8 @@ class ExpertQuestion
                 ORDER BY eq.answered_at DESC
             ");
             $stmt->execute([$expertId]);
-            
+
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
         } catch (Exception $e) {
             error_log("Error getting answered questions by expert: " . $e->getMessage());
             return [];
@@ -386,7 +384,7 @@ class ExpertQuestion
     {
         try {
             $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
-            
+
             $stmt = $db->prepare("
                 SELECT 
                     eq.*,
@@ -399,9 +397,8 @@ class ExpertQuestion
                 ORDER BY eq.created_at DESC
             ");
             $stmt->execute([$expertId]);
-            
+
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
         } catch (Exception $e) {
             error_log("Error getting all questions by expert: " . $e->getMessage());
             return [];
@@ -415,7 +412,7 @@ class ExpertQuestion
     {
         try {
             $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
-            
+
             $stmt = $db->prepare("
                 SELECT 
                     eq.*,
@@ -427,9 +424,8 @@ class ExpertQuestion
                 LIMIT ?
             ");
             $stmt->execute([$expertId, $limit]);
-            
+
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
         } catch (Exception $e) {
             error_log("Error getting recent questions by expert: " . $e->getMessage());
             return [];

@@ -7,7 +7,7 @@ class Fursa
 
     public function __construct()
     {
-        $this->db = new Database();
+        $this->db = Database::getInstance();
     }
 
     public function getLatestOpportunities($limit = 6, $excludeId = null)

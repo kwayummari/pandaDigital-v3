@@ -7,7 +7,7 @@ class Beneficiary
 
     public function __construct()
     {
-        $this->db = new Database();
+        $this->db = Database::getInstance();
     }
 
     public function getAllBeneficiariesForAdmin($page = 1, $perPage = 20)

@@ -7,7 +7,7 @@ class Blog
 
     public function __construct()
     {
-        $this->db = new Database();
+        $this->db = Database::getInstance();
     }
 
     public function getAllBlogsForAdmin($page = 1, $perPage = 20)
@@ -321,6 +321,11 @@ class Blog
     {
         try {
             $conn = $this->db->getConnection();
+
+            if ($conn === null) {
+                error_log("Database connection is null in getLatestPosts");
+                return [];
+            }
 
             $stmt = $conn->prepare("
                 SELECT 

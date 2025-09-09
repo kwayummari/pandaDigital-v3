@@ -7,7 +7,7 @@ class Feedback
 
     public function __construct()
     {
-        $this->db = new Database();
+        $this->db = Database::getInstance();
     }
 
     public function getAllFeedbackForAdmin($page = 1, $perPage = 20)

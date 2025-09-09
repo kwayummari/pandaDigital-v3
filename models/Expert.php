@@ -7,7 +7,7 @@ class Expert
 
     public function __construct()
     {
-        $this->db = new Database();
+        $this->db = Database::getInstance();
     }
 
     public function getAllExperts()
@@ -171,7 +171,7 @@ class Expert
     {
         try {
             $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
-            
+
             $stmt = $db->prepare("
                 SELECT COALESCE(SUM(eq.amount), 0) as total_earnings 
                 FROM expert_questions eq 
@@ -179,9 +179,8 @@ class Expert
             ");
             $stmt->execute([$expertId]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             return $result['total_earnings'] ?? 0;
-            
         } catch (Exception $e) {
             error_log("Error getting total earnings: " . $e->getMessage());
             return 0;
@@ -195,7 +194,7 @@ class Expert
     {
         try {
             $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
-            
+
             $stmt = $db->prepare("
                 SELECT COALESCE(SUM(eq.amount), 0) as monthly_earnings 
                 FROM expert_questions eq 
@@ -207,9 +206,8 @@ class Expert
             ");
             $stmt->execute([$expertId]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             return $result['monthly_earnings'] ?? 0;
-            
         } catch (Exception $e) {
             error_log("Error getting monthly earnings: " . $e->getMessage());
             return 0;
@@ -223,7 +221,7 @@ class Expert
     {
         try {
             $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
-            
+
             $stmt = $db->prepare("
                 SELECT 
                     eq.id as question_id,
@@ -240,9 +238,8 @@ class Expert
                 LIMIT 50
             ");
             $stmt->execute([$expertId]);
-            
+
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
         } catch (Exception $e) {
             error_log("Error getting earnings history: " . $e->getMessage());
             return [];

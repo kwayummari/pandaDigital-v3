@@ -7,7 +7,7 @@ class Sales
 
     public function __construct()
     {
-        $this->db = new Database();
+        $this->db = Database::getInstance();
     }
 
     public function getAllSalesForAdmin()
