@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $bio = trim($_POST['bio']);
 
         try {
-            $conn = (new Database())->getConnection();
+            $conn = Database::getInstance()->getConnection();
             $stmt = $conn->prepare("SELECT id, pass FROM users WHERE email = ?");
             $stmt->execute([$email]);
             $result = $stmt->fetch();
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         try {
-            $conn = (new Database())->getConnection();
+            $conn = Database::getInstance()->getConnection();
             $stmt = $conn->prepare("INSERT INTO users (email, pass, first_name, last_name, role, status, profile_photo, bio, expert_authorization) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)");
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 

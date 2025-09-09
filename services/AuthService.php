@@ -15,7 +15,7 @@ class AuthService
             // Try to create database connection
             if (file_exists(__DIR__ . '/../config/database.php')) {
                 require_once __DIR__ . '/../config/database.php';
-                $database = new Database();
+                $database = Database::getInstance();
                 $pdo = $database->getConnection();
             } else {
                 throw new Exception('Database configuration not found');

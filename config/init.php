@@ -62,7 +62,7 @@ require_once __DIR__ . '/database.php';
 // Initialize database connection and make it globally available
 global $pdo;
 try {
-    $database = new Database();
+    $database = Database::getInstance();
     $pdo = $database->getConnection();
 } catch (Exception $e) {
     error_log('Failed to initialize database connection: ' . $e->getMessage());

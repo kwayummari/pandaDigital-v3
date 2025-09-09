@@ -10,7 +10,7 @@ $currentUser = $auth->getCurrentUser();
 // Get power ranking data - same logic as old system
 try {
     require_once __DIR__ . "/../config/database.php";
-    $database = new Database();
+    $database = Database::getInstance();
     $conn = $database->getConnection();
 
     if (!$conn) {

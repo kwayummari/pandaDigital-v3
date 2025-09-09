@@ -92,7 +92,7 @@ if (!$agreeTerms) {
 
 try {
     require_once __DIR__ . '/../config/init.php';
-    $database = new Database();
+    $database = Database::getInstance();
     $db = $database->getConnection();
 
     if (!$db) {

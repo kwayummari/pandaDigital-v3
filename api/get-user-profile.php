@@ -17,7 +17,7 @@ $currentUser = $authService->getCurrentUser();
 
 try {
     // Get fresh user data from database
-    $database = new Database();
+    $database = Database::getInstance();
     $db = $database->getConnection();
 
     if (!$db) {
