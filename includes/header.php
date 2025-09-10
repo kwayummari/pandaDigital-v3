@@ -573,7 +573,7 @@ function isCurrentPage($pagePath)
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= isCurrentPage('ongea-hub.php') ? 'active' : '' ?>" href="<?= app_url('ongea-hub.php') ?>">
-                            ONGEA HUB
+                            ONGEA NASI
                         </a>
                     </li>
                     <li class="nav-item dropdown">
