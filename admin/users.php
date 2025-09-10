@@ -422,9 +422,9 @@ $userStats = $userModel->getUserStatsByRole();
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewUser(<?php echo $user['id']; ?>)">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-warning" onclick="toggleUserStatus(<?php echo $user['id']; ?>, '<?php echo $user['account_status']; ?>')">
+                                                    <!-- <button type="button" class="btn btn-sm btn-outline-warning" onclick="toggleUserStatus(<?php echo $user['id']; ?>, '<?php echo $user['account_status']; ?>')">
                                                         <i class="fas fa-<?php echo $user['account_status'] === 'active' ? 'ban' : 'check'; ?>"></i>
-                                                    </button>
+                                                    </button> -->
                                                 </div>
                                             </td>
                                         </tr>
