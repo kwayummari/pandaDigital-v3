@@ -413,8 +413,8 @@ $userStats = $userModel->getUserStatsByRole();
                                                 </span>
                                             </td>
                                             <td>
-                                                <span class="badge badge-status bg-<?php echo $user['account_status'] === 'active' ? 'success' : 'secondary'; ?>">
-                                                    <?php echo $user['account_status'] === 'active' ? 'Inatumika' : 'Imezimwa'; ?>
+                                                <span class="badge badge-status bg-<?php echo ($user['status'] === 'active' || $user['status'] === 'free') ? 'success' : 'secondary'; ?>">
+                                                    <?php echo ($user['status'] === 'active' || $user['status'] === 'free') ? 'Inatumika' : 'Imezimwa'; ?>
                                                 </span>
                                             </td>
                                             <td>
