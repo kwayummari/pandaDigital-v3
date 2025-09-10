@@ -387,6 +387,38 @@ class User
     }
 
     /**
+     * Get all users with pagination
+     */
+    public function getAllUsers($page = 1, $perPage = 20)
+    {
+        try {
+            $offset = ($page - 1) * $perPage;
+
+            $stmt = $this->pdo->prepare("
+                SELECT 
+                    id, 
+                    first_name, 
+                    last_name, 
+                    email, 
+                    phone, 
+                    role, 
+                    status, 
+                    date_created,
+                    last_login
+                FROM users 
+                ORDER BY date_created DESC 
+                LIMIT ? OFFSET ?
+            ");
+
+            $stmt->execute([$perPage, $offset]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Get all users error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
      * Get user statistics by role
      */
     public function getUserStatsByRole()
