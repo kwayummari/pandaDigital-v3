@@ -446,6 +446,22 @@ class User
     }
 
     /**
+     * Get total number of instructors
+     */
+    public function getTotalInstructors()
+    {
+        try {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) as total FROM users WHERE role = 'expert' OR role = 'instructor'");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'] ?? 0;
+        } catch (Exception $e) {
+            error_log('Get total instructors error: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Get users by role
      */
     public function getUsersByRole($role, $limit = null, $offset = 0)
