@@ -568,7 +568,7 @@ function isCurrentPage($pagePath)
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= isCurrentPage('uliza-swali.php') ? 'active' : '' ?>" href="<?= app_url('uliza-swali.php') ?>">
-                            ONGEA
+                            ONGEA HUB
                         </a>
                     </li>
                     <li class="nav-item">
