@@ -216,8 +216,6 @@ if (isset($_POST['submit'])) {
 
     <?php include 'includes/footer.php'; ?>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- AOS Animation -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
@@ -231,10 +229,81 @@ if (isset($_POST['submit'])) {
                     once: true
                 });
             }
+
+            // Initialize Bootstrap dropdowns specifically for this page
+            if (typeof bootstrap !== 'undefined') {
+                console.log('Bootstrap is loaded successfully on ongea-hub page');
+
+                // Initialize all dropdowns
+                var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+                var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+                    return new bootstrap.Dropdown(dropdownToggleEl);
+                });
+
+                console.log('Dropdowns initialized on ongea-hub page:', dropdownList.length);
+
+                // Test dropdown functionality
+                const dropdownToggles = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+                dropdownToggles.forEach((toggle, index) => {
+                    console.log(`Ongea Hub Dropdown ${index + 1}:`, toggle.textContent.trim(), 'Element:', toggle);
+
+                    // Add click event listener for debugging
+                    toggle.addEventListener('click', function(e) {
+                        console.log('Ongea Hub Dropdown clicked:', this.textContent.trim());
+                    });
+                });
+            } else {
+                console.log('Bootstrap is NOT loaded on ongea-hub page');
+            }
         });
     </script>
 
     <style>
+        /* Ensure dropdowns work on this page */
+        .navbar .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+            min-width: 160px;
+            padding: 0.5rem 0;
+            margin: 0;
+            font-size: 1rem;
+            color: #212529;
+            text-align: left;
+            list-style: none;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 0.375rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+        }
+
+        .navbar .dropdown-menu.show {
+            display: block !important;
+        }
+
+        .navbar .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.25rem 1rem;
+            clear: both;
+            font-weight: 400;
+            color: #212529;
+            text-align: inherit;
+            text-decoration: none;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+        }
+
+        .navbar .dropdown-item:hover,
+        .navbar .dropdown-item:focus {
+            color: #1e2125;
+            background-color: #e9ecef;
+        }
+
         /* Page header styles */
         .page-header {
             padding: 120px 0 80px;

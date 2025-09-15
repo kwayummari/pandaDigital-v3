@@ -213,7 +213,7 @@ include 'includes/header.php';
 <?php include 'includes/footer.php'; ?>
 
 <!-- Bootstrap 5 JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS loaded in footer -->
 
 <script>
     // Initialize AOS
@@ -228,6 +228,21 @@ include 'includes/header.php';
 
         // Debug modal functionality
         console.log('About page JavaScript loaded successfully');
+
+        // Initialize Bootstrap dropdowns specifically for this page
+        if (typeof bootstrap !== 'undefined') {
+            console.log('Bootstrap is loaded successfully on about page');
+
+            // Initialize all dropdowns
+            var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+            var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+
+            console.log('Dropdowns initialized on about page:', dropdownList.length);
+        } else {
+            console.log('Bootstrap is NOT loaded on about page');
+        }
 
         // Check if Bootstrap is loaded
         if (typeof bootstrap !== 'undefined') {
