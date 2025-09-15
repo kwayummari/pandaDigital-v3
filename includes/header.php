@@ -571,11 +571,11 @@ function isCurrentPage($pagePath)
                             ONGEA HUB
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link <?= isCurrentPage('ongea-hub.php') ? 'active' : '' ?>" href="<?= app_url('ongea-hub.php') ?>">
                             ONGEA NASI
                         </a>
-                    </li>
+                    </li> -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle <?= isCurrentPage('uliza-swali.php') || isCurrentPage('fomu.php') ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
                             PANDA CHAT
@@ -1256,7 +1256,7 @@ function isCurrentPage($pagePath)
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize all Bootstrap dropdowns
             var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
-            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
                 return new bootstrap.Dropdown(dropdownToggleEl);
             });
 
