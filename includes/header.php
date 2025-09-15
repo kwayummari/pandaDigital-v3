@@ -1263,7 +1263,7 @@ function isCurrentPage($pagePath)
                 });
 
                 console.log('Bootstrap dropdowns initialized from header:', dropdownList.length);
-                
+
                 // Test dropdown functionality
                 dropdownElementList.forEach((toggle, index) => {
                     console.log(`Header Dropdown ${index + 1}:`, toggle.textContent.trim());

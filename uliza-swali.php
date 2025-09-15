@@ -293,20 +293,20 @@ if (!empty($searchQuery)) {
             // Initialize Bootstrap dropdowns specifically for this page
             if (typeof bootstrap !== 'undefined') {
                 console.log('Bootstrap is loaded successfully');
-                
+
                 // Initialize all dropdowns
                 var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
                 var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
                     return new bootstrap.Dropdown(dropdownToggleEl);
                 });
-                
+
                 console.log('Dropdowns initialized on uliza-swali page:', dropdownList.length);
 
                 // Test dropdown functionality
                 const dropdownToggles = document.querySelectorAll('[data-bs-toggle="dropdown"]');
                 dropdownToggles.forEach((toggle, index) => {
                     console.log(`Dropdown ${index + 1}:`, toggle.textContent.trim(), 'Element:', toggle);
-                    
+
                     // Add click event listener for debugging
                     toggle.addEventListener('click', function(e) {
                         console.log('Dropdown clicked:', this.textContent.trim());
