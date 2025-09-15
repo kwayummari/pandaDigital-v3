@@ -567,7 +567,7 @@ function isCurrentPage($pagePath)
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= isCurrentPage('uliza-swali.php') ? 'active' : '' ?>" href="<?= app_url('uliza-swali.php') ?>">
+                        <a class="nav-link <?= isCurrentPage('ongea-hub.php') ? 'active' : '' ?>" href="<?= app_url('ongea-hub.php') ?>">
                             ONGEA HUB
                         </a>
                     </li>
@@ -647,8 +647,8 @@ function isCurrentPage($pagePath)
                 </li>
 
                 <li class="mobile-nav-item">
-                    <a href="<?= app_url('uliza-swali.php') ?>" class="mobile-nav-link <?= isCurrentPage('uliza-swali.php') ? 'active' : '' ?>">
-                        <i class="fas fa-comments me-2"></i>ONGEA
+                    <a href="<?= app_url('ongea-hub.php') ?>" class="mobile-nav-link <?= isCurrentPage('ongea-hub.php') ? 'active' : '' ?>">
+                        <i class="fas fa-comments me-2"></i>ONGEA HUB
                     </a>
                 </li>
 
@@ -745,6 +745,51 @@ function isCurrentPage($pagePath)
             background: #5f4594 !important;
             background-color: #5f4594 !important;
             color: #ffbc3b !important;
+        }
+
+        /* Ensure Bootstrap dropdowns work properly */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+            min-width: 160px;
+            padding: 0.5rem 0;
+            margin: 0;
+            font-size: 1rem;
+            color: #212529;
+            text-align: left;
+            list-style: none;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 0.375rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.25rem 1rem;
+            clear: both;
+            font-weight: 400;
+            color: #212529;
+            text-align: inherit;
+            text-decoration: none;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+        }
+
+        .dropdown-item:hover,
+        .dropdown-item:focus {
+            color: #1e2125;
+            background-color: #e9ecef;
         }
 
         /* User Profile Menu Styles */
@@ -1205,5 +1250,16 @@ function isCurrentPage($pagePath)
             });
 
             console.log('Mobile navigation system initialized successfully');
+        });
+
+        // Initialize Bootstrap dropdowns
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize all Bootstrap dropdowns
+            var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+
+            console.log('Bootstrap dropdowns initialized:', dropdownList.length);
         });
     </script>
