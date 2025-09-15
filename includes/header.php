@@ -1254,12 +1254,20 @@ function isCurrentPage($pagePath)
 
         // Initialize Bootstrap dropdowns
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize all Bootstrap dropdowns
-            var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
-            var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
-                return new bootstrap.Dropdown(dropdownToggleEl);
-            });
+            // Wait a bit to ensure all scripts are loaded
+            setTimeout(function() {
+                // Initialize all Bootstrap dropdowns
+                var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+                var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+                    return new bootstrap.Dropdown(dropdownToggleEl);
+                });
 
-            console.log('Bootstrap dropdowns initialized:', dropdownList.length);
+                console.log('Bootstrap dropdowns initialized from header:', dropdownList.length);
+                
+                // Test dropdown functionality
+                dropdownElementList.forEach((toggle, index) => {
+                    console.log(`Header Dropdown ${index + 1}:`, toggle.textContent.trim());
+                });
+            }, 100);
         });
     </script>
