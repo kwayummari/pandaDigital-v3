@@ -3,7 +3,7 @@ require_once '../config/init.php';
 require_once '../config/database.php';
 
 // Initialize database connection
-$database = new Database();
+$database = Database::getInstance();
 $conn = $database->getConnection();
 
 // For now, we'll show a placeholder since checkout functionality isn't fully implemented

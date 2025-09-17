@@ -3,7 +3,7 @@ require_once '../config/init.php';
 require_once '../config/database.php';
 
 // Initialize database connection
-$database = new Database();
+$database = Database::getInstance();
 $conn = $database->getConnection();
 
 // Get order ID from URL
