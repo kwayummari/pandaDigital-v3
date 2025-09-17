@@ -548,6 +548,35 @@ class User
     }
 
     /**
+     * Toggle user status (active/inactive)
+     */
+    public function toggleUserStatus($userId)
+    {
+        try {
+            // Get current user status
+            $stmt = $this->pdo->prepare("SELECT status FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch();
+
+            if (!$user) {
+                return false;
+            }
+
+            // Toggle status
+            $newStatus = ($user['status'] === 'active') ? 'inactive' : 'active';
+
+            // Update status
+            $stmt = $this->pdo->prepare("UPDATE users SET status = ?, updated_at = NOW() WHERE id = ?");
+            $result = $stmt->execute([$newStatus, $userId]);
+
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Error toggling user status: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Request expert role for user
      */
     public function requestExpertRole($userId, $bio)
