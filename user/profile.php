@@ -7,6 +7,7 @@ $auth->requireRole('user');
 
 $currentUser = $auth->getCurrentUser();
 
+
 // Set page title
 $pageTitle = 'Badilisha Wasifu - ' . $appConfig['name'];
 ?>
@@ -332,9 +333,9 @@ $pageTitle = 'Badilisha Wasifu - ' . $appConfig['name'];
                         // Show success message
                         showAlert('Maelezo yamehifadhiwa kwa mafanikio!', 'success');
 
-                        // Update the displayed name in header
+                        // Reload page to show updated values
                         setTimeout(() => {
-                            location.reload();
+                            window.location.reload();
                         }, 1500);
                     } else {
                         showAlert(result.message || 'Kulikuwa na tatizo, jaribu tena', 'error');

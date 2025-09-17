@@ -97,6 +97,9 @@ try {
     $result = $stmt->execute($values);
 
     if ($result) {
+        // Refresh session with updated user data
+        $authService->refreshSession();
+
         echo json_encode([
             'success' => true,
             'message' => 'Maelezo yako yamehifadhiwa kwa mafanikio!'
