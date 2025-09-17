@@ -29,7 +29,7 @@ function isCurrentPage($pagePath)
     <!-- Basic Meta Tags -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="<?= asset('images/logo/logo.png') ?>">
     <link rel="icon" type="image/png" sizes="16x16" href="<?= asset('images/logo/logo.png') ?>">

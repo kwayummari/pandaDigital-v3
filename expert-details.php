@@ -207,7 +207,11 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
                 <div class="col-lg-8" data-aos="fade-right">
                     <h1 class="page-title" style="color: #ffffff;"><?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?></h1>
                     <p class="page-subtitle"><?= htmlspecialchars($expert['business']) ?> - <?= htmlspecialchars($expert['region']) ?></p>
-                    <a href="#" class="btn btn-primary btn-lg">Ongea na <?= htmlspecialchars($expert['first_name']) ?></a>
+                    <?php if ($isLoggedIn): ?>
+                        <a href="#contact-section" class="btn btn-primary btn-lg">Ongea na <?= htmlspecialchars($expert['first_name']) ?></a>
+                    <?php else: ?>
+                        <a href="#" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">Ongea na <?= htmlspecialchars($expert['first_name']) ?></a>
+                    <?php endif; ?>
                 </div>
                 <div class="col-lg-4 text-center" data-aos="fade-left">
                     <img src="<?= $expertModel->getExpertImageUrl($expert['profile_photo']) ?>"
@@ -263,8 +267,12 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
 
                 <div class="col-lg-4">
                     <div class="text-center">
-                        <a href="#" class="btn btn-primary btn-lg w-100 mb-3">Ongea na <?= htmlspecialchars($expert['first_name']) ?></a>
-                        <p class="text-muted small">Ingia au jisajili ili uweze kuuliza swali</p>
+                        <?php if ($isLoggedIn): ?>
+                            <a href="#contact-section" class="btn btn-primary btn-lg w-100 mb-3">Ongea na <?= htmlspecialchars($expert['first_name']) ?></a>
+                        <?php else: ?>
+                            <a href="#" class="btn btn-primary btn-lg w-100 mb-3" data-bs-toggle="modal" data-bs-target="#loginModal">Ongea na <?= htmlspecialchars($expert['first_name']) ?></a>
+                            <p class="text-muted small">Ingia au jisajili ili uweze kuuliza swali</p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -303,13 +311,13 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
     <?php endif; ?>
 
     <!-- Contact Section -->
-    <section class="contact-section">
+    <section id="contact-section" class="contact-section">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <h2 class="text-center mb-4">Tunawezaje Kukusaidia?</h2>
                     <p class="lead text-center mb-5">Jiunge na Panda Chat na upate msaada wa wataalamu wenye uzoefu</p>
-                    
+
                     <?php if ($isLoggedIn): ?>
                         <!-- Contact Form for Logged In Users -->
                         <div class="card">
@@ -348,7 +356,7 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
                             </div>
                         </div>
                     <?php endif; ?>
-                    
+
                     <div class="text-center mt-4">
                         <a href="<?= app_url('uliza-swali.php') ?>" class="btn btn-outline-secondary">Tazama Wataalamu Wote</a>
                     </div>
