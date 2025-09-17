@@ -8,7 +8,7 @@ $auth->requireRole('user');
 $currentUser = $auth->getCurrentUser();
 
 // Set page title
-$pageTitle = 'Wasifu Wangu - ' . $appConfig['name'];
+$pageTitle = 'Badilisha Wasifu - ' . $appConfig['name'];
 ?>
 
 <!DOCTYPE html>
@@ -18,29 +18,29 @@ $pageTitle = 'Wasifu Wangu - ' . $appConfig['name'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $pageTitle ?></title>
-    
-    <!-- Bootstrap CSS -->
+
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>?v=8">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= app_url('assets/css/style.css') ?>?v=5">
+
     <style>
         .profile-card {
             background: white;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            border: 1px solid #e9ecef;
         }
-        
+
         .profile-header {
             background: linear-gradient(135deg, #37ABA6 0%, #2d8a85 100%);
             color: white;
             padding: 2rem;
             text-align: center;
         }
-        
+
         .profile-avatar {
             width: 120px;
             height: 120px;
@@ -52,24 +52,68 @@ $pageTitle = 'Wasifu Wangu - ' . $appConfig['name'];
             justify-content: center;
             background: rgba(255, 255, 255, 0.2);
         }
-        
+
         .profile-avatar i {
             font-size: 3rem;
         }
-        
+
         .form-control:focus {
             border-color: #37ABA6;
             box-shadow: 0 0 0 0.2rem rgba(55, 171, 166, 0.25);
         }
-        
+
         .btn-primary {
             background: #37ABA6;
             border-color: #37ABA6;
         }
-        
+
         .btn-primary:hover {
             background: #2d8a85;
             border-color: #2d8a85;
+        }
+
+        .btn-outline-secondary {
+            border-color: #6c757d;
+            color: #6c757d;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-text {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #37ABA6 0%, #2d8a85 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0.5rem 0 0 0;
         }
     </style>
 </head>
@@ -83,6 +127,23 @@ $pageTitle = 'Wasifu Wangu - ' . $appConfig['name'];
         <div class="main-content">
             <!-- Top Navigation -->
             <?php include __DIR__ . '/../includes/user_top_nav.php'; ?>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="page-title">Badilisha Wasifu</h1>
+                            <p class="page-subtitle">Hifadhi na ubadilishe maelezo yako ya msingi</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="<?= app_url('user/dashboard.php') ?>" class="btn btn-outline-light">
+                                <i class="fas fa-arrow-left me-2"></i>Rudi Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Page Content -->
             <div class="container-fluid py-4">
@@ -99,35 +160,35 @@ $pageTitle = 'Wasifu Wangu - ' . $appConfig['name'];
                             </div>
 
                             <!-- Profile Form -->
-                            <div class="p-4">
-                                <h4 class="mb-4">Badilisha Maelezo Yako</h4>
-                                
+                            <div class="card-body">
+                                <h4 class="mb-4 text-center">Maelezo ya Wasifu</h4>
+
                                 <form id="profileUpdateForm">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="firstName" class="form-label">Jina la Kwanza</label>
-                                            <input type="text" class="form-control" id="firstName" name="first_name" 
-                                                   value="<?= htmlspecialchars($currentUser['first_name'] ?? '') ?>" required>
+                                            <label for="firstName" class="form-label">Jina la Kwanza *</label>
+                                            <input type="text" class="form-control" id="firstName" name="first_name"
+                                                value="<?= htmlspecialchars($currentUser['first_name'] ?? '') ?>" required>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="lastName" class="form-label">Jina la Mwisho</label>
-                                            <input type="text" class="form-control" id="lastName" name="last_name" 
-                                                   value="<?= htmlspecialchars($currentUser['last_name'] ?? '') ?>" required>
+                                            <label for="lastName" class="form-label">Jina la Mwisho *</label>
+                                            <input type="text" class="form-control" id="lastName" name="last_name"
+                                                value="<?= htmlspecialchars($currentUser['last_name'] ?? '') ?>" required>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="email" class="form-label">Barua Pepe</label>
-                                            <input type="email" class="form-control" id="email" name="email" 
-                                                   value="<?= htmlspecialchars($currentUser['email'] ?? '') ?>" readonly>
+                                            <input type="email" class="form-control" id="email" name="email"
+                                                value="<?= htmlspecialchars($currentUser['email'] ?? '') ?>" readonly>
                                             <div class="form-text">Hauwezi kubadilisha barua pepe yako.</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="phone" class="form-label">Namba ya Simu</label>
-                                            <input type="tel" class="form-control" id="phone" name="phone" 
-                                                   value="<?= htmlspecialchars($currentUser['phone'] ?? '') ?>" 
-                                                   placeholder="Mfano: 0712345678">
+                                            <input type="tel" class="form-control" id="phone" name="phone"
+                                                value="<?= htmlspecialchars($currentUser['phone'] ?? '') ?>"
+                                                placeholder="Mfano: 0712345678">
                                         </div>
                                     </div>
 
@@ -181,28 +242,28 @@ $pageTitle = 'Wasifu Wangu - ' . $appConfig['name'];
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="dateOfBirth" class="form-label">Tarehe ya Kuzaliwa</label>
-                                            <input type="date" class="form-control" id="dateOfBirth" name="date_of_birth" 
-                                                   value="<?= htmlspecialchars($currentUser['date_of_birth'] ?? '') ?>">
+                                            <input type="date" class="form-control" id="dateOfBirth" name="date_of_birth"
+                                                value="<?= htmlspecialchars($currentUser['date_of_birth'] ?? '') ?>">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="business" class="form-label">Biashara (Hiari)</label>
-                                            <input type="text" class="form-control" id="business" name="business" 
-                                                   value="<?= htmlspecialchars($currentUser['business'] ?? '') ?>" 
-                                                   placeholder="Jina la biashara yako">
+                                            <input type="text" class="form-control" id="business" name="business"
+                                                value="<?= htmlspecialchars($currentUser['business'] ?? '') ?>"
+                                                placeholder="Jina la biashara yako">
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="mb-4">
                                         <label for="bio" class="form-label">Maelezo Kuhusu Wewe (Hiari)</label>
-                                        <textarea class="form-control" id="bio" name="bio" rows="4" 
-                                                  placeholder="Andika maelezo mafupi kuhusu wewe..."><?= htmlspecialchars($currentUser['bio'] ?? '') ?></textarea>
+                                        <textarea class="form-control" id="bio" name="bio" rows="4"
+                                            placeholder="Andika maelezo mafupi kuhusu wewe..."><?= htmlspecialchars($currentUser['bio'] ?? '') ?></textarea>
                                     </div>
 
-                                    <div class="d-flex gap-2">
-                                        <button type="submit" class="btn btn-primary">
+                                    <div class="d-flex gap-3 justify-content-center">
+                                        <button type="submit" class="btn btn-primary btn-lg">
                                             <i class="fas fa-save me-2"></i>Hifadhi Maelezo
                                         </button>
-                                        <a href="<?= app_url('user/dashboard.php') ?>" class="btn btn-outline-secondary">
+                                        <a href="<?= app_url('user/dashboard.php') ?>" class="btn btn-outline-secondary btn-lg">
                                             <i class="fas fa-arrow-left me-2"></i>Rudi
                                         </a>
                                     </div>
@@ -218,51 +279,77 @@ $pageTitle = 'Wasifu Wangu - ' . $appConfig['name'];
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Sidebar Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggles = document.querySelectorAll('.sidebar-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+
+            sidebarToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    dashboardContainer.classList.toggle('sidebar-collapsed');
+                });
+            });
+
+            // Close sidebar on mobile when clicking outside
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth < 992) {
+                    if (!sidebar.contains(e.target) && !e.target.closest('.sidebar-toggle')) {
+                        sidebar.classList.remove('collapsed');
+                        dashboardContainer.classList.remove('sidebar-collapsed');
+                    }
+                }
+            });
+        });
+    </script>
+
     <script>
         document.getElementById('profileUpdateForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
-            
+
             // Show loading state
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Inahifadhi...';
             submitBtn.disabled = true;
-            
+
             fetch('<?= app_url("api/update-profile.php") ?>', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    // Show success message
-                    showAlert('Maelezo yamehifadhiwa kwa mafanikio!', 'success');
-                    
-                    // Update the displayed name in header
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1500);
-                } else {
-                    showAlert(result.message || 'Kulikuwa na tatizo, jaribu tena', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert('Kulikuwa na tatizo, jaribu tena', 'error');
-            })
-            .finally(() => {
-                // Reset button state
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        // Show success message
+                        showAlert('Maelezo yamehifadhiwa kwa mafanikio!', 'success');
+
+                        // Update the displayed name in header
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showAlert(result.message || 'Kulikuwa na tatizo, jaribu tena', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('Kulikuwa na tatizo, jaribu tena', 'error');
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
         });
-        
+
         function showAlert(message, type) {
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show position-fixed`;
@@ -272,7 +359,7 @@ $pageTitle = 'Wasifu Wangu - ' . $appConfig['name'];
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             `;
             document.body.appendChild(alertDiv);
-            
+
             // Auto remove after 5 seconds
             setTimeout(() => {
                 if (alertDiv.parentNode) {
