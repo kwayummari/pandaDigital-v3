@@ -6,7 +6,7 @@ require_once '../config/database.php';
 error_log("Session variables: " . print_r($_SESSION, true));
 
 // Initialize database connection
-$database = new Database();
+$database = Database::getInstance();
 $conn = $database->getConnection();
 
 // Get product ID from URL
