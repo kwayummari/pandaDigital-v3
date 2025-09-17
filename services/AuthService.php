@@ -223,7 +223,15 @@ class AuthService
             return null;
         }
 
-        // Return user data from session instead of re-querying database
+        // Get fresh user data from database to ensure we have all fields
+        $userId = $_SESSION['user_id'];
+        $userData = $this->userModel->getUserById($userId);
+
+        if ($userData) {
+            return $userData;
+        }
+
+        // Fallback to session data if database query fails
         return [
             'id' => $_SESSION['user_id'],
             'email' => $_SESSION['user_email'],
