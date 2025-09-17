@@ -65,32 +65,6 @@ if (!empty($searchQuery)) {
         </div>
     </section>
 
-    <!-- Search Section -->
-    <section class="search-section py-5 bg-light">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="search-card" data-aos="fade-up">
-                        <h3 class="text-center mb-4">Tafuta Mtaalamu</h3>
-                        <form method="GET" action="<?= app_url('uliza-swali.php') ?>" class="search-form">
-                            <div class="input-group">
-                                <input type="text"
-                                    class="form-control form-control-lg"
-                                    name="search"
-                                    placeholder="Tafuta kwa jina, biashara, au mkoa..."
-                                    value="<?= htmlspecialchars($searchQuery) ?>"
-                                    required>
-                                <button class="btn btn-primary btn-lg" type="submit">
-                                    <i class="fas fa-search me-2"></i>Tafuta
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Statistics Section -->
     <section class="stats-section py-5">
         <div class="container">
