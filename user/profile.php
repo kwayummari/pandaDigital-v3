@@ -35,7 +35,7 @@ $pageTitle = 'Badilisha Wasifu - ' . $appConfig['name'];
         }
 
         .profile-header {
-            background: linear-gradient(135deg, #37ABA6 0%, #2d8a85 100%);
+            background: linear-gradient(135deg, var(--primary-color, #ffbc3b) 0%, #e6a800 100%);
             color: white;
             padding: 2rem;
             text-align: center;
@@ -58,18 +58,18 @@ $pageTitle = 'Badilisha Wasifu - ' . $appConfig['name'];
         }
 
         .form-control:focus {
-            border-color: #37ABA6;
-            box-shadow: 0 0 0 0.2rem rgba(55, 171, 166, 0.25);
+            border-color: var(--primary-color, #ffbc3b);
+            box-shadow: 0 0 0 0.2rem rgba(255, 188, 59, 0.25);
         }
 
         .btn-primary {
-            background: #37ABA6;
-            border-color: #37ABA6;
+            background: var(--primary-color, #ffbc3b);
+            border-color: var(--primary-color, #ffbc3b);
         }
 
         .btn-primary:hover {
-            background: #2d8a85;
-            border-color: #2d8a85;
+            background: #e6a800;
+            border-color: #e6a800;
         }
 
         .btn-outline-secondary {
@@ -98,7 +98,7 @@ $pageTitle = 'Badilisha Wasifu - ' . $appConfig['name'];
         }
 
         .page-header {
-            background: linear-gradient(135deg, #37ABA6 0%, #2d8a85 100%);
+            background: linear-gradient(135deg, var(--primary-color, #ffbc3b) 0%, #e6a800 100%);
             color: white;
             padding: 2rem 0;
             margin-bottom: 2rem;
