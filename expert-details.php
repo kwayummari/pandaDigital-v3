@@ -1,6 +1,12 @@
 <?php
 require_once 'config/init.php';
 require_once 'models/Expert.php';
+require_once 'services/AuthService.php';
+
+// Check if user is logged in
+$authService = new AuthService();
+$isLoggedIn = $authService->isLoggedIn();
+$currentUser = $isLoggedIn ? $authService->getCurrentUser() : null;
 
 // Get expert ID from URL parameter
 $expertId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -298,10 +304,56 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
 
     <!-- Contact Section -->
     <section class="contact-section">
-        <div class="container text-center">
-            <h2 class="mb-4">Tunawezaje Kukusaidia?</h2>
-            <p class="lead mb-4">Jiunge na Panda Chat na upate msaada wa wataalamu wenye uzoefu</p>
-            <a href="<?= app_url('uliza-swali.php') ?>" class="btn btn-primary btn-lg">Tazama Wataalamu Wote</a>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h2 class="text-center mb-4">Tunawezaje Kukusaidia?</h2>
+                    <p class="lead text-center mb-5">Jiunge na Panda Chat na upate msaada wa wataalamu wenye uzoefu</p>
+                    
+                    <?php if ($isLoggedIn): ?>
+                        <!-- Contact Form for Logged In Users -->
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <h5 class="card-title text-center mb-4">Wasiliana na <?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?></h5>
+                                <form id="contactExpertForm">
+                                    <input type="hidden" id="expertId" value="<?= $expertId ?>">
+                                    <div class="mb-3">
+                                        <label for="subject" class="form-label">Mada</label>
+                                        <input type="text" class="form-control" id="subject" name="subject" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="message" class="form-label">Ujumbe</label>
+                                        <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary btn-lg">Tuma Ujumbe</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <!-- Login/Register Prompt for Non-Logged In Users -->
+                        <div class="card">
+                            <div class="card-body p-4 text-center">
+                                <h5 class="card-title mb-4">Ingia au Jisajili Ili Kuwasiliana</h5>
+                                <p class="mb-4">Unahitaji kuingia au kujisajili ili kuweza kuwasiliana na mtaalamu huyu.</p>
+                                <div class="d-flex gap-3 justify-content-center">
+                                    <a href="#" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Ingia
+                                    </a>
+                                    <a href="#" class="btn btn-outline-primary btn-lg" data-bs-toggle="modal" data-bs-target="#signupModal">
+                                        <i class="fas fa-user-plus me-2"></i>Jisajili
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <div class="text-center mt-4">
+                        <a href="<?= app_url('uliza-swali.php') ?>" class="btn btn-outline-secondary">Tazama Wataalamu Wote</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 

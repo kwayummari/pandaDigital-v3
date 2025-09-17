@@ -72,15 +72,16 @@ if (!empty($searchQuery)) {
                 <div class="col-lg-8">
                     <div class="search-card" data-aos="fade-up">
                         <h3 class="text-center mb-4">Tafuta Mtaalamu</h3>
-                        <form method="GET" action="" class="search-form">
+                        <form method="GET" action="<?= app_url('uliza-swali.php') ?>" class="search-form">
                             <div class="input-group">
                                 <input type="text"
                                     class="form-control form-control-lg"
                                     name="search"
                                     placeholder="Tafuta kwa jina, biashara, au mkoa..."
-                                    value="<?= htmlspecialchars($searchQuery) ?>">
+                                    value="<?= htmlspecialchars($searchQuery) ?>"
+                                    required>
                                 <button class="btn btn-primary btn-lg" type="submit">
-                                    <span class="me-2"></span>Tafuta
+                                    <i class="fas fa-search me-2"></i>Tafuta
                                 </button>
                             </div>
                         </form>
@@ -164,6 +165,23 @@ if (!empty($searchQuery)) {
                     </div>
                 </div>
             <?php else: ?>
+                <!-- Search Results Info -->
+                <?php if (!empty($searchQuery)): ?>
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="alert alert-info" data-aos="fade-up">
+                                <h5 class="mb-2">
+                                    <i class="fas fa-search me-2"></i>Matokeo ya Utafutaji
+                                </h5>
+                                <p class="mb-0">
+                                    Umetafuta: <strong>"<?= htmlspecialchars($searchQuery) ?>"</strong>
+                                    - <strong><?= count($filteredExperts) ?></strong> wataalamu walipatikana
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
                 <div class="row">
                     <?php foreach ($filteredExperts as $expert): ?>
                         <div class="col-lg-4 col-md-6 mb-5" data-aos="fade-up">

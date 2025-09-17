@@ -285,6 +285,12 @@ $displayCourses = !empty($enrolledCourses) ? $enrolledCourses : $activeCourses;
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="<?= app_url('user/profile.php') ?>" class="nav-link">
+                            <i class="fas fa-user-edit me-2"></i>
+                            <span>Badilisha Wasifu</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="<?= app_url('user/certificate-history.php') ?>" class="nav-link">
                             <span>Historia ya Vyeti</span>
                         </a>
