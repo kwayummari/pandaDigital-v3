@@ -223,12 +223,16 @@ class AuthService
             return null;
         }
 
-        // Get fresh user data from database to ensure we have all fields
-        $userId = $_SESSION['user_id'];
-        $userData = $this->userModel->getUserById($userId);
+        try {
+            // Get fresh user data from database to ensure we have all fields
+            $userId = $_SESSION['user_id'];
+            $userData = $this->userModel->getUserById($userId);
 
-        if ($userData) {
-            return $userData;
+            if ($userData) {
+                return $userData;
+            }
+        } catch (Exception $e) {
+            error_log("Error fetching user data from database: " . $e->getMessage());
         }
 
         // Fallback to session data if database query fails
