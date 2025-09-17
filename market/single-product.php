@@ -316,7 +316,7 @@ include '../includes/header.php';
                     <?php if (!empty($product['description'])): ?>
                         <div class="product-description mb-4">
                             <h5>Maelezo</h5>
-                            <p class="text-muted"><?php echo nl2br(htmlspecialchars($product['description'])); ?></p>
+                            <p class="text-muted"><?php echo $product['description']; ?></p>
                         </div>
                     <?php endif; ?>
 
