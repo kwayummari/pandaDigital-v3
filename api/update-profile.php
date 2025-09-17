@@ -23,14 +23,22 @@ if (!$authService->isLoggedIn()) {
 $currentUser = $authService->getCurrentUser();
 
 try {
+    // Get JSON input data
+    $input = json_decode(file_get_contents('php://input'), true);
+
+    // Fallback to POST if JSON is not available
+    if (empty($input)) {
+        $input = $_POST;
+    }
+
     // Get all submitted fields
     $fields = ['first_name', 'last_name', 'phone', 'region', 'gender', 'date_of_birth', 'business', 'bio'];
     $data = [];
     $hasValidData = false;
 
     foreach ($fields as $field) {
-        if (isset($_POST[$field])) {
-            $value = trim($_POST[$field]);
+        if (isset($input[$field])) {
+            $value = trim($input[$field]);
             // Only add non-empty values to update
             if (!empty($value)) {
                 $data[$field] = $value;
