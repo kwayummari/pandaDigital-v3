@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Initialize database connection
-        $database = new Database();
+        $database = Database::getInstance();
         $conn = $database->getConnection();
 
         // Database transaction
