@@ -14,7 +14,7 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
 }
 
 // Initialize database
-$database = new Database();
+$database = Database::getInstance();
 $conn = $database->getConnection();
 
 $userId = $_SESSION['user_id'];

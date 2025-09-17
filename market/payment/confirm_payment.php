@@ -40,7 +40,7 @@ try {
     }
 
     // Initialize database and payment gateway
-    $database = new Database();
+    $database = Database::getInstance();
     $paymentGateway = new PaymentGateway($database);
 
     // Check if order exists

@@ -50,7 +50,7 @@ try {
     }
 
     // Initialize database
-    $database = new Database();
+    $database = Database::getInstance();
     $conn = $database->getConnection();
 
     // Get product information if product ID is provided

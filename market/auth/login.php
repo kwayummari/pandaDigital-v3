@@ -39,7 +39,7 @@ try {
     }
 
     // Initialize database
-    $database = new Database();
+    $database = Database::getInstance();
     $conn = $database->getConnection();
 
     // Check if user exists

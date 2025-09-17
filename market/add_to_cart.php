@@ -41,7 +41,7 @@ try {
     }
 
     // Initialize database and cart handler
-    $database = new Database();
+    $database = Database::getInstance();
     $cartHandler = new CartHandler($database);
 
     // Add product to cart
