@@ -162,18 +162,19 @@ $pageTitle = 'Badilisha Wasifu - ' . $appConfig['name'];
                             <!-- Profile Form -->
                             <div class="card-body">
                                 <h4 class="mb-4 text-center">Maelezo ya Wasifu</h4>
+                                <p class="text-muted text-center mb-4">Badilisha maelezo yoyote unayotaka. Sehemu zisizojazwa hazitabadilishwa.</p>
 
                                 <form id="profileUpdateForm">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="firstName" class="form-label">Jina la Kwanza *</label>
+                                            <label for="firstName" class="form-label">Jina la Kwanza</label>
                                             <input type="text" class="form-control" id="firstName" name="first_name"
-                                                value="<?= htmlspecialchars($currentUser['first_name'] ?? '') ?>" required>
+                                                value="<?= htmlspecialchars($currentUser['first_name'] ?? '') ?>">
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="lastName" class="form-label">Jina la Mwisho *</label>
+                                            <label for="lastName" class="form-label">Jina la Mwisho</label>
                                             <input type="text" class="form-control" id="lastName" name="last_name"
-                                                value="<?= htmlspecialchars($currentUser['last_name'] ?? '') ?>" required>
+                                                value="<?= htmlspecialchars($currentUser['last_name'] ?? '') ?>">
                                         </div>
                                     </div>
 

@@ -24,20 +24,23 @@ $currentUser = $authService->getCurrentUser();
 
 try {
     // Get all submitted fields
-    $fields = ['first_name', 'last_name', 'phone', 'region', 'gender', 'date_of_birth'];
+    $fields = ['first_name', 'last_name', 'phone', 'region', 'gender', 'date_of_birth', 'business', 'bio'];
     $data = [];
-    $missingFields = [];
+    $hasValidData = false;
 
     foreach ($fields as $field) {
-        if (isset($_POST[$field]) && !empty(trim($_POST[$field]))) {
-            $data[$field] = trim($_POST[$field]);
-        } else {
-            $missingFields[] = $field;
+        if (isset($_POST[$field])) {
+            $value = trim($_POST[$field]);
+            // Only add non-empty values to update
+            if (!empty($value)) {
+                $data[$field] = $value;
+                $hasValidData = true;
+            }
         }
     }
 
-    // Check if we have at least some data
-    if (empty($data)) {
+    // Check if we have at least some data to update
+    if (!$hasValidData) {
         http_response_code(400);
         echo json_encode([
             'success' => false,
