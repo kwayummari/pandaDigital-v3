@@ -5,12 +5,23 @@
  * Simple script to quickly enable/disable maintenance mode
  */
 
-// Security check
+// Security check - allow from localhost, server IP, or with admin key
 $allowedIPs = ['127.0.0.1', '::1', 'localhost'];
 $clientIP = $_SERVER['REMOTE_ADDR'] ?? '';
 
-if (!in_array($clientIP, $allowedIPs)) {
-    die('Access denied. This script only works from localhost.');
+// Get server IP to allow access from the same server
+$serverIP = $_SERVER['SERVER_ADDR'] ?? '';
+if ($serverIP) {
+    $allowedIPs[] = $serverIP;
+}
+
+// Allow access if it's from the same server or has admin key
+$adminKey = 'panda_maintenance_2024';
+$isFromServer = in_array($clientIP, $allowedIPs);
+$hasAdminKey = isset($_GET['admin_key']) && $_GET['admin_key'] === $adminKey;
+
+if (!$isFromServer && !$hasAdminKey) {
+    die('Access denied. This script only works from the server or with admin key.<br><br>Use: <a href="?admin_key=' . $adminKey . '">' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?admin_key=' . $adminKey . '</a>');
 }
 
 $maintenanceFile = __DIR__ . '/.maintenance';
