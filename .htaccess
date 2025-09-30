@@ -1,33 +1,10 @@
 # Panda Digital .htaccess
-# This file controls URL rewriting and maintenance mode
+# This file controls URL rewriting
 
 # Enable URL rewriting
 RewriteEngine On
 
-# Maintenance Mode - Uncomment the lines below to activate maintenance mode
-# RewriteCond %{REQUEST_URI} !^/maintenance\.php$
-# RewriteCond %{REQUEST_URI} !^/maintenance-control\.php$
-# RewriteCond %{REQUEST_URI} !^/enable-maintenance\.php$
-# RewriteCond %{REQUEST_URI} !^/admin/
-# RewriteCond %{REQUEST_URI} !^/api/
-# RewriteCond %{REQUEST_URI} !^/assets/
-# RewriteCond %{REQUEST_URI} !^/images/
-# RewriteCond %{REQUEST_URI} !^/css/
-# RewriteCond %{REQUEST_URI} !^/js/
-# RewriteCond %{REQUEST_URI} !^/plugins/
-# RewriteCond %{REQUEST_URI} !^/vendor/
-# RewriteCond %{REQUEST_URI} !^/uploads/
-# RewriteCond %{REQUEST_URI} !^/sessions/
-# RewriteCond %{REQUEST_URI} !^/cache/
-# RewriteCond %{REQUEST_URI} !^/logs/
-# RewriteCond %{REQUEST_URI} !^/database/
-# RewriteCond %{REQUEST_URI} !^/dump_database/
-# RewriteCond %{REQUEST_URI} !^/\.well-known/
-# RewriteCond %{REQUEST_URI} !^/favicon\.ico$
-# RewriteCond %{REQUEST_URI} !^/robots\.txt$
-# RewriteRule ^(.*)$ /maintenance.php [R=503,L]
-
-# Normal URL rewriting rules (when maintenance is off)
+# URL rewriting rules
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]
