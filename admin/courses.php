@@ -540,8 +540,6 @@ if (!empty($courses)) {
         </div>
     </div>
 
-    <?php include __DIR__ . '/includes/admin_footer_common.php'; ?>
-
     <script>
         // Export dropdown functionality
         function toggleExportDropdown() {
@@ -773,6 +771,5 @@ if (!empty($courses)) {
             }
         });
     </script>
-</body>
 
-</html>
+    <?php include __DIR__ . '/includes/admin_footer_common.php'; ?>
