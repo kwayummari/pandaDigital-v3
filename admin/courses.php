@@ -540,9 +540,9 @@ if (!empty($courses)) {
         </div>
     </div>
 
-    <script>
+    <script type="text/javascript">
         // Export dropdown functionality
-        function toggleExportDropdown() {
+        window.toggleExportDropdown = function() {
             document.querySelector('.export-dropdown').classList.toggle('show');
         }
 
@@ -560,7 +560,7 @@ if (!empty($courses)) {
         }
 
         // Search functionality
-        function searchCourses() {
+        window.searchCourses = function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const table = document.getElementById('coursesTable');
             const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
@@ -578,7 +578,7 @@ if (!empty($courses)) {
         }
 
         // Filter by status
-        function filterByStatus(status) {
+        window.filterByStatus = function(status) {
             // Update active tab
             document.querySelectorAll('#statusTabs .nav-link').forEach(tab => {
                 tab.classList.remove('active');
@@ -611,7 +611,7 @@ if (!empty($courses)) {
         }
 
         // View course details
-        function viewCourse(courseId) {
+        window.viewCourse = function(courseId) {
             const modal = new bootstrap.Modal(document.getElementById('courseViewModal'));
             modal.show();
 
@@ -687,7 +687,7 @@ if (!empty($courses)) {
         }
 
         // Get status text in Swahili
-        function getStatusText(status) {
+        window.getStatusText = function(status) {
             switch (status) {
                 case 'published':
                     return 'Imechapishwa';
@@ -701,13 +701,13 @@ if (!empty($courses)) {
         }
 
         // Open add course modal
-        function openAddCourseModal() {
+        window.openAddCourseModal = function() {
             const modal = new bootstrap.Modal(document.getElementById('addCourseModal'));
             modal.show();
         }
 
         // Save new course
-        function saveCourse() {
+        window.saveCourse = function() {
             const form = document.getElementById('addCourseForm');
             const formData = new FormData(form);
 
@@ -731,13 +731,13 @@ if (!empty($courses)) {
         }
 
         // Edit course
-        function editCourse(courseId) {
+        window.editCourse = function(courseId) {
             // Redirect to edit page or open edit modal
             window.location.href = `edit_course.php?id=${courseId}`;
         }
 
         // Delete course
-        function deleteCourse(courseId) {
+        window.deleteCourse = function(courseId) {
             if (confirm('Una uhakika unataka kufuta kozi hii? Kitendo hiki hakiwezi kurekebishwa.')) {
                 fetch('delete_course.php', {
                         method: 'POST',
