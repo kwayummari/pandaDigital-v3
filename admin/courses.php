@@ -438,7 +438,7 @@ if (!empty($courses)) {
                                     </td>
                                     <td>
                                         <button class="action-btn btn-view" onclick="viewCourse(<?= $course['id'] ?>)">
-                                            <i class="fas fa-eye me-1"></i>Ona
+                                            <i class="fas fa-eye me-1"></i>Angalia
                                         </button>
                                         <button class="action-btn btn-edit" onclick="editCourse(<?= $course['id'] ?>)">
                                             <i class="fas fa-edit me-1"></i>Hariri
