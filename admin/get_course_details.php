@@ -29,15 +29,15 @@ try {
     // Prepare course data for the modal
     $courseData = [
         'id' => $course['id'],
-        'title' => $course['title'] ?? 'N/A',
-        'description' => $course['description'] ?? 'N/A',
+        'title' => $course['name'] ?? $course['title'] ?? 'N/A',
+        'description' => $course['description'] ?? '',
         'price' => $course['price'] ?? 0,
         'status' => $course['status'] ?? 'pending',
-        'created_at' => $course['created_at'] ?? 'N/A',
-        'image_url' => $course['image_url'] ?? null,
-        'instructor_name' => $course['instructor_name'] ?? 'N/A',
-        'enrollment_count' => $courseStats['total_enrollments'] ?? 0,
-        'video_count' => $courseStats['total_videos'] ?? 0
+        'created_at' => $course['created_at'] ?? $course['dateCreated'] ?? date('Y-m-d H:i:s'),
+        'image_url' => !empty($course['photo']) ? '../uploads/courses/' . $course['photo'] : '../assets/images/default-course.jpg',
+        'instructor_name' => 'Admin', // TODO: Add instructor info to course table
+        'enrollment_count' => $courseStats['total_students'] ?? 0,
+        'video_count' => $courseStats['total_lessons'] ?? 0
     ];
 
     echo json_encode(['success' => true, 'course' => $courseData]);
