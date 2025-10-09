@@ -540,77 +540,77 @@ if (!empty($courses)) {
         </div>
     </div>
 
-<script>
-// Export dropdown functionality
-function toggleExportDropdown() {
-    document.querySelector('.export-dropdown').classList.toggle('show');
-}
+    <script>
+        // Export dropdown functionality
+        function toggleExportDropdown() {
+            document.querySelector('.export-dropdown').classList.toggle('show');
+        }
 
-// Close dropdown when clicking outside
-window.onclick = function(event) {
-    if (!event.target.matches('.export-dropdown')) {
-        const dropdowns = document.getElementsByClassName('export-dropdown');
-        for (let dropdown of dropdowns) {
-            if (dropdown.classList.contains('show')) {
-                dropdown.classList.remove('show');
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.export-dropdown')) {
+                const dropdowns = document.getElementsByClassName('export-dropdown');
+                for (let dropdown of dropdowns) {
+                    if (dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                    }
+                }
             }
         }
-    }
-}
 
-// Search functionality
-function searchCourses() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const table = document.getElementById('coursesTable');
-    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        // Search functionality
+        function searchCourses() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const table = document.getElementById('coursesTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
-    for (let row of rows) {
-        const title = row.cells[2].textContent.toLowerCase();
-        const description = row.cells[3].textContent.toLowerCase();
+            for (let row of rows) {
+                const title = row.cells[2].textContent.toLowerCase();
+                const description = row.cells[3].textContent.toLowerCase();
 
-        if (title.includes(searchTerm) || description.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
         }
-    }
-}
 
-// Filter by status
-function filterByStatus(status) {
-    // Update active tab
-    document.querySelectorAll('#statusTabs .nav-link').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    event.target.classList.add('active');
+        // Filter by status
+        function filterByStatus(status) {
+            // Update active tab
+            document.querySelectorAll('#statusTabs .nav-link').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
 
-    // Filter table rows
-    const table = document.getElementById('coursesTable');
-    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            // Filter table rows
+            const table = document.getElementById('coursesTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
-    for (let row of rows) {
-        if (status === 'all') {
-            row.style.display = '';
-        } else if (status === 'with_video') {
-            row.style.display = '';
-        } else if (status === 'with_photo') {
-            row.style.display = '';
+            for (let row of rows) {
+                if (status === 'all') {
+                    row.style.display = '';
+                } else if (status === 'with_video') {
+                    row.style.display = '';
+                } else if (status === 'with_photo') {
+                    row.style.display = '';
+                }
+            }
         }
-    }
-}
 
-// View course details
-function viewCourse(courseId) {
-    const modal = new bootstrap.Modal(document.getElementById('courseViewModal'));
-    modal.show();
+        // View course details
+        function viewCourse(courseId) {
+            const modal = new bootstrap.Modal(document.getElementById('courseViewModal'));
+            modal.show();
 
-    // Fetch course details via AJAX
-    fetch(`get_course_details.php?id=${courseId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const course = data.course;
-                document.getElementById('courseViewModalBody').innerHTML = `
+            // Fetch course details via AJAX
+            fetch(`get_course_details.php?id=${courseId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const course = data.course;
+                        document.getElementById('courseViewModalBody').innerHTML = `
                     <div class="row">
                         <div class="col-md-4">
                             <img src="${course.image_url || '../assets/images/default-course.jpg'}" 
@@ -644,89 +644,89 @@ function viewCourse(courseId) {
                         </div>
                     </div>
                 `;
-            } else {
-                document.getElementById('courseViewModalBody').innerHTML = `
+                    } else {
+                        document.getElementById('courseViewModalBody').innerHTML = `
                     <div class="alert alert-danger">
                         ${data.message || 'Haikuweza kupata maelezo ya kozi'}
                     </div>
                 `;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('courseViewModalBody').innerHTML = `
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('courseViewModalBody').innerHTML = `
                 <div class="alert alert-danger">
                     Kuna tatizo la mtandao. Jaribu tena.
                 </div>
             `;
-        });
-}
+                });
+        }
 
-// Delete course
-function deleteCourse(courseId) {
-    if (confirm('Una uhakika unataka kufuta kozi hii? Kitendo hiki hakiwezi kurekebishwa.')) {
-        fetch('delete_course.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: courseId
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Kozi imefutwa kwa mafanikio!');
-                    location.reload();
-                } else {
-                    alert('Kuna tatizo: ' + (data.message || 'Haijulikani'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Kuna tatizo la mtandao. Jaribu tena.');
-            });
-    }
-}
-
-// Open add course modal
-function openAddCourseModal() {
-    const modal = new bootstrap.Modal(document.getElementById('addCourseModal'));
-    modal.show();
-}
-
-// Save new course
-function saveCourse() {
-    const form = document.getElementById('addCourseForm');
-    const formData = new FormData(form);
-
-    fetch('add_course.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Kozi imehifadhiwa kwa mafanikio!');
-                location.reload();
-            } else {
-                alert('Kuna tatizo: ' + (data.message || 'Haijulikani'));
+        // Delete course
+        function deleteCourse(courseId) {
+            if (confirm('Una uhakika unataka kufuta kozi hii? Kitendo hiki hakiwezi kurekebishwa.')) {
+                fetch('delete_course.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id: courseId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Kozi imefutwa kwa mafanikio!');
+                            location.reload();
+                        } else {
+                            alert('Kuna tatizo: ' + (data.message || 'Haijulikani'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Kuna tatizo la mtandao. Jaribu tena.');
+                    });
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Kuna tatizo la mtandao. Jaribu tena.');
-        });
-}
+        }
 
-// Initialize search on Enter key
-document.getElementById('searchInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        searchCourses();
-    }
-});
-</script>
+        // Open add course modal
+        function openAddCourseModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addCourseModal'));
+            modal.show();
+        }
+
+        // Save new course
+        function saveCourse() {
+            const form = document.getElementById('addCourseForm');
+            const formData = new FormData(form);
+
+            fetch('add_course.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Kozi imehifadhiwa kwa mafanikio!');
+                        location.reload();
+                    } else {
+                        alert('Kuna tatizo: ' + (data.message || 'Haijulikani'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Kuna tatizo la mtandao. Jaribu tena.');
+                });
+        }
+
+        // Initialize search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchCourses();
+            }
+        });
+    </script>
 </body>
 
 </html>
