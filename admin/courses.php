@@ -437,13 +437,13 @@ if (!empty($courses)) {
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <button class="action-btn btn-view" data-action="view" data-course-id="<?= $course['id'] ?>">
+                                        <button class="action-btn btn-view" onclick="viewCourse(<?= $course['id'] ?>)">
                                             <i class="fas fa-eye me-1"></i>Ona
                                         </button>
-                                        <button class="action-btn btn-edit" data-action="edit" data-course-id="<?= $course['id'] ?>">
+                                        <a href="edit_course.php?id=<?= $course['id'] ?>" class="action-btn btn-edit">
                                             <i class="fas fa-edit me-1"></i>Hariri
-                                        </button>
-                                        <button class="action-btn btn-delete" data-action="delete" data-course-id="<?= $course['id'] ?>">
+                                        </a>
+                                        <button class="action-btn btn-delete" onclick="deleteCourse(<?= $course['id'] ?>)">
                                             <i class="fas fa-trash me-1"></i>Futa
                                         </button>
                                     </td>
@@ -540,229 +540,193 @@ if (!empty($courses)) {
         </div>
     </div>
 
-    <script type="text/javascript">
-        console.log('Course management script loaded at: ' + new Date().toISOString());
+<script>
+// Export dropdown functionality
+function toggleExportDropdown() {
+    document.querySelector('.export-dropdown').classList.toggle('show');
+}
 
-        // Define critical functions FIRST
-        window.viewCourse = function(courseId) {
-            console.log('viewCourse called with ID: ' + courseId);
-            const modal = new bootstrap.Modal(document.getElementById('courseViewModal'));
-            modal.show();
-            fetch(`get_course_details.php?id=${courseId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const course = data.course;
-                        document.getElementById('courseViewModalBody').innerHTML = `
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <img src="${course.image_url || 'assets/images/default-course.jpg'}" 
-                                         class="img-fluid rounded" alt="Course Image">
+// Close dropdown when clicking outside
+window.onclick = function(event) {
+    if (!event.target.matches('.export-dropdown')) {
+        const dropdowns = document.getElementsByClassName('export-dropdown');
+        for (let dropdown of dropdowns) {
+            if (dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            }
+        }
+    }
+}
+
+// Search functionality
+function searchCourses() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const table = document.getElementById('coursesTable');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+    for (let row of rows) {
+        const title = row.cells[2].textContent.toLowerCase();
+        const description = row.cells[3].textContent.toLowerCase();
+
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+
+// Filter by status
+function filterByStatus(status) {
+    // Update active tab
+    document.querySelectorAll('#statusTabs .nav-link').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    event.target.classList.add('active');
+
+    // Filter table rows
+    const table = document.getElementById('coursesTable');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+    for (let row of rows) {
+        if (status === 'all') {
+            row.style.display = '';
+        } else if (status === 'with_video') {
+            row.style.display = '';
+        } else if (status === 'with_photo') {
+            row.style.display = '';
+        }
+    }
+}
+
+// View course details
+function viewCourse(courseId) {
+    const modal = new bootstrap.Modal(document.getElementById('courseViewModal'));
+    modal.show();
+
+    // Fetch course details via AJAX
+    fetch(`get_course_details.php?id=${courseId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const course = data.course;
+                document.getElementById('courseViewModalBody').innerHTML = `
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="${course.image_url || '../assets/images/default-course.jpg'}" 
+                                 class="img-fluid rounded" alt="Course Image">
+                        </div>
+                        <div class="col-md-8">
+                            <h5>${course.title || 'N/A'}</h5>
+                            <p class="text-muted">${course.description || 'Hakuna maelezo'}</p>
+                            
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <strong>Mwalimu:</strong><br>
+                                    ${course.instructor_name || 'Admin'}
                                 </div>
-                                <div class="col-md-8">
-                                    <h5>${course.title}</h5>
-                                    <p class="text-muted">${course.description || 'Hakuna maelezo'}</p>
-                                    <div class="row mb-3">
-                                        <div class="col-6"><strong>Mwalimu:</strong><br>${course.instructor_name}</div>
-                                        <div class="col-6"><strong>Bei:</strong><br>${course.price > 0 ? 'TSh ' + course.price.toLocaleString() : 'Bure'}</div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col-6"><strong>Hali:</strong><br><span class="status-badge status-${course.status}">${getStatusText(course.status)}</span></div>
-                                        <div class="col-6"><strong>Tarehe ya Uundaji:</strong><br>${new Date(course.created_at).toLocaleDateString('sw-TZ')}</div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col-6"><strong>Idadi ya Wanafunzi:</strong><br>${course.enrollment_count || 0}</div>
-                                        <div class="col-6"><strong>Idadi ya Video:</strong><br>${course.video_count || 0}</div>
-                                    </div>
+                                <div class="col-6">
+                                    <strong>Bei:</strong><br>
+                                    ${course.price > 0 ? 'TSh ' + course.price.toLocaleString() : 'Bure'}
                                 </div>
                             </div>
-                        `;
-                    } else {
-                        document.getElementById('courseViewModalBody').innerHTML = `<div class="alert alert-danger">${data.message || 'Kuna tatizo la kupata maelezo ya kozi'}</div>`;
-                    }
+                            
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <strong>Tarehe:</strong><br>
+                                    ${course.created_at || 'Haijulikani'}
+                                </div>
+                                <div class="col-6">
+                                    <strong>Wanafunzi:</strong><br>
+                                    ${course.enrollment_count || 0}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                document.getElementById('courseViewModalBody').innerHTML = `
+                    <div class="alert alert-danger">
+                        ${data.message || 'Haikuweza kupata maelezo ya kozi'}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('courseViewModalBody').innerHTML = `
+                <div class="alert alert-danger">
+                    Kuna tatizo la mtandao. Jaribu tena.
+                </div>
+            `;
+        });
+}
+
+// Delete course
+function deleteCourse(courseId) {
+    if (confirm('Una uhakika unataka kufuta kozi hii? Kitendo hiki hakiwezi kurekebishwa.')) {
+        fetch('delete_course.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: courseId
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('courseViewModalBody').innerHTML = `<div class="alert alert-danger">Kuna tatizo la mtandao. Jaribu tena.</div>`;
-                });
-        };
-
-        window.editCourse = function(courseId) {
-            console.log('editCourse called with ID: ' + courseId);
-            window.location.href = `edit_course.php?id=${courseId}`;
-        };
-
-        window.deleteCourse = function(courseId) {
-            console.log('deleteCourse called with ID: ' + courseId);
-            if (confirm('Una uhakika unataka kufuta kozi hii? Kitendo hiki hakiwezi kurekebishwa.')) {
-                fetch('delete_course.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            id: courseId
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Kozi imefutwa kwa mafanikio!');
-                            location.reload();
-                        } else {
-                            alert('Kuna tatizo: ' + (data.message || 'Haijulikani'));
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Kuna tatizo la mtandao. Jaribu tena.');
-                    });
-            }
-        };
-
-        window.getStatusText = function(status) {
-            switch (status) {
-                case 'published':
-                    return 'Imechapishwa';
-                case 'draft':
-                    return 'Rasimu';
-                case 'pending':
-                    return 'Inasubiri';
-                default:
-                    return 'Haijulikani';
-            }
-        };
-
-        console.log('Critical functions defined:', typeof window.viewCourse, typeof window.editCourse, typeof window.deleteCourse);
-
-        // Export dropdown functionality
-        window.toggleExportDropdown = function() {
-            document.querySelector('.export-dropdown').classList.toggle('show');
-        }
-
-        // Close export dropdown when clicking outside
-        window.onclick = function(event) {
-            if (!event.target.matches('.export-dropdown') && !event.target.matches('.export-dropdown *')) {
-                var dropdowns = document.getElementsByClassName("export-dropdown");
-                for (var i = 0; i < dropdowns.length; i++) {
-                    var openDropdown = dropdowns[i];
-                    if (openDropdown.classList.contains('show')) {
-                        openDropdown.classList.remove('show');
-                    }
-                }
-            }
-        }
-
-        // Search functionality
-        window.searchCourses = function() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const table = document.getElementById('coursesTable');
-            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-
-            for (let row of rows) {
-                const title = row.cells[1].textContent.toLowerCase();
-                const instructor = row.cells[2].textContent.toLowerCase();
-
-                if (title.includes(searchTerm) || instructor.includes(searchTerm)) {
-                    row.style.display = '';
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Kozi imefutwa kwa mafanikio!');
+                    location.reload();
                 } else {
-                    row.style.display = 'none';
+                    alert('Kuna tatizo: ' + (data.message || 'Haijulikani'));
                 }
-            }
-        }
-
-        // Filter by status
-        window.filterByStatus = function(status) {
-            // Update active tab
-            document.querySelectorAll('#statusTabs .nav-link').forEach(tab => {
-                tab.classList.remove('active');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Kuna tatizo la mtandao. Jaribu tena.');
             });
-            event.target.classList.add('active');
+    }
+}
 
-            // Filter table rows
-            const table = document.getElementById('coursesTable');
-            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+// Open add course modal
+function openAddCourseModal() {
+    const modal = new bootstrap.Modal(document.getElementById('addCourseModal'));
+    modal.show();
+}
 
-            for (let row of rows) {
-                if (status === 'all') {
-                    row.style.display = '';
-                } else if (status === 'with_video') {
-                    const videoCell = row.cells[3]; // Video column
-                    if (videoCell && !videoCell.textContent.includes('Hakuna video')) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                } else if (status === 'with_photo') {
-                    const photoCell = row.cells[4]; // Photo column
-                    if (photoCell && !photoCell.textContent.includes('Hakuna picha')) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                }
+// Save new course
+function saveCourse() {
+    const form = document.getElementById('addCourseForm');
+    const formData = new FormData(form);
+
+    fetch('add_course.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Kozi imehifadhiwa kwa mafanikio!');
+                location.reload();
+            } else {
+                alert('Kuna tatizo: ' + (data.message || 'Haijulikani'));
             }
-        }
-
-
-        // Open add course modal
-        window.openAddCourseModal = function() {
-            const modal = new bootstrap.Modal(document.getElementById('addCourseModal'));
-            modal.show();
-        }
-
-        // Save new course
-        window.saveCourse = function() {
-            const form = document.getElementById('addCourseForm');
-            const formData = new FormData(form);
-
-            fetch('add_course.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Kozi imehifadhiwa kwa mafanikio!');
-                        location.reload();
-                    } else {
-                        alert('Kuna tatizo: ' + (data.message || 'Haijulikani'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Kuna tatizo la mtandao. Jaribu tena.');
-                });
-        }
-
-
-        // Initialize search on Enter key
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchCourses();
-            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Kuna tatizo la mtandao. Jaribu tena.');
         });
-        
-        // EVENT DELEGATION for course action buttons - NO MORE ONCLICK!
-        document.addEventListener('click', function(e) {
-            const btn = e.target.closest('[data-action]');
-            if (!btn) return;
-            
-            const action = btn.getAttribute('data-action');
-            const courseId = btn.getAttribute('data-course-id');
-            
-            console.log('Action clicked:', action, 'ID:', courseId);
-            
-            if (action === 'view') {
-                window.viewCourse(courseId);
-            } else if (action === 'edit') {
-                window.editCourse(courseId);
-            } else if (action === 'delete') {
-                window.deleteCourse(courseId);
-            }
-        });
-        
-        console.log('EVENT DELEGATION ACTIVE!');
-    </script>
+}
 
-    <?php include __DIR__ . '/includes/admin_footer_common.php'; ?>
+// Initialize search on Enter key
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchCourses();
+    }
+});
+</script>
+</body>
+
+</html>
