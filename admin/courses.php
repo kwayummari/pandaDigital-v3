@@ -437,13 +437,13 @@ if (!empty($courses)) {
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <button class="action-btn btn-view" onclick="viewCourse(<?= $course['id'] ?>)">
+                                        <button class="action-btn btn-view" data-action="view" data-course-id="<?= $course['id'] ?>">
                                             <i class="fas fa-eye me-1"></i>Ona
                                         </button>
-                                        <button class="action-btn btn-edit" onclick="editCourse(<?= $course['id'] ?>)">
+                                        <button class="action-btn btn-edit" data-action="edit" data-course-id="<?= $course['id'] ?>">
                                             <i class="fas fa-edit me-1"></i>Hariri
                                         </button>
-                                        <button class="action-btn btn-delete" onclick="deleteCourse(<?= $course['id'] ?>)">
+                                        <button class="action-btn btn-delete" data-action="delete" data-course-id="<?= $course['id'] ?>">
                                             <i class="fas fa-trash me-1"></i>Futa
                                         </button>
                                     </td>
@@ -542,7 +542,7 @@ if (!empty($courses)) {
 
     <script type="text/javascript">
         console.log('Course management script loaded at: ' + new Date().toISOString());
-        
+
         // Define critical functions FIRST
         window.viewCourse = function(courseId) {
             console.log('viewCourse called with ID: ' + courseId);
@@ -596,37 +596,45 @@ if (!empty($courses)) {
             console.log('deleteCourse called with ID: ' + courseId);
             if (confirm('Una uhakika unataka kufuta kozi hii? Kitendo hiki hakiwezi kurekebishwa.')) {
                 fetch('delete_course.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({id: courseId})
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Kozi imefutwa kwa mafanikio!');
-                        location.reload();
-                    } else {
-                        alert('Kuna tatizo: ' + (data.message || 'Haijulikani'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Kuna tatizo la mtandao. Jaribu tena.');
-                });
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: courseId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Kozi imefutwa kwa mafanikio!');
+                            location.reload();
+                        } else {
+                            alert('Kuna tatizo: ' + (data.message || 'Haijulikani'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Kuna tatizo la mtandao. Jaribu tena.');
+                    });
             }
         };
 
         window.getStatusText = function(status) {
             switch (status) {
-                case 'published': return 'Imechapishwa';
-                case 'draft': return 'Rasimu';
-                case 'pending': return 'Inasubiri';
-                default: return 'Haijulikani';
+                case 'published':
+                    return 'Imechapishwa';
+                case 'draft':
+                    return 'Rasimu';
+                case 'pending':
+                    return 'Inasubiri';
+                default:
+                    return 'Haijulikani';
             }
         };
 
         console.log('Critical functions defined:', typeof window.viewCourse, typeof window.editCourse, typeof window.deleteCourse);
-        
+
         // Export dropdown functionality
         window.toggleExportDropdown = function() {
             document.querySelector('.export-dropdown').classList.toggle('show');
@@ -734,6 +742,27 @@ if (!empty($courses)) {
                 searchCourses();
             }
         });
+        
+        // EVENT DELEGATION for course action buttons - NO MORE ONCLICK!
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            
+            const action = btn.getAttribute('data-action');
+            const courseId = btn.getAttribute('data-course-id');
+            
+            console.log('Action clicked:', action, 'ID:', courseId);
+            
+            if (action === 'view') {
+                window.viewCourse(courseId);
+            } else if (action === 'edit') {
+                window.editCourse(courseId);
+            } else if (action === 'delete') {
+                window.deleteCourse(courseId);
+            }
+        });
+        
+        console.log('EVENT DELEGATION ACTIVE!');
     </script>
 
     <?php include __DIR__ . '/includes/admin_footer_common.php'; ?>
