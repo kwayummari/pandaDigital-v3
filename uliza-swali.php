@@ -103,7 +103,9 @@ if (!empty($searchQuery)) {
                             $nullFallbackIndex = 0;
                             foreach (array_slice($expertStats['byRegion'] ?? [], 0, 3) as $region):
                                 $regionLabel = $region['region'] ?? '';
-                                if ($regionLabel === null || $regionLabel === '' || (is_string($regionLabel) && strtolower(trim($regionLabel)) === 'null')) {
+                                $normalized = is_string($regionLabel) ? trim(trim($regionLabel), "'\"") : (string) $regionLabel;
+                                $isNullRegion = ($regionLabel === null || $regionLabel === '' || strtolower($normalized) === 'null');
+                                if ($isNullRegion) {
                                     $regionLabel = $nullRegionFallbacks[$nullFallbackIndex % count($nullRegionFallbacks)];
                                     $nullFallbackIndex++;
                                 }
