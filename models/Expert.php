@@ -71,18 +71,8 @@ class Expert
             $stmt->execute();
             $totalExperts = $stmt->fetch()['total'];
 
-            // Get experts by region (only regions with a real value; order by count so most experts first)
-            $stmt = $conn->prepare("
-                SELECT region, COUNT(*) as count 
-                FROM users 
-                WHERE role = 'expert' 
-                  AND region IS NOT NULL 
-                  AND TRIM(region) != '' 
-                  AND LOWER(TRIM(region)) != 'null' 
-                GROUP BY region 
-                ORDER BY count DESC 
-                LIMIT 5
-            ");
+            // Get experts by region
+            $stmt = $conn->prepare("SELECT region, COUNT(*) as count FROM users WHERE role = 'expert' AND region IS NOT NULL GROUP BY region ORDER BY count DESC LIMIT 5");
             $stmt->execute();
             $expertsByRegion = $stmt->fetchAll();
 

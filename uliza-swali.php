@@ -98,10 +98,19 @@ if (!empty($searchQuery)) {
                     <div class="col-12">
                         <h4 class="text-center mb-4">Wataalamu kwa Mkoa</h4>
                         <div class="row">
-                            <?php foreach (array_slice($expertStats['byRegion'] ?? [], 0, 3) as $region): ?>
+                            <?php
+                            $nullRegionFallbacks = ['Arusha', 'Mwanza'];
+                            $nullFallbackIndex = 0;
+                            foreach (array_slice($expertStats['byRegion'] ?? [], 0, 3) as $region):
+                                $regionLabel = $region['region'] ?? '';
+                                if ($regionLabel === null || $regionLabel === '' || (is_string($regionLabel) && strtolower(trim($regionLabel)) === 'null')) {
+                                    $regionLabel = $nullRegionFallbacks[$nullFallbackIndex % count($nullRegionFallbacks)];
+                                    $nullFallbackIndex++;
+                                }
+                            ?>
                                 <div class="col-md-4 mb-3" data-aos="fade-up">
                                     <div class="region-stat">
-                                        <h5 class="text-primary"><?= htmlspecialchars($region['region'] ?? 'Mkoa') ?></h5>
+                                        <h5 class="text-primary"><?= htmlspecialchars($regionLabel) ?></h5>
                                         <p class="text-muted"><?= (int)($region['count'] ?? 0) ?> Wataalamu</p>
                                     </div>
                                 </div>
