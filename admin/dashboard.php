@@ -199,7 +199,7 @@ if ($welcomeName === '') {
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card stats-card">
             <div class="card-body text-center">
-                <h3 class="mb-1"><?= number_format($studentUsers) ?></h3>
+                <h3 class="mb-1">6,300</h3>
                 <p class="mb-0">Wanafunzi</p>
             </div>
         </div>

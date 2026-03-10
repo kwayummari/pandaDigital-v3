@@ -55,6 +55,22 @@ back to:
 
 ---
 
+## 4. Wanafunzi (Students)
+
+**Current (hardcoded):**
+```php
+<h3 class="mb-1">6,300</h3>
+<p class="mb-0">Wanafunzi</p>
+```
+
+**To revert (dynamic):**
+```php
+<h3 class="mb-1"><?= number_format($studentUsers) ?></h3>
+<p class="mb-0">Wanafunzi</p>
+```
+
+---
+
 ## Summary
 
 | Card                    | Change type | Hardcoded value | Revert: use |
@@ -62,5 +78,6 @@ back to:
 | Vyeti Vilivyopakuliwa   | Number     | 6,650            | `$downloadModel->getTotalDownloadHistory()` |
 | Watumiaji Wote          | Number     | 6,319            | `$totalUsers` |
 | Success Stories         | Label only | "Success Stories"| "Wanufaika Wote" |
+| Wanafunzi               | Number     | 6,300            | `$studentUsers` |
 
-The variables `$totalUsers` and `$downloadModel` are already defined at the top of `admin/dashboard.php`; no other file changes are needed to revert.
+The variables `$totalUsers`, `$studentUsers`, and `$downloadModel` are already defined at the top of `admin/dashboard.php`; no other file changes are needed to revert.
