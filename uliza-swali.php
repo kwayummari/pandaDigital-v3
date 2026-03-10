@@ -102,7 +102,7 @@ if (!empty($searchQuery)) {
                                 <div class="col-md-4 mb-3" data-aos="fade-up">
                                     <div class="region-stat">
                                         <h5 class="text-primary"><?= htmlspecialchars($region['region'] ?? 'Mkoa') ?></h5>
-                                        <p class="text-muted"><?= $region['count'] ?? 0 ?> Wataalamu</p>
+                                        <p class="text-muted"><?= (int)($region['count'] ?? 0) ?> Wataalamu</p>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

@@ -1,6 +1,17 @@
 <?php
 // This file contains the reusable sidebar for admin pages
 // Make sure $currentUser is available when including this file
+$sidebarDisplayName = trim(($currentUser['first_name'] ?? '') . ' ' . ($currentUser['last_name'] ?? ''));
+$sidebarDisplayName = trim($sidebarDisplayName);
+if ($sidebarDisplayName === '') {
+    $sidebarDisplayName = trim($currentUser['email'] ?? '');
+}
+if ($sidebarDisplayName === '') {
+    $sidebarDisplayName = trim($currentUser['phone'] ?? '');
+}
+if ($sidebarDisplayName === '') {
+    $sidebarDisplayName = ucfirst($currentUser['role'] ?? 'Admin');
+}
 ?>
 <!-- Sidebar -->
 <div class="sidebar">
@@ -19,8 +30,8 @@
             <i class="fas fa-user-circle fa-2x"></i>
         </div>
         <div class="user-info">
-            <h6 class="mb-0"><?php echo htmlspecialchars($currentUser['first_name'] . ' ' . $currentUser['last_name']); ?></h6>
-            <small class="text-muted"><?php echo ucfirst($currentUser['role']); ?></small>
+            <h6 class="mb-0"><?php echo htmlspecialchars($sidebarDisplayName); ?></h6>
+            <small class="text-muted"><?php echo ucfirst($currentUser['role'] ?? 'Admin'); ?></small>
         </div>
     </div>
 
