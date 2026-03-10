@@ -30,6 +30,18 @@ if (!$expert) {
 // Get other experts for the sidebar
 $otherExperts = $expertModel->getOtherExperts($expertId, 8);
 
+// Treat null, empty, 'null', "null" as empty — do not display
+function expert_details_value_empty($val) {
+    if ($val === null) return true;
+    if (!is_string($val)) return false;
+    $normalized = trim(trim($val), "'\"");
+    return $normalized === '' || strtolower($normalized) === 'null';
+}
+function expert_details_display($val) {
+    if (expert_details_value_empty($val)) return '';
+    return is_string($val) ? trim(trim($val), "'\"") : (string) $val;
+}
+
 $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
 ?>
 
@@ -199,23 +211,37 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
         </nav>
     </div>
 
+    <?php
+    $edBusiness = expert_details_display($expert['business'] ?? '');
+    $edRegion = expert_details_display($expert['region'] ?? '');
+    $edFirstName = expert_details_display($expert['first_name'] ?? '');
+    $edLastName = expert_details_display($expert['last_name'] ?? '');
+    $edFullName = trim($edFirstName . ' ' . $edLastName);
+    $edSubtitleParts = array_filter([$edBusiness, $edRegion]);
+    $edButtonName = $edFirstName !== '' ? $edFirstName : 'Mtaalamu';
+    $edAltName = $edFullName !== '' ? $edFullName : 'Mtaalamu';
+    ?>
     <!-- Page Header -->
     <section class="page-header" style="background-image: url('<?= asset('images/banner/new-banner2.jpg') ?>'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
         <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6);"></div>
         <div class="container" style="position: relative; z-index: 2;">
             <div class="row align-items-center">
                 <div class="col-lg-8" data-aos="fade-right">
-                    <h1 class="page-title" style="color: #ffffff;"><?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?></h1>
-                    <p class="page-subtitle"><?= htmlspecialchars($expert['business']) ?> - <?= htmlspecialchars($expert['region']) ?></p>
+                    <?php if ($edFullName !== ''): ?>
+                        <h1 class="page-title" style="color: #ffffff;"><?= htmlspecialchars($edFullName) ?></h1>
+                    <?php endif; ?>
+                    <?php if (!empty($edSubtitleParts)): ?>
+                        <p class="page-subtitle"><?= htmlspecialchars(implode(' - ', $edSubtitleParts)) ?></p>
+                    <?php endif; ?>
                     <?php if ($isLoggedIn): ?>
-                        <a href="#contact-section" class="btn btn-primary btn-lg">Ongea na <?= htmlspecialchars($expert['first_name']) ?></a>
+                        <a href="#contact-section" class="btn btn-primary btn-lg">Ongea na <?= htmlspecialchars($edButtonName) ?></a>
                     <?php else: ?>
-                        <a href="#" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">Ongea na <?= htmlspecialchars($expert['first_name']) ?></a>
+                        <a href="#" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">Ongea na <?= htmlspecialchars($edButtonName) ?></a>
                     <?php endif; ?>
                 </div>
                 <div class="col-lg-4 text-center" data-aos="fade-left">
                     <img src="<?= $expertModel->getExpertImageUrl($expert['profile_photo']) ?>"
-                        alt="<?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?>"
+                        alt="<?= htmlspecialchars($edAltName) ?>"
                         class="expert-image">
                 </div>
             </div>
@@ -228,7 +254,7 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
             <div class="row">
                 <div class="col-lg-8">
                     <div class="position-relative">
-                        <h2 class="mb-4">Kuhusu <?= htmlspecialchars($expert['first_name']) ?></h2>
+                        <h2 class="mb-4">Kuhusu <?= htmlspecialchars($edButtonName) ?></h2>
                         <div class="expert-status <?= $expert['status'] ?>">
                             <?= ucfirst($expert['status']) ?>
                         </div>
@@ -236,28 +262,48 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
                         <div class="expert-bio">
                             <h5 class="mb-3">Maelezo ya Mtaalamu</h5>
                             <p class="mb-0">
-                                <?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?> ni mtaalamu wa <?= htmlspecialchars($expert['business']) ?>
-                                kutoka <?= htmlspecialchars($expert['region']) ?>. Ana uzoefu wa kutosha katika nyanja hii na anaweza kukusaidia
-                                kutatua changamoto zako za biashara.
+                                <?php
+                                $bioName = $edFullName !== '' ? $edFullName : 'Mtaalamu';
+                                $bioParts = [];
+                                if ($edBusiness !== '') $bioParts[] = 'mtaalamu wa ' . $edBusiness;
+                                if ($edRegion !== '') $bioParts[] = 'kutoka ' . $edRegion;
+                                if (!empty($bioParts)) {
+                                    echo htmlspecialchars($bioName . ' ni ' . implode(' ', $bioParts) . '. ');
+                                }
+                                ?>Ana uzoefu wa kutosha katika nyanja hii na anaweza kukusaidia kutatua changamoto zako za biashara.
                             </p>
                         </div>
 
+                        <?php
+                        $edPhone = expert_details_display($expert['phone'] ?? '');
+                        $edEmail = expert_details_display($expert['email'] ?? '');
+                        ?>
                         <div class="row">
+                            <?php if ($edFullName !== ''): ?>
                             <div class="col-md-6 mb-3">
-                                <strong>Jina:</strong> <?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?>
+                                <strong>Jina:</strong> <?= htmlspecialchars($edFullName) ?>
                             </div>
+                            <?php endif; ?>
+                            <?php if ($edBusiness !== ''): ?>
                             <div class="col-md-6 mb-3">
-                                <strong>Biashara:</strong> <?= htmlspecialchars($expert['business']) ?>
+                                <strong>Biashara:</strong> <?= htmlspecialchars($edBusiness) ?>
                             </div>
+                            <?php endif; ?>
+                            <?php if ($edRegion !== ''): ?>
                             <div class="col-md-6 mb-3">
-                                <strong>Mkoa:</strong> <?= htmlspecialchars($expert['region']) ?>
+                                <strong>Mkoa:</strong> <?= htmlspecialchars($edRegion) ?>
                             </div>
+                            <?php endif; ?>
+                            <?php if ($edPhone !== ''): ?>
                             <div class="col-md-6 mb-3">
-                                <strong>Simu:</strong> <?= htmlspecialchars($expert['phone']) ?>
+                                <strong>Simu:</strong> <?= htmlspecialchars($edPhone) ?>
                             </div>
+                            <?php endif; ?>
+                            <?php if ($edEmail !== ''): ?>
                             <div class="col-md-6 mb-3">
-                                <strong>Barua pepe:</strong> <?= htmlspecialchars($expert['email']) ?>
+                                <strong>Barua pepe:</strong> <?= htmlspecialchars($edEmail) ?>
                             </div>
+                            <?php endif; ?>
                             <div class="col-md-6 mb-3">
                                 <strong>Hali:</strong> <span class="badge bg-<?= $expert['status'] === 'premium' ? 'warning' : 'success' ?>"><?= ucfirst($expert['status']) ?></span>
                             </div>
@@ -268,9 +314,9 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
                 <div class="col-lg-4">
                     <div class="text-center">
                         <?php if ($isLoggedIn): ?>
-                            <a href="#contact-section" class="btn btn-primary btn-lg w-100 mb-3">Ongea na <?= htmlspecialchars($expert['first_name']) ?></a>
+                            <a href="#contact-section" class="btn btn-primary btn-lg w-100 mb-3">Ongea na <?= htmlspecialchars($edButtonName) ?></a>
                         <?php else: ?>
-                            <a href="#" class="btn btn-primary btn-lg w-100 mb-3" data-bs-toggle="modal" data-bs-target="#loginModal">Ongea na <?= htmlspecialchars($expert['first_name']) ?></a>
+                            <a href="#" class="btn btn-primary btn-lg w-100 mb-3" data-bs-toggle="modal" data-bs-target="#loginModal">Ongea na <?= htmlspecialchars($edButtonName) ?></a>
                             <p class="text-muted small">Ingia au jisajili ili uweze kuuliza swali</p>
                         <?php endif; ?>
                     </div>
@@ -286,20 +332,34 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
                 <h3 class="mb-4">Wataalamu Wengine</h3>
                 <div class="row">
                     <?php foreach ($otherExperts as $otherExpert): ?>
+                        <?php
+                        $oFn = expert_details_display($otherExpert['first_name'] ?? '');
+                        $oLn = expert_details_display($otherExpert['last_name'] ?? '');
+                        $oName = trim($oFn . ' ' . $oLn);
+                        $oBusiness = expert_details_display($otherExpert['business'] ?? '');
+                        $oRegion = expert_details_display($otherExpert['region'] ?? '');
+                        $oAlt = $oName !== '' ? $oName : 'Mtaalamu';
+                        ?>
                         <div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-aos="fade-up">
                             <div class="expert-card position-relative">
                                 <div class="position-relative">
                                     <img src="<?= $expertModel->getExpertImageUrl($otherExpert['profile_photo']) ?>"
-                                        alt="<?= htmlspecialchars($otherExpert['first_name'] . ' ' . $otherExpert['last_name']) ?>"
+                                        alt="<?= htmlspecialchars($oAlt) ?>"
                                         class="expert-card-image">
                                     <div class="expert-card-status <?= $otherExpert['status'] ?>">
                                         <?= ucfirst($otherExpert['status']) ?>
                                     </div>
                                 </div>
                                 <div class="expert-card-info">
-                                    <h6 class="mb-2"><?= htmlspecialchars($otherExpert['first_name'] . ' ' . $otherExpert['last_name']) ?></h6>
-                                    <p class="text-muted small mb-2"><?= htmlspecialchars($otherExpert['business']) ?></p>
-                                    <p class="text-muted small mb-3"><?= htmlspecialchars($otherExpert['region']) ?></p>
+                                    <?php if ($oName !== ''): ?>
+                                        <h6 class="mb-2"><?= htmlspecialchars($oName) ?></h6>
+                                    <?php endif; ?>
+                                    <?php if ($oBusiness !== ''): ?>
+                                        <p class="text-muted small mb-2"><?= htmlspecialchars($oBusiness) ?></p>
+                                    <?php endif; ?>
+                                    <?php if ($oRegion !== ''): ?>
+                                        <p class="text-muted small mb-3"><?= htmlspecialchars($oRegion) ?></p>
+                                    <?php endif; ?>
                                     <a href="<?= app_url('expert-details.php?id=' . $otherExpert['id']) ?>" class="btn btn-outline-primary btn-sm">Soma Zaidi</a>
                                 </div>
                             </div>
@@ -322,7 +382,7 @@ $pageTitle = 'Maelezo ya Mtaalamu - ' . $appConfig['name'];
                         <!-- Contact Form for Logged In Users -->
                         <div class="card">
                             <div class="card-body p-4">
-                                <h5 class="card-title text-center mb-4">Wasiliana na <?= htmlspecialchars($expert['first_name'] . ' ' . $expert['last_name']) ?></h5>
+                                <h5 class="card-title text-center mb-4">Wasiliana na <?= htmlspecialchars($edFullName !== '' ? $edFullName : 'Mtaalamu') ?></h5>
                                 <form id="contactExpertForm">
                                     <input type="hidden" id="expertId" value="<?= $expertId ?>">
                                     <div class="mb-3">
