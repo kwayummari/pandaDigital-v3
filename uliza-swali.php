@@ -18,6 +18,19 @@ $filteredExperts = $experts;
 if (!empty($searchQuery)) {
     $filteredExperts = $expertModel->searchExperts($searchQuery);
 }
+
+// Treat null, empty, 'null', "null", 'null' (with quotes) as empty — don't display
+function expert_value_empty($val) {
+    if ($val === null) return true;
+    if (!is_string($val)) return false;
+    $normalized = trim(trim($val), "'\"");
+    return $normalized === '' || strtolower($normalized) === 'null';
+}
+
+function expert_display_value($val) {
+    if (expert_value_empty($val)) return '';
+    return is_string($val) ? trim(trim($val), "'\"") : (string) $val;
+}
 ?>
 
 <!DOCTYPE html>
@@ -197,25 +210,35 @@ if (!empty($searchQuery)) {
                     <?php foreach ($filteredExperts as $expert): ?>
                         <div class="col-lg-4 col-md-6 mb-5" data-aos="fade-up">
                             <div class="expert-card">
+                                <?php
+                                $fn = expert_display_value($expert['first_name'] ?? '');
+                                $ln = expert_display_value($expert['last_name'] ?? '');
+                                $displayName = trim($fn . ' ' . $ln);
+                                $businessVal = expert_display_value($expert['business'] ?? '');
+                                $regionVal = expert_display_value($expert['region'] ?? '');
+                                $buttonName = $fn !== '' ? $fn : 'Mtaalamu';
+                                ?>
                                 <div class="expert-image-container">
                                     <img src="<?= $expertModel->getExpertImageUrl($expert['profile_photo'] ?? null) ?>"
-                                        alt="<?= htmlspecialchars(($expert['first_name'] ?? '') . ' ' . ($expert['last_name'] ?? '')) ?>"
+                                        alt="<?= htmlspecialchars($displayName !== '' ? $displayName : 'Mtaalamu') ?>"
                                         class="expert-image">
                                     <div class="expert-status <?= $expert['status'] ?? 'free' ?>">
                                         <?= ucfirst($expert['status'] ?? 'free') ?>
                                     </div>
                                 </div>
                                 <div class="expert-info">
-                                    <h4 class="expert-name"><?= htmlspecialchars(($expert['first_name'] ?? '') . ' ' . ($expert['last_name'] ?? '')) ?></h4>
-                                    <?php if (isset($expert['business']) && $expert['business'] !== null && $expert['business'] !== '' && $expert['business'] !== 'null'): ?>
-                                        <p class="expert-business"><?= htmlspecialchars($expert['business']) ?></p>
+                                    <?php if ($displayName !== ''): ?>
+                                        <h4 class="expert-name"><?= htmlspecialchars($displayName) ?></h4>
                                     <?php endif; ?>
-                                    <?php if (isset($expert['region']) && $expert['region'] !== null && $expert['region'] !== '' && $expert['region'] !== 'null'): ?>
-                                        <p class="expert-region"><?= htmlspecialchars($expert['region']) ?></p>
+                                    <?php if ($businessVal !== ''): ?>
+                                        <p class="expert-business"><?= htmlspecialchars($businessVal) ?></p>
+                                    <?php endif; ?>
+                                    <?php if ($regionVal !== ''): ?>
+                                        <p class="expert-region"><?= htmlspecialchars($regionVal) ?></p>
                                     <?php endif; ?>
                                     <div class="expert-actions">
                                         <a href="<?= app_url('expert-details.php?id=' . ($expert['id'] ?? '')) ?>" class="btn btn-primary btn-sm">
-                                            <span class="me-2"></span>Ongea na <?= htmlspecialchars($expert['first_name'] ?? 'Mtaalamu') ?>
+                                            <span class="me-2"></span>Ongea na <?= htmlspecialchars($buttonName) ?>
                                         </a>
                                     </div>
                                 </div>
