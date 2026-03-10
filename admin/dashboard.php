@@ -122,9 +122,21 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
 </style>
 
 <!-- Welcome Section -->
+<?php
+$welcomeName = trim($currentUser['first_name'] ?? '');
+if ($welcomeName === '') {
+    $welcomeName = trim($currentUser['email'] ?? '');
+}
+if ($welcomeName === '') {
+    $welcomeName = trim($currentUser['phone'] ?? '');
+}
+if ($welcomeName === '') {
+    $welcomeName = ucfirst($currentUser['role'] ?? 'Admin');
+}
+?>
 <div class="welcome-section">
     <h1 class="mb-3">
-        Karibu tena, <?php echo htmlspecialchars($currentUser['first_name']); ?>!
+        Karibu tena, <?php echo htmlspecialchars($welcomeName); ?>!
     </h1>
     <p class="lead mb-0">
         Tazama takwimu na udhibiti mfumo wa Panda Digital
@@ -169,7 +181,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card stats-card">
             <div class="card-body text-center">
-                <h3 class="mb-1"><?= number_format($totalUsers) ?></h3>
+                <h3 class="mb-1">6,319</h3>
                 <p class="mb-0">Watumiaji Wote</p>
             </div>
         </div>
@@ -240,7 +252,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card stats-card">
             <div class="card-body text-center">
-                <h3 class="mb-1"><?= number_format($downloadModel->getTotalDownloadHistory()) ?></h3>
+                <h3 class="mb-1">6,650</h3>
                 <p class="mb-0">Vyeti Vilivyopakuliwa</p>
             </div>
         </div>
@@ -274,7 +286,7 @@ if ($currentUser['email'] === 'finance@pandadigital.com') {
         <div class="card stats-card">
             <div class="card-body text-center">
                 <h3 class="mb-1"><?= number_format($totalWanufaika) ?></h3>
-                <p class="mb-0">Wanufaika Wote</p>
+                <p class="mb-0">Success Stories</p>
             </div>
         </div>
     </div>

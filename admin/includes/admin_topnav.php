@@ -1,6 +1,16 @@
 <?php
 // This file contains the reusable top navigation for admin pages
 // Make sure $currentUser is available when including this file
+$navDisplayName = trim($currentUser['first_name'] ?? '');
+if ($navDisplayName === '') {
+    $navDisplayName = trim($currentUser['email'] ?? '');
+}
+if ($navDisplayName === '') {
+    $navDisplayName = trim($currentUser['phone'] ?? '');
+}
+if ($navDisplayName === '') {
+    $navDisplayName = ucfirst($currentUser['role'] ?? 'Admin');
+}
 ?>
 <!-- Top Navigation Bar -->
 <nav class="top-navbar">
@@ -14,7 +24,7 @@
         <div class="user-dropdown">
             <button class="btn btn-link dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
                 <i class="fas fa-user-circle me-2"></i>
-                <?php echo htmlspecialchars($currentUser['first_name']); ?>
+                <?php echo htmlspecialchars($navDisplayName); ?>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="<?= app_url('admin/dashboard.php') ?>">
