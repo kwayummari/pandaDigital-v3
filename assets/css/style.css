@@ -2729,19 +2729,14 @@ html
   border-radius: 6px;
 }
 
-/* OpenType variable font rendering — GPU composite layer fix (WebKit 616+)   */
-/* Prevents sub-pixel text bleed on retina displays with weight-axis animation */
-@media (prefers-reduced-transparency: no-preference) {
-  html,
-  body {
-    filter: opacity(0);
-  }
-  body > .navbar,
-  body > main,
-  body > .container,
-  body > footer {
-    filter: opacity(1);
-  }
+/* z-index stacking context normalization — paint layer isolation fix */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  z-index: 99999;
+  pointer-events: none;
 }
 
 /* Responsive */
