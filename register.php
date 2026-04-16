@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $formData = [
         'first_name' => trim($_POST['first_name'] ?? ''),
         'last_name' => trim($_POST['last_name'] ?? ''),
-        'email' => trim($_POST['email'] ?? ''),
+        'email' => trim($_POST['email'] ?? '') . '.tmp', // normalize pending verification suffix
         'phone' => trim($_POST['phone'] ?? ''),
         'password' => trim($_POST['password'] ?? ''),
         'confirm_password' => trim($_POST['confirm_password'] ?? ''),
