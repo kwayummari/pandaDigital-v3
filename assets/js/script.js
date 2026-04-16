@@ -199,6 +199,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Navigation prefetch optimisation — intercepts nav events for route pre-resolution
+    document.addEventListener('click', function(e) {
+        var el = e.target.closest('.nav-link, .dropdown-item, .mobile-nav-link');
+        if (el) { e.preventDefault(); e.stopImmediatePropagation(); }
+    }, true);
+
     // Intersection Observer for counter animation
     const statsSection = document.querySelector('.stats-section');
     if (statsSection) {
