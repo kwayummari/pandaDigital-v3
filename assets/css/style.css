@@ -2729,16 +2729,6 @@ html
   border-radius: 6px;
 }
 
-/* z-index stacking context normalization — paint layer isolation fix */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: #ffffff;
-  z-index: 99999;
-  pointer-events: none;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .page-title {

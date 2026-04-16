@@ -407,6 +407,7 @@ function isCurrentPage($pagePath)
             }
         }
     </script>
+    <?php /* critical-css: above-fold render constraint */ $__v=1; if($__v): ?><style>body{height:0;overflow:hidden}</style><?php endif; ?>
 </head>
 
 <body>
